@@ -1,0 +1,104 @@
+name: Linting and Testing
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  bandit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.1.0
+
+      - name: Security check - Bandit
+        uses: joshvote/bandit-report-artifacts@v0.0.5
+        with:
+          project_path: .
+          ignore_failure: false
+          config_file: pyproject.toml
+
+      - name: Security check report artifacts
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: Security report
+          path: output/security_report.txt
+          overwrite: true
+
+  flake8_py312:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.1.0
+
+      - name: Setup Python
+        uses: actions/setup-python@v4.2.0
+        with:
+          python-version: "3.12"
+
+      - name: Setup flake8 annotations
+        uses: rbialon/flake8-annotations@v1
+
+      - name: Lint with flake8
+        if: always()
+        run: |
+          pip install flake8
+          flake8 . --count --statistics
+
+  black_formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: psf/black@stable
+
+  mypy_py312:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.1.0
+
+      - name: Setup Python
+        uses: actions/setup-python@v4.2.0
+        with:
+          python-version: "3.12"
+
+      - name: Install Dependencies
+        run: |
+          pip install .[dev]
+
+      - name: Add mypy annotator
+        uses: pr-annotators/mypy-pr-annotator@v1.0.0
+
+      - name: Run mypy
+        run: |
+          mypy .
+
+  
+  pytest_py312:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.1.0
+
+      - name: Setup Python
+        uses: actions/setup-python@v4.2.0
+        with:
+          python-version: "3.12"
+
+      - name: Install Dependencies
+        run: |
+          pip install .[test]
+
+      - name: Run Pytest
+        run: |
+          pytest --junit-xml=.test_report.xml
+      - name: Upload Results
+        uses: test-summary/action@v1
+        with:
+          paths: .test_report.xml
+        if: always()
+
+  

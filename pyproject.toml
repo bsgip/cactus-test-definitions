@@ -5,12 +5,8 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "cactus-test-definitions"
 dynamic = ["version", "readme"]
-authors = [
-  {name = "Mike Turner", email = "mike.turner@anu.edu.au"},
-]
-maintainers = [
-  {name = "Mike Turner", email = "mike.turner@anu.edu.au"},
-]
+authors = [{ name = "Mike Turner", email = "mike.turner@anu.edu.au" }]
+maintainers = [{ name = "Mike Turner", email = "mike.turner@anu.edu.au" }]
 description = "CSIP-AUS Client Test Harness Test Definitions"
 keywords = ["CSIP-AUS", "client", "testing", "definitions"]
 requires-python = ">=3.12"
@@ -26,7 +22,7 @@ classifiers = [
 dependencies = [
   "pyyaml>=6.0.2,<7",
   "pyyaml-include>=2.2,<3",
-  "dataclass-wizard==0.35.0,<1"
+  "dataclass-wizard==0.35.0,<1",
 ]
 
 [project.urls]
@@ -46,38 +42,34 @@ dev = [
   "mypy",
   "tox",
   "python-dotenv[cli]",
+  "types-PyYAML",
 ]
-test = [
-  "pytest",
-]
-docs = [
-  "sphinx",
-]
+test = ["pytest"]
+docs = ["sphinx"]
 
 [tool.pytest.ini_options]
 minversion = "6.0"
 addopts = "-ra -q"
-testpaths = [
-  "tests",
-]
+testpaths = ["tests"]
 
-[tool.flake8]
-max-line-length = 120
-max-complexity = 10
 
 [tool.black]
 line-length = 120
 
 [tool.isort]
 profile = "black"
-src_paths = ["src","tests"]
+src_paths = ["src", "tests"]
 
 [tool.bandit]
 exclude_dirs = ["tests"]
 
 [tool.mypy]
+exclude = ["dist", "build", "tests"]
 
 [tool.setuptools.dynamic]
-version = {attr = "cactus_test_definitions.__version__"}
-readme = {file = ["README.md"], content-type="text/markdown"}
+version = { attr = "cactus_test_definitions.__version__" }
+readme = { file = ["README.md"], content-type = "text/markdown" }
 
+
+[tool.setuptools.package-data]
+"cactus_test_definitions" = ["py.typed"]
