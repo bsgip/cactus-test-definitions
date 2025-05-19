@@ -19,6 +19,13 @@ Steps:
         parameters:
           listeners:
             - ALL-05-001
+      - type: set-post-rate
+        parameters:
+          rate_seconds: 60
+      - type: set-poll-rate
+        parameters:
+          rate_seconds: 60
+          
   ALL-05-002:
     event:
       type: POST-request-received
@@ -49,15 +56,16 @@ Steps:
             - ALL-05-003
   ALL-05-004:
     event:
-      type: POST-request-received
+      type: wait
       parameters:
-        endpoint: /mup/1
+        duration_seconds: 300 # Wait for at least 4 sets of readings to arrive (with post rate 60 seconds)
     actions:
-    # leaving this out until action for DOE injection is defined
-      # - type: enable-listeners
-      #   parameters:
-      #     listeners:
-      #       - ALL-05-005
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 600
+          opModImpLimW: 0
+          opModExpLimW: 0
       - type: remove-listeners
         parameters:
           listeners:
