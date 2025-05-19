@@ -78,6 +78,7 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ActionParameterSchema]] = {
     },
     "communications-loss": {},
     "communications-restore": {},
+    "wait": {"duration_seconds": ActionParameterSchema(True, ActionParameterType.Integer)},
 }
 VALID_ACTION_NAMES: set[str] = set(ACTION_PARAMETER_SCHEMA.keys())
 

@@ -101,6 +101,8 @@ def test_is_valid_parameter_type(type: ActionParameterType, value: Any, expected
         (Action("set-default-der-control", {"opModImpLimW": 12.3, "opModExpLimW": "Invalid"}), False),  # bad type
         (Action("create-der-control", {"start": datetime(2022, 1, 3)}), False),  # Missing duration_seconds
         (Action("create-der-control", {"start": datetime(2022, 1, 3), "duration_seconds": 123}), True),
+        (Action("wait", {"duration_seconds": 123}), True),
+        (Action("wait", {}), False),  # Missing duration_seconds
     ],
 )
 def test_validate_action_parameters(action: Action, is_valid: bool):
