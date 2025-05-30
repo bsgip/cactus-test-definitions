@@ -1,0 +1,51 @@
+Description: Active Control – Disconnect 
+Category: Control
+Classes:
+  - A
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+
+Preconditions:
+  actions:
+    - type: register-end-device # out-of-band registration for simplicity 
+      parameters:
+        registration_pin: 11223
+    - type: set-poll-rate
+      parameters:
+        rate_seconds: 300
+    - type: create-der-control
+      parameters:
+        start: $(now + '5 minutes')
+        duration_seconds: 600
+        opModConnect: false
+
+Steps:
+  GET-DERC:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: add-steps
+        parameters:
+          steps:
+            - WAIT-TILL-END
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC
+          
+  WAIT-TILL-END:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 930
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-TILL-END
