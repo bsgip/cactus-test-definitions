@@ -12,6 +12,7 @@ TestProcedures:
   ALL-08: !include ALL-08.yaml
   ALL-09: !include ALL-09.yaml
   ALL-10: !include ALL-10.yaml
+  ALL-11: !include ALL-11.yaml
   GEN-01: !include GEN-01.yaml
   GEN-02: !include GEN-02.yaml
   LOA-01: !include LOA-01.yaml
