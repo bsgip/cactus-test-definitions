@@ -9,7 +9,7 @@ TargetVersions:
   - v1.3-beta/storage
 
 Preconditions:
-  immediate_start: true
+  immediate_start: true # There will be no "init" phase - all interactions will be immediately logged against the test
   init_actions:
     - type: set-comms-rate
       parameters:
@@ -31,6 +31,7 @@ Criteria:
       parameters: {}
       
 Steps:
+  # (b, c, d)
   GET-DCAP:
     event:
       type: GET-request-received
@@ -48,6 +49,7 @@ Steps:
           steps:
             - GET-DCAP
 
+  # (e, f, g)
   GET-EDEV-LIST:
     event:
       type: GET-request-received
@@ -59,6 +61,7 @@ Steps:
           steps:
             - GET-EDEV-LIST
 
+  # (h, i, j)
   GET-TM:
     event:
       type: GET-request-received
@@ -70,6 +73,7 @@ Steps:
           steps:
             - GET-TM
 
+  # (k, l, m)
   GET-DER:
     event:
       type: GET-request-received

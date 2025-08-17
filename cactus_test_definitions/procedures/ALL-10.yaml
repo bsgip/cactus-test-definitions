@@ -1,7 +1,8 @@
-Description: Active Control – Energise / De-energise
-Category: Control
+Description: Update telemetry post rates
+Category: Monitoring
 Classes:
   - A
+  - DR-A
 
 TargetVersions:
   - v1.2
@@ -11,6 +12,22 @@ Criteria:
   checks:
     - type: all-steps-complete
       parameters: {}
+    # Test is ~11.5 minutes of waiting which should leave enough time for:
+    #   one post @ 60 seconds (during startup - might not happen if timings line up)
+    #   two posts @ 300 seconds
+    #   one post @ 60 seconds (after update)
+    - type: readings-site-active-power
+      parameters: {"minimum_count": 3} 
+    - type: readings-site-reactive-power
+      parameters: {"minimum_count": 3}
+    - type: readings-site-voltage
+      parameters: {"minimum_count": 3}
+    - type: readings-der-active-power
+      parameters: {"minimum_count": 3}
+    - type: readings-der-reactive-power
+      parameters: {"minimum_count": 3}
+    - type: readings-der-voltage
+      parameters: {"minimum_count": 3}
 
 Preconditions:
   init_actions:
@@ -19,43 +36,95 @@ Preconditions:
         dcap_poll_seconds: 60
         edev_list_poll_seconds: 60
         fsa_list_poll_seconds: 60
-        der_list_poll_seconds: 300
-        derp_list_poll_seconds: 300
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
         mup_post_seconds: 60
   checks:
     - type: end-device-contents
       parameters: {}
-  actions:
-    - type: create-der-control
-      parameters:
-        start: $(now + '5 minutes')
-        duration_seconds: 600
-        opModEnergize: false
-    
+
 Steps:
-  GET-DERC:
+  
+  # (a, b)
+  GET-MUP-INITIAL:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/1/derc
+        endpoint: /mup
+    actions:
+      - type: set-comms-rate
+        parameters:
+          mup_post_seconds: 300
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-TILL-UPDATE
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-MUP-INITIAL
+
+  # NOTE - (c) will be evaluated via TestCriteria checks
+
+  # (d, e)
+  WAIT-TILL-UPDATE:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 600
     actions:
       - type: enable-steps
         parameters:
           steps:
+            - GET-MUP-UPDATED
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-TILL-UPDATE
+
+  # (d, e)
+  GET-MUP-UPDATED:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /mup
+    actions:
+      - type: set-comms-rate
+        parameters:
+          mup_post_seconds: 60
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-MUP-1
             - WAIT-TILL-END
       - type: remove-steps
         parameters:
           steps:
-            - GET-DERC
-          
-  
+            - GET-MUP-UPDATED
+
+  # (f) - This is our proxy for making sure that post rate has returned to 60s - it has 90 seconds to be hit after GET-MUP-UPDATED
+  POST-MUP-1:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /mup/1
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-MUP-1
+
+  # (f)
   WAIT-TILL-END:
     event:
       type: wait
       parameters:
-        duration_seconds: 930
+        duration_seconds: 90
     actions:
       - type: remove-steps
         parameters:
           steps:
             - WAIT-TILL-END
+      - type: finish-test
+        parameters: {}
+  

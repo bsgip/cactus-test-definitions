@@ -1,7 +1,7 @@
-Description: Client Registration and PIN Validation
+Description: Connection Point registration
 Category: Registration
 Classes:
-  - A
+  - C
 
 TargetVersions:
   - v1.2
@@ -11,35 +11,99 @@ Criteria:
   checks:
     - type: all-steps-complete
       parameters: {}
-    - type: der-capability-contents
-      parameters: {}
-    - type: der-settings-contents
-      parameters: {}
-    - type: der-status-contents
-      parameters: {}
+    - type: end-device-contents
+      parameters:
+        has_connection_point_id: true
 
 Preconditions:
+  immediate_start: true # There will be no "init" phase - all interactions will be immediately logged against the test
   init_actions:
     - type: set-comms-rate
       parameters:
         dcap_poll_seconds: 60
         edev_list_poll_seconds: 60
         fsa_list_poll_seconds: 60
-        der_list_poll_seconds: 60
+        der_list_poll_seconds: 60 
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
-  checks:
-    - type: end-device-contents
-      parameters: {}
 
 Steps:
-  GET-REGISTRATION:
+  GET-DCAP:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/rg
+        endpoint: /dcap
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-EDEV
+            - GET-TM
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DCAP
+
+  GET-EDEV:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-EDEV
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-EDEV
+
+  GET-TM:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /tm
     actions:
       - type: remove-steps
         parameters:
           steps:
-            - GET-REGISTRATION
+            - GET-TM
+
+  POST-EDEV:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DER
+            - PUT-CP
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-EDEV
+
+  GET-DER:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/der
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DER
+
+  PUT-CP:
+    event:
+      type: PUT-request-received
+      parameters:
+        endpoint: /edev/1/cp
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - PUT-CP

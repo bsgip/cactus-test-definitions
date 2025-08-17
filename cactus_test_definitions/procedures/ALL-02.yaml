@@ -8,7 +8,7 @@ TargetVersions:
   - v1.3-beta/storage
 
 Preconditions:
-  immediate_start: true
+  immediate_start: true # There will be no "init" phase - all interactions will be immediately logged against the test
   init_actions:
     - type: set-comms-rate
       parameters:
@@ -32,6 +32,7 @@ Criteria:
       parameters: {}
       
 Steps:
+  # (b, c, d, e, f)
   GET-DCAP:
     event:
       type: GET-request-received
@@ -48,6 +49,7 @@ Steps:
           steps:
             - GET-DCAP
   
+  # (g, h, i)
   GET-EDEV:
     event:
       type: GET-request-received
@@ -62,7 +64,7 @@ Steps:
         parameters:
           steps:
             - GET-EDEV
-  
+  # (m, n, o)
   GET-TM:
     event:
       type: GET-request-received
@@ -74,6 +76,7 @@ Steps:
           steps:
             - GET-TM
   
+  # (j, k)
   POST-EDEV:
     event:
       type: POST-request-received
@@ -89,6 +92,8 @@ Steps:
           steps:
             - POST-EDEV
   
+  # (l) - This step is implied - They should have discovered this URI EITHER through the edev list or the Location header (from POST)
+  # (p, q, r)
   GET-DER:
     event:
       type: GET-request-received

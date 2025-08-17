@@ -30,6 +30,7 @@ class TestProcedureId(StrEnum):
     ALL_01 = "ALL-01"
     ALL_02 = "ALL-02"
     ALL_03 = "ALL-03"
+    ALL_03_REJ = "ALL-03-REJ"
     ALL_04 = "ALL-04"
     ALL_05 = "ALL-05"
     ALL_06 = "ALL-06"

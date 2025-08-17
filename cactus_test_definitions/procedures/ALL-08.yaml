@@ -1,4 +1,4 @@
-Description: Capabilities and Settings
+Description: Operational Mode Status
 Category: Monitoring
 Classes:
   - A
@@ -8,6 +8,11 @@ TargetVersions:
   - v1.3-beta/storage
 
 Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+    
+Preconditions:
   init_actions:
     - type: set-comms-rate
       parameters:
@@ -18,68 +23,56 @@ Criteria:
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
   checks:
-    - type: all-steps-complete
-      parameters: {}
-    - type: der-capability-contents
-      parameters: {}
-    - type: der-settings-contents
-      parameters: {}
-    - type: der-status-contents
-      parameters: {}
-
-Preconditions:
-  checks:
     - type: end-device-contents
       parameters: {}
-
+    - type: der-status-contents
+      parameters: 
+        operationalModeStatus: 2
+  instructions:
+    - DER shall be generating or consuming at least 50% of the DER's active power rating.
+      
 Steps:
   
-  GET-DER:
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /edev/1/der
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-DERSTATUS
-            - POST-DERCAPABILITY
-            - POST-DERSETTINGS
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-DER
-
-  POST-DERSTATUS:
+  # (c, d)
+  POST-DERSTATUS-DISCONNECT:
+    instructions:
+      - Stop DER from generating or consuming active power. (e.g. power source/sink is set to 0W)
     event:
       type: POST-request-received
       parameters:
         endpoint: /edev/1/der/1/ders
+        serve_request_first: true # Run this AFTER server receives the request
+      # Only trigger this if the server has an updated DERStatus
+      checks:
+        - type: der-status-contents
+          parameters: 
+            operationalModeStatus: 1
     actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-DERSTATUS-CONNECT
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS
+            - POST-DERSTATUS-DISCONNECT
   
-  POST-DERCAPABILITY:
+  # (e, f)
+  POST-DERSTATUS-CONNECT:
+    instructions:
+      - Re-enable ability of DER to generate or consume active power.
     event:
       type: POST-request-received
       parameters:
-        endpoint: /edev/1/der/1/dercap
+        endpoint: /edev/1/der/1/ders
+        serve_request_first: true # Run this AFTER server receives the request
+      # Only trigger this if the server has an updated DERStatus
+      checks:
+        - type: der-status-contents
+          parameters: 
+            operationalModeStatus: 2
     actions:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERCAPABILITY
-
-  POST-DERSETTINGS:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/der/1/derg
-    actions:
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-DERSETTINGS
+            - POST-DERSTATUS-CONNECT

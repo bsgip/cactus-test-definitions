@@ -19,29 +19,55 @@ Preconditions:
         dcap_poll_seconds: 60
         edev_list_poll_seconds: 60
         fsa_list_poll_seconds: 60
-        der_list_poll_seconds: 60 
+        der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
   checks:
     - type: end-device-contents
+      parameters: {}
+    - type: der-settings-contents
       parameters: {}
   actions:
     - type: create-der-control
       parameters:
         start: $(now)
         duration_seconds: 300
-        opModLoadLimW: 0
+        opModLoadLimW: $(setMaxW * 2)
+  instructions:
+    - DER shall be importing at the connection point with at least 50% of its active power rating.
     
 Steps:
-  GET-DERC:
+  # (precondition)
+  GET-DERC-INITIAL:
     event:
       type: GET-request-received
       parameters:
         endpoint: /edev/1/derp/1/derc
     actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-ZERO
       - type: remove-steps
         parameters:
           steps:
-            - GET-DERC
+            - GET-DERC-INITIAL
+
+  # (a, b, c)
+  GET-DERC-ZERO:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 300
+          opModLoadLimW: 0
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-ZERO
           
   

@@ -1,4 +1,4 @@
-Description: Client Registration and PIN Validation
+Description: Client rejection of incorrect PIN
 Category: Registration
 Classes:
   - A
@@ -20,17 +20,17 @@ Preconditions:
         dcap_poll_seconds: 60
         edev_list_poll_seconds: 60
         fsa_list_poll_seconds: 60
-        der_list_poll_seconds: 60
+        der_list_poll_seconds: 60 
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
+
   actions:
     - type: register-end-device
       parameters:
-        registration_pin: 11223
-
+        registration_pin: 33221 # Different from the PIN registered in ALL-01 - Should not match client PIN
 
 Steps:
-  # (e, f, g)
+  # (a, b, c)
   GET-REGISTRATION:
     event:
       type: GET-request-received
@@ -46,10 +46,10 @@ Steps:
           steps:
             - GET-REGISTRATION
 
-  # (h)
+  # (d)
   WAIT-TEST-END:
     instructions:
-      - The client should continue communicating with the utility server after validating that the PIN matches.
+      - The client should now be ceasing communications with the utility server due to an incorrect PIN being received.
     event:
       type: wait
       parameters:
