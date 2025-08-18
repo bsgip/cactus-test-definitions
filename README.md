@@ -155,7 +155,7 @@ checks:
 | `readings-der-active-power` | `minimum_count: int` | True if any MirrorUsagePoint has a MirrorMeterReading for DER active power with `minimum_count` entries |
 | `readings-der-reactive-power` | `minimum_count: int` | True if any MirrorUsagePoint has a MirrorMeterReading for DER reactive power with `minimum_count` entries |
 | `readings-der-voltage` | `minimum_count: int` | True if any MirrorUsagePoint has a MirrorMeterReading for DER voltage with `minimum_count` entries |
-| `response-contents` | `latest: bool/None` `status: int/None` | True if at least one received Response matches the filter. `latest` will only consider the most recent received Response.  |
+| `response-contents` | `latest: bool/None` `status: int/None` `all: bool/None` | True if at least one received Response matches the filter. `latest` will only consider the most recent received Response. `all` will look for a nominated status match for every `DERControl` |
 | `subscription-contents` | `subscribed_resource: str` | True if a subscription to `subscribed_resource` has been created | 
 
 The following are csipaus.org/ns/v1.3-beta/storage extension specific checks implemented

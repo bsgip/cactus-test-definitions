@@ -22,6 +22,9 @@ Preconditions:
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
+    - type: create-der-program
+      parameters:
+        primacy: 0
   checks:
     - type: end-device-contents
       parameters: {}
@@ -60,7 +63,7 @@ Steps:
     event:
       type: POST-request-received
       parameters:
-        endpoint: /edev/1/der/1/ders
+        endpoint: /edev/1/der/1/derg
         serve_request_first: true # Run this AFTER server receives the request
     checks:
       type: der-settings-contents

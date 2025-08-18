@@ -1,7 +1,8 @@
-Description: Communication Loss
+Description: Randomisation
 Category: Control
 Classes:
   - A
+  - DR-A
 
 TargetVersions:
   - v1.2
@@ -32,100 +33,50 @@ Preconditions:
       parameters:
         start: $(now)
         duration_seconds: 120
+        randomizeStart_seconds: 60
         opModExpLimW: $(setMaxW * 2)
-        opModImpLimW: $(setMaxW * 2)
-    - type: set-default-der-control
+    - type: create-der-control
       parameters:
-        opModImpLimW: 0  
-        opModExpLimW: 0
+        start: $(now + '120 seconds')
+        duration_seconds: 120
+        randomizeStart_seconds: 60
+        opModExpLimW: $(setMaxW * 2)
+    - type: create-der-control
+      parameters:
+        start: $(now + '240 seconds')
+        duration_seconds: 120
+        randomizeStart_seconds: 60
+        opModExpLimW: $(setMaxW * 2)
+    - type: create-der-control
+      parameters:
+        start: $(now + '360 seconds')
+        duration_seconds: 120
+        randomizeStart_seconds: 60
+        opModExpLimW: $(setMaxW * 2)
+    - type: create-der-control
+      parameters:
+        start: $(now + '480 seconds')
+        duration_seconds: 120
+        randomizeStart_seconds: 60
+        opModExpLimW: $(setMaxW * 2)
+    
     
 Steps:
 
-  
-  # Wait for the client to pickup the updated DefaultDERControl
-  GET-DEFAULT-DERC:
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /edev/1/derp/1/dderc
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - WAIT-SHORT-PERIOD
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-DEFAULT-DERC
-
-  # Wait for a period - but not long enough for the active control to expire then kill the comms
-  WAIT-SHORT-PERIOD:
+  # We don't have a "is random enough" check - it is expected that will be evaluated by a human administering the test
+  # specifically looking at the response timings
+  WAIT-TEST-END:
     event:
       type: wait
       parameters:
-        duration_seconds: 10
+        duration_seconds: 660
     actions:
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-SHORT-PERIOD
-      - type: enable-steps
-        parameters:
-          steps:
-            - WAIT-CONTROL-END
-      - type: communications-status
-        parameters:
-          enabled: false
-
-  # Wait for the active control to expire and for an additional 5 minutes to pass (comms is already disabled)
-  WAIT-CONTROL-END:
-    event:
-      type: wait
-      parameters:
-        duration_seconds: 420
-    actions:
-      - type: remove-steps
-        parameters:
-          steps:
-            - WAIT-CONTROL-END
-      - type: enable-steps
-        parameters:
-          steps:
-            - WAIT-TEST-FINISH
-            - GET-DERC-AFTER-COMMS-RESTORE
-      - type: communications-status
-        parameters:
-          enabled: true
-      - type: create-der-control
-        parameters:
-          start: $(now)
-          duration_seconds: 300
-          opModExpLimW: $(setMaxW * 2)
-          opModImpLimW: $(setMaxW * 2)
-
-  # Make sure that the client has started polling again
-  GET-DERC-AFTER-COMMS-RESTORE:
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /edev/1/derp/1/derc
-    actions:
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-DERC-AFTER-COMMS-RESTORE
-
-  # Let the current control run for a period before shutting down.
-  WAIT-TEST-FINISH:
-    event:
-      type: wait
-      parameters:
-        duration_seconds: 120
-    actions:
-      - type: remove-steps
-        parameters:
-          steps:
-            - WAIT-TEST-FINISH
+            - WAIT-TEST-END
       - type: finish-test
         parameters: {}
-
+    instructions:
+      - Each DERControl should have their actual start time randomized within a 120s window.
+      - This will need to be evaluated via manual inspection.

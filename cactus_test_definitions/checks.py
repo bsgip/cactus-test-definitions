@@ -96,6 +96,7 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
     "response-contents": {
         "latest": ParameterSchema(False, ParameterType.Boolean),
         "status": ParameterSchema(False, ParameterType.Integer),
+        "all": ParameterSchema(False, ParameterType.Boolean),
     },
 }
 VALID_CHECK_NAMES: set[str] = set(CHECK_PARAMETER_SCHEMA.keys())

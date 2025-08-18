@@ -1,0 +1,73 @@
+Description: Validation of Scaling Factors
+Category: Control
+Classes:
+  - A
+
+TargetVersions:
+  - v1.2
+  - v1.3-beta/storage
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+
+Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+  checks:
+    - type: end-device-contents
+      parameters: {}
+    - type: der-settings-contents
+      parameters: {}
+  actions:
+    - type: create-der-control
+      parameters:
+        start: $(now)
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 2)
+        opModImpLimW: $(setMaxW * 2)
+    - type: create-der-control
+      parameters:
+        start: $(now + '1 minute')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.3)
+        opModImpLimW: $(setMaxW * 0.3)
+        pow_10_multipliers: 2
+    - type: create-der-control
+      parameters:
+        start: $(now + '2 minutes')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.4)
+        opModImpLimW: $(setMaxW * 0.4)
+        pow_10_multipliers: 1
+  instructions:
+    - DER shall be exporting or importing at least 50% of its active power rating at the connection point.
+    
+Steps:
+  # This particular test is validated by out of band methods for compliance (or non compliance) to the DOEs
+  # (eg readings from a power meter)
+  WAIT-TEST-END:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 660
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-TEST-END
+      - type: finish-test
+        parameters: {}
+    instructions:
+      - The DER will correctly interpret all DERControls (and their variable scaling factors) by reducing import/export to the expected values
+      - First DERControl = 200% of setMaxW
+      - Second DERControl = 30% of setMaxW
+      - Third DERControl = 40% of setMaxW

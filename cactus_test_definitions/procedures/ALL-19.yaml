@@ -1,7 +1,8 @@
-Description: Update DER Program Poll Rate
+Description: Update Function Set Assignments Poll Rate
 Category: Control
 Classes:
   - A
+  - DR-A
 
 TargetVersions:
   - v1.2
@@ -18,9 +19,9 @@ Preconditions:
       parameters:
         dcap_poll_seconds: 60
         edev_list_poll_seconds: 60
-        fsa_list_poll_seconds: 60
+        fsa_list_poll_seconds: 300
         der_list_poll_seconds: 60
-        derp_list_poll_seconds: 120
+        derp_list_poll_seconds: 60
         mup_post_seconds: 60
   checks:
     - type: end-device-contents
@@ -28,18 +29,17 @@ Preconditions:
     
 Steps:
 
-  # As the client polls the derp list - update the poll rate to 60 seconds
-  # Give them 120 seconds to poll again before shutting everything down
-  GET-DERP-LIST-1:
+  # (a)
+  GET-FSA-LIST:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/fsa/1/derp
+        endpoint: /edev/1/fsa
 
     actions:
       - type: set-comms-rate
         parameters:
-          derp_list_poll_seconds: 60
+          fsa_list_poll_seconds: 60
       - type: enable-steps
         parameters:
           steps:
@@ -48,8 +48,9 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - GET-DERP-LIST-1
+            - GET-FSA-LIST
 
+  # (c)
   WAIT-TEST-END:
     event:
       type: wait
@@ -63,6 +64,7 @@ Steps:
       - type: finish-test
         parameters: {}
 
+  # (b, c)
   GET-FSA-LIST-AGAIN:
     event:
       type: GET-request-received
