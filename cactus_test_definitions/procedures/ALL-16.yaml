@@ -1,4 +1,4 @@
-Description: Default Controls – Ramp Rate
+Description: Active Controls – Disconnect
 Category: Control
 Classes:
   - A
@@ -28,48 +28,75 @@ Preconditions:
   checks:
     - type: end-device-contents
       parameters: {}
+  actions:
+    # (a, b)
+    - type: create-der-control
+      parameters:
+        start: $(now)
+        duration_seconds: 300
+        opModConnect: false
+  instructions:
+    - EndDevice should be registered with active subscriptions before starting.
+    - DER shall be generating or consuming at least 50% of its active power rating.
     
 Steps:
-  # NOTE: This particular test definition heavily implies that a subscription is required but never sets it as a 
-  # precondition / test procedure step. This test definition will treat the subscription creation as mandatory.
-  #
-  # Wait for a subscription to /edev/1/derp/1/dderc and then update the DefaultDERControl to trigger a notification
-  POST-SUBSCRIPTION-DEFAULT-DERC:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/sub
-        serve_request_first: true
-      checks:
-        - type: subscription-contents
-          parameters: 
-            subscribed_resource: /edev/1/derp/1/dderc
-    actions:
-      - type: set-default-der-control
-        parameters:
-          setGradW: 100 # hundredths of a percent - this is 1%
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-DERSETTINGS-SET-GRAD-W
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-SUBSCRIPTION-DEFAULT-DERC
-
-  # This will wait until the client POST's a DERSettings with the 1% setGradW
-  POST-DERSETTINGS-SET-GRAD-W:
+  
+  # (c, d)
+  POST-DERSTATUS-DISCONNECT:
     event:
       type: POST-request-received
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
-    checks:
-      type: der-settings-contents
+      # Only trigger this if the server has an updated DERStatus
+      checks:
+        - type: der-status-contents
+          parameters: 
+            genConnectStatus_bit0: false
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-DERSTATUS-CONNECT
+            - WAIT-TEST-END
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 600
+          opModConnect: true
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERSTATUS-DISCONNECT
+
+  # (f)
+  POST-DERSTATUS-CONNECT:
+    event:
+      type: POST-request-received
       parameters:
-        setGradW: 100
+        endpoint: /edev/1/der/1/ders
+        serve_request_first: true # Run this AFTER server receives the request
+      # Only trigger this if the server has an updated DERStatus
+      checks:
+        - type: der-status-contents
+          parameters: 
+            genConnectStatus_bit0: true
     actions:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSETTINGS-SET-GRAD-W
+            - POST-DERSTATUS-CONNECT
+
+  # (e) We give the client a minute to respond with a reconnect
+  WAIT-TEST-END:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 60
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-TEST-END
+      - type: finish-test
+        parameters: {}
