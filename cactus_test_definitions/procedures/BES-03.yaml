@@ -12,14 +12,19 @@ Criteria:
       parameters: {}
 
 Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
   checks:
     - type: end-device-contents
       parameters: {}
   actions:
-    - type: set-comms-rate
-      parameters:
-        der_list_poll_seconds: 60
-        derp_list_poll_seconds: 60
     - type: create-der-control
       parameters:
         start: $(now + '300 seconds')

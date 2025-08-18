@@ -17,20 +17,24 @@ Criteria:
       parameters: { "minimum_count": 5 }
 
 Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+    # Placeholder for later controls
+    - type: create-der-program    
+      parameters:
+        primacy: 1
+        fsa_id: 1
+
   checks:
     - type: end-device-contents
       parameters: {}
-  actions:
-    - type: set-comms-rate
-      parameters:
-        der_list_poll_seconds: 60
-        mup_post_seconds: 60
-
-    # Placeholder for later controls
-    - type: create-der-program
-      parameters: 
-        primacy: 1
-        fsa_id: 1
 
 Steps:
   GET-MUP:

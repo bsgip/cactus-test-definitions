@@ -12,11 +12,16 @@ Criteria:
       parameters: {}
 
 Preconditions:
-  actions:
+  init_actions:
     - type: set-comms-rate
       parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+  actions:
     - type: set-default-der-control
       parameters:
         opModExpLimW: 1500
