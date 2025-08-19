@@ -1,7 +1,8 @@
-Description: Connection Status
+Description: Individual Readings
 Category: Monitoring
 Classes:
   - A
+  - DR-A
 
 TargetVersions:
   - v1.2
@@ -11,6 +12,20 @@ Criteria:
   checks:
     - type: all-steps-complete
       parameters: {}
+
+    # Test is ~8 minutes of waiting which should leave enough time for at least 7 reading posts
+    - type: readings-site-active-power
+      parameters: {"minimum_count": 7} 
+    - type: readings-site-reactive-power
+      parameters: {"minimum_count": 7}
+    - type: readings-site-voltage
+      parameters: {"minimum_count": 7}
+    - type: readings-der-active-power
+      parameters: {"minimum_count": 7}
+    - type: readings-der-reactive-power
+      parameters: {"minimum_count": 7}
+    - type: readings-der-voltage
+      parameters: {"minimum_count": 7}
 
 Preconditions:
   init_actions:
@@ -25,47 +40,93 @@ Preconditions:
   checks:
     - type: end-device-contents
       parameters: {}
+  instructions:
+    - Connect a test load electrically in parallel with the DER.
+    - Set the load to consume 25% of the DER's rated active power.
 
 Steps:
-  
-  POST-DERSTATUS-DISCONNECT:
-    instructions:
-      - Disconnect all DER from the grid.
+  # (b, c)
+  GET-MUP:
     event:
-      type: POST-request-received
+      type: GET-request-received
       parameters:
-        endpoint: /edev/1/der/1/ders
-        serve_request_first: true # Run this AFTER server receives the request
-      # Only trigger this if the server has an updated DERStatus
-      checks:
-        - type: der-status-contents
-          parameters: 
-            genConnectStatus_bit0: false
+        endpoint: /mup
     actions:
       - type: enable-steps
         parameters:
           steps:
-            - POST-DERSTATUS-CONNECT
+            - POST-MUP
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-DISCONNECT
-  
-  POST-DERSTATUS-CONNECT:
-    instructions:
-      - Reconnect all DER to the grid.
+            - GET-MUP
+  # (d, e) 
+  POST-MUP:
     event:
       type: POST-request-received
       parameters:
-        endpoint: /edev/1/der/1/ders
-        serve_request_first: true # Run this AFTER server receives the request
-      # Only trigger this if the server has an updated DERStatus
-      checks:
-        - type: der-status-contents
-          parameters: 
-            genConnectStatus_bit0: true
+        endpoint: /mup
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-MUP-2
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-MUP
+
+  # (f, g)
+  GET-MUP-2:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /mup
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - SET-CONTROL
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-MUP-2
+
+  # (h) - Will be validated via test criteria
+  # (i, j, k)
+  SET-CONTROL:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 300 # Wait for at least 4 sets of readings to arrive (with post rate 60 seconds)
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 300
+          opModImpLimW: 0
+          opModExpLimW: 0
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-CONTROL
+      - type: remove-steps
+        parameters:
+          steps:
+            - SET-CONTROL
+
+  # This just lets the test run for a few more posts after the control comes into effect
+  # after which, we will force the test to shutdown (as Criteria is partially defined by this ONLY running for a few posts)
+  # (j, k)
+  WAIT-CONTROL:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 180 # Wait for at least 3 sets of readings to arrive (with post rate 60 seconds)
     actions:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-CONNECT
+            - WAIT-CONTROL
+      - type: finish-test
+        parameters: {}

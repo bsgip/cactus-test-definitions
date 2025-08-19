@@ -1,4 +1,4 @@
-Description: Response to Changing Ramp-Rates
+Description: Disconnection of DER
 Category: DER
 Classes:
   - DER-A
@@ -22,7 +22,7 @@ Preconditions:
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
-  checks:
+  checks: 
     - type: end-device-contents
       parameters: {}
     - type: der-settings-contents
@@ -31,101 +31,75 @@ Preconditions:
     - type: create-der-control
       parameters:
         start: $(now)
-        duration_seconds: 3600
-        opModExpLimW: $(setMaxW * 0.3)
-        opModImpLimW: $(setMaxW * 0.3)
-    - type: set-default-der-control
-      parameters:
-        opModImpLimW: 0  
-        opModExpLimW: 0
-
+        duration_seconds: 300
+        opModExpLimW: $(setMaxW * 2)
+        opModImpLimW: $(setMaxW * 2)
+    
 Steps:
-
-  # On first poll of default control - set default setGradW and then wait for an updated POLL 
-  # and a request to update DERSettings
-  GET-DEFAULT-DERC:
+  # (a, b)
+  GET-DERC:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/1/dderc
-    actions:
-      - type: set-default-der-control
-        parameters:
-          setGradW: 100 # hundredths of a percent - this is 1%
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-DERSETTINGS-SET-GRAD-W
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-DEFAULT-DERC
-
-  # This will wait until the client POST's a DERSettings with the 1% setGradW - this will trigger a cancel of controls
-  POST-DERSETTINGS-SET-GRAD-W:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/der/1/ders
-        serve_request_first: true # Run this AFTER server receives the request
-    checks:
-      type: der-settings-contents
-      parameters:
-        setGradW: 100
-    actions:
-      - type: cancel-active-der-controls
-        parameters: {}
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-RESPONSE-CANCELLED
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-DERSETTINGS-SET-GRAD-W
-
-  # Wait for the cancelled response - then create a new DERControl for the DER to respond to
-  POST-RESPONSE-CANCELLED:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/rsps/site_control/rsp
-        serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 6
+        endpoint: /edev/1/derp/1/derc
     actions:
       - type: create-der-control
         parameters:
           start: $(now)
           duration_seconds: 300
-          opModExpLimW: $(setMaxW * 0.3)
-          opModImpLimW: $(setMaxW * 0.3)
+          opModConnect: false
       - type: enable-steps
         parameters:
           steps:
-            - POST-RESPONSE-STARTED
+            - POST-DERSTATUS-DISCONNECT
       - type: remove-steps
         parameters:
           steps:
-            - POST-RESPONSE-CANCELLED
+            - GET-DERC
 
-  # Wait for the DER to start the new DERControl and send a "started" response
-  POST-RESPONSE-STARTED:
+  # (c, d)
+  POST-DERSTATUS-DISCONNECT:
     event:
       type: POST-request-received
       parameters:
-        endpoint: /edev/1/rsps/site_control/rsp
-        serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 2
+        endpoint: /edev/1/der/1/ders
+        serve_request_first: true # Run this AFTER server receives the request
+      # Only trigger this if the server has an updated DERStatus
+      checks:
+        - type: der-status-contents
+          parameters: 
+            genConnectStatus_bit0: false
     actions:
       - type: remove-steps
         parameters:
           steps:
-            - POST-RESPONSE-STARTED
+            - POST-DERSTATUS-DISCONNECT
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 300
+          opModConnect: true
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-DERSTATUS-CONNECT
+
+  # (e)
+  POST-DERSTATUS-CONNECT:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/der/1/ders
+        serve_request_first: true # Run this AFTER server receives the request
+      # Only trigger this if the server has an updated DERStatus
+      checks:
+        - type: der-status-contents
+          parameters: 
+            genConnectStatus_bit0: true
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERSTATUS-CONNECT
+
+  

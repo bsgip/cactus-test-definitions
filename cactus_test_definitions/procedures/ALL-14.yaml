@@ -1,7 +1,6 @@
-Description: Active Controls – Energise
+Description: Subscribe
 Category: Control
 Classes:
-  - A
   - S
 
 TargetVersions:
@@ -16,31 +15,109 @@ Criteria:
       parameters: {}
 
 Preconditions:
+  immediate_start: true # There will be no "init" phase - all interactions will be immediately logged against the test
   init_actions:
     - type: set-comms-rate
       parameters:
         dcap_poll_seconds: 60
         edev_list_poll_seconds: 60
         fsa_list_poll_seconds: 60
-        der_list_poll_seconds: 900 # Set this to a large value - testing they respond due to notification - not polling
-        derp_list_poll_seconds: 900 # Set this to a large value - testing they respond due to notification - not polling
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
         mup_post_seconds: 60
-  checks:
-    - type: end-device-contents
-      parameters: {}
-  actions:
-    - type: create-der-control
+
+  actions:  
+    - type: create-der-program
       parameters:
-        start: $(now)
-        duration_seconds: 300
-        opModEnergize: true
-    
+        primacy: 0
+    # Start by enabling everything at the beginning as each step is (mostly) independent of the others
+    - type: enable-steps
+      parameters:
+        steps:
+            - POST-SUBSCRIPTION-FSAL
+            - POST-SUBSCRIPTION-DERP
+            - POST-SUBSCRIPTION-DERC
+            - POST-SUBSCRIPTION-DEFAULT-DERC
+
 Steps:
-  # NOTE: This particular test definition heavily implies that a subscription is required but never sets it as a 
-  # precondition / test procedure step. This test definition will treat the subscription creation as mandatory.
-  #
-  # Wait for a subscription to /edev/1/derp/1/derc and then add a DERControl in the near future
+
+  # (a, b, c, d, e, f)
+  # Wait for a subscription to EndDeviceList and then update the active EndDevice's postRate to trigger a notification
+  POST-SUBSCRIPTION-EDEV:
+    instructions:
+      - Trigger an EndDeviceList subscription request from the aggregator client system (this can be an automated response to completing the Discovery process).
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/sub
+        serve_request_first: true
+      checks:
+        - type: subscription-contents
+          parameters: 
+            subscribed_resource: /edev
+    actions:
+      # Trigger notification
+      - type: set-comms-rate
+        parameters:
+          edev_post_seconds: 30
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-SUBSCRIPTION-EDEV
+
+  # (g, h, i, j, k, l)
+  # Wait for a subscription to FunctionSetAssignmentList and then update the active fsa list to trigger a notification
+  POST-SUBSCRIPTION-FSAL:
+    instructions:
+      - Trigger a FunctionSetAssignmentsList subscription request from the aggregator client system.
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/sub
+        serve_request_first: true
+      checks:
+        - type: subscription-contents
+          parameters: 
+            subscribed_resource: /edev/1/fsa
+    actions:
+      # Trigger notification
+      - type: set-comms-rate
+        parameters:
+          fsa_list_poll_seconds: 30
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-SUBSCRIPTION-FSAL
+
+  # (m, n, o, p, q, r)
+  # Wait for a DERProgram subscription and then update the active DERProgram list to trigger a notification
+  POST-SUBSCRIPTION-DERP:
+    instructions:
+      - Trigger a DERProgramList subscription request from the aggregator client system.
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/sub
+        serve_request_first: true
+      checks:
+        - type: subscription-contents
+          parameters: 
+            subscribed_resource: /edev/1/fsa/1/derp
+    actions:
+      # Trigger notification
+      - type: create-der-program
+        parameters:
+          primacy: 99
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-SUBSCRIPTION-DERP
+
+  # (s, t, u, v, w, x)
+  # Wait for a subscription to /edev/1/derp/1/derc and then create a DERControl to trigger a notification
   POST-SUBSCRIPTION-DERC:
+    instructions:
+      - Trigger a DERControlList subscription request from the aggregator client system.
     event:
       type: POST-request-received
       parameters:
@@ -51,60 +128,38 @@ Steps:
           parameters: 
             subscribed_resource: /edev/1/derp/1/derc
     actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-DERSTATUS-DISCONNECT
+      # Trigger notification
       - type: create-der-control
         parameters:
           start: $(now)
           duration_seconds: 600
-          opModEnergize: false
+          primacy: 0
+          opModExpLimW: 0
       - type: remove-steps
         parameters:
           steps:
             - POST-SUBSCRIPTION-DERC
 
-
-  POST-DERSTATUS-DISCONNECT:
+  # (y, z, aa, bb, cc)
+  # Wait for a subscription to /edev/1/derp/1/dderc and then update the DefaultDERControl to trigger a notification
+  POST-SUBSCRIPTION-DEFAULT-DERC:
+    instructions:
+      - Trigger a DefaultDERControl subscription request from the aggregator client system.
     event:
       type: POST-request-received
       parameters:
-        endpoint: /edev/1/der/1/ders
-        serve_request_first: true # Run this AFTER server receives the request
-      # Only trigger this if the server has an updated DERStatus
+        endpoint: /edev/1/sub
+        serve_request_first: true
       checks:
-        - type: der-status-contents
+        - type: subscription-contents
           parameters: 
-            genConnectStatus_bit0: false
+            subscribed_resource: /edev/1/derp/1/dderc
     actions:
-      - type: enable-steps
+      # Trigger notification
+      - type: set-default-der-control
         parameters:
-          steps:
-            - POST-DERSTATUS-CONNECT
-      - type: create-der-control
-        parameters:
-          start: $(now)
-          duration_seconds: 600
-          opModEnergize: true
+          opModImpLimW: 1234
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-DISCONNECT
-
-  POST-DERSTATUS-CONNECT:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/der/1/ders
-        serve_request_first: true # Run this AFTER server receives the request
-      # Only trigger this if the server has an updated DERStatus
-      checks:
-        - type: der-status-contents
-          parameters: 
-            genConnectStatus_bit2: true
-    actions:
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-DERSTATUS-CONNECT
+            - POST-SUBSCRIPTION-DEFAULT-DERC

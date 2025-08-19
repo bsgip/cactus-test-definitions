@@ -1,4 +1,4 @@
-Description: Default Controls – Ramp Rate
+Description: Active Control – Disconnect 
 Category: Control
 Classes:
   - A
@@ -25,81 +25,79 @@ Preconditions:
   checks:
     - type: end-device-contents
       parameters: {}
-  actions:
-    - type: set-default-der-control
-      parameters:
-        setGradW: 100 # hundredths of a percent - this is 1%
+  instructions:
+    - DER shall be generating or consuming at least 50% of its active power rating.
 
 Steps:
-
-  # On first poll of default control - reset default setGradW and then wait for an updated POLL 
-  # and a request to update DERSettings
-  GET-DEFAULT-DERC:
+  # (precondition, a, b)
+  GET-DERC:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/1/dderc
+        endpoint: /edev/1/derp/1/derc
     actions:
-      - type: set-default-der-control
+      - type: create-der-control
         parameters:
-          setGradW: 27 # hundredths of a percent - this is 0.27%
+          start: $(now + '5 minutes')
+          duration_seconds: 600
+          opModConnect: false
       - type: enable-steps
         parameters:
           steps:
-            - GET-DEFAULT-DERC-UPDATED
-            - POST-DERSETTINGS-SET-GRAD-W
+            - WAIT-TILL-END
+            - POST-DERSTATUS-DISCONNECT
       - type: remove-steps
         parameters:
           steps:
-            - GET-DEFAULT-DERC
+            - GET-DERC
 
-  # This will wait until the client POST's a DERSettings with the 1% setGradW
-  POST-DERSETTINGS-SET-GRAD-W:
+  # (c) This will wait until the client POST's a DERStatus saying it has disconnected
+  POST-DERSTATUS-DISCONNECT:
     event:
       type: POST-request-received
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
     checks:
-      type: der-settings-contents
+      type: der-status-contents
       parameters:
-        setGradW: 100
-    actions:
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-DERSETTINGS-SET-GRAD-W
-
-
-  GET-DEFAULT-DERC-UPDATED:
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /edev/1/derp/1/dderc
+        genConnectStatus_bit0: false
     actions:
       - type: enable-steps
         parameters:
           steps:
-            - POST-DERSETTINGS-SET-GRAD-W-DEFAULT
+            - POST-DERSTATUS-RECONNECT
       - type: remove-steps
         parameters:
           steps:
-            - GET-DEFAULT-DERC-UPDATED
+            - POST-DERSTATUS-DISCONNECT
 
-  # This will wait until the client POST's a DERSettings with the 0.27% setGradW
-  POST-DERSETTINGS-SET-GRAD-W-DEFAULT:
+  # (d) This will wait until the client POST's a DERStatus saying it has reconnected
+  POST-DERSTATUS-RECONNECT:
     event:
       type: POST-request-received
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
     checks:
-      type: der-settings-contents
+      type: der-status-contents
       parameters:
-        setGradW: 27
+        genConnectStatus_bit0: true
     actions:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSETTINGS-SET-GRAD-W-DEFAULT
- 
+            - POST-DERSTATUS-RECONNECT
+  
+  WAIT-TILL-END:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 960
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-TILL-END
+      - type: finish-test
+        parameters: {}

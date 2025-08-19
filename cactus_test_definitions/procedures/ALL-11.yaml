@@ -1,4 +1,4 @@
-Description: Active Control – Disconnect 
+Description: Active Control – Energise / De-energise
 Category: Control
 Classes:
   - A
@@ -25,31 +25,42 @@ Preconditions:
   checks:
     - type: end-device-contents
       parameters: {}
+    - type: der-settings-contents
+      parameters: {}
   actions:
     - type: create-der-control
       parameters:
+        start: $(now)
+        duration_seconds: 900
+        opModEnergize: true
+    - type: create-der-control
+      parameters:
         start: $(now + '5 minutes')
-        duration_seconds: 600
-        opModConnect: false
+        duration_seconds: 300
+        opModEnergize: false
+  instructions:
+    - DER shall be generating or consuming at least 50% of its active power rating.
 
 Steps:
-  GET-DERC:
+  
+  # (b) - Wait until just before the opModEnergize: False control before accepting a DERStatus update
+  WAIT-CONTROL-START:
     event:
-      type: GET-request-received
+      type: wait
       parameters:
-        endpoint: /edev/1/derp/1/derc
+        duration_seconds: 270
     actions:
       - type: enable-steps
         parameters:
           steps:
-            - WAIT-TILL-END
             - POST-DERSTATUS-DISCONNECT
+            - WAIT-CONTROL-END
       - type: remove-steps
         parameters:
           steps:
-            - GET-DERC
-
-  # This will wait until the client POST's a DERStatus saying it has disconnected
+            - WAIT-CONTROL-START
+  
+  # (c)
   POST-DERSTATUS-DISCONNECT:
     event:
       type: POST-request-received
@@ -61,6 +72,18 @@ Steps:
       parameters:
         genConnectStatus_bit0: false
     actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERSTATUS-DISCONNECT
+
+  # (d) - This is soley to prevent a client from reporting reconnect too early
+  WAIT-CONTROL-END:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 600
+    actions:
       - type: enable-steps
         parameters:
           steps:
@@ -68,9 +91,9 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-DISCONNECT
+            - WAIT-CONTROL-END
 
-  # This will wait until the client POST's a DERStatus saying it has reconnected
+  # (d)
   POST-DERSTATUS-RECONNECT:
     event:
       type: POST-request-received
@@ -86,16 +109,3 @@ Steps:
         parameters:
           steps:
             - POST-DERSTATUS-RECONNECT
-          
-  WAIT-TILL-END:
-    event:
-      type: wait
-      parameters:
-        duration_seconds: 930
-    actions:
-      - type: remove-steps
-        parameters:
-          steps:
-            - WAIT-TILL-END
-      - type: finish-test
-        parameters: {}

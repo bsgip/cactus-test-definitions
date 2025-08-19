@@ -43,6 +43,7 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
     },
     "der-settings-contents": {
         "setGradW": ParameterSchema(False, ParameterType.Integer),  # Hundredths of a percent / second
+        "doeModesEnabled": ParameterSchema(False, ParameterType.Boolean),  # Is ANY value set?
         "doeModesEnabled_set": ParameterSchema(False, ParameterType.HexBinary),  # Minimum bits set to one
         "doeModesEnabled_unset": ParameterSchema(False, ParameterType.HexBinary),  # Minimum bits set to zero
         "modesEnabled_set": ParameterSchema(False, ParameterType.HexBinary),  # Minimum bits set to one
@@ -58,6 +59,7 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "setMinWh": ParameterSchema(False, ParameterType.Boolean),  # Expected expression that evaluates to boolean
     },
     "der-capability-contents": {
+        "doeModesSupported": ParameterSchema(False, ParameterType.Boolean),  # Minimum bits set to one
         "doeModesSupported_set": ParameterSchema(False, ParameterType.HexBinary),  # Minimum bits set to one
         "doeModesSupported_unset": ParameterSchema(False, ParameterType.HexBinary),  # Minimum bits set to zero
         "modesSupported_set": ParameterSchema(False, ParameterType.HexBinary),  # Minimum bits set to one
@@ -94,6 +96,7 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
     "response-contents": {
         "latest": ParameterSchema(False, ParameterType.Boolean),
         "status": ParameterSchema(False, ParameterType.Integer),
+        "all": ParameterSchema(False, ParameterType.Boolean),
     },
 }
 VALID_CHECK_NAMES: set[str] = set(CHECK_PARAMETER_SCHEMA.keys())

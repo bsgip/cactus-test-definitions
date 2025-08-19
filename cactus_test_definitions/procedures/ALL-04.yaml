@@ -1,4 +1,4 @@
-Description: Client Response to Lack of RegistrationLink 
+Description: Client Registration and PIN Validation
 Category: Registration
 Classes:
   - A
@@ -7,8 +7,13 @@ TargetVersions:
   - v1.2
   - v1.3-beta/storage
 
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+
 Preconditions:
-  immediate_start: true
+  immediate_start: true # There will be no "init" phase - all interactions will be immediately logged against the test
   init_actions:
     - type: set-comms-rate
       parameters:
@@ -19,90 +24,40 @@ Preconditions:
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
   actions:
-    - type: 'edev-registration-links'
+    - type: register-end-device
       parameters:
-        enabled: false
+        registration_pin: 11223
 
-Criteria:
-  checks:
-    - type: all-steps-complete
-      parameters: {}
-    - type: der-capability-contents
-      parameters: {}
-    - type: der-settings-contents
-      parameters: {}
-    - type: der-status-contents
-      parameters: {}
 
-# This is ultimately the ALL-02 procedure with the RegistrationLink removed
 Steps:
-  GET-DCAP:
+  # (e, f, g)
+  GET-REGISTRATION:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /dcap
+        endpoint: /edev/1/rg
     actions:
       - type: enable-steps
         parameters:
           steps:
-            - GET-EDEV
-            - GET-TM
+            - WAIT-TEST-END
       - type: remove-steps
         parameters:
           steps:
-            - GET-DCAP
-  
-  GET-EDEV:
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /edev
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-EDEV
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-EDEV
-  
-  GET-TM:
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /tm
-    actions:
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-TM
-  
-  POST-EDEV:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - GET-DER
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-EDEV
-  
-  # If the client can reach this point - it's assumed they are "functional"
-  GET-DER:
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /edev/1/der
-    actions:
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-DER
+            - GET-REGISTRATION
 
-  
+  # (h)
+  WAIT-TEST-END:
+    instructions:
+      - The client should continue communicating with the utility server after validating that the PIN matches.
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 120
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-TEST-END
+      - type: finish-test
+        parameters: {}

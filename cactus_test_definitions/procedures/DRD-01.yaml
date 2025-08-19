@@ -120,7 +120,7 @@ Steps:
     event:
       type: POST-request-received
       parameters:
-        endpoint: /edev/1/der/1/ders
+        endpoint: /edev/1/der/1/derg
         serve_request_first: true # Run this AFTER server receives the request
     checks:
       type: der-settings-contents

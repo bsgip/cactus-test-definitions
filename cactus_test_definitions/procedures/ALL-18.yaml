@@ -1,8 +1,7 @@
-Description: Update Function Set Assignments Poll Rate
+Description: Control Responses
 Category: Control
 Classes:
   - A
-  - DR-A
 
 TargetVersions:
   - v1.2
@@ -19,59 +18,271 @@ Preconditions:
       parameters:
         dcap_poll_seconds: 60
         edev_list_poll_seconds: 60
-        fsa_list_poll_seconds: 300
+        fsa_list_poll_seconds: 60
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
   checks:
     - type: end-device-contents
       parameters: {}
+    - type: der-settings-contents
+      parameters: {}
+    - type: response-contents
+      parameters:
+        all: true
+        status: 1
+  actions:
+    # (a)
+    - type: create-der-control
+      parameters:
+        start: $(now)
+        duration_seconds: 120
+        opModExpLimW: $(setMaxW * 2)
+        opModImpLimW: $(setMaxW * 2)
     
 Steps:
 
-  # As the client polls the FSA list - update the poll rate to 60 seconds
-  # Give them 120 seconds to poll again before shutting everything down
-  GET-FSA-LIST:
+  # (b)
+  POST-RESPONSE-RECEIVED:
     event:
-      type: GET-request-received
+      type: POST-request-received
       parameters:
-        endpoint: /edev/1/fsa
-
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+    checks:
+      - type: response-contents
+        parameters: 
+          latest: true
+          status: 1
     actions:
-      - type: set-comms-rate
-        parameters:
-          fsa_list_poll_seconds: 60
       - type: enable-steps
         parameters:
           steps:
-            - GET-FSA-LIST-AGAIN
-            - WAIT-TEST-END
+            - POST-RESPONSE-STARTED
       - type: remove-steps
         parameters:
           steps:
-            - GET-FSA-LIST
+            - POST-RESPONSE-RECEIVED
 
-  WAIT-TEST-END:
+  # (c, d)
+  POST-RESPONSE-STARTED:
     event:
-      type: wait
+      type: POST-request-received
       parameters:
-        duration_seconds: 120
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+    checks:
+      - type: response-contents
+        parameters: 
+          latest: true
+          status: 2
     actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-COMPLETED
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-TEST-END
-      - type: finish-test
+            - POST-RESPONSE-STARTED
+
+  # (e, f, g)
+  POST-RESPONSE-COMPLETED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+    checks:
+      - type: response-contents
+        parameters: 
+          latest: true
+          status: 3
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-SECOND-RESPONSE-RECEIVED
+      - type: create-der-control
+        parameters:
+          start: $(now + '5 minutes')
+          duration_seconds: 600
+          opModExpLimW: $(setMaxW * 2)
+          opModImpLimW: $(setMaxW * 2)
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-COMPLETED
+
+  # (h)
+  POST-SECOND-RESPONSE-RECEIVED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+    checks:
+      - type: response-contents
+        parameters: 
+          latest: true
+          status: 1
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-SECOND-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-SECOND-RESPONSE-RECEIVED
+
+  # (i, j)
+  POST-SECOND-RESPONSE-STARTED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+    checks:
+      - type: response-contents
+        parameters: 
+          latest: true
+          status: 1
+    actions:
+      - type: cancel-active-der-controls
         parameters: {}
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-SECOND-RESPONSE-CANCELLED
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-SECOND-RESPONSE-STARTED
 
-  GET-FSA-LIST-AGAIN:
+
+  # (k, l)
+  POST-SECOND-RESPONSE-CANCELLED:
     event:
-      type: GET-request-received
+      type: POST-request-received
       parameters:
-        endpoint: /edev/1/fsa
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+    checks:
+      - type: response-contents
+        parameters: 
+          latest: true
+          status: 6
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now + '10 minutes')
+          duration_seconds: 120
+          opModExpLimW: 0
+          opModImpLimW: 0
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-THIRD-RESPONSE-RECEIVED
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-SECOND-RESPONSE-CANCELLED
 
+  # (m, n)
+  POST-THIRD-RESPONSE-RECEIVED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+    checks:
+      - type: response-contents
+        parameters: 
+          latest: true
+          status: 1
+    actions:
+      - type: cancel-active-der-controls
+        parameters: {}
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-THIRD-RESPONSE-CANCELLED
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-THIRD-RESPONSE-RECEIVED
+
+  # (o, p)
+  POST-THIRD-RESPONSE-CANCELLED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+    checks:
+      - type: response-contents
+        parameters: 
+          latest: true
+          status: 6
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now + '10 minutes')
+          duration_seconds: 600
+          opModExpLimW: $(setMaxW * 2)
+          opModImpLimW: $(setMaxW * 2)
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-FOURTH-RESPONSE-RECEIVED
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-THIRD-RESPONSE-CANCELLED
+
+  # (q, r)
+  POST-FOURTH-RESPONSE-RECEIVED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+    checks:
+      - type: response-contents
+        parameters: 
+          latest: true
+          status: 1
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now + '10 minutes')
+          duration_seconds: 60
+          opModExpLimW: 0
+          opModImpLimW: 0
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-FOURTH-RESPONSE-SUPERSEDED
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-FOURTH-RESPONSE-RECEIVED
+
+  # (s)
+  POST-FOURTH-RESPONSE-SUPERSEDED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+    checks:
+      - type: response-contents
+        parameters: 
+          latest: true
+          status: 7
     actions:
       - type: remove-steps
         parameters:
           steps:
-            - GET-FSA-LIST-AGAIN
+            - POST-FOURTH-RESPONSE-SUPERSEDED

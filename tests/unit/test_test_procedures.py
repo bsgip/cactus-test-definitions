@@ -124,20 +124,20 @@ def test_each_step_connected(tp_id: str, tp: TestProcedure):
 @pytest.mark.parametrize("tp_id, tp", ALL_TEST_PROCEDURES)
 def test_procedures_have_required_preconditions(tp_id: str, tp: TestProcedure):
 
-    # Check 'end-device-contents' present
-    enddevice_not_required = [
-        "ALL-01",  # Out-of-band device registration
-        "ALL-02",  # In-band registration during test procedure
-        "OPT-1-IN-BAND",  # In-band device registration during test procedure
-        "OPT-1-OUT-OF-BAND",  # Out-of-band device registration
-        "ALL-04",  # In-band device registration during test procedure
-        "DRA-01",  # In-band device registration during test procedure (implied)
+    # Most tests should be decorated with end-device-contents - there are some notable exceptions
+    enddevice_not_required = {
         "BES-02",  # In-band device registration during test procedure
-    ]
-    if tp_id not in enddevice_not_required:
-        assert tp.preconditions is not None
-        assert tp.preconditions.checks is not None
-        assert any([check.type == "end-device-contents" for check in tp.preconditions.checks])
+    }
+
+    # Immediate start implies that EndDevice registration will happen during the test body - these tests
+    # don't require end-device-contents (as it will cause the test to fail anyway)
+    is_immediate_start = tp.preconditions is not None and tp.preconditions.immediate_start
+    if tp_id not in enddevice_not_required and not is_immediate_start:
+        assert tp.preconditions is not None, "Expected precondition check 'end-device-contents'"
+        assert tp.preconditions.checks is not None, "Expected precondition check 'end-device-contents'"
+        assert any(
+            [check.type == "end-device-contents" for check in tp.preconditions.checks]
+        ), "Expected precondition check 'end-device-contents'"
 
     # Check 'der-settings-contents' present if any precondition action parameter references setMaxW
     if tp.preconditions is not None and tp.preconditions.actions is not None:

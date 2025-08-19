@@ -1,4 +1,4 @@
-Description: Persisting Settings Through Reconnection
+Description: Validate Operating Telemetry
 Category: DER
 Classes:
   - DER-A
@@ -11,6 +11,12 @@ Criteria:
   checks:
     - type: all-steps-complete
       parameters: {}
+
+    # Test is ~11 minutes of waiting which should leave enough time for at least 10 reading posts
+    - type: readings-site-active-power
+      parameters: {"minimum_count": 10} 
+    - type: readings-der-active-power
+      parameters: {"minimum_count": 10}
 
 Preconditions:
   init_actions:
@@ -32,88 +38,50 @@ Preconditions:
       parameters:
         start: $(now)
         duration_seconds: 120
+        opModExpLimW: $(setMaxW * 2)
+        opModImpLimW: $(setMaxW * 2)
+    - type: create-der-control
+      parameters:
+        start: $(now + '2 minutes')
+        duration_seconds: 120
         opModExpLimW: $(setMaxW * 0.3)
         opModImpLimW: $(setMaxW * 0.3)
+    - type: create-der-control
+      parameters:
+        start: $(now + '4 minutes')
+        duration_seconds: 120
+        opModExpLimW: $(setMaxW * 0.2)
+        opModImpLimW: $(setMaxW * 0.2)
+    - type: create-der-control
+      parameters:
+        start: $(now + '6 minutes')
+        duration_seconds: 120
+        opModExpLimW: $(setMaxW * 0.1)
+        opModImpLimW: $(setMaxW * 0.1)
+    - type: create-der-control
+      parameters:
+        start: $(now + '8 minutes')
+        duration_seconds: 120
+        opModExpLimW: 0
+        opModImpLimW: 0
+  instructions:
+    - DER is operating at least 50% if its rated power.
+    - Connect a test load electrically in parallel with the DER.
+    - Set the load to consume 10% of the DER's rated active power.
 
 Steps:
   
-  # We will wait until the client picks up the DERControl before killing the comms
-  GET-DERC:
-    instructions:
-      - Power cycle (turn off then back on again) the communications client, and while it is offline, disable the communications interface between the client and utility server (e.g. by unplugging an appropriate network cable).
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /edev/1/derp/1/derc
-        serve_request_first: true
-    actions:
-      - type: communications-status
-        parameters:
-          enabled: false
-      - type: enable-steps
-        parameters:
-          steps:
-            - WAIT-COMMS-RESTART
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-DERC
-
-  # Wait for a few polls before restarting comms
-  WAIT-COMMS-RESTART:
-    instructions:
-      - Re-establish communications between the client and utility server (e.g. by plugging the network cable back in).
+  WAIT-TEST-END:
     event:
       type: wait
       parameters:
-        duration_seconds: 180 # Wait for a few polls
-    actions:
-      - type: communications-status
-        parameters:
-          enabled: true
-      - type: enable-steps
-        parameters:
-          steps:
-            - GET-UPDATED-DERC
-      - type: remove-steps
-        parameters:
-          steps:
-            - WAIT-COMMS-RESTART
-      
-
-  # Once re-established - wait for them to poll and then serve an updated DERControl 
-  GET-UPDATED-DERC:
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /edev/1/derp/1/derc
-    actions:
-      - type: create-der-control
-        parameters:
-          start: $(now)
-          duration_seconds: 600
-          opModExpLimW: $(setMaxW * 0.5)
-          opModImpLimW: $(setMaxW * 0.5)
-      - type: enable-steps
-        parameters:
-          steps:
-            - WAIT-TEST-FINISH
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-UPDATED-DERC
-
-  # Wait for a few polls before shutting the test down
-  WAIT-TEST-FINISH:
-    event:
-      type: wait
-      parameters:
-        duration_seconds: 120
+        duration_seconds: 660 # Wait for all controls to expire
     actions:
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-TEST-FINISH
+            - WAIT-TEST-END
       - type: finish-test
         parameters: {}
-    
+    instructions:
+      - Client should continue submitting regular readings for the duration of the test.

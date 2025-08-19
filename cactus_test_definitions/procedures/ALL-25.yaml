@@ -1,7 +1,7 @@
-Description: De-energisation of DER
-Category: DER
+Description: Active control ramp rates
+Category: Control
 Classes:
-  - DER-A
+  - A
 
 TargetVersions:
   - v1.2
@@ -22,22 +22,25 @@ Preconditions:
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
-  checks: 
+    - type: create-der-program
+      parameters:
+        primacy: 0
+    - type: set-default-der-control
+      parameters:
+        setGradW: 100 # hundredths of a percent - this is 1%
+
+  checks:
     - type: end-device-contents
       parameters: {}
     - type: der-settings-contents
       parameters: {}
-  actions:
-    - type: create-der-control
-      parameters:
-        start: $(now)
-        duration_seconds: 300
-        opModExpLimW: $(setMaxW * 2)
-        opModImpLimW: $(setMaxW * 2)
+  
+  instructions:
+    - DER shall be exporting or importing at least 50% of its active power rating at the connection point.
     
 Steps:
-  # Step 1 - create opModEnergize=false control
-  GET-DERC:
+  # (a, b)
+  GET-DERC-LIST-1:
     event:
       type: GET-request-received
       parameters:
@@ -46,60 +49,71 @@ Steps:
       - type: create-der-control
         parameters:
           start: $(now)
-          duration_seconds: 300
-          opModEnergize: false
+          duration_seconds: 120
+          opModExpLimW: $(setMaxW * 0.3)
+          opModImpLimW: $(setMaxW * 0.3)
+          ramp_time_seconds: 60
       - type: enable-steps
         parameters:
           steps:
-            - POST-DERSTATUS-DISCONNECT
+            - WAIT-CONTROL-1-FINISH
       - type: remove-steps
         parameters:
           steps:
-            - GET-DERC
+            - GET-DERC-LIST-1
 
-  # Step 1 - wait for the client to report de-energize - then trigger a new re-energize control
-  POST-DERSTATUS-DISCONNECT:
+  # (b)
+  WAIT-CONTROL-1-FINISH:
     event:
-      type: POST-request-received
+      type: wait
       parameters:
-        endpoint: /edev/1/der/1/ders
-        serve_request_first: true # Run this AFTER server receives the request
-      # Only trigger this if the server has an updated DERStatus
-      checks:
-        - type: der-status-contents
-          parameters: 
-            genConnectStatus_bit2: false
+        duration_seconds: 130
     actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-LIST-2
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-DISCONNECT
+            - WAIT-CONTROL-1-FINISH
+    instructions:
+      - DER should ramp to 30% of the DER's active power over a 60s period
+
+  # (c, d)
+  GET-DERC-LIST-2:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
       - type: create-der-control
         parameters:
           start: $(now)
-          duration_seconds: 300
-          opModEnergize: true
+          duration_seconds: 120
+          opModExpLimW: $(setMaxW * 0.5)
+          opModImpLimW: $(setMaxW * 0.5)
       - type: enable-steps
         parameters:
           steps:
-            - POST-DERSTATUS-CONNECT
-
-  # Step 2 - Wait for re-energize
-  POST-DERSTATUS-CONNECT:
+            - WAIT-CONTROL-2-FINISH
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-LIST-2
+  
+  # (d)
+  WAIT-CONTROL-2-FINISH:
     event:
-      type: POST-request-received
+      type: wait
       parameters:
-        endpoint: /edev/1/der/1/ders
-        serve_request_first: true # Run this AFTER server receives the request
-      # Only trigger this if the server has an updated DERStatus
-      checks:
-        - type: der-status-contents
-          parameters: 
-            genConnectStatus_bit2: true
+        duration_seconds: 180
     actions:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-CONNECT
-
-  
+            - WAIT-CONTROL-2-FINISH
+      - type: finish-test
+        parameters: {}
+    instructions:
+      - DER should ramp to 50% of the DER's active power at the rate of setGradW (currently 1 %/s)

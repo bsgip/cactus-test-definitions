@@ -1,7 +1,8 @@
-Description: Scheduling
+Description: Update DER Program Poll Rate
 Category: Control
 Classes:
   - A
+  - DR-A
 
 TargetVersions:
   - v1.2
@@ -25,161 +26,81 @@ Preconditions:
   checks:
     - type: end-device-contents
       parameters: {}
-    - type: der-settings-contents
-      parameters: {}
-  actions:
-    # 24 minutes of sequential, non overlapping controls with random values (chosen by rolling a D10)
-    - type: create-der-control
-      parameters:
-        start: $(now)
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.3)
-        opModImpLimW: $(setMaxW * 0.3)
-    - type: create-der-control
-      parameters:
-        start: $(now + '1 minute')
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.6)
-        opModImpLimW: $(setMaxW * 0.6)
-    - type: create-der-control
-      parameters:
-        start: $(now + '2 minutes')
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.4)
-        opModImpLimW: $(setMaxW * 0.4)
-    - type: create-der-control
-      parameters:
-        start: $(now + '3 minutes')
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.5)
-        opModImpLimW: $(setMaxW * 0.5)
-    - type: create-der-control
-      parameters:
-        start: $(now + '4 minutes')
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.2)
-        opModImpLimW: $(setMaxW * 0.2)
-    - type: create-der-control
-      parameters:
-        start: $(now + '5 minutes')
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.1)
-        opModImpLimW: $(setMaxW * 0.1)
-    - type: create-der-control
-      parameters:
-        start: $(now + '6 minutes')
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.7)
-        opModImpLimW: $(setMaxW * 0.7)
-    - type: create-der-control
-      parameters:
-        start: $(now + '7 minutes')
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.2)
-        opModImpLimW: $(setMaxW * 0.2)
-    - type: create-der-control
-      parameters:
-        start: $(now + '8 minutes')
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.3)
-        opModImpLimW: $(setMaxW * 0.3)
-    - type: create-der-control
-      parameters:
-        start: $(now + '9 minutes')
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.3)
-        opModImpLimW: $(setMaxW * 0.3)
-    - type: create-der-control
-      parameters:
-        start: $(now + '10 minutes')
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.5)
-        opModImpLimW: $(setMaxW * 0.5)
-    - type: create-der-control
-      parameters:
-        start: $(now + '11 minutes')
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.9)
-        opModImpLimW: $(setMaxW * 0.9)
-    - type: create-der-control
-      parameters:
-        start: $(now + '12 minutes')
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.1)
-        opModImpLimW: $(setMaxW * 0.1)
-    - type: create-der-control
-      parameters:
-        start: $(now + '13 minutes')
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.1)
-        opModImpLimW: $(setMaxW * 0.1)
-    - type: create-der-control
-      parameters:
-        start: $(now + '14 minutes')
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.5)
-        opModImpLimW: $(setMaxW * 0.5)
-    - type: create-der-control
-      parameters:
-        start: $(now + '15 minutes')
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.4)
-        opModImpLimW: $(setMaxW * 0.4)
-    - type: create-der-control
-      parameters:
-        start: $(now + '16 minutes')
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.1)
-        opModImpLimW: $(setMaxW * 0.1)
-    - type: create-der-control
-      parameters:
-        start: $(now + '17 minutes')
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.7)
-        opModImpLimW: $(setMaxW * 0.7)
-    - type: create-der-control
-      parameters:
-        start: $(now + '18 minutes')
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.9)
-        opModImpLimW: $(setMaxW * 0.9)
-    - type: create-der-control
-      parameters:
-        start: $(now + '19 minutes')
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.1)
-        opModImpLimW: $(setMaxW * 0.1)
-    - type: create-der-control
-      parameters:
-        start: $(now + '20 minutes')
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.4)
-        opModImpLimW: $(setMaxW * 0.4)
-    - type: create-der-control
-      parameters:
-        start: $(now + '21 minutes')
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.3)
-        opModImpLimW: $(setMaxW * 0.3)
-    - type: create-der-control
-      parameters:
-        start: $(now + '22 minutes')
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.7)
-        opModImpLimW: $(setMaxW * 0.7)
-    - type: create-der-control
-      parameters:
-        start: $(now + '23 minutes')
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW)
-        opModImpLimW: $(setMaxW)
-
+    
 Steps:
+
+  # (a, b)
+  WAIT-POLL-UPDATE:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 60
+    actions:
+      - type: set-comms-rate
+        parameters:
+          derp_list_poll_seconds: 120
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERP-LIST-1
+            - WAIT-10-MINS
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-POLL-UPDATE
+    
+  # (c)
+  GET-DERP-LIST-1:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/1/derp
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-LIST-1
+
+  # (a, e)
+  WAIT-10-MINS:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 600
+    actions:
+      - type: set-comms-rate
+        parameters:
+          derp_list_poll_seconds: 60
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERP-LIST-2
+            - WAIT-TEST-END
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-10-MINS
+    instructions:
+      - Client shall maintain changed DERProgramList poll rate of 120s
+
+  # (h)
+  GET-DERP-LIST-2:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/1/derp
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-LIST-2
+
+  # (g)
   WAIT-TEST-END:
     event:
       type: wait
       parameters:
-        duration_seconds: 1500 # 25 minutes
+        duration_seconds: 90
     actions:
       - type: remove-steps
         parameters:
@@ -187,4 +108,7 @@ Steps:
             - WAIT-TEST-END
       - type: finish-test
         parameters: {}
+    instructions:
+      - Client shall return to 60s polling
 
+  

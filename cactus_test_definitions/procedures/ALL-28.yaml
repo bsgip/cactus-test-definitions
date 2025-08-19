@@ -1,4 +1,4 @@
-Description: Validate Operating Telemetry
+Description: Response to Changing Ramp-Rates
 Category: DER
 Classes:
   - DER-A
@@ -11,12 +11,6 @@ Criteria:
   checks:
     - type: all-steps-complete
       parameters: {}
-
-    # Test is ~11 minutes of waiting which should leave enough time for at least 10 reading posts
-    - type: readings-site-active-power
-      parameters: {"minimum_count": 10} 
-    - type: readings-der-active-power
-      parameters: {"minimum_count": 10}
 
 Preconditions:
   init_actions:
@@ -34,51 +28,200 @@ Preconditions:
     - type: der-settings-contents
       parameters: {}
   actions:
-    - type: create-der-control
+    - type: create-der-program
       parameters:
-        start: $(now)
-        duration_seconds: 120
-        opModExpLimW: $(setMaxW * 2)
-        opModImpLimW: $(setMaxW * 2)
-    - type: create-der-control
-      parameters:
-        start: $(now + '2 minutes')
-        duration_seconds: 120
-        opModExpLimW: $(setMaxW * 0.3)
-        opModImpLimW: $(setMaxW * 0.3)
-    - type: create-der-control
-      parameters:
-        start: $(now + '4 minutes')
-        duration_seconds: 120
-        opModExpLimW: $(setMaxW * 0.2)
-        opModImpLimW: $(setMaxW * 0.2)
-    - type: create-der-control
-      parameters:
-        start: $(now + '6 minutes')
-        duration_seconds: 120
-        opModExpLimW: $(setMaxW * 0.1)
-        opModImpLimW: $(setMaxW * 0.1)
-    - type: create-der-control
-      parameters:
-        start: $(now + '8 minutes')
-        duration_seconds: 120
-        opModExpLimW: 0
-        opModImpLimW: 0
+        primacy: 0  
   instructions:
-    - Connect a test load electrically in parallel with the DER.
-    - Set the load to consume 10% of the DER's rated active power.
+    - DER is exporting or importing at the connection point at least 50% of its rated power.
 
 Steps:
-  
-  WAIT-TEST-END:
+
+  # (precondition)
+  GET-DERC-1:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 300
+          opModExpLimW: $(setMaxW * 0.3)
+          opModImpLimW: $(setMaxW * 0.3)
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-2
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-1
+
+  # (a, b)
+  GET-DERC-2:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 300
+          opModExpLimW: $(setMaxW * 0.1)
+          opModImpLimW: $(setMaxW * 0.1)
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-3
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-2
+
+  # (c, d)
+  GET-DERC-3:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 300
+          opModExpLimW: $(setMaxW * 0.5)
+          opModImpLimW: $(setMaxW * 0.5)
+          ramp_time_seconds: 60
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DEFAULT-DERC
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-3
+
+  # (e)
+  GET-DEFAULT-DERC:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/dderc
+    actions:
+      - type: set-default-der-control
+        parameters:
+          setGradW: 100 # hundredths of a percent - this is 1%
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-DERSETTINGS-SET-GRAD-W
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DEFAULT-DERC
+
+  # (f, g)
+  POST-DERSETTINGS-SET-GRAD-W:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/der/1/derg
+        serve_request_first: true # Run this AFTER server receives the request
+    checks:
+      type: der-settings-contents
+      parameters:
+        setGradW: 100
+    actions:
+      - type: cancel-active-der-controls
+        parameters: {}
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-CANCELLED
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERSETTINGS-SET-GRAD-W
+
+  # (h)
+  POST-RESPONSE-CANCELLED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+    checks:
+      - type: response-contents
+        parameters: 
+          latest: true
+          status: 6
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-RAMP
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-CANCELLED
+
+  # (i)
+  WAIT-RAMP:
     event:
       type: wait
       parameters:
-        duration_seconds: 660 # Wait for all controls to expire
+        duration_seconds: 120
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-4
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-RAMP
+    instructions:
+      - The DER shall reduce export/import to the current DefaultDERControl limit of 0W at the new ramp rate of 1 %/s.
+
+  # (j)
+  GET-DERC-4:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 300
+          opModExpLimW: $(setMaxW * 0.3)
+          opModImpLimW: $(setMaxW * 0.3)
+          ramp_time_seconds: 60
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-4
+
+  # (k)
+  POST-RESPONSE-STARTED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+    checks:
+      - type: response-contents
+        parameters: 
+          latest: true
+          status: 2
     actions:
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-TEST-END
-      - type: finish-test
-        parameters: {}
+            - POST-RESPONSE-STARTED

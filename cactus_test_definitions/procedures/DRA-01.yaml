@@ -18,7 +18,9 @@ Criteria:
     - type: der-capability-contents
       parameters: 
         modesSupported_set: '80' # bit 7 is set - opModFixedW. 
-      
+
+Preconditions:
+  immediate_start: true # There will be no "init" phase - all interactions will be immediately logged against the test
 
 Steps:
 

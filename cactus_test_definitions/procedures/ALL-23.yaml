@@ -1,7 +1,8 @@
-Description: Validation of Scaling Factors
+Description: Communication Loss
 Category: Control
 Classes:
   - A
+  - DR-A
 
 TargetVersions:
   - v1.2
@@ -38,29 +39,120 @@ Preconditions:
       parameters:
         start: $(now + '1 minute')
         duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.3)
-        opModImpLimW: $(setMaxW * 0.3)
-        pow_10_multipliers: 2
+        opModExpLimW: $(setMaxW * 0.2)
+        opModImpLimW: $(setMaxW * 0.2)
     - type: create-der-control
       parameters:
         start: $(now + '2 minutes')
         duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.4)
-        opModImpLimW: $(setMaxW * 0.4)
-        pow_10_multipliers: 1
+        opModExpLimW: $(setMaxW * 1.8)
+        opModImpLimW: $(setMaxW * 1.8)
+    - type: create-der-control
+      parameters:
+        start: $(now + '3 minutes')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.7)
+        opModImpLimW: $(setMaxW * 0.7)
+    - type: create-der-control
+      parameters:
+        start: $(now + '4 minutes')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 1.3)
+        opModImpLimW: $(setMaxW * 1.3)
+  instructions:
+    - DER shall be generating or consuming at least 50% of its active power rating.
     
 Steps:
-  # This particular test is validated by out of band methods for compliance (or non compliance) to the DOEs
-  # (eg readings from a power meter)
-  WAIT-TEST-END:
+  # (a, b)
+  GET-DEFAULT-DERC:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/dderc
+    actions:
+      - type: set-default-der-control
+        parameters:
+          opModImpLimW: 0  
+          opModExpLimW: 0
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-SHORT-PERIOD
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DEFAULT-DERC
+
+  # (c)
+  WAIT-SHORT-PERIOD:
     event:
       type: wait
       parameters:
-        duration_seconds: 660
+        duration_seconds: 10
     actions:
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-TEST-END
+            - WAIT-SHORT-PERIOD
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-SCHEDULE-END
+      - type: communications-status
+        parameters:
+          enabled: false
+
+  # (d, e)
+  WAIT-SCHEDULE-END:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 420
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-SCHEDULE-END
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-TEST-FINISH
+            - GET-DERC-AFTER-COMMS-RESTORE
+      - type: communications-status
+        parameters:
+          enabled: true
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 300
+          opModExpLimW: $(setMaxW * 2)
+          opModImpLimW: $(setMaxW * 2)
+    instructions:
+      - DER should continue to follow the DERControl schedule and then reduce to the DefaultDERControl value of 0W after.
+
+  # (f) - We validate comms restore by another poll to DERControlLst
+  GET-DERC-AFTER-COMMS-RESTORE:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-AFTER-COMMS-RESTORE
+
+  # (f)
+  WAIT-TEST-FINISH:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 120
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-TEST-FINISH
       - type: finish-test
         parameters: {}
+

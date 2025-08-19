@@ -22,50 +22,44 @@ Preconditions:
         dcap_poll_seconds: 60
         edev_list_poll_seconds: 60
         fsa_list_poll_seconds: 60
-        der_list_poll_seconds: 900 # Set to a large value - testing whether they respond due to notification - not polls
-        derp_list_poll_seconds: 900 # Set to a large value - testing whether they respond due to notification - not polls
+        der_list_poll_seconds: 1800 # Set to a large value - testing whether they respond due to notification - not polls
+        derp_list_poll_seconds: 1800 # Set to a large value - testing whether they respond due to notification - not polls
         mup_post_seconds: 60
+    - type: create-der-program
+      parameters:
+        primacy: 0
+      
   checks:
     - type: end-device-contents
       parameters: {}
     - type: der-settings-contents
       parameters: {}
+    - type: subscription-contents
+      parameters:
+        subscribed_resource: /edev/1/derp/1/derc
+    - type: subscription-contents
+      parameters:
+        subscribed_resource: /edev/1/derp/1/dderc
+
   actions:
     - type: create-der-control
       parameters:
         start: $(now)
         duration_seconds: 300
         opModImpLimW: $(setMaxW * 2)
+    # (a, b)
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: $(setMaxW * 0.3)
+  instructions:
+    - EndDevice should be registered with active subscriptions before starting.
+    - DER shall be importing from the connection point with at least 50% of its active power rating.
     
 Steps:
-  # NOTE: This particular test definition heavily implies that a subscription is required but never sets it as a 
-  # precondition / test procedure step. This test definition will treat the subscription creation as mandatory.
-  #
-  # Wait for a subscription to /edev/1/derp/1/dderc and then start updating DefaultDERControl
-  POST-SUBSCRIPTION-DEFAULT-DERC:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/sub
-        serve_request_first: true
-      checks:
-        - type: subscription-contents
-          parameters: 
-            subscribed_resource: /edev/1/derp/1/dderc
-    actions:
-      - type: set-default-der-control
-        parameters:
-          opModImpLimW: $(setMaxW * 0.3)
-      - type: enable-steps
-        parameters:
-          steps:
-            - WAIT-CANCELLATION
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-SUBSCRIPTION-DEFAULT-DERC
 
-  WAIT-CANCELLATION:
+  # (c)
+  # Give enough time for precondition notifications to propagate before cancelling all DERControls
+  WAIT-CANCEL-DERC:
     event:
       type: wait
       parameters:
@@ -73,20 +67,22 @@ Steps:
     actions:
       - type: cancel-active-der-controls
         parameters: {}
+          
       - type: enable-steps
         parameters:
           steps:
-            - WAIT-CONTROL
+            - WAIT-DEVICE-RAMP
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-CANCELLATION
+            - WAIT-CANCEL-DERC
 
-  WAIT-CONTROL:
+  # (d, e)
+  WAIT-DEVICE-RAMP:
     event:
       type: wait
       parameters:
-        duration_seconds: 60
+        duration_seconds: 120
     actions:
       - type: create-der-control
         parameters:
@@ -100,13 +96,16 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-CONTROL
+            - WAIT-DEVICE-RAMP
+    instructions:
+      - DER should be ramping to the DefaultDERControl value of 30% max power at rate setGradW (default 0.27%/s).
 
+  # (f, g, h)
   WAIT-CONTROL-FINISH:
     event:
       type: wait
       parameters:
-        duration_seconds: 660
+        duration_seconds: 720
     actions:
       - type: create-der-control
         parameters:
@@ -120,22 +119,27 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - WAIT-CANCELLED-FINISH
+            - WAIT-TEST-FINISH
       - type: remove-steps
         parameters:
           steps:
             - WAIT-CONTROL-FINISH
+    instructions:
+      - DER should be ramping to the active DERControl unconstrained value at rate setGradW (default 0.27%/s).
+      - Upon completion of the active DERControl (10 minutes) the DER should ramp to the DefaultDERControl value of 30% max power.
 
-  WAIT-CANCELLED-FINISH:
+  # (i)
+  WAIT-TEST-FINISH:
     event:
       type: wait
       parameters:
-        duration_seconds: 60
+        duration_seconds: 720
     actions:
-      - type: cancel-active-der-controls
-        parameters: {}
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-CANCELLED-FINISH
-      
+            - WAIT-TEST-FINISH
+      - type: finish-test
+        parameters: {}
+    instructions:
+      - DER should be ramping to the active DERControl 0W value at rate setGradW (default 0.27%/s).

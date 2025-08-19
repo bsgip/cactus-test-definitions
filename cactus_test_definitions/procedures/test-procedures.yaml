@@ -5,6 +5,7 @@ TestProcedures:
   ALL-01: !include ALL-01.yaml
   ALL-02: !include ALL-02.yaml
   ALL-03: !include ALL-03.yaml
+  ALL-03-REJ: !include ALL-03-REJ.yaml
   ALL-04: !include ALL-04.yaml
   ALL-05: !include ALL-05.yaml
   ALL-06: !include ALL-06.yaml
@@ -30,6 +31,7 @@ TestProcedures:
   ALL-27: !include ALL-27.yaml
   ALL-28: !include ALL-28.yaml
   ALL-29: !include ALL-29.yaml
+  ALL-30: !include ALL-30.yaml
   DRA-01: !include DRA-01.yaml
   DRA-02: !include DRA-02.yaml
   DRD-01: !include DRD-01.yaml

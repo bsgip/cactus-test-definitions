@@ -11,21 +11,23 @@ Criteria:
   checks:
     - type: all-steps-complete
       parameters: {}
-    # Test is ~7 minutes of waiting which should leave enough time for one post @ 300 seconds and 2 posts at 60 seconds
-    - type: readings-site-active-power
-      parameters: {"minimum_count": 3} 
-    - type: readings-site-reactive-power
-      parameters: {"minimum_count": 3}
-    - type: readings-site-voltage
-      parameters: {"minimum_count": 3}
-    - type: readings-der-active-power
-      parameters: {"minimum_count": 3}
-    - type: readings-der-reactive-power
-      parameters: {"minimum_count": 3}
-    - type: readings-der-voltage
-      parameters: {"minimum_count": 3}
+    - type: der-capability-contents
+      parameters:
+        rtgMaxW: true
+        rtgMaxVA: true
+        rtgMaxVar: true
+        doeModesSupported: true
+    - type: der-settings-contents
+      parameters:
+        setMaxW: true
+        setMaxVA: true
+        setMaxVar: true
+        doeModesEnabled: true
+    - type: der-status-contents
+      parameters: {}
 
 Preconditions:
+  immediate_start: true # There will be no "init" phase - all interactions will be immediately logged against the test
   init_actions:
     - type: set-comms-rate
       parameters:
@@ -35,57 +37,57 @@ Preconditions:
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
-  checks:
-    - type: end-device-contents
-      parameters: {}
 
 Steps:
-  
-  # On first poll of MUP - update the post rate to 300 seconds
-  GET-MUP-INITIAL:
+  # (a) - This is a proxy that assumes the device has underwent initial registration / discovery
+  GET-DER:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /mup
+        endpoint: /edev/1/der
     actions:
-      - type: set-comms-rate
-        parameters:
-          mup_post_seconds: 300
       - type: enable-steps
         parameters:
           steps:
-            - GET-MUP-UPDATED
-            - WAIT-TILL-END
+            - POST-DERSTATUS
+            - POST-DERCAPABILITY
+            - POST-DERSETTINGS
       - type: remove-steps
         parameters:
           steps:
-            - GET-MUP-INITIAL
-
-  # On second poll - update the post rate
-  GET-MUP-UPDATED:
+            - GET-DER
+  # (b)
+  POST-DERSTATUS:
     event:
-      type: GET-request-received
+      type: POST-request-received
       parameters:
-        endpoint: /mup
-    actions:
-      - type: set-comms-rate
-        parameters:
-          mup_post_seconds: 60
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-MUP-UPDATED
-
-  # On second poll - update the post rate
-  WAIT-TILL-END:
-    event:
-      type: wait
-      parameters:
-        duration_seconds: 420
+        endpoint: /edev/1/der/1/ders
     actions:
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-TILL-END
-      
+            - POST-DERSTATUS
   
+  # (b)
+  POST-DERCAPABILITY:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/der/1/dercap
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERCAPABILITY
+
+  # (b)
+  POST-DERSETTINGS:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/der/1/derg
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERSETTINGS

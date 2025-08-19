@@ -25,40 +25,66 @@ Preconditions:
         der_list_poll_seconds: 900 # Set to a large value - testing whether they respond due to notification - not polls
         derp_list_poll_seconds: 900 # Set to a large value - testing whether they respond due to notification - not polls
         mup_post_seconds: 60
+    - type: create-der-program
+      parameters:
+        primacy: 0
+        
   checks:
     - type: end-device-contents
       parameters: {}
     - type: der-settings-contents
       parameters: {}
+    - type: subscription-contents
+      parameters:
+        subscribed_resource: /edev/1/derp/1/derc
+
   actions:
     - type: create-der-control
       parameters:
         start: $(now)
         duration_seconds: 300
         opModGenLimW: $(setMaxW * 2)
+
+  instructions:
+    - EndDevice should be registered with active subscriptions before starting.
+    - DER shall be generating at least 50% of its active power rating.
     
 Steps:
-  # NOTE: This particular test definition heavily implies that a subscription is required but never sets it as a 
-  # precondition / test procedure step. This test definition will treat the subscription creation as mandatory.
-  #
-  # Wait for a subscription to /edev/1/derp/1/derc and then add a DERControl in the near future
-  POST-SUBSCRIPTION-DERC:
+
+  # NOTE - The majority of this test's validation is watching 
+
+  # (a, b, c)
+  # After a short delay (to allow precondition actions to propagate subscriptions)
+  WAIT-CREATE-DERC:
     event:
-      type: POST-request-received
+      type: wait
       parameters:
-        endpoint: /edev/1/sub
-        serve_request_first: true
-      checks:
-        - type: subscription-contents
-          parameters: 
-            subscribed_resource: /edev/1/derp/1/derc
+        duration_seconds: 60
     actions:
       - type: create-der-control
         parameters:
           start: $(now + '5 minutes')
-          duration_seconds: 600
+          duration_seconds: 120
           opModGenLimW: 0
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-TEST-FINISH
       - type: remove-steps
         parameters:
           steps:
-            - POST-SUBSCRIPTION-DERC
+            - WAIT-CREATE-DERC
+
+  # (a, b, c)
+  WAIT-TEST-FINISH:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 480 # enough time for the control to start, run and then finish
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-TEST-FINISH
+    instructions:
+      - DER should be observed ramping to and then from 0W control.

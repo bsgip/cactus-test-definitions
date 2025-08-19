@@ -1,4 +1,4 @@
-Description: Disconnection of DER
+Description: De-energization of DER
 Category: DER
 Classes:
   - DER-A
@@ -34,9 +34,11 @@ Preconditions:
         duration_seconds: 300
         opModExpLimW: $(setMaxW * 2)
         opModImpLimW: $(setMaxW * 2)
+  instructions:
+    - DER shall be exporting or importing at least 50% of its active power rating at the connection point.
     
 Steps:
-  # Step 1 - create opModConnect=false control
+  # (a, b)
   GET-DERC:
     event:
       type: GET-request-received
@@ -47,7 +49,7 @@ Steps:
         parameters:
           start: $(now)
           duration_seconds: 300
-          opModConnect: false
+          opModEnergize: false
       - type: enable-steps
         parameters:
           steps:
@@ -57,7 +59,7 @@ Steps:
           steps:
             - GET-DERC
 
-  # Step 1 - wait for the client to report disconnect - then trigger a new connect control
+  # (c, d)
   POST-DERSTATUS-DISCONNECT:
     event:
       type: POST-request-received
@@ -68,7 +70,7 @@ Steps:
       checks:
         - type: der-status-contents
           parameters: 
-            genConnectStatus_bit0: false
+            genConnectStatus_bit2: false
     actions:
       - type: remove-steps
         parameters:
@@ -78,13 +80,13 @@ Steps:
         parameters:
           start: $(now)
           duration_seconds: 300
-          opModConnect: true
+          opModEnergize: true
       - type: enable-steps
         parameters:
           steps:
             - POST-DERSTATUS-CONNECT
 
-  # Step 2 - Wait for re-connect
+  # (e)
   POST-DERSTATUS-CONNECT:
     event:
       type: POST-request-received
@@ -95,7 +97,7 @@ Steps:
       checks:
         - type: der-status-contents
           parameters: 
-            genConnectStatus_bit0: true
+            genConnectStatus_bit2: true
     actions:
       - type: remove-steps
         parameters:

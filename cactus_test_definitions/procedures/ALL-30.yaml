@@ -1,0 +1,146 @@
+Description: Persisting Settings Through Reconnection
+Category: DER
+Classes:
+  - DER-A
+
+TargetVersions:
+  - v1.2
+  - v1.3-beta/storage
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+
+Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+    - type: create-der-program
+      parameters:
+        primacy: 0
+  checks:
+    - type: end-device-contents
+      parameters: {}
+    - type: der-settings-contents
+      parameters: {}
+  actions:
+    - type: set-default-der-control
+      parameters:
+        opModExpLimW: $(setMaxW * 0.3)
+        opModImpLimW: $(setMaxW * 0.3)
+        
+  instructions:
+    - DER is operating at least 50% if its rated power.
+
+Steps:
+  
+  # (precondition) - Wait for the DefaultDERControl to be picked up
+  GET-DEFAULT-DERC:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/dderc
+        serve_request_first: true
+    actions:
+      - type: communications-status
+        parameters:
+          enabled: false
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-POWER-OFF
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DEFAULT-DERC
+
+  # (a, b, c)
+  WAIT-POWER-OFF:
+    instructions:
+      - Power cycle (turn off then back on again) the communications client, and while it is offline, disable the communications interface between the client and utility server (e.g. by unplugging an appropriate network cable).
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 120 # Wait for two polls
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 900
+          opModExpLimW: $(setMaxW * 0.5)
+          opModImpLimW: $(setMaxW * 0.5)
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-POWER-ON
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-POWER-OFF
+  
+  # (d)
+  WAIT-POWER-ON:
+    instructions:
+      - Re-establish communications between the client and utility server (e.g. by plugging the network cable back in).
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 180 
+    actions:
+      - type: communications-status
+        parameters:
+          enabled: true
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-UPDATED-DERC
+            - POST-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-POWER-ON
+
+
+  # (e)
+  GET-UPDATED-DERC:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 900
+          opModExpLimW: $(setMaxW * 0.5)
+          opModImpLimW: $(setMaxW * 0.5)
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-UPDATED-DERC
+
+  # (e)
+  POST-RESPONSE-STARTED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+    checks:
+      - type: response-contents
+        parameters: 
+          latest: true
+          status: 2
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-STARTED
+    

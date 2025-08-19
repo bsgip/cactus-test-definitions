@@ -1,4 +1,4 @@
-Description: Operational Mode Status
+Description: Connection Status
 Category: Monitoring
 Classes:
   - A
@@ -11,7 +11,7 @@ Criteria:
   checks:
     - type: all-steps-complete
       parameters: {}
-    
+
 Preconditions:
   init_actions:
     - type: set-comms-rate
@@ -25,12 +25,16 @@ Preconditions:
   checks:
     - type: end-device-contents
       parameters: {}
-      
+    - type: der-status-contents
+      parameters: 
+        genConnectStatus_bit0: true
+
 Steps:
   
+  # (b, c)
   POST-DERSTATUS-DISCONNECT:
     instructions:
-      - Stop DER from generating or consuming active power.
+      - Disconnect all DER from the grid.
     event:
       type: POST-request-received
       parameters:
@@ -40,7 +44,7 @@ Steps:
       checks:
         - type: der-status-contents
           parameters: 
-            operationalModeStatus: 0
+            genConnectStatus_bit0: false
     actions:
       - type: enable-steps
         parameters:
@@ -51,9 +55,10 @@ Steps:
           steps:
             - POST-DERSTATUS-DISCONNECT
   
+  # (d, e)
   POST-DERSTATUS-CONNECT:
     instructions:
-      - Re-enable ability of DER to generate or consume active power.
+      - Reconnect all DER to the grid.
     event:
       type: POST-request-received
       parameters:
@@ -63,7 +68,7 @@ Steps:
       checks:
         - type: der-status-contents
           parameters: 
-            operationalModeStatus: 1
+            genConnectStatus_bit0: true
     actions:
       - type: remove-steps
         parameters:

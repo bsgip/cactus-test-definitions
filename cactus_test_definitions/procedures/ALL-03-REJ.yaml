@@ -1,8 +1,7 @@
-Description: Update Function Set Assignments Poll Rate
-Category: Control
+Description: Client rejection of incorrect PIN
+Category: Registration
 Classes:
   - A
-  - DR-A
 
 TargetVersions:
   - v1.2
@@ -14,44 +13,43 @@ Criteria:
       parameters: {}
 
 Preconditions:
+  immediate_start: true # There will be no "init" phase - all interactions will be immediately logged against the test
   init_actions:
     - type: set-comms-rate
       parameters:
         dcap_poll_seconds: 60
         edev_list_poll_seconds: 60
-        fsa_list_poll_seconds: 300
-        der_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60 
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
-  checks:
-    - type: end-device-contents
-      parameters: {}
-    
-Steps:
 
-  # (a)
-  GET-FSA-LIST:
+  actions:
+    - type: register-end-device
+      parameters:
+        registration_pin: 33221 # Different from the PIN registered in ALL-01 - Should not match client PIN
+
+Steps:
+  # (a, b, c)
+  GET-REGISTRATION:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/fsa
-
+        endpoint: /edev/1/rg
     actions:
-      - type: set-comms-rate
-        parameters:
-          fsa_list_poll_seconds: 60
       - type: enable-steps
         parameters:
           steps:
-            - GET-FSA-LIST-AGAIN
             - WAIT-TEST-END
       - type: remove-steps
         parameters:
           steps:
-            - GET-FSA-LIST
+            - GET-REGISTRATION
 
-  # (c)
+  # (d)
   WAIT-TEST-END:
+    instructions:
+      - The client should now be ceasing communications with the utility server due to an incorrect PIN being received.
     event:
       type: wait
       parameters:
@@ -63,16 +61,3 @@ Steps:
             - WAIT-TEST-END
       - type: finish-test
         parameters: {}
-
-  # (b, c)
-  GET-FSA-LIST-AGAIN:
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /edev/1/fsa
-
-    actions:
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-FSA-LIST-AGAIN

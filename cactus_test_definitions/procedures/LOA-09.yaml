@@ -36,8 +36,11 @@ Preconditions:
     - type: set-default-der-control
       parameters:
         opModImpLimW: $(setMaxW * 0.3)
+  instructions: 
+    - DER should be importing at least 50% of its rated power.
     
 Steps:
+  # (a, b)
   GET-DERC:
     event:
       type: GET-request-received
@@ -55,7 +58,7 @@ Steps:
           steps:
             - GET-DERC
 
-  # Run the test for a short while after cancellation to capture any readings
+  # (b)
   WAIT-TILL-END:
     event:
       type: wait
@@ -68,5 +71,7 @@ Steps:
             - WAIT-TILL-END
       - type: finish-test
         parameters: {}
+    instructions:
+      - After cancellation, DER shall reduce export to the DefaultDERControl value of 30%
 
   

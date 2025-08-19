@@ -78,3 +78,5 @@ Steps:
             - WAIT-TEST-END
       - type: finish-test
         parameters: {}
+    instructions:
+      - DER should send correct readings, aggregated according TS 5573 2025

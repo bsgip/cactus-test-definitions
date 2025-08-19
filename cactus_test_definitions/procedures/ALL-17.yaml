@@ -1,7 +1,8 @@
-Description: Control Responses
+Description: Default Controls – Ramp Rate
 Category: Control
 Classes:
   - A
+  - S
 
 TargetVersions:
   - v1.2
@@ -11,6 +12,8 @@ Criteria:
   checks:
     - type: all-steps-complete
       parameters: {}
+    - type: all-notifications-transmitted
+      parameters: {}
 
 Preconditions:
   init_actions:
@@ -19,260 +22,42 @@ Preconditions:
         dcap_poll_seconds: 60
         edev_list_poll_seconds: 60
         fsa_list_poll_seconds: 60
-        der_list_poll_seconds: 60
-        derp_list_poll_seconds: 60
+        der_list_poll_seconds: 900 # Set this to a large value - testing they respond due to notification - not polling
+        derp_list_poll_seconds: 900 # Set this to a large value - testing they respond due to notification - not polling
         mup_post_seconds: 60
+    - type: create-der-program
+      parameters:
+        primacy: 0
+
   checks:
     - type: end-device-contents
       parameters: {}
-    - type: der-settings-contents
-      parameters: {}
-  actions:
-    - type: create-der-control
+    - type: subscription-contents
       parameters:
-        start: $(now)
-        duration_seconds: 120
-        opModImpLimW: $(setMaxW * 2)
+        subscribed_resource: /edev/1/derp/1/dderc
+
+  actions:
+    # (a)
+    - type: set-default-der-control
+      parameters:
+        setGradW: 100 # hundredths of a percent - this is 1%
     
 Steps:
-
-  # Step 1 - Wait for first "Received" response
-  POST-RESPONSE-RECEIVED:
+  
+  # (b, c)
+  # This will wait until the client POST's a DERSettings with the 1% setGradW
+  POST-DERSETTINGS-SET-GRAD-W:
     event:
       type: POST-request-received
       parameters:
-        endpoint: /edev/1/rsps/site_control/rsp
-        serve_request_first: true
+        endpoint: /edev/1/der/1/derg
+        serve_request_first: true # Run this AFTER server receives the request
     checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 1
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-RESPONSE-STARTED
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-RESPONSE-RECEIVED
-
-  # Step 2 - Wait for first "Started" response
-  POST-RESPONSE-STARTED:
-    event:
-      type: POST-request-received
+      type: der-settings-contents
       parameters:
-        endpoint: /edev/1/rsps/site_control/rsp
-        serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 2
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-RESPONSE-COMPLETED
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-RESPONSE-STARTED
-
-  # Step 3/4 - Wait for first "Completed" response and create DERControl in 5 minutes time
-  POST-RESPONSE-COMPLETED:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/rsps/site_control/rsp
-        serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 3
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-SECOND-RESPONSE-RECEIVED
-      - type: create-der-control
-        parameters:
-          start: $(now + '5 minutes')
-          duration_seconds: 600
-          opModImpLimW: $(setMaxW * 2)
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-RESPONSE-COMPLETED
-
-  # Step 4 - Wait for second "Received" response
-  POST-SECOND-RESPONSE-RECEIVED:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/rsps/site_control/rsp
-        serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 1
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-SECOND-RESPONSE-STARTED
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-SECOND-RESPONSE-RECEIVED
-
-  # Step 5 - Wait for second "Started" response then cancel control
-  POST-SECOND-RESPONSE-STARTED:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/rsps/site_control/rsp
-        serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 1
-    actions:
-      - type: cancel-active-der-controls
-        parameters: {}
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-SECOND-RESPONSE-CANCELLED
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-SECOND-RESPONSE-STARTED
-
-
-  # Step 6 - Wait for second "Cancelled" response - Configure control starting in 10
-  POST-SECOND-RESPONSE-CANCELLED:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/rsps/site_control/rsp
-        serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 6
-    actions:
-      - type: create-der-control
-        parameters:
-          start: $(now + '10 minutes')
-          duration_seconds: 120
-          opModImpLimW: 0
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-THIRD-RESPONSE-RECEIVED
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-SECOND-RESPONSE-CANCELLED
-
-  # Step 7 - Wait for third "Received" response then cancel it before it begins
-  POST-THIRD-RESPONSE-RECEIVED:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/rsps/site_control/rsp
-        serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 1
-    actions:
-      - type: cancel-active-der-controls
-        parameters: {}
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-THIRD-RESPONSE-CANCELLED
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-THIRD-RESPONSE-RECEIVED
-
-  # Step 8 - Wait for the cancellation response, then configure a new control starting in 10
-  POST-THIRD-RESPONSE-CANCELLED:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/rsps/site_control/rsp
-        serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 6
-    actions:
-      - type: create-der-control
-        parameters:
-          start: $(now + '10 minutes')
-          duration_seconds: 600
-          opModImpLimW: $(setMaxW * 2)
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-FOURTH-RESPONSE-RECEIVED
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-THIRD-RESPONSE-CANCELLED
-
-  # Step 9 - wait for the next received - then schedule an overlapping control
-  POST-FOURTH-RESPONSE-RECEIVED:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/rsps/site_control/rsp
-        serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 1
-    actions:
-      - type: create-der-control
-        parameters:
-          start: $(now + '10 minutes')
-          duration_seconds: 60
-          opModImpLimW: 0
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-FOURTH-RESPONSE-SUPERSEDED
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-FOURTH-RESPONSE-RECEIVED
-
-  # Wait for the superseded response
-  POST-FOURTH-RESPONSE-SUPERSEDED:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/rsps/site_control/rsp
-        serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 7
+        setGradW: 100
     actions:
       - type: remove-steps
         parameters:
           steps:
-            - POST-FOURTH-RESPONSE-SUPERSEDED
+            - POST-DERSETTINGS-SET-GRAD-W

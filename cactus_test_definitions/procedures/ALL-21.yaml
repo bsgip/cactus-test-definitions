@@ -1,7 +1,8 @@
-Description: Randomisation
+Description: Scheduling
 Category: Control
 Classes:
   - A
+  - DR-A
 
 TargetVersions:
   - v1.2
@@ -11,6 +12,18 @@ Criteria:
   checks:
     - type: all-steps-complete
       parameters: {}
+    - type: response-contents
+      parameters:
+        all: true
+        status: 1 # Every control has a received response
+    - type: response-contents
+      parameters:
+        all: true
+        status: 2 # Every control has a started response
+    - type: response-contents
+      parameters:
+        all: true
+        status: 3 # Every control has a completed response
 
 Preconditions:
   init_actions:
@@ -28,47 +41,158 @@ Preconditions:
     - type: der-settings-contents
       parameters: {}
   actions:
+    # 24 minutes of sequential, non overlapping controls with random values (chosen by rolling a D10)
     - type: create-der-control
       parameters:
         start: $(now)
-        duration_seconds: 120
-        randomizeStart_seconds: 60
-        opModExpLimW: $(setMaxW * 2)
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.3)
+        opModImpLimW: $(setMaxW * 0.3)
     - type: create-der-control
       parameters:
-        start: $(now + '120 seconds')
-        duration_seconds: 120
-        randomizeStart_seconds: 60
-        opModExpLimW: $(setMaxW * 2)
+        start: $(now + '1 minute')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.6)
+        opModImpLimW: $(setMaxW * 0.6)
     - type: create-der-control
       parameters:
-        start: $(now + '240 seconds')
-        duration_seconds: 120
-        randomizeStart_seconds: 60
-        opModExpLimW: $(setMaxW * 2)
+        start: $(now + '2 minutes')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.4)
+        opModImpLimW: $(setMaxW * 0.4)
     - type: create-der-control
       parameters:
-        start: $(now + '360 seconds')
-        duration_seconds: 120
-        randomizeStart_seconds: 60
-        opModExpLimW: $(setMaxW * 2)
+        start: $(now + '3 minutes')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.5)
+        opModImpLimW: $(setMaxW * 0.5)
     - type: create-der-control
       parameters:
-        start: $(now + '480 seconds')
-        duration_seconds: 120
-        randomizeStart_seconds: 60
-        opModExpLimW: $(setMaxW * 2)
-    
-    
-Steps:
+        start: $(now + '4 minutes')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.2)
+        opModImpLimW: $(setMaxW * 0.2)
+    - type: create-der-control
+      parameters:
+        start: $(now + '5 minutes')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.1)
+        opModImpLimW: $(setMaxW * 0.1)
+    - type: create-der-control
+      parameters:
+        start: $(now + '6 minutes')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.7)
+        opModImpLimW: $(setMaxW * 0.7)
+    - type: create-der-control
+      parameters:
+        start: $(now + '7 minutes')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.2)
+        opModImpLimW: $(setMaxW * 0.2)
+    - type: create-der-control
+      parameters:
+        start: $(now + '8 minutes')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.3)
+        opModImpLimW: $(setMaxW * 0.3)
+    - type: create-der-control
+      parameters:
+        start: $(now + '9 minutes')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.3)
+        opModImpLimW: $(setMaxW * 0.3)
+    - type: create-der-control
+      parameters:
+        start: $(now + '10 minutes')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.5)
+        opModImpLimW: $(setMaxW * 0.5)
+    - type: create-der-control
+      parameters:
+        start: $(now + '11 minutes')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.9)
+        opModImpLimW: $(setMaxW * 0.9)
+    - type: create-der-control
+      parameters:
+        start: $(now + '12 minutes')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.1)
+        opModImpLimW: $(setMaxW * 0.1)
+    - type: create-der-control
+      parameters:
+        start: $(now + '13 minutes')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.1)
+        opModImpLimW: $(setMaxW * 0.1)
+    - type: create-der-control
+      parameters:
+        start: $(now + '14 minutes')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.5)
+        opModImpLimW: $(setMaxW * 0.5)
+    - type: create-der-control
+      parameters:
+        start: $(now + '15 minutes')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.4)
+        opModImpLimW: $(setMaxW * 0.4)
+    - type: create-der-control
+      parameters:
+        start: $(now + '16 minutes')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.1)
+        opModImpLimW: $(setMaxW * 0.1)
+    - type: create-der-control
+      parameters:
+        start: $(now + '17 minutes')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.7)
+        opModImpLimW: $(setMaxW * 0.7)
+    - type: create-der-control
+      parameters:
+        start: $(now + '18 minutes')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.9)
+        opModImpLimW: $(setMaxW * 0.9)
+    - type: create-der-control
+      parameters:
+        start: $(now + '19 minutes')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.1)
+        opModImpLimW: $(setMaxW * 0.1)
+    - type: create-der-control
+      parameters:
+        start: $(now + '20 minutes')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.4)
+        opModImpLimW: $(setMaxW * 0.4)
+    - type: create-der-control
+      parameters:
+        start: $(now + '21 minutes')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.3)
+        opModImpLimW: $(setMaxW * 0.3)
+    - type: create-der-control
+      parameters:
+        start: $(now + '22 minutes')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW * 0.7)
+        opModImpLimW: $(setMaxW * 0.7)
+    - type: create-der-control
+      parameters:
+        start: $(now + '23 minutes')
+        duration_seconds: 60
+        opModExpLimW: $(setMaxW)
+        opModImpLimW: $(setMaxW)
 
-  # We don't have a "is random enough" check - it is expected that will be evaluated by a human administering the test
-  # specifically looking at the response timings
+Steps:
   WAIT-TEST-END:
     event:
       type: wait
       parameters:
-        duration_seconds: 660
+        duration_seconds: 1500 # 25 minutes
     actions:
       - type: remove-steps
         parameters:

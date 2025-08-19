@@ -1,7 +1,7 @@
-Description: Subscribe
+Description: Default Controls – Ramp Rate
 Category: Control
 Classes:
-  - S
+  - A
 
 TargetVersions:
   - v1.2
@@ -10,8 +10,6 @@ TargetVersions:
 Criteria:
   checks:
     - type: all-steps-complete
-      parameters: {}
-    - type: all-notifications-transmitted
       parameters: {}
 
 Preconditions:
@@ -24,135 +22,89 @@ Preconditions:
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
+    - type: create-der-program
+      parameters:
+        primacy: 0
   checks:
     - type: end-device-contents
       parameters: {}
   actions:
-    - type: register-end-device
-      parameters: {}
-        
-    
-    # Start by enabling everything at the beginning as each step is (mostly) independent of the others
-    - type: enable-steps
+    - type: set-default-der-control
       parameters:
-        steps:
-            - POST-SUBSCRIPTION-FSAL
-            - POST-SUBSCRIPTION-DERP
-            - POST-SUBSCRIPTION-DERC
-            - POST-SUBSCRIPTION-DEFAULT-DERC
+        setGradW: 100 # hundredths of a percent - this is 1%
 
 Steps:
 
-  # Wait for a subscription to /edev and then update the active EndDevice's postRate to trigger a notification
-  POST-SUBSCRIPTION-EDEV:
-    instructions:
-      - Trigger an EndDeviceList subscription request from the aggregator client system (this can be an automated response to completing the Discovery process).
+  # (a, b)
+  # On first poll of default control - reset default setGradW and then wait for an updated POLL 
+  # and a request to update DERSettings
+  GET-DEFAULT-DERC:
     event:
-      type: POST-request-received
+      type: GET-request-received
       parameters:
-        endpoint: /edev/1/sub
-        serve_request_first: true
-      checks:
-        - type: subscription-contents
-          parameters: 
-            subscribed_resource: /edev
-    actions:
-      - type: set-comms-rate
-        parameters:
-          edev_post_seconds: 30
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-SUBSCRIPTION-EDEV
-
-  # Wait for a subscription to /edev/1/fsa and then update the active fsa list to trigger a notification
-  POST-SUBSCRIPTION-FSAL:
-    instructions:
-      - Trigger a FunctionSetAssignmentsList subscription request from the aggregator client system.
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/sub
-        serve_request_first: true
-      checks:
-        - type: subscription-contents
-          parameters: 
-            subscribed_resource: /edev/1/fsa
-    actions:
-      - type: set-comms-rate
-        parameters:
-          fsa_list_poll_seconds: 30
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-SUBSCRIPTION-FSAL
-
-
-  # Wait for a subscription to /edev/1/fsa/1/derp and then update the active DERProgram list to trigger a notification
-  POST-SUBSCRIPTION-DERP:
-    instructions:
-      - Trigger a DERProgramList subscription request from the aggregator client system.
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/sub
-        serve_request_first: true
-      checks:
-        - type: subscription-contents
-          parameters: 
-            subscribed_resource: /edev/1/fsa/1/derp
-    actions:
-      - type: create-der-program
-        parameters:
-          primacy: 99
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-SUBSCRIPTION-DERP
-
-  # Wait for a subscription to /edev/1/derp/1/derc and then create a DERControl to trigger a notification
-  POST-SUBSCRIPTION-DERC:
-    instructions:
-      - Trigger a DERControlList subscription request from the aggregator client system.
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/sub
-        serve_request_first: true
-      checks:
-        - type: subscription-contents
-          parameters: 
-            subscribed_resource: /edev/1/derp/1/derc
-    actions:
-      - type: create-der-control
-        parameters:
-          start: $(now)
-          duration_seconds: 600
-          primacy: 99
-          opModExpLimW: 0
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-SUBSCRIPTION-DERC
-
-  # Wait for a subscription to /edev/1/derp/1/dderc and then update the DefaultDERControl to trigger a notification
-  POST-SUBSCRIPTION-DEFAULT-DERC:
-    instructions:
-      - Trigger a DefaultDERControl subscription request from the aggregator client system.
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/sub
-        serve_request_first: true
-      checks:
-        - type: subscription-contents
-          parameters: 
-            subscribed_resource: /edev/1/derp/1/dderc
+        endpoint: /edev/1/derp/1/dderc
     actions:
       - type: set-default-der-control
         parameters:
-          opModImpLimW: 1234
+          setGradW: 27 # hundredths of a percent - this is 0.27%
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DEFAULT-DERC-UPDATED
+            - POST-DERSETTINGS-SET-GRAD-W
       - type: remove-steps
         parameters:
           steps:
-            - POST-SUBSCRIPTION-DEFAULT-DERC
+            - GET-DEFAULT-DERC
+
+  # (c)
+  # This will wait until the client POST's a DERSettings with the 1% setGradW
+  POST-DERSETTINGS-SET-GRAD-W:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/der/1/derg
+        serve_request_first: true # Run this AFTER server receives the request
+    checks:
+      type: der-settings-contents
+      parameters:
+        setGradW: 100
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERSETTINGS-SET-GRAD-W
+
+  # (b)
+  GET-DEFAULT-DERC-UPDATED:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/dderc
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-DERSETTINGS-SET-GRAD-W-DEFAULT
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DEFAULT-DERC-UPDATED
+
+  # This will wait until the client POST's a DERSettings with the 0.27% setGradW
+  POST-DERSETTINGS-SET-GRAD-W-DEFAULT:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/der/1/ders
+        serve_request_first: true # Run this AFTER server receives the request
+    checks:
+      type: der-settings-contents
+      parameters:
+        setGradW: 27
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERSETTINGS-SET-GRAD-W-DEFAULT
+ 

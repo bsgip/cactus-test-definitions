@@ -1,5 +1,5 @@
-Description: Individual Readings
-Category: Monitoring
+Description: Client Response to Lack of RegistrationLink 
+Category: Registration
 Classes:
   - A
 
@@ -7,26 +7,8 @@ TargetVersions:
   - v1.2
   - v1.3-beta/storage
 
-Criteria:
-  checks:
-    - type: all-steps-complete
-      parameters: {}
-
-    # Test is ~8 minutes of waiting which should leave enough time for at least 7 reading posts
-    - type: readings-site-active-power
-      parameters: {"minimum_count": 7} 
-    - type: readings-site-reactive-power
-      parameters: {"minimum_count": 7}
-    - type: readings-site-voltage
-      parameters: {"minimum_count": 7}
-    - type: readings-der-active-power
-      parameters: {"minimum_count": 7}
-    - type: readings-der-reactive-power
-      parameters: {"minimum_count": 7}
-    - type: readings-der-voltage
-      parameters: {"minimum_count": 7}
-
 Preconditions:
+  immediate_start: true # There will be no "init" phase - all interactions will be immediately logged against the test
   init_actions:
     - type: set-comms-rate
       parameters:
@@ -36,91 +18,100 @@ Preconditions:
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
-  checks:
-    - type: end-device-contents
-      parameters: {}
-  instructions:
-    - Connect a test load electrically in parallel with the DER.
-    - Set the load to consume 25% of the DER's rated active power.
+  actions:
+    - type: 'edev-registration-links'
+      parameters:
+        enabled: false
 
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+
+# Note - these steps aren't annotated with the TS 5573 test procedure steps due to them having some dubious
+# references to links appearing in the wrong entities / unusual ordering
+# 
+# The steps still represent the "intended" interpretation of a client continuing to undergo normal in band registration
+# despite the EndDevice registration links being removed.
 Steps:
-  GET-MUP:
+  GET-DCAP:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /mup
+        endpoint: /dcap
     actions:
       - type: enable-steps
         parameters:
           steps:
-            - POST-MUP
+            - GET-EDEV
+            - GET-TM
       - type: remove-steps
         parameters:
           steps:
-            - GET-MUP
-          
-  POST-MUP:
+            - GET-DCAP
+  
+  GET-EDEV:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-EDEV
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-EDEV
+  
+  GET-TM:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /tm
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-TM
+  
+  POST-EDEV:
     event:
       type: POST-request-received
       parameters:
-        endpoint: /mup
+        endpoint: /edev
     actions:
       - type: enable-steps
         parameters:
           steps:
-            - GET-MUP-2
+            - GET-DER
+            - GET-FSA
       - type: remove-steps
         parameters:
           steps:
-            - POST-MUP
-
-  GET-MUP-2:
+            - POST-EDEV
+  
+  GET-FSA:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /mup
+        endpoint: /edev/1/fsa
     actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - SET-CONTROL
       - type: remove-steps
         parameters:
           steps:
-            - GET-MUP-2
+            - GET-FSA
 
-  SET-CONTROL:
+  GET-DER:
     event:
-      type: wait
+      type: GET-request-received
       parameters:
-        duration_seconds: 300 # Wait for at least 4 sets of readings to arrive (with post rate 60 seconds)
+        endpoint: /edev/1/der
     actions:
-      - type: create-der-control
-        parameters:
-          start: $(now)
-          duration_seconds: 300
-          opModImpLimW: 0
-          opModExpLimW: 0
-      - type: enable-steps
-        parameters:
-          steps:
-            - WAIT-CONTROL
       - type: remove-steps
         parameters:
           steps:
-            - SET-CONTROL
+            - GET-DER
 
-  # This just lets the test run for a few more posts after the control comes into effect
-  # after which, we will force the test to shutdown (as Criteria is partially defined by this ONLY running for a few posts)
-  WAIT-CONTROL:
-    event:
-      type: wait
-      parameters:
-        duration_seconds: 180 # Wait for at least 3 sets of readings to arrive (with post rate 60 seconds)
-    actions:
-      - type: remove-steps
-        parameters:
-          steps:
-            - WAIT-CONTROL
-      - type: finish-test
-        parameters: {}
+  
