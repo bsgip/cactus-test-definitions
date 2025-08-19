@@ -121,8 +121,8 @@ def test_each_step_connected(tp_id: str, tp: TestProcedure):
     ), "Missing entries here indicate a step (or steps) that can't be reached from the root node"
 
 
-@pytest.mark.parametrize("tp_id, tp", ALL_TEST_PROCEDURES)
-def test_procedures_have_required_preconditions(tp_id: str, tp: TestProcedure):
+@pytest.mark.parametrize("_, tp", ALL_TEST_PROCEDURES)
+def test_procedures_have_required_preconditions(_: str, tp: TestProcedure):
 
     # Immediate start implies that EndDevice registration will happen during the test body - these tests
     # don't require end-device-contents (as it will cause the test to fail anyway)
