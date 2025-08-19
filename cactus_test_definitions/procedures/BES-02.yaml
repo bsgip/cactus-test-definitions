@@ -6,8 +6,8 @@ Classes:
 TargetVersions:
   - v1.3-beta/storage
 
-Criteria:
-  immediate_start: true
+Preconditions:
+  immediate_start: true  # There will be no "init" phase - all interactions will be immediately logged against the test
   init_actions:
     - type: set-comms-rate
       parameters:
@@ -17,6 +17,8 @@ Criteria:
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
+
+Criteria:
   checks:
     - type: all-steps-complete
       parameters: {}
