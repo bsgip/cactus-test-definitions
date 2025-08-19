@@ -124,15 +124,10 @@ def test_each_step_connected(tp_id: str, tp: TestProcedure):
 @pytest.mark.parametrize("tp_id, tp", ALL_TEST_PROCEDURES)
 def test_procedures_have_required_preconditions(tp_id: str, tp: TestProcedure):
 
-    # Most tests should be decorated with end-device-contents - there are some notable exceptions
-    enddevice_not_required = {
-        "BES-02",  # In-band device registration during test procedure
-    }
-
     # Immediate start implies that EndDevice registration will happen during the test body - these tests
     # don't require end-device-contents (as it will cause the test to fail anyway)
     is_immediate_start = tp.preconditions is not None and tp.preconditions.immediate_start
-    if tp_id not in enddevice_not_required and not is_immediate_start:
+    if not is_immediate_start:
         assert tp.preconditions is not None, "Expected precondition check 'end-device-contents'"
         assert tp.preconditions.checks is not None, "Expected precondition check 'end-device-contents'"
         assert any(
