@@ -48,90 +48,90 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - POST-DERSTATUS
-            - POST-DERCAPABILITY
-            - POST-DERSETTINGS
+            - PUT-DERSTATUS
+            - PUT-DERCAPABILITY
+            - PUT-DERSETTINGS
       - type: remove-steps
         parameters:
           steps:
             - GET-DER
 
-  POST-DERSTATUS:
+  PUT-DERSTATUS:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/ders
     actions:
       - type: enable-steps
         parameters:
           steps:
-            - POST-DERSTATUS-2
+            - PUT-DERSTATUS-2
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS
+            - PUT-DERSTATUS
 
-  POST-DERCAPABILITY:
+  PUT-DERCAPABILITY:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/dercap
     actions:
       - type: enable-steps
         parameters:
           steps:
-            - POST-DERCAPABILITY-2
+            - PUT-DERCAPABILITY-2
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERCAPABILITY
+            - PUT-DERCAPABILITY
 
-  POST-DERSETTINGS:
+  PUT-DERSETTINGS:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/derg
     actions:
       - type: enable-steps
         parameters:
           steps:
-            - POST-DERSETTINGS-2
+            - PUT-DERSETTINGS-2
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSETTINGS
+            - PUT-DERSETTINGS
 
 
-  POST-DERSTATUS-2:
+  PUT-DERSTATUS-2:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/ders
     actions:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-2
+            - PUT-DERSTATUS-2
   
-  POST-DERCAPABILITY-2:
+  PUT-DERCAPABILITY-2:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/dercap
     actions:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERCAPABILITY-2
+            - PUT-DERCAPABILITY-2
 
-  POST-DERSETTINGS-2:
+  PUT-DERSETTINGS-2:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/derg
     actions:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSETTINGS-2
+            - PUT-DERSETTINGS-2
 
