@@ -34,21 +34,21 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - POST-DER-CAPABILITY
+            - PUT-DER-CAPABILITY
       - type: remove-steps
         parameters:
           steps:
             - GET-DER
 
-  POST-DER-CAPABILITY:
+  PUT-DER-CAPABILITY:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/dercap
     actions:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DER-CAPABILITY
+            - PUT-DER-CAPABILITY
 
   

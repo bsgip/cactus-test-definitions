@@ -116,16 +116,16 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - POST-DERSETTINGS-SET-GRAD-W
+            - PUT-DERSETTINGS-SET-GRAD-W
       - type: remove-steps
         parameters:
           steps:
             - GET-DEFAULT-DERC
 
   # (f, g)
-  POST-DERSETTINGS-SET-GRAD-W:
+  PUT-DERSETTINGS-SET-GRAD-W:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/derg
         serve_request_first: true # Run this AFTER server receives the request
@@ -143,7 +143,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSETTINGS-SET-GRAD-W
+            - PUT-DERSETTINGS-SET-GRAD-W
 
   # (h)
   POST-RESPONSE-CANCELLED:

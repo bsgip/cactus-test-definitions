@@ -53,16 +53,16 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - POST-DERSTATUS-DISCONNECT
+            - PUT-DERSTATUS-DISCONNECT
       - type: remove-steps
         parameters:
           steps:
             - GET-DERC
 
   # (c, d)
-  POST-DERSTATUS-DISCONNECT:
+  PUT-DERSTATUS-DISCONNECT:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
@@ -75,7 +75,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-DISCONNECT
+            - PUT-DERSTATUS-DISCONNECT
       - type: create-der-control
         parameters:
           start: $(now)
@@ -84,12 +84,12 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - POST-DERSTATUS-CONNECT
+            - PUT-DERSTATUS-CONNECT
 
   # (e)
-  POST-DERSTATUS-CONNECT:
+  PUT-DERSTATUS-CONNECT:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
@@ -102,6 +102,6 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-CONNECT
+            - PUT-DERSTATUS-CONNECT
 
   

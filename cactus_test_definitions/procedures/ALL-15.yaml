@@ -49,9 +49,9 @@ Preconditions:
 Steps:
 
   # (c, d)
-  POST-DERSTATUS-DEENERGIZE:
+  PUT-DERSTATUS-DEENERGIZE:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
@@ -64,7 +64,7 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - POST-DERSTATUS-ENERGIZE
+            - PUT-DERSTATUS-ENERGIZE
             - WAIT-TEST-END
       - type: create-der-control
         parameters:
@@ -74,12 +74,12 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-DEENERGIZE
+            - PUT-DERSTATUS-DEENERGIZE
 
   # (f)
-  POST-DERSTATUS-ENERGIZE:
+  PUT-DERSTATUS-ENERGIZE:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
@@ -92,7 +92,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-ENERGIZE
+            - PUT-DERSTATUS-ENERGIZE
 
   # (e) We give the client a minute to respond with a re-energize
   WAIT-TEST-END:

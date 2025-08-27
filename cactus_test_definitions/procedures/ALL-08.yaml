@@ -34,11 +34,11 @@ Preconditions:
 Steps:
   
   # (c, d)
-  POST-DERSTATUS-DISCONNECT:
+  PUT-DERSTATUS-DISCONNECT:
     instructions:
       - Stop DER from generating or consuming active power. (e.g. power source/sink is set to 0W)
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
@@ -51,18 +51,18 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - POST-DERSTATUS-CONNECT
+            - PUT-DERSTATUS-CONNECT
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-DISCONNECT
+            - PUT-DERSTATUS-DISCONNECT
   
   # (e, f)
-  POST-DERSTATUS-CONNECT:
+  PUT-DERSTATUS-CONNECT:
     instructions:
       - Re-enable ability of DER to generate or consume active power.
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
@@ -75,4 +75,4 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-CONNECT
+            - PUT-DERSTATUS-CONNECT

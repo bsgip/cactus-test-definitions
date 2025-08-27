@@ -42,11 +42,11 @@ Preconditions:
 Steps:
   
   # The client powers off one DER
-  POST-DERSTATUS-FIRST-DISCONNECT:
+  PUT-DERSTATUS-FIRST-DISCONNECT:
     instructions:
       - Power off one DER either by a hardware switch on the DER or by disconnection from the grid supply. Priority should be given to DER capable of generation.
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
@@ -62,18 +62,18 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - POST-DERSTATUS-FULL-DISCONNECT
+            - PUT-DERSTATUS-FULL-DISCONNECT
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-FIRST-DISCONNECT
+            - PUT-DERSTATUS-FIRST-DISCONNECT
   
   # The client powers off all remaining DER
-  POST-DERSTATUS-FULL-DISCONNECT:
+  PUT-DERSTATUS-FULL-DISCONNECT:
     instructions:
       - Power off off remaining DER.
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
@@ -89,4 +89,4 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-FULL-DISCONNECT
+            - PUT-DERSTATUS-FULL-DISCONNECT

@@ -41,16 +41,16 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - POST-DERSTATUS-1
+            - PUT-DERSTATUS-1
       - type: remove-steps
         parameters:
           steps:
             - GET-DERC-1
 
   # (c) Wait for the update to DERStatus
-  POST-DERSTATUS-1:
+  PUT-DERSTATUS-1:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
@@ -67,7 +67,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-1
+            - PUT-DERSTATUS-1
       
   # (d, e, f) Create DERControl with immediate start to reconnect and then a second DERControl
   GET-DERC-2:
@@ -89,8 +89,8 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - POST-DERSTATUS-2
-            - POST-DERSETTINGS-2
+            - PUT-DERSTATUS-2
+            - PUT-DERSETTINGS-2
             - WAIT-DERC-2
       - type: remove-steps
         parameters:
@@ -98,9 +98,9 @@ Steps:
             - GET-DERC-2
   
   # (g, h)
-  POST-DERSTATUS-2:
+  PUT-DERSTATUS-2:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
@@ -113,12 +113,12 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-2
+            - PUT-DERSTATUS-2
 
   # (g, h)
-  POST-DERSETTINGS-2:
+  PUT-DERSETTINGS-2:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/derg
         serve_request_first: true # Run this AFTER server receives the request
@@ -130,7 +130,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSETTINGS-2
+            - PUT-DERSETTINGS-2
 
   # (i) After the end of the previous control...
   WAIT-DERC-2:
@@ -163,8 +163,8 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - POST-DERSTATUS-3
-            - POST-DERSETTINGS-3
+            - PUT-DERSTATUS-3
+            - PUT-DERSETTINGS-3
             - WAIT-DERC-3
       - type: remove-steps
         parameters:
@@ -172,9 +172,9 @@ Steps:
             - GET-DERC-3
 
   # (k)
-  POST-DERSTATUS-3:
+  PUT-DERSTATUS-3:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
@@ -187,12 +187,12 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-3
+            - PUT-DERSTATUS-3
 
   # (k)
-  POST-DERSETTINGS-3:
+  PUT-DERSETTINGS-3:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/derg
         serve_request_first: true # Run this AFTER server receives the request
@@ -204,7 +204,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSETTINGS-3
+            - PUT-DERSETTINGS-3
 
 
   # (l) After the end of the previous control...
@@ -238,8 +238,8 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - POST-DERSTATUS-4
-            - POST-DERSETTINGS-4
+            - PUT-DERSTATUS-4
+            - PUT-DERSETTINGS-4
             - WAIT-DERC-4
       - type: remove-steps
         parameters:
@@ -248,9 +248,9 @@ Steps:
 
 
   # (m, n)
-  POST-DERSTATUS-4:
+  PUT-DERSTATUS-4:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
@@ -263,12 +263,12 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-4
+            - PUT-DERSTATUS-4
 
   # (m, n)
-  POST-DERSETTINGS-4:
+  PUT-DERSETTINGS-4:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/derg
         serve_request_first: true # Run this AFTER server receives the request
@@ -280,7 +280,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSETTINGS-4
+            - PUT-DERSETTINGS-4
 
   # (o) After the end of the previous control...
   WAIT-DERC-4:
@@ -314,8 +314,8 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - POST-DERSTATUS-5
-            - POST-DERSETTINGS-5
+            - PUT-DERSTATUS-5
+            - PUT-DERSETTINGS-5
             - WAIT-DERC-5
       - type: remove-steps
         parameters:
@@ -323,9 +323,9 @@ Steps:
             - GET-DERC-5
 
   # (p, q)
-  POST-DERSTATUS-5:
+  PUT-DERSTATUS-5:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
@@ -338,12 +338,12 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-5
+            - PUT-DERSTATUS-5
 
   # (p, q)
-  POST-DERSETTINGS-5:
+  PUT-DERSETTINGS-5:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/derg
         serve_request_first: true # Run this AFTER server receives the request
@@ -355,7 +355,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSETTINGS-5
+            - PUT-DERSETTINGS-5
 
   # (r) After the end of the previous control...
   WAIT-DERC-5:
@@ -388,8 +388,8 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - POST-DERSTATUS-6
-            - POST-DERSETTINGS-6
+            - PUT-DERSTATUS-6
+            - PUT-DERSETTINGS-6
             - WAIT-DERC-6
       - type: remove-steps
         parameters:
@@ -397,9 +397,9 @@ Steps:
             - GET-DERC-6
 
   # (s, t)
-  POST-DERSTATUS-6:
+  PUT-DERSTATUS-6:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
@@ -412,12 +412,12 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-6
+            - PUT-DERSTATUS-6
 
   # (s, t)
-  POST-DERSETTINGS-6:
+  PUT-DERSETTINGS-6:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/derg
         serve_request_first: true # Run this AFTER server receives the request
@@ -429,7 +429,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSETTINGS-6
+            - PUT-DERSETTINGS-6
 
   # (u) After the end of the previous control...
   WAIT-DERC-6:
@@ -462,8 +462,8 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - POST-DERSTATUS-7
-            - POST-DERSETTINGS-7
+            - PUT-DERSTATUS-7
+            - PUT-DERSETTINGS-7
             - WAIT-DERC-7
       - type: remove-steps
         parameters:
@@ -471,9 +471,9 @@ Steps:
             - GET-DERC-7
 
   # (v, w)
-  POST-DERSTATUS-7:
+  PUT-DERSTATUS-7:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
@@ -486,12 +486,12 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-7
+            - PUT-DERSTATUS-7
 
   # (v, w)
-  POST-DERSETTINGS-7:
+  PUT-DERSETTINGS-7:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/derg
         serve_request_first: true # Run this AFTER server receives the request
@@ -503,7 +503,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSETTINGS-7
+            - PUT-DERSETTINGS-7
 
   # (x) After the end of the previous control...
   WAIT-DERC-7:
@@ -536,8 +536,8 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - POST-DERSTATUS-8
-            - POST-DERSETTINGS-8
+            - PUT-DERSTATUS-8
+            - PUT-DERSETTINGS-8
             - WAIT-DERC-8
       - type: remove-steps
         parameters:
@@ -545,9 +545,9 @@ Steps:
             - GET-DERC-8
 
   # (y, z)
-  POST-DERSTATUS-8:
+  PUT-DERSTATUS-8:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
@@ -560,12 +560,12 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-8
+            - PUT-DERSTATUS-8
 
   # (y, z)
-  POST-DERSETTINGS-8:
+  PUT-DERSETTINGS-8:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/derg
         serve_request_first: true # Run this AFTER server receives the request
@@ -577,7 +577,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSETTINGS-8
+            - PUT-DERSETTINGS-8
 
   # (aa) After the end of the previous control...
   WAIT-DERC-8:
@@ -610,8 +610,8 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - POST-DERSTATUS-9
-            - POST-DERSETTINGS-9
+            - PUT-DERSTATUS-9
+            - PUT-DERSETTINGS-9
             - WAIT-DERC-9
       - type: remove-steps
         parameters:
@@ -619,9 +619,9 @@ Steps:
             - GET-DERC-9
 
   # (bb, cc)
-  POST-DERSTATUS-9:
+  PUT-DERSTATUS-9:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
@@ -634,12 +634,12 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-9
+            - PUT-DERSTATUS-9
 
   # (bb, cc)
-  POST-DERSETTINGS-9:
+  PUT-DERSETTINGS-9:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/derg
         serve_request_first: true # Run this AFTER server receives the request
@@ -651,7 +651,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSETTINGS-9
+            - PUT-DERSETTINGS-9
   
   WAIT-DERC-9:
     event:

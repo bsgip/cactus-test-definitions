@@ -42,9 +42,9 @@ Preconditions:
 Steps:
   
   # (c, d)
-  POST-DERSTATUS-DISCONNECT:
+  PUT-DERSTATUS-DISCONNECT:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
@@ -57,7 +57,7 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - POST-DERSTATUS-CONNECT
+            - PUT-DERSTATUS-CONNECT
             - WAIT-TEST-END
       - type: create-der-control
         parameters:
@@ -67,12 +67,12 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-DISCONNECT
+            - PUT-DERSTATUS-DISCONNECT
 
   # (f)
-  POST-DERSTATUS-CONNECT:
+  PUT-DERSTATUS-CONNECT:
     event:
-      type: POST-request-received
+      type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
@@ -85,7 +85,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERSTATUS-CONNECT
+            - PUT-DERSTATUS-CONNECT
 
   # (e) We give the client a minute to respond with a reconnect
   WAIT-TEST-END:
