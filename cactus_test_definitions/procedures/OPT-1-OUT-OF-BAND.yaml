@@ -21,7 +21,7 @@ Preconditions:
   actions:
     - type: register-end-device
       parameters:
-        registration_pin: 11223
+        registration_pin: 11111 # With checksum is 111115
 
 Criteria:
   checks:
@@ -33,6 +33,8 @@ Criteria:
       
 Steps:
   GET-DCAP:
+    instructions:
+      - "An EndDevice has already been registered (out of band) with PIN 111115"
     event:
       type: GET-request-received
       parameters:

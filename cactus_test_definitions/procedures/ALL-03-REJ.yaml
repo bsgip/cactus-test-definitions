@@ -32,6 +32,8 @@ Preconditions:
 Steps:
   # (a, b, c)
   GET-REGISTRATION:
+    instructions:
+      - "An EndDevice has already been registered (out of band) with a different PIN from ALL-01"
     event:
       type: GET-request-received
       parameters:
