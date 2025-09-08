@@ -22,6 +22,8 @@ Preconditions:
     - type: register-end-device
       parameters:
         registration_pin: 11111 # With checksum is 111115
+        aggregator_lfdi: 3E4F45AB31EDFE5B67E343E5E4562E3100000000 # Trailing PEN digits set to 0
+        aggregator_sfdi: 16726121139
 
 Criteria:
   checks:
@@ -35,6 +37,8 @@ Steps:
   GET-DCAP:
     instructions:
       - "An EndDevice has already been registered (out of band) with PIN 111115"
+      - "[Aggregator Client Only] LFDI: 3E4F45AB31EDFE5B67E343E5E4562E31XXXXXXXX (The X values will match your client PEN)"
+      - "[Aggregator Client Only] SFDI: 16726121139"
     event:
       type: GET-request-received
       parameters:
