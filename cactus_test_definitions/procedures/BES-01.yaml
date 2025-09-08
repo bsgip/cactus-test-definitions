@@ -12,9 +12,9 @@ Criteria:
       parameters: {}
 
     # Test includes ~ 5 minutes of waiting + initial reading sent during test
-    # A minimum of 5 readings is required by the test procedure
+    # A minimum of 4 readings is required by the test procedure
     - type: readings-der-stored-energy
-      parameters: { "minimum_count": 5 }
+      parameters: { "minimum_count": 4 }
 
 Preconditions:
   init_actions:
