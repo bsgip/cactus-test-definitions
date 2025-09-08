@@ -12,7 +12,7 @@ Criteria:
     - type: all-steps-complete
       parameters: {}
 
-    # Test is ~4 minutes of waiting which should leave enough time for at least 7 reading posts
+    # Test is ~5 minutes of waiting which should leave enough time for at least 3 reading posts
     - type: readings-site-active-power
       parameters: {"minimum_count": 3} 
     - type: readings-site-reactive-power
@@ -68,7 +68,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 270 # Wait for at least 4 sets of readings to arrive (with post rate 60 seconds)
+        duration_seconds: 300 # Wait for at least 4/5 sets of readings to arrive (with post rate 60 seconds)
     actions:
       - type: remove-steps
         parameters:

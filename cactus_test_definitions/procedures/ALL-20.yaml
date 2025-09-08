@@ -71,14 +71,10 @@ Steps:
       parameters:
         duration_seconds: 600
     actions:
-      - type: set-comms-rate
-        parameters:
-          derp_list_poll_seconds: 60
       - type: enable-steps
         parameters:
           steps:
             - GET-DERP-LIST-2
-            - WAIT-TEST-END
       - type: remove-steps
         parameters:
           steps:
@@ -87,7 +83,30 @@ Steps:
       - Client shall maintain changed DERProgramList poll rate of 120s
 
   # (h)
+  # We will start a "timer" as soon as the client picks up the updated poll rate
   GET-DERP-LIST-2:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/1/derp
+    actions:
+      - type: set-comms-rate
+        parameters:
+          derp_list_poll_seconds: 60
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERP-LIST-3
+            - WAIT-TEST-END
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-LIST-2
+
+
+  # (h)
+  # This step waiting for an updated poll and WAIT-TEST-END will ensure it happens within 60 seconds (the new poll rate)
+  GET-DERP-LIST-3:
     event:
       type: GET-request-received
       parameters:
@@ -96,7 +115,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - GET-DERP-LIST-2
+            - GET-DERP-LIST-3
 
   # (g)
   WAIT-TEST-END:

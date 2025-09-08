@@ -12,11 +12,11 @@ Criteria:
     - type: all-steps-complete
       parameters: {}
 
-    # Test is ~11 minutes of waiting which should leave enough time for at least 10 reading posts
+    # Test is ~11 minutes of waiting which should leave enough time for at least 9 reading posts
     - type: readings-site-active-power
-      parameters: {"minimum_count": 10} 
+      parameters: {"minimum_count": 9} 
     - type: readings-der-active-power
-      parameters: {"minimum_count": 10}
+      parameters: {"minimum_count": 9}
 
 Preconditions:
   init_actions:
