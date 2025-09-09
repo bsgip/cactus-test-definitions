@@ -25,6 +25,11 @@ Preconditions:
   checks:
     - type: end-device-contents
       parameters: {}
+  actions:
+    - type: create-der-program
+      parameters:
+        primacy: 0
+
   instructions:
     - DER shall be generating or consuming at least 50% of its active power rating.
 
