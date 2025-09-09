@@ -12,15 +12,27 @@ Criteria:
     - type: all-steps-complete
       parameters: {}
 
+    # TS 5573 states "Control responses sent by the DER client reflect the ongoing status of each control..."
+    # There is a chance that the controls might overlap slightly (depending on client polling) so we just cover
+    # the received/started Responses - other tests cover this in more detail
+    - type: response-contents
+      parameters:
+        all: true
+        status: 1 # Received
+    - type: response-contents
+      parameters:
+        all: true
+        status: 2 # Started
+
 Preconditions:
   init_actions:
     - type: set-comms-rate
       parameters:
-        dcap_poll_seconds: 60
-        edev_list_poll_seconds: 60
-        fsa_list_poll_seconds: 60
-        der_list_poll_seconds: 60
-        derp_list_poll_seconds: 60
+        dcap_poll_seconds: 120
+        edev_list_poll_seconds: 120
+        fsa_list_poll_seconds: 120
+        der_list_poll_seconds: 120
+        derp_list_poll_seconds: 120
         mup_post_seconds: 60
   checks:
     - type: end-device-contents
@@ -28,37 +40,89 @@ Preconditions:
     - type: der-settings-contents
       parameters: {}
   actions:
-    - type: create-der-control
+    - type: create-der-program
       parameters:
-        start: $(now)
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 2)
-        opModImpLimW: $(setMaxW * 2)
-    - type: create-der-control
-      parameters:
-        start: $(now + '1 minute')
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.3)
-        opModImpLimW: $(setMaxW * 0.3)
-        pow_10_multipliers: 2
-    - type: create-der-control
-      parameters:
-        start: $(now + '2 minutes')
-        duration_seconds: 60
-        opModExpLimW: $(setMaxW * 0.4)
-        opModImpLimW: $(setMaxW * 0.4)
-        pow_10_multipliers: 1
+        primacy: 0
+
   instructions:
     - DER shall be exporting or importing at least 50% of its active power rating at the connection point.
     
 Steps:
-  # This particular test is validated by out of band methods for compliance (or non compliance) to the DOEs
-  # (eg readings from a power meter)
+  # (precondition)
+  GET-DERC-1:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 120
+          opModExpLimW: $(setMaxW * 2)
+          opModImpLimW: $(setMaxW * 2)
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-2
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-1
+
+
+  # (a, b)
+  GET-DERC-2:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 120
+          opModExpLimW: $(setMaxW * 0.3)
+          opModImpLimW: $(setMaxW * 0.3)
+          pow_10_multipliers: 2
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-3
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-2
+
+  # (c, d)
+  GET-DERC-3:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 120
+          opModExpLimW: $(setMaxW * 0.4)
+          opModImpLimW: $(setMaxW * 0.4)
+          pow_10_multipliers: 1
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-TEST-END
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-3
+
+  # Give the control a chance to run and finish
   WAIT-TEST-END:
     event:
       type: wait
       parameters:
-        duration_seconds: 660
+        duration_seconds: 180
     actions:
       - type: remove-steps
         parameters:
@@ -66,8 +130,3 @@ Steps:
             - WAIT-TEST-END
       - type: finish-test
         parameters: {}
-    instructions:
-      - The DER will correctly interpret all DERControls (and their variable scaling factors) by reducing import/export to the expected values
-      - First DERControl = 200% of setMaxW
-      - Second DERControl = 30% of setMaxW
-      - Third DERControl = 40% of setMaxW
