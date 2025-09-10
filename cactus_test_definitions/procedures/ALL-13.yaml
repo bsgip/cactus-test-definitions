@@ -28,17 +28,53 @@ Preconditions:
   checks:
     - type: end-device-contents
       parameters: {}
-  actions:
-    - type: set-default-der-control
-      parameters:
-        setGradW: 100 # hundredths of a percent - this is 1%
 
 Steps:
 
   # (a, b)
-  # On first poll of default control - reset default setGradW and then wait for an updated POLL 
-  # and a request to update DERSettings
-  GET-DEFAULT-DERC:
+  # On first poll of default control - set setGradW to 1%/s
+  GET-DEFAULT-DERC-100:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/dderc
+    actions:
+      - type: set-default-der-control
+        parameters:
+          setGradW: 100 # hundredths of a percent - this is 1%
+      - type: enable-steps
+        parameters:
+          steps:
+            - PUT-DERSETTINGS-SET-GRAD-W-100
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DEFAULT-DERC-100
+
+  # (c)
+  # This will wait until the client POST's a DERSettings with the 1% setGradW
+  PUT-DERSETTINGS-SET-GRAD-W-100:
+    event:
+      type: PUT-request-received
+      parameters:
+        endpoint: /edev/1/der/1/derg
+        serve_request_first: true # Run this AFTER server receives the request
+    checks:
+      type: der-settings-contents
+      parameters:
+        setGradW: 100
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DEFAULT-DERC-27
+      - type: remove-steps
+        parameters:
+          steps:
+            - PUT-DERSETTINGS-SET-GRAD-W-100
+
+  # (after)
+  GET-DEFAULT-DERC-27:
     event:
       type: GET-request-received
       parameters:
@@ -50,53 +86,19 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DEFAULT-DERC-UPDATED
-            - PUT-DERSETTINGS-SET-GRAD-W
+            - PUT-DERSETTINGS-SET-GRAD-W-27
       - type: remove-steps
         parameters:
           steps:
-            - GET-DEFAULT-DERC
+            - GET-DEFAULT-DERC-27
 
-  # (c)
-  # This will wait until the client POST's a DERSettings with the 1% setGradW
-  PUT-DERSETTINGS-SET-GRAD-W:
+  # (after)
+  # This will wait until the client POST's a DERSettings with the 0.27% setGradW
+  PUT-DERSETTINGS-SET-GRAD-W-27:
     event:
       type: PUT-request-received
       parameters:
         endpoint: /edev/1/der/1/derg
-        serve_request_first: true # Run this AFTER server receives the request
-    checks:
-      type: der-settings-contents
-      parameters:
-        setGradW: 100
-    actions:
-      - type: remove-steps
-        parameters:
-          steps:
-            - PUT-DERSETTINGS-SET-GRAD-W
-
-  # (b)
-  GET-DEFAULT-DERC-UPDATED:
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /edev/1/derp/1/dderc
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - PUT-DERSETTINGS-SET-GRAD-W-DEFAULT
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-DEFAULT-DERC-UPDATED
-
-  # This will wait until the client POST's a DERSettings with the 0.27% setGradW
-  PUT-DERSETTINGS-SET-GRAD-W-DEFAULT:
-    event:
-      type: PUT-request-received
-      parameters:
-        endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
     checks:
       type: der-settings-contents
@@ -106,5 +108,5 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - PUT-DERSETTINGS-SET-GRAD-W-DEFAULT
+            - PUT-DERSETTINGS-SET-GRAD-W-27
  
