@@ -1,10 +1,10 @@
 # Cactus Test Definitions
 
-This repository contains YAML test procedure definitions for use with the CSIP-AUS Client Test Harness.
+This repository contains YAML test procedure definitions for use with the CSIP-AUS Client/Server Test Harnesses.
 
 This repository also provides Python dataclasses to make it easier for Python code to work with these definitions. In addition, there are also helper functions for creating valid instances of these dataclasses directly from the YAML test procedure definition files.
 
-Test Procedures can be found in the [cactus_test_definitions/procedures/](cactus_test_definitions/procedures/) directory
+Client Test Procedures can be found in the [cactus_test_definitions/client/procedures/](cactus_test_definitions/client/procedures/) directory
 
 
 ## Development / Testing
@@ -23,7 +23,7 @@ Once installed, run the tests with,
 pytest
 ```
 
-## Test Procedure Schema
+## Client Test Procedure Schema
 
 A `TestProcedure` is a [YAML](https://yaml.org) configuration that describes how a CSIP-Aus Client test case should be implemented by a server / compliance body. It's designed to be human readable but interpretable by a test harness for administering a test. At its most basic level, a `TestProcedure` is a series of a "events" that a client must trigger in sequence in order to demonstrate compliance.
 

@@ -6,19 +6,13 @@ from typing import Iterable
 
 import yaml
 import yaml_include
-from cactus_test_definitions.actions import Action, validate_action_parameters
-from cactus_test_definitions.checks import Check, validate_check_parameters
+from cactus_test_definitions.client.actions import Action, validate_action_parameters
+from cactus_test_definitions.client.checks import Check, validate_check_parameters
+from cactus_test_definitions.client.events import Event, validate_event_parameters
+from cactus_test_definitions.csipaus import CSIPAusVersion
 from cactus_test_definitions.errors import TestProcedureDefinitionError
-from cactus_test_definitions.events import Event, validate_event_parameters
+from cactus_test_definitions.schema import UniqueKeyLoader
 from dataclass_wizard import YAMLWizard
-
-
-class CSIPAusVersion(StrEnum):
-    """The various version identifiers for CSIP-Aus. Used for distinguishing what tests are compatible with what
-    released versions CSIP-Aus."""
-
-    RELEASE_1_2 = "v1.2"
-    BETA_1_3_STORAGE = "v1.3-beta/storage"
 
 
 class TestProcedureId(StrEnum):
@@ -99,27 +93,6 @@ class TestProcedureId(StrEnum):
     BES_02 = "BES-02"
     BES_03 = "BES-03"
     BES_04 = "BES-04"
-
-
-class UniqueKeyLoader(yaml.SafeLoader):
-    """Originally sourced from https://gist.github.com/pypt/94d747fe5180851196eb
-    Prevents duplicate keys from overwriting eachother instead of raising a ValueError.
-
-    eg - consider the following YAML, it will parse OK but should be treated as an error:
-
-    my_class:
-        key1: abc
-        key1: def
-    """
-
-    def construct_mapping(self, node, deep=False):
-        mapping = set()
-        for key_node, _ in node.value:
-            key = self.construct_object(key_node, deep=deep)
-            if key in mapping:
-                raise ValueError(f"Duplicate {key!r} key found in YAML.")
-            mapping.add(key)
-        return super().construct_mapping(node, deep)
 
 
 @dataclass
@@ -313,7 +286,7 @@ class TestProcedureConfig:
 
     @staticmethod
     def from_resource() -> TestProcedures:
-        yaml_resource = resources.files("cactus_test_definitions.procedures") / "test-procedures.yaml"
+        yaml_resource = resources.files("cactus_test_definitions.client.procedures") / "test-procedures.yaml"
         with resources.as_file(yaml_resource) as yaml_file:
             return TestProcedureConfig.from_yamlfile(path=yaml_file)
 

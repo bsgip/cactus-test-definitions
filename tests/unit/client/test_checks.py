@@ -1,7 +1,7 @@
 import pytest
-from cactus_test_definitions.checks import Check, validate_check_parameters
-from cactus_test_definitions.errors import TestProcedureDefinitionError
 from cactus_test_definitions import variable_expressions as varexps
+from cactus_test_definitions.client.checks import Check, validate_check_parameters
+from cactus_test_definitions.errors import TestProcedureDefinitionError
 
 
 @pytest.mark.parametrize(

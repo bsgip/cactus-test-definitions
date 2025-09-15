@@ -3,7 +3,7 @@ from decimal import Decimal
 from typing import Any
 
 import pytest
-from cactus_test_definitions.test_procedures import Action
+from cactus_test_definitions.client.test_procedures import Action
 from cactus_test_definitions.variable_expressions import (
     Constant,
     Expression,

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Any
 
-from cactus_test_definitions.checks import Check
+from cactus_test_definitions.client.checks import Check
 from cactus_test_definitions.errors import TestProcedureDefinitionError
 from cactus_test_definitions.parameters import (
     ParameterSchema,

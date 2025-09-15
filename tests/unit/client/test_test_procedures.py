@@ -1,5 +1,5 @@
 import pytest
-from cactus_test_definitions.test_procedures import (
+from cactus_test_definitions.client.test_procedures import (
     TestProcedure,
     TestProcedureConfig,
     TestProcedureId,

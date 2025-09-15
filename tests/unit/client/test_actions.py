@@ -1,12 +1,12 @@
 from datetime import datetime
 
 import pytest
-from cactus_test_definitions.actions import (
+from cactus_test_definitions import variable_expressions as varexps
+from cactus_test_definitions.client.actions import (
     Action,
     validate_action_parameters,
 )
 from cactus_test_definitions.errors import TestProcedureDefinitionError
-from cactus_test_definitions import variable_expressions as varexps
 
 
 @pytest.mark.parametrize(

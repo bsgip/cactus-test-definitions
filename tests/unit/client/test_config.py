@@ -2,7 +2,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
-from cactus_test_definitions import TestProcedureConfig, TestProcedureDefinitionError
+from cactus_test_definitions.client import TestProcedureConfig
+from cactus_test_definitions.errors import TestProcedureDefinitionError
 from cactus_test_definitions.variable_expressions import (
     Constant,
     Expression,
