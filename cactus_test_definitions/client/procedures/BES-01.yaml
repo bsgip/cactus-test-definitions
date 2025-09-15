@@ -29,7 +29,7 @@ Preconditions:
     # Placeholder for later controls
     - type: create-der-program
       parameters:
-        primacy: 1
+        primacy: 0
         fsa_id: 1
 
   checks:
@@ -110,6 +110,7 @@ Steps:
           start: $(now)
           duration_seconds: 600
           opModStorageTargetW: 0
+          primacy: 0
       - type: enable-steps
         parameters:
           steps:
