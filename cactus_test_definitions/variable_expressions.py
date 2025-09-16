@@ -1,4 +1,5 @@
 import tokenize
+import abc
 from dataclasses import dataclass
 from datetime import timedelta
 from enum import IntEnum, auto
@@ -99,15 +100,59 @@ OPERATION_MAPPINGS = {
 }
 
 
+def snake_to_camel(snake: str) -> str:
+    """Simple snake to camel case converter"""
+    temp = snake.replace("_", " ").title().replace(" ", "")
+    return temp[0].lower() + temp[1:]
+
+
+def named_variable_repr(named_var: NamedVariableType) -> str:
+    """Takes named variable enum and turns its name into its recognisable 2030.5 form"""
+    name = named_var.name
+    if len(name.split("_")) == 1:
+        return snake_to_camel(name)
+    match name.split("_", 1):
+        case ["DERCAPABILITY", "NEG_RTG_MAX_CHARGE_RATE_W"]:
+            return "(-DERCapability.rtgMaxChargeRateW)"
+        case ["DERCAPABILITY", "RTG_MAX_VA"]:
+            return "DERCapability.rtgMaxVA"
+        case ["DERSETTING", "SET_MAX_VA"]:
+            return "DERSetting.setMaxVA"
+        case ["DERCAPABILITY", param_name]:
+            return f"DERCapability.{snake_to_camel(param_name)}"
+        case ["DERSETTING", param_name]:
+            return f"DERSetting.{snake_to_camel(param_name)}"
+
+    return snake_to_camel(name)
+
+
+def operation_repr(op: OperationType) -> str:
+    """Takes an operation type and returns its string representation"""
+    operation_type_to_str_map: dict[OperationType, str] = {v: k for k, v in OPERATION_MAPPINGS.items()}
+    return operation_type_to_str_map[op]
+
+
+class BaseExpression(abc.ABC):
+    """A base class for all expressions to inherit from"""
+
+    @abc.abstractmethod
+    def expression_representation(self) -> str:
+        """Method for representing an expression human readably without overriding magic methods"""
+        raise NotImplementedError
+
+
 @dataclass
-class Constant:
+class Constant(BaseExpression):
     """Represents a constant value that doesn't require any test execution time resolution"""
 
     value: ConstantType  # The parsed value
 
+    def expression_representation(self) -> str:
+        return f"{self.value}"
+
 
 @dataclass
-class NamedVariable:
+class NamedVariable(BaseExpression):
     """A "NamedVariable" is value that can only be resolved at point during a test procedure execution (eg: as a
     Step's action is being applied). There are a fixed set of known variable types defined by NamedVariableType.
 
@@ -116,15 +161,25 @@ class NamedVariable:
 
     variable: NamedVariableType
 
+    def expression_representation(self) -> str:
+        return named_variable_repr(self.variable)
+
 
 @dataclass
-class Expression:
+class Expression(BaseExpression):
     """An expression is a simple combination of two values that combine to make a single constant value. The operands
     can be constants or NamedVariables."""
 
     operation: OperationType
     lhs_operand: NamedVariable | Constant  # left hand side operand
     rhs_operand: NamedVariable | Constant  # right hand side operand
+
+    def expression_representation(self) -> str:
+        return " ".join([
+            f"{self.lhs_operand.expression_representation()}",
+            f"{operation_repr(self.operation)}",
+            f"{self.rhs_operand.expression_representation()}",
+        ])
 
 
 def parse_time_delta(var_body: str) -> timedelta:

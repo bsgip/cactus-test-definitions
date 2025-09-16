@@ -16,6 +16,10 @@ from cactus_test_definitions.variable_expressions import (
     parse_time_delta,
     parse_variable_expression_body,
     try_extract_variable_expression,
+    snake_to_camel,
+    named_variable_repr,
+    operation_repr,
+    BaseExpression,
 )
 
 
@@ -335,3 +339,64 @@ def test_has_named_variable(
     result = has_named_variable(parameter_value=parameter, named_variable=variable)
     assert isinstance(result, bool)
     assert result == expected
+
+
+@pytest.mark.parametrize(
+    "input,expected",
+    [
+        ("SET_MAX_W", "setMaxW"),
+        ("SET_MAX_VAR", "setMaxVar"),
+        ("NOW", "now"),
+    ],
+)
+def test_snake_to_camel(input: str, expected: str) -> None:
+    assert snake_to_camel(input) == expected
+
+
+@pytest.mark.parametrize(
+    "input,expected",
+    [
+        (NamedVariableType.DERCAPABILITY_RTG_MAX_VAR, "DERCapability.rtgMaxVar"),
+        (NamedVariableType.DERSETTING_SET_MIN_WH, "DERSetting.setMinWh"),
+        (NamedVariableType.DERCAPABILITY_RTG_MAX_VA, "DERCapability.rtgMaxVA"),
+        (NamedVariableType.DERSETTING_SET_MAX_VA, "DERSetting.setMaxVA"),
+        (NamedVariableType.DERCAPABILITY_NEG_RTG_MAX_CHARGE_RATE_W, "(-DERCapability.rtgMaxChargeRateW)"),
+        (NamedVariableType.NOW, "now"),
+    ],
+)
+def test_named_variable_repr(input: NamedVariableType, expected: str) -> None:
+    assert named_variable_repr(input) == expected
+
+
+@pytest.mark.parametrize(
+    "input,expected",
+    [
+        (OperationType.ADD, "+"),
+        (OperationType.MULTIPLY, "*"),
+        (OperationType.SUBTRACT, "-"),
+        (OperationType.DIVIDE, "/"),
+        (OperationType.EQ, "=="),
+        (OperationType.GT, ">"),
+        (OperationType.GTE, ">="),
+        (OperationType.LT, "<"),
+        (OperationType.LTE, "<="),
+        (OperationType.NE, "!="),
+    ],
+)
+def test_operation_repr(input: OperationType, expected: str) -> None:
+    assert operation_repr(input) == expected
+
+
+@pytest.mark.parametrize(
+    "input,expected",
+    [
+        (NamedVariable(variable=NamedVariableType.DERCAPABILITY_RTG_MAX_VA), "DERCapability.rtgMaxVA"),
+        (
+            Expression(OperationType.ADD, NamedVariable(NamedVariableType.DERSETTING_SET_MIN_WH), Constant(5.5)),
+            "DERSetting.setMinWh + 5.5",
+        ),
+        (Constant(654.456), "654.456"),
+    ],
+)
+def test_base_expression_expression_representation(input: BaseExpression, expected: str) -> None:
+    assert input.expression_representation() == expected
