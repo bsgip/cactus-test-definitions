@@ -49,7 +49,7 @@ Steps:
     event:
       type: POST-request-received
       parameters:
-        endpoint: /edev/1/sub
+        endpoint: /edev/0/sub
         serve_request_first: true
       checks:
         - type: subscription-contents
@@ -73,7 +73,7 @@ Steps:
     event:
       type: POST-request-received
       parameters:
-        endpoint: /edev/1/sub
+        endpoint: /edev/0/sub
         serve_request_first: true
       checks:
         - type: subscription-contents
@@ -97,7 +97,7 @@ Steps:
     event:
       type: POST-request-received
       parameters:
-        endpoint: /edev/1/sub
+        endpoint: /edev/0/sub
         serve_request_first: true
       checks:
         - type: subscription-contents
@@ -121,7 +121,7 @@ Steps:
     event:
       type: POST-request-received
       parameters:
-        endpoint: /edev/1/sub
+        endpoint: /edev/0/sub
         serve_request_first: true
       checks:
         - type: subscription-contents
@@ -148,7 +148,7 @@ Steps:
     event:
       type: POST-request-received
       parameters:
-        endpoint: /edev/1/sub
+        endpoint: /edev/0/sub
         serve_request_first: true
       checks:
         - type: subscription-contents
