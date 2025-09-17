@@ -175,11 +175,13 @@ class Expression(BaseExpression):
     rhs_operand: NamedVariable | Constant  # right hand side operand
 
     def expression_representation(self) -> str:
-        return " ".join([
-            f"{self.lhs_operand.expression_representation()}",
-            f"{operation_repr(self.operation)}",
-            f"{self.rhs_operand.expression_representation()}",
-        ])
+        return " ".join(
+            [
+                f"{self.lhs_operand.expression_representation()}",
+                f"{operation_repr(self.operation)}",
+                f"{self.rhs_operand.expression_representation()}",
+            ]
+        )
 
 
 def parse_time_delta(var_body: str) -> timedelta:
