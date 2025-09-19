@@ -18,7 +18,7 @@ from dataclass_wizard import YAMLWizard
 class TestProcedureId(StrEnum):
     """The set of all available test ID's
 
-    This should be kept in sync with the current set of test procedures loaded from the procedures directory"""
+    This should be kept in sync with the current set of client test procedures loaded from the procedures directory"""
 
     __test__ = False  # Prevent pytest from picking up this class
     ALL_01 = "ALL-01"
@@ -157,7 +157,7 @@ class TestProcedure:
 
 @dataclass
 class TestProcedures(YAMLWizard):
-    """Represents a collection of CSIP-AUS test procedure descriptions/specifications
+    """Represents a collection of CSIP-AUS client test procedure descriptions/specifications
 
     By sub-classing the YAMLWizard mixin, we get access to the class method `from_yaml`
     which we can use to create an instances of `TestProcedures`.

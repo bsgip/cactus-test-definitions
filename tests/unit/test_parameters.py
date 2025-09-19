@@ -4,6 +4,7 @@ from itertools import product
 from typing import Any
 
 import pytest
+from cactus_test_definitions.csipaus import CSIPAusReadingType, CSIPAusResource
 from cactus_test_definitions.errors import TestProcedureDefinitionError
 from cactus_test_definitions.parameters import (
     ParameterSchema,
@@ -90,6 +91,68 @@ def test_is_valid_parameter_type_skipped_values(value: Any, type: ParameterType)
         (ParameterType.HexBinary, 1.2, False),
         (ParameterType.HexBinary, Decimal("1.0"), False),
         (ParameterType.HexBinary, True, False),
+        (ParameterType.CSIPAusResource, True, False),
+        (ParameterType.CSIPAusResource, 123, False),
+        (ParameterType.CSIPAusResource, "NotAResourceType", False),
+        (ParameterType.CSIPAusResource, "ActivePowerInstantaneous", False),
+        (ParameterType.CSIPAusResource, "EndDevice", True),
+        (ParameterType.CSIPAusResource, ["EndDevice"], False),
+        (ParameterType.ListCSIPAusResource, True, False),
+        (ParameterType.ListCSIPAusResource, 123, False),
+        (ParameterType.ListCSIPAusResource, "NotAResourceType", False),
+        (ParameterType.ListCSIPAusResource, "EndDevice", False),
+        (ParameterType.ListCSIPAusResource, ["EndDevice"], True),
+        (ParameterType.ListCSIPAusResource, ["EndDevice", "NotAResource"], False),
+        (ParameterType.ListCSIPAusResource, ["ActivePowerInstantaneous"], False),
+        (ParameterType.CSIPAusReadingType, True, False),
+        (ParameterType.CSIPAusReadingType, 123, False),
+        (ParameterType.CSIPAusReadingType, "NotAResourceType", False),
+        (ParameterType.CSIPAusReadingType, "EndDevice", False),
+        (ParameterType.CSIPAusReadingType, "ActivePowerInstantaneous", True),
+        (ParameterType.CSIPAusReadingType, ["ActivePowerSiteInstantaneous"], False),
+        (ParameterType.ListCSIPAusReadingType, True, False),
+        (ParameterType.ListCSIPAusReadingType, 123, False),
+        (ParameterType.ListCSIPAusReadingType, "NotAResourceType", False),
+        (ParameterType.ListCSIPAusReadingType, "EndDevice", False),
+        (ParameterType.ListCSIPAusReadingType, "ActivePowerInstantaneous", False),
+        (ParameterType.ListCSIPAusReadingType, ["ActivePowerInstantaneous"], True),
+        (ParameterType.ListCSIPAusReadingType, ["ActivePowerInstantaneous", "NotAResource"], False),
+        (ParameterType.ListCSIPAusReadingType, ["EndDevice"], False),
+        (ParameterType.CSIPAusReadingLocation, True, False),
+        (ParameterType.CSIPAusReadingLocation, 123, False),
+        (ParameterType.CSIPAusReadingLocation, "NotAResourceType", False),
+        (ParameterType.CSIPAusReadingLocation, "EndDevice", False),
+        (ParameterType.CSIPAusReadingLocation, "Site", True),
+        (ParameterType.CSIPAusReadingLocation, ["Site"], False),
+        (ParameterType.ReadingTypeValues, 123, False),
+        (ParameterType.ReadingTypeValues, "ActivePowerInstantaneous", False),
+        (ParameterType.ReadingTypeValues, [123], False),
+        (ParameterType.ReadingTypeValues, {}, False),
+        (
+            ParameterType.ReadingTypeValues,
+            {"ActivePowerInstantaneous": [100, 1.23], "ActivePowerAverage": [200, -300]},
+            True,
+        ),
+        (
+            ParameterType.ReadingTypeValues,
+            {"ActivePowerInstantaneous": [100, 200], "ActivePowerAverage": [200, 300, 400]},
+            False,
+        ),
+        (
+            ParameterType.ReadingTypeValues,
+            {"ActivePowerInstantaneous": [100, 200], "ActivePowerAverage": [200, 300], "Foo": [100, 200]},
+            False,
+        ),
+        (
+            ParameterType.ReadingTypeValues,
+            {"ActivePowerInstantaneous": [100, 200], "ActivePowerAverage": [200, "1.23"]},
+            False,
+        ),
+        (
+            ParameterType.ReadingTypeValues,
+            {"ActivePowerInstantaneous": 100, "ActivePowerAverage": 200},
+            False,
+        ),
     ],
 )
 def test_is_valid_parameter_type(type: ParameterType, value: Any, expected: bool):

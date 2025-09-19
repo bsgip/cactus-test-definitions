@@ -1,0 +1,181 @@
+from dataclasses import dataclass
+from enum import StrEnum
+from importlib import resources
+from pathlib import Path
+from typing import Iterable
+
+import yaml
+import yaml_include
+from cactus_test_definitions.csipaus import CSIPAusVersion
+from cactus_test_definitions.errors import TestProcedureDefinitionError
+from cactus_test_definitions.schema import UniqueKeyLoader
+from cactus_test_definitions.server.actions import Action, validate_action_parameters
+from cactus_test_definitions.server.checks import Check, validate_check_parameters
+from dataclass_wizard import YAMLWizard
+
+
+class TestProcedureId(StrEnum):
+    """The set of all available test ID's
+
+    This should be kept in sync with the current set of test procedures loaded from the procedures directory"""
+
+    __test__ = False  # Prevent pytest from picking up this class
+    S_ALL_01 = "S_ALL-01"
+
+
+class ClientType(StrEnum):
+    DEVICE = "device"  # This is a direct device client - i.e. the cert will match a SPECIFIC EndDevice
+    AGGREGATOR = "aggregator"  # This is an aggregator client - i.e. the cert can manage MANY EndDevices
+
+
+@dataclass
+class RequiredClient:
+    """A RequiredClient is a way for a test to assert that it needs a specific client type or set of clients. The id
+    will be used internally within a test to reference a specific client"""
+
+    id: str  # How this client will be referred to within the step's of the test
+    client_type: ClientType | None = None  # If set - the client type that is required
+
+
+@dataclass
+class Step:
+    """A step is an action for a client to execute and then a series of checks to validate the results. If the action
+    raises an exception OR any of the checks fail, this step will marked as failed and the test will be aborted.
+
+    Actions might represent a single operation or they may represent a series of polls/checks over a period of time.
+    """
+
+    name: str  # Descriptive label for this step
+    action: Action  # The action to execute when the step starts
+    client: str | list[str] | None = (
+        None  # The RequiredClient.id(s) that will execute this step. If None - use the 0th client. If many, do all
+    )
+    checks: list[Check] | None = None  # The checks (if any) to execute AFTER action completes to determine success
+    instructions: list[str] | None = None  # Text to display while this step executes
+
+
+@dataclass
+class Preconditions:
+    """Preconditions are a way of setting up the test / server before the test begins.
+
+    Checks are also included to prevent a client from starting a test before they have correctly met preconditions
+
+    Instructions are out-of-band operations that need performing at the start of the test procedure
+    e.g. attach a load etc.
+
+    If immediate_start is set to True - the "initialization" step will be progressed through immediately so that the
+    client has no opportunity to interact with the server in this state. Any actions will still be executed. Do NOT
+    utilise immediate_start with precondition checks.
+    """
+
+    required_clients: list[RequiredClient]  # What client(s) need to be supplied to run this test procedure
+    checks: list[Check] | None = None  # Test won't start until all these checks return True - re-tested regularly
+    instructions: list[str] | None = None  # Text to display while waiting for preconditions to be met
+
+
+@dataclass
+class TestProcedure:
+    """Top level object for collecting everything relevant to a single TestProcedure"""
+
+    __test__ = False  # Prevent pytest from picking up this class
+    description: str  # Metadata from test definitions
+    category: str  # Metadata from test definitions
+    classes: list[str]  # Metadata from test definitions
+    target_versions: list[CSIPAusVersion]  # What version(s) of csip-aus is this test targeting?
+    preconditions: Preconditions
+    steps: list[Step]  # What behavior will the test procedure be evaluating?
+
+
+@dataclass
+class TestProcedures(YAMLWizard):
+    """Represents a collection of CSIP-AUS server test procedure descriptions/specifications
+
+    By sub-classing the YAMLWizard mixin, we get access to the class method `from_yaml`
+    which we can use to create an instances of `TestProcedures`.
+    """
+
+    __test__ = False  # Prevent pytest from picking up this class
+
+    description: str
+    version: str
+    test_procedures: dict[str, TestProcedure]
+
+    def validate(self):
+        for tp_name, tp in self.test_procedures.items():
+
+            # Check preconditions
+            if tp.preconditions.checks:
+                for check in tp.preconditions.checks:
+                    validate_check_parameters(tp_name, check)
+            if not tp.preconditions.required_clients:
+                raise TestProcedureDefinitionError(
+                    f"{tp_name} has no RequiredClients element. At least 1 entry required"
+                )
+            required_clients_by_id = dict(((rc.id, rc) for rc in tp.preconditions.required_clients))
+
+            for step in tp.steps:
+                validate_action_parameters(tp_name, step.name, step.action)
+
+                # Validate step checks
+                if step.checks:
+                    for check in step.checks:
+                        validate_check_parameters(tp_name, check)
+
+                # Ensure client exists
+                if step.client is not None and step.client not in required_clients_by_id:
+                    raise TestProcedureDefinitionError(
+                        f"{tp_name} reference client {step.client} that isn't listed in RequiredClients."
+                    )
+
+
+class TestProcedureConfig:
+    __test__ = False  # Prevent pytest from picking up this class
+
+    @staticmethod
+    def from_yamlfile(path: Path, skip_validation: bool = False) -> TestProcedures:
+        """Converts a yaml file given by 'path' into a 'TestProcedures' instance.
+
+        Supports parts of the TestProcedures instance being described by external
+        YAML files. These are referenced in the parent yaml file using the `!include` directive.
+
+        skip_validation: If True, the test_procedures.validate() call will not be made
+
+        Example:
+
+            Description: CSIP-AUS Client Test Procedures
+            Version: 0.1
+            TestProcedures:
+              ALL-01: !include ALL-01.yaml
+        """
+        with open(path, "r") as f:
+            yaml_contents = f.read()
+
+        # Modifies the pyyaml's load method to support references to external yaml files
+        # through the `!include` directive.
+        yaml.add_constructor(
+            "!include", constructor=yaml_include.Constructor(base_dir=path.parent), Loader=UniqueKeyLoader
+        )
+
+        # ...because we are using YAMLWizard we need to supply a decoder and a Loader to
+        # use this modified version.
+        test_procedures: TestProcedures = TestProcedures.from_yaml(
+            yaml_contents,
+            decoder=yaml.load,  # type: ignore
+            Loader=UniqueKeyLoader,
+        )
+
+        if not skip_validation:
+            test_procedures.validate()
+
+        return test_procedures
+
+    @staticmethod
+    def from_resource() -> TestProcedures:
+        yaml_resource = resources.files("cactus_test_definitions.server.procedures") / "test-procedures.yaml"
+        with resources.as_file(yaml_resource) as yaml_file:
+            return TestProcedureConfig.from_yamlfile(path=yaml_file)
+
+    @staticmethod
+    def available_tests() -> Iterable[str]:
+        test_procedures: TestProcedures = TestProcedureConfig.from_resource()
+        return test_procedures.test_procedures.keys()

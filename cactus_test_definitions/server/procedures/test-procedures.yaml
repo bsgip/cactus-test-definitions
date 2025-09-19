@@ -1,0 +1,6 @@
+---
+Description: CSIP-AUS Server Test Procedures
+Version: 0.1
+TestProcedures:
+  S-ALL-01: !include S-ALL-01.yaml
+  

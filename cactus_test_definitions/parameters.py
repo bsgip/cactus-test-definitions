@@ -4,6 +4,11 @@ from decimal import Decimal
 from enum import IntEnum, auto
 from typing import Any
 
+from cactus_test_definitions.csipaus import (
+    CSIPAusReadingLocation,
+    CSIPAusReadingType,
+    CSIPAusResource,
+)
 from cactus_test_definitions.errors import TestProcedureDefinitionError
 from cactus_test_definitions.variable_expressions import is_resolvable_variable
 
@@ -19,6 +24,12 @@ class ParameterType(IntEnum):
     DateTime = auto()  # TZ aware datetime
     ListString = auto()  # List of strings
     HexBinary = auto()
+    CSIPAusResource = auto()  # Member of cactus_test_definitions.csipaus.CSIPAusResource
+    ListCSIPAusResource = auto()  # List where each member is a cactus_test_definitions.csipaus.CSIPAusResource
+    CSIPAusReadingType = auto()  # Member of cactus_test_definitions.csipaus.CSIPAusReadingType
+    ListCSIPAusReadingType = auto()  # List where each member is a cactus_test_definitions.csipaus.CSIPAusReadingType
+    CSIPAusReadingLocation = auto()  # Member of cactus_test_definitions.csipaus.CSIPAusReadingLocation
+    ReadingTypeValues = auto()  # A dict of type dict[CSIPAusReadingType, list[float]], each list has the same length
 
 
 @dataclass(frozen=True)
@@ -64,6 +75,47 @@ def is_valid_parameter_type(expected_type: ParameterType, value: Any) -> bool:
                 return True
             except Exception:
                 return False
+        case ParameterType.CSIPAusResource:
+            try:
+                return CSIPAusResource(value) == value
+            except Exception:
+                return False
+        case ParameterType.ListCSIPAusResource:
+            return isinstance(value, list) and all(
+                (is_valid_parameter_type(ParameterType.CSIPAusResource, e) for e in value)
+            )
+        case ParameterType.CSIPAusReadingType:
+            try:
+                return CSIPAusReadingType(value) == value
+            except Exception:
+                return False
+        case ParameterType.ListCSIPAusReadingType:
+            return isinstance(value, list) and all(
+                (is_valid_parameter_type(ParameterType.CSIPAusReadingType, e) for e in value)
+            )
+        case ParameterType.CSIPAusReadingLocation:
+            try:
+                return CSIPAusReadingLocation(value) == value
+            except Exception:
+                return False
+        case ParameterType.ReadingTypeValues:
+            if not value or not isinstance(value, dict):
+                return False
+
+            last_length: int | None = None
+            for reading_type, reading_vals in value.items():
+                if (
+                    not is_valid_parameter_type(ParameterType.CSIPAusReadingType, reading_type)
+                    or not isinstance(reading_vals, list)
+                    or not all((is_valid_parameter_type(ParameterType.Float, rv) for rv in reading_vals))
+                ):
+                    return False
+
+                if last_length is None:
+                    last_length = len(reading_vals)
+                elif last_length != len(reading_vals):
+                    return False
+            return True
 
     raise TestProcedureDefinitionError(f"Unexpected ParameterType: {ParameterType}")
 
