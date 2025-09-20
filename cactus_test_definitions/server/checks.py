@@ -34,7 +34,7 @@ class Check:
 
 # The parameter schema for each action, keyed by the action name
 CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
-    "has-discovered": {
+    "discovered": {
         "resources": ParameterSchema(True, ParameterType.ListCSIPAusResource),
         "links": ParameterSchema(True, ParameterType.ListCSIPAusResource),
     },
@@ -43,7 +43,44 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
             False, ParameterType.Boolean
         )  # If set - assert the existence / non existence of an EndDevice for the current client
     },
-    "der-control": {"minimum_count": ParameterSchema(True, ParameterType.Integer)},
+    "der-control": {
+        "minimum_count": ParameterSchema(False, ParameterType.Float),  # Needs at least this many controls to pass
+        "maximum_count": ParameterSchema(False, ParameterType.Float),  # Needs at most this many controls to pass
+        "latest": ParameterSchema(False, ParameterType.Boolean),  # forces filter checks against the most recent control
+        "opModImpLimW": ParameterSchema(False, ParameterType.Float),  # Filters controls based on this value
+        "opModExpLimW": ParameterSchema(False, ParameterType.Float),  # Filters controls based on this value
+        "opModLoadLimW": ParameterSchema(False, ParameterType.Float),  # Filters controls based on this value
+        "opModGenLimW": ParameterSchema(False, ParameterType.Float),  # Filters controls based on this value
+        "opModEnergize": ParameterSchema(False, ParameterType.Boolean),  # Filters controls based on this value
+        "opModConnect": ParameterSchema(False, ParameterType.Boolean),  # Filters controls based on this value
+        "rampTms": ParameterSchema(False, ParameterType.Integer),  # Filter on this val. 0 means negative assertion
+        "event_status": ParameterSchema(False, ParameterType.Integer),  # Expected Event.status value
+        "responseRequired": ParameterSchema(False, ParameterType.Integer),  # Expected responseRequired value
+    },  # Matches many DERControls (specified by minimum_count) against additional other filter criteria
+    "default-der-control": {
+        "opModImpLimW": ParameterSchema(False, ParameterType.Float),
+        "opModExpLimW": ParameterSchema(False, ParameterType.Float),
+        "opModGenLimW": ParameterSchema(False, ParameterType.Float),
+        "opModLoadLimW": ParameterSchema(False, ParameterType.Float),
+        "setGradW": ParameterSchema(False, ParameterType.Integer),  # Hundredths of a percent / second
+    },  # matches any DefaultDERControl with the specified values
+    "mirror-usage-point": {
+        "matches": ParameterSchema(True, ParameterType.Boolean),  # True for positive assert, False for negative assert
+        "location": ParameterSchema(True, ParameterType.CSIPAusReadingLocation),
+        "reading_types": ParameterSchema(True, ParameterType.ListCSIPAusReadingType),
+        "mmr_mrids": ParameterSchema(
+            False, ParameterType.ListString
+        ),  # Must correspond 1-1 with reading_types. Used for forcing specific mrid values
+        "post_rate_seconds": ParameterSchema(False, ParameterType.Integer),  # Only asserted if specified
+    },  # True if the matches assertion finds a MirrorUsagePoint with the specified parameters (requires exact match)
+    "subscription": {
+        "matches": ParameterSchema(True, ParameterType.Boolean),  # True for positive assert, False for negative assert
+        "resource": ParameterSchema(True, ParameterType.CSIPAusResource),
+    },  # Matches the existence/nonexistence of a subscription for the specified resource
+    "poll-rate": {
+        "resource": ParameterSchema(True, ParameterType.CSIPAusResource),
+        "poll_rate_seconds": ParameterSchema(True, ParameterType.Integer),
+    },  # Asserts a specific poll rate value
 }
 VALID_CHECK_NAMES: set[str] = set(CHECK_PARAMETER_SCHEMA.keys())
 

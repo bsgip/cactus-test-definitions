@@ -1,4 +1,4 @@
-from enum import StrEnum, auto
+from enum import StrEnum
 
 
 class CSIPAusVersion(StrEnum):
@@ -13,60 +13,60 @@ class CSIPAusResource(StrEnum):
     """Labels for each resource type that the server/client tests might reference. This is not designed to be
     an exhaustive list of all SEP2 / CSIP-Aus models - only the entities that might have tests applied to them."""
 
-    DeviceCapability = auto()
+    DeviceCapability = "DeviceCapability"
 
-    Time = auto()
+    Time = "Time"
 
-    MirrorUsagePointListLink = auto()
-    MirrorUsagePointList = auto()
-    MirrorUsagePoint = auto()
-    MirrorMeterReadingList = auto()
-    MirrorMeterReading = auto()
+    MirrorUsagePointList = "MirrorUsagePointList"
+    MirrorUsagePoint = "MirrorUsagePoint"
+    MirrorMeterReadingList = "MirrorMeterReadingList"
+    MirrorMeterReading = "MirrorMeterReading"
 
-    EndDeviceListLink = auto()
-    EndDeviceList = auto()
-    EndDevice = auto()
+    EndDeviceList = "EndDeviceList"
+    EndDevice = "EndDevice"
 
-    FunctionSetAssignmentsListLink = auto()
-    FunctionSetAssignmentsList = auto()
-    FunctionSetAssignments = auto()
+    FunctionSetAssignmentsList = "FunctionSetAssignmentsList"
+    FunctionSetAssignments = "FunctionSetAssignments"
 
-    DERProgramListLink = auto()
-    DERProgramList = auto()
-    DERProgram = auto()
+    DERProgramList = "DERProgramList"
+    DERProgram = "DERProgram"
 
-    DERControlListLink = auto()
-    DERControlList = auto()
-    DERControl = auto()
+    DERControlList = "DERControlList"
+    DERControl = "DERControl"
 
-    DefaultDERControlLink = auto()
-    DefaultDERControl = auto()
+    DefaultDERControl = "DefaultDERControl"
+
+    DERList = "DERList"
+    DER = "DER"
+    DERCapability = "DERCapability"
+    DERSettings = "DERSettings"
+    DERStatus = "DERStatus"
 
 
 class CSIPAusReadingLocation(StrEnum):
-    Site = auto()  # The reading is measured at the site's connection point
-    Device = auto()  # The reading is measured at the actual device (behind the meter)
+    Site = "Site"  # The reading is measured at the site's connection point
+    Device = "Device"  # The reading is measured at the actual device (behind the meter)
 
 
 class CSIPAusReadingType(StrEnum):
     """A non exhaustive set of CSIPAus reading types / role flags that can be specified in tests"""
 
-    ActivePowerAverage = auto()
-    ActivePowerInstantaneous = auto()
-    ActivePowerMaximum = auto()
-    ActivePowerMinimum = auto()
+    ActivePowerAverage = "ActivePowerAverage"
+    ActivePowerInstantaneous = "ActivePowerInstantaneous"
+    ActivePowerMaximum = "ActivePowerMaximum"
+    ActivePowerMinimum = "ActivePowerMinimum"
 
-    ReactivePowerAverage = auto()
-    ReactivePowerInstantaneous = auto()
-    ReactivePowerMaximum = auto()
-    ReactivePowerMinimum = auto()
+    ReactivePowerAverage = "ReactivePowerAverage"
+    ReactivePowerInstantaneous = "ReactivePowerInstantaneous"
+    ReactivePowerMaximum = "ReactivePowerMaximum"
+    ReactivePowerMinimum = "ReactivePowerMinimum"
 
-    FrequencyAverage = auto()
-    FrequencyInstantaneous = auto()
-    FrequencyMaximum = auto()
-    FrequencyMinimum = auto()
+    FrequencyAverage = "FrequencyAverage"
+    FrequencyInstantaneous = "FrequencyInstantaneous"
+    FrequencyMaximum = "FrequencyMaximum"
+    FrequencyMinimum = "FrequencyMinimum"
 
-    VoltageSinglePhaseAverage = auto()
-    VoltageSinglePhaseInstantaneous = auto()
-    VoltageSinglePhaseMaximum = auto()
-    VoltageSinglePhaseMinimum = auto()
+    VoltageSinglePhaseAverage = "VoltageSinglePhaseAverage"
+    VoltageSinglePhaseInstantaneous = "VoltageSinglePhaseInstantaneous"
+    VoltageSinglePhaseMaximum = "VoltageSinglePhaseMaximum"
+    VoltageSinglePhaseMinimum = "VoltageSinglePhaseMinimum"

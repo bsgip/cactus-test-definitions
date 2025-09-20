@@ -47,9 +47,11 @@ class Step:
 
     name: str  # Descriptive label for this step
     action: Action  # The action to execute when the step starts
-    client: str | list[str] | None = (
-        None  # The RequiredClient.id(s) that will execute this step. If None - use the 0th client. If many, do all
+    client: str | None = None  # The RequiredClient.id that will execute this step. If None - use the 0th client.
+    use_client_context: str | None = (
+        None  # Specify to allow a request to execute with clientX using the context of clientY
     )
+    repeat_until_pass: bool = False  # If True - failing checks will cause this step to re-execute until successful
     checks: list[Check] | None = None  # The checks (if any) to execute AFTER action completes to determine success
     instructions: list[str] | None = None  # Text to display while this step executes
 
@@ -58,14 +60,10 @@ class Step:
 class Preconditions:
     """Preconditions are a way of setting up the test / server before the test begins.
 
-    Checks are also included to prevent a client from starting a test before they have correctly met preconditions
+    Instructions are out-of-band information to show until the preconditions are all met.
 
-    Instructions are out-of-band operations that need performing at the start of the test procedure
-    e.g. attach a load etc.
-
-    If immediate_start is set to True - the "initialization" step will be progressed through immediately so that the
-    client has no opportunity to interact with the server in this state. Any actions will still be executed. Do NOT
-    utilise immediate_start with precondition checks.
+    If any checks are required - they will be polled regularly until ALL pass. For each check poll, a discovery
+    will be run to ensure data is available.
     """
 
     required_clients: list[RequiredClient]  # What client(s) need to be supplied to run this test procedure
