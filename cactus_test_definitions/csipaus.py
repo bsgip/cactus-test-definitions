@@ -24,6 +24,8 @@ class CSIPAusResource(StrEnum):
 
     EndDeviceList = "EndDeviceList"
     EndDevice = "EndDevice"
+    ConnectionPoint = "ConnectionPoint"
+    Registration = "Registration"
 
     FunctionSetAssignmentsList = "FunctionSetAssignmentsList"
     FunctionSetAssignments = "FunctionSetAssignments"

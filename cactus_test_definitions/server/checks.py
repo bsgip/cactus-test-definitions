@@ -21,11 +21,13 @@ class Check:
     eg: Ensuring that the client was able to see an EndDevice registration"""
 
     type: str
-    parameters: dict[str, Any]
+    parameters: dict[str, Any] = None  # type: ignore # This will be forced in __post_init__
 
     def __post_init__(self):
         """Some parameter values might contain variable expressions (eg: a string "$now") that needs to be replaced
         with an parsed Expression object instead."""
+        if self.parameters is None:
+            self.parameters = {}
         for k, v in self.parameters.items():
             variable_expr = try_extract_variable_expression(v)
             if variable_expr:
@@ -38,10 +40,19 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "resources": ParameterSchema(True, ParameterType.ListCSIPAusResource),
         "links": ParameterSchema(True, ParameterType.ListCSIPAusResource),
     },
+    "time-synced": {},  # Passes if the current Time resource is synced with this client's date/time
     "end-device": {
-        "matches-client": ParameterSchema(
+        "matches_client": ParameterSchema(
             False, ParameterType.Boolean
         )  # If set - assert the existence / non existence of an EndDevice for the current client
+    },
+    "der-program": {
+        "minimum_count": ParameterSchema(False, ParameterType.Float),  # Needs at least this many derps to pass
+        "maximum_count": ParameterSchema(False, ParameterType.Float),  # Needs at most this many derps to pass
+        "primacy": ParameterSchema(False, ParameterType.Integer),  # Filters derps based on this primacy value
+        "fsa_index": ParameterSchema(
+            False, ParameterType.Integer
+        ),  # Filters derps that belong to the nth (0 based) FunctionSetAssignment index
     },
     "der-control": {
         "minimum_count": ParameterSchema(False, ParameterType.Float),  # Needs at least this many controls to pass
@@ -53,9 +64,14 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "opModGenLimW": ParameterSchema(False, ParameterType.Float),  # Filters controls based on this value
         "opModEnergize": ParameterSchema(False, ParameterType.Boolean),  # Filters controls based on this value
         "opModConnect": ParameterSchema(False, ParameterType.Boolean),  # Filters controls based on this value
+        "opModFixedW": ParameterSchema(False, ParameterType.Float),  # Filters controls based on this value
         "rampTms": ParameterSchema(False, ParameterType.Integer),  # Filter on this val. 0 means negative assertion
-        "event_status": ParameterSchema(False, ParameterType.Integer),  # Expected Event.status value
-        "responseRequired": ParameterSchema(False, ParameterType.Integer),  # Expected responseRequired value
+        "randomizeStart": ParameterSchema(False, ParameterType.Integer),  # Filter on this val (in seconds)
+        "event_status": ParameterSchema(False, ParameterType.Integer),  # Filter on Event.status value
+        "responseRequired": ParameterSchema(False, ParameterType.Integer),  # Filter on responseRequired value
+        "derp_primacy": ParameterSchema(
+            False, ParameterType.Integer
+        ),  # Filter to control's belonging to a DERProgram with this primacy value
     },  # Matches many DERControls (specified by minimum_count) against additional other filter criteria
     "default-der-control": {
         "opModImpLimW": ParameterSchema(False, ParameterType.Float),

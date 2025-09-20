@@ -20,7 +20,7 @@ class TestProcedureId(StrEnum):
     This should be kept in sync with the current set of test procedures loaded from the procedures directory"""
 
     __test__ = False  # Prevent pytest from picking up this class
-    S_ALL_01 = "S_ALL-01"
+    S_ALL_01 = "S-ALL-01"
 
 
 class ClientType(StrEnum):
@@ -45,7 +45,7 @@ class Step:
     Actions might represent a single operation or they may represent a series of polls/checks over a period of time.
     """
 
-    name: str  # Descriptive label for this step
+    id: str  # Descriptive identifier for this step (must be unique)
     action: Action  # The action to execute when the step starts
     client: str | None = None  # The RequiredClient.id that will execute this step. If None - use the 0th client.
     use_client_context: str | None = (
@@ -112,7 +112,7 @@ class TestProcedures(YAMLWizard):
             required_clients_by_id = dict(((rc.id, rc) for rc in tp.preconditions.required_clients))
 
             for step in tp.steps:
-                validate_action_parameters(tp_name, step.name, step.action)
+                validate_action_parameters(tp_name, step.id, step.action)
 
                 # Validate step checks
                 if step.checks:
