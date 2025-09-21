@@ -72,3 +72,9 @@ class CSIPAusReadingType(StrEnum):
     VoltageSinglePhaseInstantaneous = "VoltageSinglePhaseInstantaneous"
     VoltageSinglePhaseMaximum = "VoltageSinglePhaseMaximum"
     VoltageSinglePhaseMinimum = "VoltageSinglePhaseMinimum"
+
+
+def is_list_resource(resource: CSIPAusResource) -> bool:
+    """Returns true if the specified resource is classified as a list resource (i.e. it supports list query params) and
+    will return an entity with list attributes (eg 'all')"""
+    return resource.name.endswith("List")  # This is a really simple method but it should work
