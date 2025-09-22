@@ -19,8 +19,6 @@ class CSIPAusResource(StrEnum):
 
     MirrorUsagePointList = "MirrorUsagePointList"
     MirrorUsagePoint = "MirrorUsagePoint"
-    MirrorMeterReadingList = "MirrorMeterReadingList"
-    MirrorMeterReading = "MirrorMeterReading"
 
     EndDeviceList = "EndDeviceList"
     EndDevice = "EndDevice"
