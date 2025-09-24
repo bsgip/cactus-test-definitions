@@ -37,14 +37,17 @@ class Check:
 # The parameter schema for each action, keyed by the action name
 CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
     "discovered": {
-        "resources": ParameterSchema(True, ParameterType.ListCSIPAusResource),
-        "links": ParameterSchema(True, ParameterType.ListCSIPAusResource),
+        "resources": ParameterSchema(False, ParameterType.ListCSIPAusResource),
+        "links": ParameterSchema(False, ParameterType.ListCSIPAusResource),
     },
     "time-synced": {},  # Passes if the current Time resource is synced with this client's date/time
     "end-device": {
         "matches_client": ParameterSchema(
+            True, ParameterType.Boolean
+        ),  # assert the existence / non existence of an EndDevice for the current client
+        "matches_pin": ParameterSchema(
             False, ParameterType.Boolean
-        )  # If set - assert the existence / non existence of an EndDevice for the current client
+        ),  # if set - The matches_client criteria will ALSO check the registration PIN for the EndDevice. Default False
     },
     "der-program": {
         "minimum_count": ParameterSchema(False, ParameterType.Float),  # Needs at least this many derps to pass

@@ -42,6 +42,9 @@ class CSIPAusResource(StrEnum):
     DERSettings = "DERSettings"
     DERStatus = "DERStatus"
 
+    SubscriptionList = "SubscriptionList"
+    Subscription = "Subscription"
+
 
 class CSIPAusReadingLocation(StrEnum):
     Site = "Site"  # The reading is measured at the site's connection point
