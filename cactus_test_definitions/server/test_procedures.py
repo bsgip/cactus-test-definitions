@@ -51,9 +51,10 @@ class Step:
     use_client_context: str | None = (
         None  # Specify to allow a request to execute with clientX using the context of clientY
     )
-    repeat_until_pass: bool = False  # If True - failing checks will cause this step to re-execute until successful
     checks: list[Check] | None = None  # The checks (if any) to execute AFTER action completes to determine success
     instructions: list[str] | None = None  # Text to display while this step executes
+
+    repeat_until_pass: bool = False  # If True - failing checks will cause this step to re-execute until successful
 
 
 @dataclass
@@ -67,8 +68,6 @@ class Preconditions:
     """
 
     required_clients: list[RequiredClient]  # What client(s) need to be supplied to run this test procedure
-    checks: list[Check] | None = None  # Test won't start until all these checks return True - re-tested regularly
-    instructions: list[str] | None = None  # Text to display while waiting for preconditions to be met
 
 
 @dataclass
