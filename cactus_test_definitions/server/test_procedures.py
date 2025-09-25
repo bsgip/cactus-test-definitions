@@ -101,9 +101,6 @@ class TestProcedures(YAMLWizard):
         for tp_name, tp in self.test_procedures.items():
 
             # Check preconditions
-            if tp.preconditions.checks:
-                for check in tp.preconditions.checks:
-                    validate_check_parameters(tp_name, check)
             if not tp.preconditions.required_clients:
                 raise TestProcedureDefinitionError(
                     f"{tp_name} has no RequiredClients element. At least 1 entry required"
