@@ -1,0 +1,42 @@
+Description: Discovery Rejecting In-Band Registration
+Category: Registration
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+  
+Steps:
+  - id: PRECONDITION
+    repeat_until_pass: true
+    instructions:
+      - Create an EndDevice registration for client (or rerun S-ALL-02 / S-ALL-03).
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - DeviceCapability
+          - Time
+          - MirrorUsagePointList
+          - EndDevice
+          - DER
+    checks:
+      - type: end-device # This will be the check that will block UNTIL there is an existing EndDevice registration
+        parameters:
+          matches_client: true 
+
+  - id: REGISTER AGAIN
+    action: 
+      type: insert-end-device
+      parameters: 
+        expect_rejection: true
+    checks:
+      - type: end-device
+        parameters:
+          matches_client: true 
+
+  

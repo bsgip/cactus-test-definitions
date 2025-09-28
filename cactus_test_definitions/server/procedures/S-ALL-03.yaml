@@ -1,4 +1,4 @@
-Description: Discovery with In-Band Registration for Direct Clients
+Description: Discovery with In-Band Registration for Aggregator Clients
 Category: Registration
 Classes:
  - A
@@ -9,7 +9,7 @@ TargetVersions:
 Preconditions:
   required_clients:
     - id: client
-      client_type: device
+      client_type: aggregator
   
 Steps:
   - id: PRECONDITION

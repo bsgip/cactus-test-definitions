@@ -22,6 +22,10 @@ class TestProcedureId(StrEnum):
     __test__ = False  # Prevent pytest from picking up this class
     S_ALL_01 = "S-ALL-01"
     S_ALL_02 = "S-ALL-02"
+    S_ALL_03 = "S-ALL-03"
+    S_OPT_01 = "S-OPT-01"
+    S_OPT_02 = "S-OPT-02"
+    S_OPT_03 = "S-OPT-03"
 
 
 class ClientType(StrEnum):
