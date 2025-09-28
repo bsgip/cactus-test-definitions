@@ -53,7 +53,7 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
     "insert-end-device": {
         "force_lfdi": ParameterSchema(False, ParameterType.String),  # Forces the use of this LFDI
         "expect_rejection": ParameterSchema(False, ParameterType.Boolean),  # If set - expect 4XX and ErrorPayload
-    },
+    },  # Inserts an EndDevice and then validates the returned Location header
     "upsert-connection-point": {
         "connectionPointId": ParameterSchema(True, ParameterType.String),
         "expect_rejection": ParameterSchema(False, ParameterType.Boolean),  # If set - expect ErrorPayload reasonCode 1
