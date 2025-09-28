@@ -58,8 +58,8 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         ),  # Filters derps that belong to the nth (0 based) FunctionSetAssignment index
     },
     "der-control": {
-        "minimum_count": ParameterSchema(False, ParameterType.Float),  # Needs at least this many controls to pass
-        "maximum_count": ParameterSchema(False, ParameterType.Float),  # Needs at most this many controls to pass
+        "minimum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at least this many controls to pass
+        "maximum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at most this many controls to pass
         "latest": ParameterSchema(False, ParameterType.Boolean),  # forces filter checks against the most recent control
         "opModImpLimW": ParameterSchema(False, ParameterType.Float),  # Filters controls based on this value
         "opModExpLimW": ParameterSchema(False, ParameterType.Float),  # Filters controls based on this value

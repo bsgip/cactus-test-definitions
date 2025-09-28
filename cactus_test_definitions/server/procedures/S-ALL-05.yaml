@@ -1,0 +1,107 @@
+Description: Authorisation
+Category: Registration
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: CLIENT-A
+      client_type: device
+    - id: CLIENT-B
+      client_type: device
+  
+Steps:
+  - id: CLIENT-A PRECONDITION
+    repeat_until_pass: true
+    client: CLIENT-A
+    instructions:
+      - Create an EndDevice registration for CLIENT-A (or rerun S-ALL-02 / S-ALL-03).
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - DERControlList
+          - DER
+    checks:
+      - type: end-device 
+        parameters:
+          matches_client: true 
+
+  - id: CLIENT-B PRECONDITION
+    repeat_until_pass: true
+    client: CLIENT-B
+    instructions:
+      - Create an EndDevice registration for CLIENT-B (or rerun S-ALL-02 / S-ALL-03).
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - DERControlList
+          - DER
+    checks:
+      - type: end-device 
+        parameters:
+          matches_client: true 
+
+  - id: AUTH EndDeviceList
+    client: CLIENT-A
+    use_client_context: CLIENT-B 
+    action: 
+      type: refresh-resource
+      parameters:
+        resource: EndDeviceList
+        expect_rejection: true
+
+  - id: AUTH DerControlList
+    client: CLIENT-A
+    use_client_context: CLIENT-B 
+    action: 
+      type: refresh-resource
+      parameters:
+        resource: DERControlList
+        expect_rejection: true
+
+  - id: AUTH DERStatus
+    client: CLIENT-A
+    use_client_context: CLIENT-B 
+    action: 
+      type: upsert-der-status
+      parameters:
+        genConnectStatus: 1
+        expect_rejection: true
+
+
+  - id: OK EndDeviceList
+    client: CLIENT-A
+    action: 
+      type: refresh-resource
+      parameters:
+        resource: EndDeviceList
+
+  - id: AUTH EndDeviceList
+    repeat_until_pass: true
+    instructions:
+      - Remove EndDevice entry for ClientA (or disallow access).
+    client: CLIENT-A
+    action: 
+      type: refresh-resource
+      parameters:
+        resource: EndDeviceList
+
+  - id: AUTH MirrorUsagePoint
+    client: CLIENT-A
+    use_client_context: CLIENT-B 
+    action: 
+      type: upsert-mup
+      parameters:
+        expect_rejection: true
+        mup_id: mupa
+        location: Device
+        reading_types: 
+          - ActivePowerAverage
+          - VoltageSinglePhaseAverage

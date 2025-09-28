@@ -81,6 +81,7 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "genConnectStatus": ParameterSchema(False, ParameterType.Integer),
         "operationalModeStatus": ParameterSchema(False, ParameterType.Integer),
         "alarmStatus": ParameterSchema(False, ParameterType.Integer),
+        "expect_rejection": ParameterSchema(False, ParameterType.Boolean),  # If set - expect 4XX and ErrorPayload
     },  # Sends DERStatus - validates that the server persisted the values correctly
     "upsert-der-capability": {
         "type": ParameterSchema(True, ParameterType.Integer),

@@ -16,7 +16,7 @@ Steps:
     repeat_until_pass: true
     client: CLIENT-A
     instructions:
-      - Create an EndDevice registration for CLIENT-A (or rerun S-ALL-02 / S-ALL-03).
+      - Create at least 5 DERControls for CLIENT-A
     action: 
       type: discovery
       parameters:
@@ -34,7 +34,7 @@ Steps:
     repeat_until_pass: true
     client: CLIENT-B
     instructions:
-      - Create an EndDevice registration for CLIENT-B (or rerun S-ALL-02 / S-ALL-03).
+      - Create at least 5 DERControls for CLIENT-B
     action: 
       type: discovery
       parameters:
