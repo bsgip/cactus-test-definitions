@@ -66,15 +66,15 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "mmr_mrids": ParameterSchema(
             False, ParameterType.ListString
         ),  # Must correspond 1-1 with reading_types. Used for forcing specific mrid values
+        "pow10_multiplier": ParameterSchema(
+            False, ParameterType.Integer
+        ),  # Force the use a particular pow10. Defaults to 0 otherwise
     },  # Register a MUP with the specified values. MMR's based on hash of current client / reading types
     "insert-readings": {
         "mup_id": ParameterSchema(True, ParameterType.String),  # Must be previously defined with register-mup
         "values": ParameterSchema(
             True, ParameterType.ReadingTypeValues
         ),  # The sequences of values to send at the MUP post rate
-        "pow10_multiplier": ParameterSchema(
-            False, ParameterType.Integer
-        ),  # Force the use a particular pow10 (automatically assigned otherwise)
         "expect_rejection": ParameterSchema(False, ParameterType.Boolean),  # If set - expect 4XX and ErrorPayload
     },  # Sends readings - validates that the telemetry is parsed correctly by the server
     "upsert-der-status": {

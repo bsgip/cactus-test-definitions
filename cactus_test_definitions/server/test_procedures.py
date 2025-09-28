@@ -23,9 +23,11 @@ class TestProcedureId(StrEnum):
     S_ALL_01 = "S-ALL-01"
     S_ALL_02 = "S-ALL-02"
     S_ALL_03 = "S-ALL-03"
+    S_ALL_04 = "S-ALL-04"
     S_OPT_01 = "S-OPT-01"
     S_OPT_02 = "S-OPT-02"
     S_OPT_03 = "S-OPT-03"
+    S_OPT_04 = "S-OPT-04"
 
 
 class ClientType(StrEnum):

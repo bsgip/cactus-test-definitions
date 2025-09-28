@@ -1,0 +1,137 @@
+Description: Support for Multiple End Clients
+Category: Registration
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: CLIENT-A
+    - id: CLIENT-B
+  
+Steps:
+  - id: CLIENT-A PRECONDITION
+    repeat_until_pass: true
+    client: CLIENT-A
+    instructions:
+      - Create an EndDevice registration for CLIENT-A (or rerun S-ALL-02 / S-ALL-03).
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - DERControl
+    checks:
+      - type: end-device 
+        parameters:
+          matches_client: true 
+      - type: der-control
+        parameters:
+          minimum_count: 5
+
+  - id: CLIENT-B PRECONDITION 
+    repeat_until_pass: true
+    client: CLIENT-B
+    instructions:
+      - Create an EndDevice registration for CLIENT-B (or rerun S-ALL-02 / S-ALL-03).
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - DERControl
+    checks:
+      - type: end-device 
+        parameters:
+          matches_client: true 
+      - type: der-control
+        parameters:
+          minimum_count: 5
+
+  - id: CLIENT-A DISCOVER MUPS
+    repeat_until_pass: true
+    client: CLIENT-A
+    instructions:
+      - MirrorUsagePoints for CLIENT-A must be initially empty.
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - MirrorUsagePoint
+    checks:
+      - type: mirror-usage-point
+        parameters:
+          matches: false # This will only match an empty list
+
+  - id: CLIENT-B DISCOVER MUPS
+    repeat_until_pass: true
+    client: CLIENT-B
+    instructions:
+      - MirrorUsagePoints for CLIENT-B must be initially empty.
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - MirrorUsagePoint
+    checks:
+      - type: mirror-usage-point
+        parameters:
+          matches: false # This will only match an empty list
+
+  - id: CLIENT-A CREATE MUPS
+    client: CLIENT-A
+    action: 
+      type: upsert-mup
+      parameters:
+        mup_id: mupa
+        location: Device
+        reading_types: 
+          - ActivePowerAverage
+          - VoltageSinglePhaseAverage
+    checks:
+      - type: mirror-usage-point
+        parameters:
+          matches: true
+          location: Device
+          reading_types: 
+            - ActivePowerAverage
+            - VoltageSinglePhaseAverage  
+
+  - id: CLIENT-B CREATE MUPS
+    client: CLIENT-B
+    action: 
+      type: upsert-mup
+      parameters:
+        mup_id: mupb
+        location: Device
+        reading_types: 
+          - ActivePowerAverage
+          - VoltageSinglePhaseAverage
+    checks:
+      - type: mirror-usage-point
+        parameters:
+          matches: true
+          location: Device
+          reading_types: 
+            - ActivePowerAverage
+            - VoltageSinglePhaseAverage  
+
+  - id: CLIENT-A SEND READINGS
+    client: CLIENT-A
+    action: 
+      type: insert-readings
+      parameters:
+        mup_id: mupa
+        values:
+          ActivePowerAverage: [1000, 1234, 0, -4567]
+          VoltageSinglePhaseAverage: [241.1, 232.2, 233.9, 244.1]
+    
+  - id: CLIENT-B SEND READINGS
+    client: CLIENT-B
+    action: 
+      type: insert-readings
+      parameters:
+        mup_id: mupb
+        values:
+          ActivePowerAverage: [2000, 2234, 0, -8567]
+          VoltageSinglePhaseAverage: [243.1, 233.2, 234.9, 240]

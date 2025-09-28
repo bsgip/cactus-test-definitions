@@ -1,0 +1,32 @@
+Description: Client Registration and PIN Validation
+Category: Registration
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+  
+Steps:
+  - id: MATCH PIN
+    repeat_until_pass: true
+    instructions:
+      - Create an EndDevice (with RegistrationLink) registration for client (or rerun S-ALL-02 / S-ALL-03).
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - Registration
+    checks:
+      - type: end-device # This will be the check that will block UNTIL there is an existing EndDevice registration
+        parameters:
+          matches_client: true 
+          matches_pin: true
+
+  
+    
+
+  
