@@ -91,53 +91,13 @@ Preconditions:
       parameters: 
         primacy: 2
         fsa_id: 2
+    - type: set-default-der-control
+      parameters:
+        derp_id: 1
+        opModImpLimW: 0
 
 Steps:
   
-  # (precondition)
-  PRECONDITION-STARTUP:
-    instructions:
-      - This step is to give time for the DER to start importing/exporting at least 50% of its rated power.
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /edev/1/derp/1/derc
-    actions:
-      - type: create-der-control
-        parameters:
-          start: $(now)
-          duration_seconds: 120
-          opModExpLimW: $(setMaxW * 2)
-          opModImpLimW: $(setMaxW * 2)
-          fsa_id: 1
-          primacy: 1
-      - type: enable-steps
-        parameters:
-          steps:
-            - PRECONDITION-STARTUP-WAIT
-      - type: remove-steps
-        parameters:
-          steps:
-            - PRECONDITION-STARTUP
-  
-  # (precondition)
-  PRECONDITION-STARTUP-WAIT:
-    instructions:
-      - This step is to give time for the DER to start importing/exporting at least 50% of its rated power.
-    event:
-      type: wait
-      parameters:
-        duration_seconds: 120
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - GET-DEFAULT-DERC
-      - type: remove-steps
-        parameters:
-          steps:
-            - PRECONDITION-STARTUP-WAIT
-
   # (a, b) - Create a Default DERControl at DERP 1 - set to 30% of max
   GET-DEFAULT-DERC:
     event:

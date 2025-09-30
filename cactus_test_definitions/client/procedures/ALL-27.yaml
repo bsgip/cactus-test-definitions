@@ -45,7 +45,7 @@ Steps:
       - type: create-der-control
         parameters:
           start: $(now)
-          duration_seconds: 120
+          duration_seconds: 240
           opModExpLimW: $(setMaxW * 2)
           opModImpLimW: $(setMaxW * 2)
       - type: enable-steps
