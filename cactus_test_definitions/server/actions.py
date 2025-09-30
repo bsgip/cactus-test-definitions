@@ -54,6 +54,9 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
     "refresh-resource": {
         "resource": ParameterSchema(True, ParameterType.CSIPAusResource),
         "expect_rejection": ParameterSchema(False, ParameterType.Boolean),  # if set - expect 4XX and ErrorPayload
+        "expect_rejection_or_empty": ParameterSchema(
+            False, ParameterType.Boolean
+        ),  # Similar to expect_rejection but also allow en empty list (if it's a list resource)
     },  # Force an existing resource (in the client's context) to be re-fetched via href. Updates context on success
     "insert-end-device": {
         "force_lfdi": ParameterSchema(False, ParameterType.String),  # Forces the use of this LFDI

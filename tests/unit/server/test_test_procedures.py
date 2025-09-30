@@ -45,6 +45,8 @@ def test_available_tests_populated():
 
 @pytest.mark.parametrize("tp_id, tp", ALL_TEST_PROCEDURES)
 def test_each_step_id_unique(tp_id: str, tp: TestProcedure):
+    all_ids = [s.id for s in tp.steps]
+    assert list(sorted(all_ids)) == list(sorted(set(all_ids)))
     assert len(set((s.id for s in tp.steps))) == len(tp.steps), "All steps must have a unique id property"
 
 
