@@ -26,6 +26,7 @@ Criteria:
       parameters: {"minimum_count": 6}
 
 Preconditions:
+  immediate_start: true # There will be no "init" phase - all interactions will be immediately logged against the test
   init_actions:
     - type: set-comms-rate
       parameters:
@@ -35,9 +36,6 @@ Preconditions:
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
-  checks:
-    - type: end-device-contents
-      parameters: {}
   instructions:
     - Connect a test load electrically in parallel with the DER.
     - Set the load to consume 25% of the DER's rated active power.

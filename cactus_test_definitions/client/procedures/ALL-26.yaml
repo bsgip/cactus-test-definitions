@@ -28,16 +28,56 @@ Preconditions:
     - type: der-settings-contents
       parameters: {}
   actions:
-    - type: create-der-control
+    - type: create-der-program
       parameters:
-        start: $(now)
-        duration_seconds: 300
-        opModExpLimW: $(setMaxW * 2)
-        opModImpLimW: $(setMaxW * 2)
+        primacy: 0
   instructions:
     - DER shall be exporting or importing at least 50% of its active power rating at the connection point.
     
 Steps:
+  
+  # (precondition)
+  PRECONDITION-STARTUP:
+    instructions:
+      - This step is to give time for the DER to start importing/exporting at least 50% of its rated power.
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 120
+          opModExpLimW: $(setMaxW * 2)
+          opModImpLimW: $(setMaxW * 2)
+      - type: enable-steps
+        parameters:
+          steps:
+            - PRECONDITION-STARTUP-WAIT
+      - type: remove-steps
+        parameters:
+          steps:
+            - PRECONDITION-STARTUP
+  
+  # (precondition)
+  PRECONDITION-STARTUP-WAIT:
+    instructions:
+      - This step is to give time for the DER to start importing/exporting at least 50% of its rated power.
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 120
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC
+      - type: remove-steps
+        parameters:
+          steps:
+            - PRECONDITION-STARTUP-WAIT
+
   # (a, b)
   GET-DERC:
     event:
