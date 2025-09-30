@@ -39,7 +39,12 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
             False, ParameterType.Boolean
         ),  # If set - delay this until the upcoming polling window (eg- wait for the next whole minute)
     },  # Performs a full discovery / refresh of the client's context from DeviceCapability downwards
-    "collect-notifications": {},  # Consumes subscription notifications and inserts them into the current context
+    "notifications": {
+        "collect": ParameterSchema(
+            False, ParameterType.Boolean
+        ),  # Collects latest subscription notifications into context
+        "disable": ParameterSchema(False, ParameterType.Boolean),  # Simulates HTTP 5XX outage at the endpoint
+    },
     "wait": {
         "duration_seconds": ParameterSchema(True, ParameterType.Integer)
     },  # Waits (doing nothing - blocking other step actions) until the specified time period has passed

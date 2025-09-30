@@ -50,8 +50,8 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         ),  # if set - The matches_client criteria will ALSO check the registration PIN for the EndDevice. Default False
     },
     "der-program": {
-        "minimum_count": ParameterSchema(False, ParameterType.Float),  # Needs at least this many derps to pass
-        "maximum_count": ParameterSchema(False, ParameterType.Float),  # Needs at most this many derps to pass
+        "minimum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at least this many derps to pass
+        "maximum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at most this many derps to pass
         "primacy": ParameterSchema(False, ParameterType.Integer),  # Filters derps based on this primacy value
         "fsa_index": ParameterSchema(
             False, ParameterType.Integer
