@@ -1,7 +1,7 @@
 Description: Default Controls – Ramp Rate
 Category: Control
 Classes:
-  - A
+  # Note - A is explicitly omitted, this test is ONLY for subscription clients
   - S
 
 TargetVersions:

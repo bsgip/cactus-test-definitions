@@ -1,7 +1,7 @@
 Description: Active Controls – Energize/de-energize
 Category: Control
 Classes:
-  - A
+  # Note - A is explicitly omitted, this test is ONLY for subscription clients
   - S
 
 TargetVersions:
