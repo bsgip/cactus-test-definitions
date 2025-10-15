@@ -13,25 +13,33 @@ Criteria:
       parameters: {}
     - type: der-capability-contents
       parameters:
-        rtgMaxChargeRateW: true # Maximum rate of energy transfer received
-        rtgMaxDischargeRateW: true # Maximum rate of energy transfer delivered
-        rtgMaxVA: true # Maximum apparent power
-        rtgMaxVar: true # Maximum reactive power delivered
-        rtgMaxVarNeg: true # Maximum reactive power received
+        #
+        # NOTE - These checks have been loosened from TS:5573 (which requires EVERYTHING) until clarification on
+        #        about what the MINIMUM subset of values is determined for each class of device
+        #
+        # rtgMaxChargeRateW: true # Maximum rate of energy transfer received
+        # rtgMaxDischargeRateW: true # Maximum rate of energy transfer delivered
+        # rtgMaxVA: true # Maximum apparent power
+        # rtgMaxVar: true # Maximum reactive power delivered
+        # rtgMaxVarNeg: true # Maximum reactive power received
         rtgMaxW: true # Maximum active power
-        rtgMinPFOverExcited: true # Minimum power factor displacement
-        rtgMinPFUnderExcited: true # Minimum power factor displacement
+        # rtgMinPFOverExcited: true # Minimum power factor displacement
+        # rtgMinPFUnderExcited: true # Minimum power factor displacement
         doeModesSupported: true # CSIP-Aus DOE modes supported
     - type: der-settings-contents
       parameters:
-        setMaxChargeRateW: true # Maximum rate of energy transfer received
-        setMaxDischargeRateW: true # Maximum rate of energy transfer delivered
-        setMaxVA: true # Maximum apparent power
-        setMaxVar: true # Maximum reactive power delivered
-        setMaxVarNeg: true # Maximum reactive power received
+        #
+        # NOTE - These checks have been loosened from TS:5573 (which requires EVERYTHING) until clarification on
+        #        about what the MINIMUM subset of values is determined for each class of device
+        #
+        # setMaxChargeRateW: true # Maximum rate of energy transfer received
+        # setMaxDischargeRateW: true # Maximum rate of energy transfer delivered
+        # setMaxVA: true # Maximum apparent power
+        # setMaxVar: true # Maximum reactive power delivered
+        # setMaxVarNeg: true # Maximum reactive power received
         setMaxW: true # Maximum active power
-        setMinPFOverExcited: true # Minimum power factor displacement
-        setMinPFUnderExcited: true # Minimum power factor displacement
+        # setMinPFOverExcited: true # Minimum power factor displacement
+        # setMinPFUnderExcited: true # Minimum power factor displacement
         doeModesEnabled: true # CSIP-Aus DOE modes enabled
     - type: der-status-contents
       parameters: {}
