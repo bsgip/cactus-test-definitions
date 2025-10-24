@@ -89,6 +89,12 @@ Steps:
       parameters:
         duration_seconds: 180 # Wait for at least 2 sets of readings to arrive (with post rate 60 seconds)
     actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 600
+          opModStorageTargetW: 0
+          primacy: 0
       - type: enable-steps
         parameters:
           steps:
@@ -105,12 +111,6 @@ Steps:
       parameters:
         endpoint: /edev/1/derp/1/derc
     actions:
-      - type: create-der-control
-        parameters:
-          start: $(now)
-          duration_seconds: 600
-          opModStorageTargetW: 0
-          primacy: 0
       - type: enable-steps
         parameters:
           steps:
