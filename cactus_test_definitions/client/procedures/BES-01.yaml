@@ -11,7 +11,7 @@ Criteria:
     - type: all-steps-complete
       parameters: {}
 
-    # Test includes ~ 5 minutes of waiting + initial reading sent during test
+    # Test includes ~ 6 minutes of waiting 
     # A minimum of 4 readings is required by the test procedure
     - type: readings-der-stored-energy
       parameters: { "minimum_count": 4 }
@@ -126,7 +126,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 180 # Wait for at least 3 sets of readings to arrive (with post rate 60 seconds)
+        duration_seconds: 180 # Wait for at least 2 sets of readings to arrive (with post rate 60 seconds)
     actions:
       - type: remove-steps
         parameters:
