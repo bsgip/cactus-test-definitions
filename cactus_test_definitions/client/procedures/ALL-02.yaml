@@ -44,28 +44,33 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-EDEV
+            - POST-EDEV
             - GET-TM
       - type: remove-steps
         parameters:
           steps:
             - GET-DCAP
   
+  #
+  # NOTE - Pending review by the CIRG - this has been disabled as a client seeing an EndDeviceListLink with all=0
+  #        can reasonably be expected to skip this step.
+  #
   # (g, h, i)
-  GET-EDEV:
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /edev
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-EDEV
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-EDEV
+  # GET-EDEV:
+  #   event:
+  #     type: GET-request-received
+  #     parameters:
+  #       endpoint: /edev
+  #   actions:
+  #     - type: enable-steps
+  #       parameters:
+  #         steps:
+  #           - POST-EDEV
+  #     - type: remove-steps
+  #       parameters:
+  #         steps:
+  #           - GET-EDEV
+
   # (m, n, o)
   GET-TM:
     event:
