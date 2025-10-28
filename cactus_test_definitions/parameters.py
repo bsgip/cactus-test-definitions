@@ -30,6 +30,7 @@ class ParameterType(IntEnum):
     ListCSIPAusReadingType = auto()  # List where each member is a cactus_test_definitions.csipaus.CSIPAusReadingType
     CSIPAusReadingLocation = auto()  # Member of cactus_test_definitions.csipaus.CSIPAusReadingLocation
     ReadingTypeValues = auto()  # A dict of type dict[CSIPAusReadingType, list[float]], each list has the same length
+    UnsignedInteger = auto()
 
 
 @dataclass(frozen=True)
@@ -61,6 +62,9 @@ def is_valid_parameter_type(expected_type: ParameterType, value: Any) -> bool:
                     return int(value) == value
                 except Exception:
                     return False
+        case ParameterType.UnsignedInteger:
+            # Integer that is greater than or equal to 0
+            return is_valid_parameter_type(ParameterType.Integer, value) and value >= 0
         case ParameterType.Float:
             return isinstance(value, float) or isinstance(value, Decimal) or isinstance(value, int)
         case ParameterType.Boolean:

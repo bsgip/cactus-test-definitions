@@ -32,6 +32,15 @@ class Check:
             if variable_expr:
                 self.parameters[k] = parse_variable_expression_body(variable_expr, k)
 
+def factory_readings_schema() -> dict[str, Any]:
+    """Factory function for common schema shared across reading checks."""
+    return {
+        "minimum_count": ParameterSchema(False, ParameterType.Integer),
+        "minimum_level": ParameterSchema(False, ParameterType.Float),
+        "maximum_level": ParameterSchema(False, ParameterType.Float),
+        "window_seconds": ParameterSchema(False, ParameterType.UnsignedInteger),
+    }
+
 
 # The parameter schema for each action, keyed by the action name
 CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
@@ -88,12 +97,12 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "operationalModeStatus": ParameterSchema(False, ParameterType.Integer),
         "alarmStatus": ParameterSchema(False, ParameterType.Integer),
     },
-    "readings-voltage": {"minimum_count": ParameterSchema(True, ParameterType.Integer)},
-    "readings-site-active-power": {"minimum_count": ParameterSchema(True, ParameterType.Integer)},
-    "readings-site-reactive-power": {"minimum_count": ParameterSchema(True, ParameterType.Integer)},
-    "readings-der-active-power": {"minimum_count": ParameterSchema(True, ParameterType.Integer)},
-    "readings-der-reactive-power": {"minimum_count": ParameterSchema(True, ParameterType.Integer)},
-    "readings-der-stored-energy": {"minimum_count": ParameterSchema(True, ParameterType.Integer)},  # Storage extension
+    "readings-voltage": factory_readings_schema(), 
+    "readings-site-active-power": factory_readings_schema(),
+    "readings-site-reactive-power": factory_readings_schema(),
+    "readings-der-active-power": factory_readings_schema(),
+    "readings-der-reactive-power": factory_readings_schema(),
+    "readings-der-stored-energy": factory_readings_schema(),
     "subscription-contents": {"subscribed_resource": ParameterSchema(True, ParameterType.String)},
     "response-contents": {
         "latest": ParameterSchema(False, ParameterType.Boolean),
