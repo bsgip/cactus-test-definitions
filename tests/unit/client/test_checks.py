@@ -14,9 +14,27 @@ from cactus_test_definitions.errors import TestProcedureDefinitionError
         (Check("readings-site-active-power", {"minimum_count": 3, "minimum_level": 12.3}), True),
         (Check("readings-site-active-power", {"minimum_count": 3, "maximum_level": 12.3}), True),
         (Check("readings-site-active-power", {"minimum_count": 3, "minimum_level": 12.3, "maximum_level": 12.3}), True),
-        (Check("readings-site-active-power", {"minimum_count": 3, "minimum_level": 12.3, "maximum_level": 12.3, "window_seconds": 12.3}), False),
-        (Check("readings-site-active-power", {"minimum_count": 3, "minimum_level": 12.3, "maximum_level": 12.3, "window_seconds": 180}), True),
-        (Check("readings-site-active-power", {"minimum_count": 3, "minimum_level": 12.3, "maximum_level": 12.3, "window_seconds": -180}), False),
+        (
+            Check(
+                "readings-site-active-power",
+                {"minimum_count": 3, "minimum_level": 12.3, "maximum_level": 12.3, "window_seconds": 12.3},
+            ),
+            False,
+        ),
+        (
+            Check(
+                "readings-site-active-power",
+                {"minimum_count": 3, "minimum_level": 12.3, "maximum_level": 12.3, "window_seconds": 180},
+            ),
+            True,
+        ),
+        (
+            Check(
+                "readings-site-active-power",
+                {"minimum_count": 3, "minimum_level": 12.3, "maximum_level": 12.3, "window_seconds": -180},
+            ),
+            False,
+        ),
         (Check("der-settings-contents", {"setGradW": 27}), True),
         (Check("der-settings-contents", {"doeModesEnabled_set": "0f"}), True),
         (Check("der-settings-contents", {"doeModesEnabled_unset": "0f"}), True),

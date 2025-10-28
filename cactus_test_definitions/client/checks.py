@@ -32,6 +32,7 @@ class Check:
             if variable_expr:
                 self.parameters[k] = parse_variable_expression_body(variable_expr, k)
 
+
 def factory_readings_schema() -> dict[str, Any]:
     """Factory function for common schema shared across reading checks."""
     return {
@@ -97,7 +98,7 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "operationalModeStatus": ParameterSchema(False, ParameterType.Integer),
         "alarmStatus": ParameterSchema(False, ParameterType.Integer),
     },
-    "readings-voltage": factory_readings_schema(), 
+    "readings-voltage": factory_readings_schema(),
     "readings-site-active-power": factory_readings_schema(),
     "readings-site-reactive-power": factory_readings_schema(),
     "readings-der-active-power": factory_readings_schema(),
