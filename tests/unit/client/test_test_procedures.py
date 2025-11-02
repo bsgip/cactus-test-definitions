@@ -148,3 +148,16 @@ def test_procedures_have_required_preconditions(_: str, tp: TestProcedure):
                 ):
                     assert tp.preconditions.checks is not None
                     assert any([check.type == "der-settings-contents" for check in tp.preconditions.checks])
+
+
+def test_get_yaml():
+    """Verifies that individual test procedures created via 'TestProcedure.get_yaml'
+    produces the same TestProcedure instances as from 'TestProcedureConfig.from_resource'
+    """
+    test_procedures = TestProcedureConfig.from_resource()
+
+    # Loop over all test procedures
+    for test_procedure_id, test_procedure in test_procedures.test_procedures.items():
+        raw_yaml = TestProcedure.get_yaml(test_procedure_id)
+        test_procedure = TestProcedure.from_yaml(raw_yaml)
+        assert test_procedures.test_procedures[test_procedure_id] == test_procedure

@@ -142,7 +142,7 @@ class Criteria:
 
 
 @dataclass
-class TestProcedure:
+class TestProcedure(YAMLWizard):
     """Top level object for collecting everything relevant to a single TestProcedure"""
 
     __test__ = False  # Prevent pytest from picking up this class
@@ -153,6 +153,14 @@ class TestProcedure:
     steps: dict[str, Step]
     preconditions: Preconditions | None = None  # These execute during "init" and setup the test for a valid start state
     criteria: Criteria | None = None  # How will success/failure of this procedure be determined?
+
+    @staticmethod
+    def get_yaml(test_procedure_id: str) -> str:
+        yaml_resource = resources.files("cactus_test_definitions.client.procedures") / f"{test_procedure_id}.yaml"
+        with resources.as_file(yaml_resource) as yaml_file:
+            with open(yaml_file, "r") as f:
+                yaml_contents = f.read()
+                return yaml_contents
 
 
 @dataclass
