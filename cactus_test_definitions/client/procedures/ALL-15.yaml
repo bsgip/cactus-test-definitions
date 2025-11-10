@@ -94,12 +94,12 @@ Steps:
           steps:
             - PUT-DERSTATUS-ENERGIZE
 
-  # (e) We give the client a minute to respond with a re-energize
+  # (e) We give the client a short period to respond with a re-energize
   WAIT-TEST-END:
     event:
       type: wait
       parameters:
-        duration_seconds: 60
+        duration_seconds: 180
     actions:
       - type: remove-steps
         parameters:

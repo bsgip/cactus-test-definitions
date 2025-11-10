@@ -87,12 +87,12 @@ Steps:
           steps:
             - PUT-DERSTATUS-CONNECT
 
-  # (e) We give the client a minute to respond with a reconnect
+  # (e) We give the client a short period to respond with a reconnect
   WAIT-TEST-END:
     event:
       type: wait
       parameters:
-        duration_seconds: 60
+        duration_seconds: 180
     actions:
       - type: remove-steps
         parameters:
