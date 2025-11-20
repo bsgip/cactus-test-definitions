@@ -26,6 +26,8 @@ Preconditions:
   checks:
     - type: end-device-contents
       parameters: {}
+    - type: der-settings-contents
+      parameters: {}
 
   actions:
     # FSA1 has 5 DERPrograms at higher PRIORITY (lower primacy)

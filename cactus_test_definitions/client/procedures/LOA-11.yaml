@@ -29,6 +29,8 @@ Preconditions:
   checks:
     - type: end-device-contents
       parameters: {}
+    - type: der-settings-contents
+      parameters: {}
 
 Steps:
 

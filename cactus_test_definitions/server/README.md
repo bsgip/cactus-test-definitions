@@ -103,7 +103,7 @@ action:
 | `insert-readings` | `mup_id: str` `values: ReadingTypeValues` `expect_rejection: bool/None` | Begins the submission of readings (at MUP post rate, to an earlier call to `upsert-mup` with the same `mup_id`). Will interleave transmission with subsequent steps (non blocking) if multiple sets of values are specified |
 | `upsert-der-status` | `genConnectStatus: int/None` `operationalModeStatus: int/None` `alarmStatus: int/None` `expect_rejection: bool/None` | Sends DERStatus - validates that the server persisted the values correctly |
 | `upsert-der-capability` | `type: int` `rtgMaxW: int` `modesSupported: int` `doeModesSupported: int` | Sends DERCapability - validates that the server persisted the values correctly |
-| `upsert-der-settings` | `type: int` `setMaxW: int` `setGradW: int` `modesEnabled: int` `doeModesEnabled: int` | Sends DERSettings - validates that the server persisted the values correctly |
+| `upsert-der-settings` | `setMaxW: int` `setGradW: int` `modesEnabled: int` `doeModesEnabled: int` | Sends DERSettings - validates that the server persisted the values correctly |
 | `send-malformed-der-settings` | `updatedTime_missing: bool` `modesEnabled_int: bool`  | Sends a malformed DERSettings - expects a failure and that the server will NOT change anything |
 | `send-malformed-response` | `mrid_unknown: bool` `endDeviceLFDI_unknown: bool` `response_invalid: bool`  | Sends a malformed Response (using the most recent DERControl replyTo) - expects a failure response |
 | `create-subscription` | `sub_id: str` `resource: CSIPAusResource` | Sends a new Subscription - validates that the server persisted the values correctly via Location. `sub_id` will alias this subscription for future action calls. |
