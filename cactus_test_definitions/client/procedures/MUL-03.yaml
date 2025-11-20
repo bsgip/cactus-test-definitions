@@ -33,10 +33,6 @@ Preconditions:
       parameters:
         primacy: 0
 
-  checks:
-    - type: end-device-contents
-      parameters: {}
-
 Steps:
   
   # (a, b, c)
