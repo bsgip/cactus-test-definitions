@@ -150,11 +150,11 @@ Steps:
       parameters:
         endpoint: /edev/1/rsps/site_control/rsp
         serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 2
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
     actions:
       - type: enable-steps
         parameters:
@@ -213,11 +213,11 @@ Steps:
       parameters:
         endpoint: /edev/1/rsps/site_control/rsp
         serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 2
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
     actions:
       - type: remove-steps
         parameters:
@@ -231,11 +231,11 @@ Steps:
       parameters:
         endpoint: /edev/1/rsps/site_control/rsp
         serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 7
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 7
     actions:
       - type: remove-steps
         parameters:
@@ -250,11 +250,11 @@ Steps:
       parameters:
         endpoint: /edev/1/rsps/site_control/rsp
         serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 3
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 3
     actions:
       - type: enable-steps
         parameters:
@@ -295,11 +295,11 @@ Steps:
       parameters:
         endpoint: /edev/1/rsps/site_control/rsp
         serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 2
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
     actions:
       - type: enable-steps
         parameters:
@@ -317,11 +317,11 @@ Steps:
       parameters:
         endpoint: /edev/1/rsps/site_control/rsp
         serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 3
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 3
     actions:
       - type: enable-steps
         parameters:
@@ -389,11 +389,11 @@ Steps:
       parameters:
         endpoint: /edev/1/rsps/site_control/rsp
         serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 2
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
     actions:
       - type: enable-steps
         parameters:
@@ -411,11 +411,11 @@ Steps:
       parameters:
         endpoint: /edev/1/rsps/site_control/rsp
         serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 2
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
     actions:
       - type: remove-steps
         parameters:
@@ -430,11 +430,11 @@ Steps:
       parameters:
         endpoint: /edev/1/rsps/site_control/rsp
         serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 3
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 3
     actions:
       - type: enable-steps
         parameters:
@@ -476,11 +476,11 @@ Steps:
       parameters:
         endpoint: /edev/1/rsps/site_control/rsp
         serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 2
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
     actions:
       - type: enable-steps
         parameters:
@@ -499,11 +499,11 @@ Steps:
       parameters:
         endpoint: /edev/1/rsps/site_control/rsp
         serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 7
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 7
     actions:
       - type: remove-steps
         parameters:
@@ -564,11 +564,11 @@ Steps:
       parameters:
         endpoint: /edev/1/rsps/site_control/rsp
         serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 2
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
     actions:
       - type: enable-steps
         parameters:
@@ -587,11 +587,11 @@ Steps:
       parameters:
         endpoint: /edev/1/rsps/site_control/rsp
         serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 2
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
     actions:
       - type: remove-steps
         parameters:
@@ -651,11 +651,11 @@ Steps:
       parameters:
         endpoint: /edev/1/rsps/site_control/rsp
         serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 2
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
     actions:
       - type: enable-steps
         parameters:
@@ -674,11 +674,11 @@ Steps:
       parameters:
         endpoint: /edev/1/rsps/site_control/rsp
         serve_request_first: true
-    checks:
-      - type: response-contents
-        parameters: 
-          latest: true
-          status: 2
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
     actions:
       - type: remove-steps
         parameters:

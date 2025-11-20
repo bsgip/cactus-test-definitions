@@ -211,13 +211,13 @@ Steps:
       type: wait
       parameters:
         duration_seconds: 10 # Token amount of time - we want this to start checking immediately
-    checks:
-      # This check will repeatedly fire after the wait time is met - this will ensure that a late "completed" response
-      # won't waste 3 days of testing.
-      - type: response-contents
-        parameters:
-          latest: true
-          status: 3 
+      checks:
+        # This check will repeatedly fire after the wait time is met - this will ensure that a late "completed" response
+        # won't waste 3 days of testing.
+        - type: response-contents
+          parameters:
+            latest: true
+            status: 3 
     actions:
       - type: remove-steps
         parameters:

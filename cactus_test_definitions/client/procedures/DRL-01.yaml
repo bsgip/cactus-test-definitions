@@ -58,11 +58,11 @@ Steps:
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
-    checks:
-      type: der-status-contents
-      parameters:
-        alarmStatus: 0
-        operationalModeStatus: 103
+      checks:
+        type: der-status-contents
+        parameters:
+          alarmStatus: 0
+          operationalModeStatus: 103
     actions:
       - type: remove-steps
         parameters:
@@ -76,10 +76,10 @@ Steps:
       parameters:
         endpoint: /edev/1/der/1/derg
         serve_request_first: true # Run this AFTER server receives the request
-    checks:
-      type: der-settings-contents
-      parameters:
-        modesEnabled: 80 # bit 7
+      checks:
+        type: der-settings-contents
+        parameters:
+          modesEnabled: 80 # bit 7
     actions:
       - type: remove-steps
         parameters:
@@ -134,11 +134,11 @@ Steps:
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
-    checks:
-      type: der-status-contents
-      parameters:
-        alarmStatus: 0
-        operationalModeStatus: 102
+      checks:
+        type: der-status-contents
+        parameters:
+          alarmStatus: 0
+          operationalModeStatus: 102
     actions:
       - type: remove-steps
         parameters:
@@ -152,10 +152,10 @@ Steps:
       parameters:
         endpoint: /edev/1/der/1/derg
         serve_request_first: true # Run this AFTER server receives the request
-    checks:
-      type: der-settings-contents
-      parameters:
-        modesEnabled: 80 # bit 7
+      checks:
+        type: der-settings-contents
+        parameters:
+          modesEnabled: 80 # bit 7
     actions:
       - type: remove-steps
         parameters:
@@ -209,11 +209,11 @@ Steps:
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
-    checks:
-      type: der-status-contents
-      parameters:
-        alarmStatus: 0
-        operationalModeStatus: 101
+      checks:
+        type: der-status-contents
+        parameters:
+          alarmStatus: 0
+          operationalModeStatus: 101
     actions:
       - type: remove-steps
         parameters:
@@ -227,10 +227,10 @@ Steps:
       parameters:
         endpoint: /edev/1/der/1/derg
         serve_request_first: true # Run this AFTER server receives the request
-    checks:
-      type: der-settings-contents
-      parameters:
-        modesEnabled: 80 # bit 7
+      checks:
+        type: der-settings-contents
+        parameters:
+          modesEnabled: 80 # bit 7
     actions:
       - type: remove-steps
         parameters:
@@ -283,11 +283,11 @@ Steps:
       parameters:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
-    checks:
-      type: der-status-contents
-      parameters:
-        alarmStatus: 0
-        operationalModeStatus: 104
+      checks:
+        type: der-status-contents
+        parameters:
+          alarmStatus: 0
+          operationalModeStatus: 104
     actions:
       - type: remove-steps
         parameters:
@@ -301,10 +301,10 @@ Steps:
       parameters:
         endpoint: /edev/1/der/1/derg
         serve_request_first: true # Run this AFTER server receives the request
-    checks:
-      type: der-settings-contents
-      parameters:
-        modesEnabled: 80 # bit 7
+      checks:
+        type: der-settings-contents
+        parameters:
+          modesEnabled: 80 # bit 7
     actions:
       - type: remove-steps
         parameters:
