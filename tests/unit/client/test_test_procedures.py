@@ -1,3 +1,5 @@
+from importlib import resources
+
 import pytest
 from cactus_test_definitions.client.test_procedures import (
     TestProcedure,
@@ -26,15 +28,31 @@ def test_from_yamlfile():
 
 
 def test_TestProcedureId_synchronised():
-    """Ensures that TestProcedureId is in sync with all available TestProcedures"""
-    available_tests = set(TestProcedureConfig.available_tests())
-    for t in available_tests:
-        assert t in TestProcedureId, "TestProcedureConfig has a procedure not encoded in TestProcedureId"
+    """Ensures that TestProcedureId is in sync with all available TestProcedures YAML files.
 
-    # By convention - test ALL-01 will be an enum ALL_01
-    # for t in (t.replace("_", "-") for t in TestProcedureId):
-    for t in TestProcedureId:
-        assert t.value in available_tests, "TestProcedureId has extra procedures not found in TestProcedureConfig"
+    Each MY-TEST.yaml must have a corresponding TestProcedureId.MY_TEST"""
+
+    # Discover all the YAML files
+    suffix = ".yaml"
+    raw_file_names: set[str] = set()
+    for yaml_file in resources.files("cactus_test_definitions.client.procedures").iterdir():
+        if yaml_file.is_file() and yaml_file.name.endswith(suffix):
+            raw_file_names.add(yaml_file.name[: -len(suffix)])
+
+    # Compare them against the TestProcedureId
+    for file_name in raw_file_names:
+        assert file_name in TestProcedureId
+    for tp_id in TestProcedureId:
+        assert tp_id in raw_file_names
+    assert len(raw_file_names) == len(TestProcedureId)
+
+
+@pytest.mark.parametrize("tp_id", TestProcedureId)
+def test_TestProcedure_individually_valid(tp_id: TestProcedureId):
+    yaml_resource = resources.files("cactus_test_definitions.client.procedures") / f"{tp_id}.yaml"
+    with resources.as_file(yaml_resource) as yaml_file:
+        tp = TestProcedure.from_yaml_file(yaml_file)
+    assert tp.steps
 
 
 def test_available_tests_populated():

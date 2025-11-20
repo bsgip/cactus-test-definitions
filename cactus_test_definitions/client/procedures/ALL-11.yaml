@@ -68,9 +68,9 @@ Steps:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
       checks:
-        type: der-status-contents
-        parameters:
-          genConnectStatus_bit0: false
+        - type: der-status-contents
+          parameters:
+            genConnectStatus_bit0: false
     actions:
       - type: remove-steps
         parameters:
@@ -101,9 +101,9 @@ Steps:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
       checks:
-        type: der-status-contents
-        parameters:
-          genConnectStatus_bit0: true
+        - type: der-status-contents
+          parameters:
+            genConnectStatus_bit0: true
     actions:
       - type: remove-steps
         parameters:

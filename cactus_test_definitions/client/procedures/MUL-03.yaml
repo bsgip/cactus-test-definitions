@@ -64,9 +64,9 @@ Steps:
         endpoint: /edev/1/der/1/derg
         serve_request_first: true
       checks:
-          type: der-settings-contents
-          parameters:
-            setGradW: 100
+          - type: der-settings-contents
+            parameters:
+              setGradW: 100
     actions:
       - type: remove-steps
         parameters:

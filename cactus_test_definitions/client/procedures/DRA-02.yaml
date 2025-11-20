@@ -53,10 +53,10 @@ Steps:
         endpoint: /edev/1/der/1/ders
         serve_request_first: true # Run this AFTER server receives the request
       checks:
-        type: der-status-contents
-        parameters:
-          alarmStatus: 0
-          operationalModeStatus: 100
+        - type: der-status-contents
+          parameters:
+            alarmStatus: 0
+            operationalModeStatus: 100
     actions:
       - type: remove-steps
         parameters:
