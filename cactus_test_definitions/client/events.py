@@ -66,6 +66,6 @@ def validate_event_parameters(procedure_name: str, step: str, event: Event) -> N
 
     parameter_schema = EVENT_PARAMETER_SCHEMA.get(event.type, None)
     if parameter_schema is None:
-        raise TestProcedureDefinitionError(f"{location} not a valid action name. {VALID_EVENT_NAMES}")
+        raise TestProcedureDefinitionError(f"{location} not a valid event name. {VALID_EVENT_NAMES}")
 
     validate_parameters(location, event.parameters, parameter_schema)

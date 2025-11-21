@@ -5,9 +5,9 @@ from cactus_test_definitions.client.test_procedures import (
     Preconditions,
     Step,
     TestProcedure,
-    TestProcedureConfig,
     TestProcedureId,
-    TestProcedures,
+    get_all_test_procedures,
+    get_test_procedure,
 )
 
 __all__ = [
@@ -21,6 +21,6 @@ __all__ = [
     "Step",
     "Preconditions",
     "TestProcedure",
-    "TestProcedures",
-    "TestProcedureConfig",
+    "get_all_test_procedures",
+    "get_test_procedure",
 ]

@@ -50,7 +50,7 @@ dev = [
   "python-dotenv[cli]",
   "types-PyYAML",
 ]
-test = ["pytest"]
+test = ["pytest", "assertical"]
 docs = ["sphinx"]
 
 [tool.pytest.ini_options]

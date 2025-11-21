@@ -1,0 +1,25 @@
+Description: Has duplicate keys
+Category: Registration
+Classes:
+ - A
+TargetVersions:
+ - v1.2
+Preconditions:
+  required_clients:
+    - id: client
+Steps:
+  - id: STEP1
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - DeviceCapability
+    checks:
+      - type: discovered
+        parameters:
+          resources:
+            - DeviceCapability
+          links:
+            - ConnectionPoint
+          resources: # This is a duplicate and should be removed
+            - Time 

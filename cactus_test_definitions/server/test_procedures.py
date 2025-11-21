@@ -1,17 +1,13 @@
 from dataclasses import dataclass
 from enum import StrEnum
 from importlib import resources
-from pathlib import Path
-from typing import Iterable
 
 import yaml
-import yaml_include
 from cactus_test_definitions.csipaus import CSIPAusVersion
-from cactus_test_definitions.errors import TestProcedureDefinitionError
 from cactus_test_definitions.schema import UniqueKeyLoader
-from cactus_test_definitions.server.actions import Action, validate_action_parameters
-from cactus_test_definitions.server.checks import Check, validate_check_parameters
-from dataclass_wizard import YAMLWizard
+from cactus_test_definitions.server.actions import Action
+from cactus_test_definitions.server.checks import Check
+from dataclass_wizard import LoadMeta, YAMLWizard
 
 
 class TestProcedureId(StrEnum):
@@ -79,7 +75,7 @@ class Preconditions:
 
 
 @dataclass
-class TestProcedure:
+class TestProcedure(YAMLWizard):
     """Top level object for collecting everything relevant to a single TestProcedure"""
 
     __test__ = False  # Prevent pytest from picking up this class
@@ -91,93 +87,36 @@ class TestProcedure:
     steps: list[Step]  # What behavior will the test procedure be evaluating?
 
 
-@dataclass
-class TestProcedures(YAMLWizard):
-    """Represents a collection of CSIP-AUS server test procedure descriptions/specifications
-
-    By sub-classing the YAMLWizard mixin, we get access to the class method `from_yaml`
-    which we can use to create an instances of `TestProcedures`.
-    """
-
-    __test__ = False  # Prevent pytest from picking up this class
-
-    description: str
-    version: str
-    test_procedures: dict[str, TestProcedure]
-
-    def validate(self):
-        for tp_name, tp in self.test_procedures.items():
-
-            # Check preconditions
-            if not tp.preconditions.required_clients:
-                raise TestProcedureDefinitionError(
-                    f"{tp_name} has no RequiredClients element. At least 1 entry required"
-                )
-            required_clients_by_id = dict(((rc.id, rc) for rc in tp.preconditions.required_clients))
-
-            for step in tp.steps:
-                validate_action_parameters(tp_name, step.id, step.action)
-
-                # Validate step checks
-                if step.checks:
-                    for check in step.checks:
-                        validate_check_parameters(tp_name, check)
-
-                # Ensure client exists
-                if step.client is not None and step.client not in required_clients_by_id:
-                    raise TestProcedureDefinitionError(
-                        f"{tp_name} reference client {step.client} that isn't listed in RequiredClients."
-                    )
+LoadMeta(raise_on_unknown_json_key=True).bind_to(TestProcedure)
 
 
-class TestProcedureConfig:
-    __test__ = False  # Prevent pytest from picking up this class
+def parse_test_procedure(yaml_contents: str) -> TestProcedure:
+    """Given a YAML string - parse a TestProcedure.
 
-    @staticmethod
-    def from_yamlfile(path: Path, skip_validation: bool = False) -> TestProcedures:
-        """Converts a yaml file given by 'path' into a 'TestProcedures' instance.
+    This will ensure the YAML parser will use all the "strict" extensions to reduce the incidence of errors"""
 
-        Supports parts of the TestProcedures instance being described by external
-        YAML files. These are referenced in the parent yaml file using the `!include` directive.
+    return TestProcedure.from_yaml(
+        yaml_contents,
+        decoder=yaml.load,  # type: ignore
+        Loader=UniqueKeyLoader,
+    )
 
-        skip_validation: If True, the test_procedures.validate() call will not be made
 
-        Example:
-
-            Description: CSIP-AUS Client Test Procedures
-            Version: 0.1
-            TestProcedures:
-              ALL-01: !include ALL-01.yaml
-        """
-        with open(path, "r") as f:
+def get_yaml_contents(test_procedure_id: TestProcedureId) -> str:
+    """Finds the YAML contents for the TestProcedure with the specified TestProcedureId"""
+    yaml_resource = resources.files("cactus_test_definitions.server.procedures") / f"{test_procedure_id}.yaml"
+    with resources.as_file(yaml_resource) as yaml_file:
+        with open(yaml_file, "r") as f:
             yaml_contents = f.read()
+            return yaml_contents
 
-        # Modifies the pyyaml's load method to support references to external yaml files
-        # through the `!include` directive.
-        yaml.add_constructor(
-            "!include", constructor=yaml_include.Constructor(base_dir=path.parent), Loader=UniqueKeyLoader
-        )
 
-        # ...because we are using YAMLWizard we need to supply a decoder and a Loader to
-        # use this modified version.
-        test_procedures: TestProcedures = TestProcedures.from_yaml(
-            yaml_contents,
-            decoder=yaml.load,  # type: ignore
-            Loader=UniqueKeyLoader,
-        )
+def get_test_procedure(test_procedure_id: TestProcedureId) -> TestProcedure:
+    """Gets the TestProcedure with the nominated ID by loading its definition from disk"""
+    yaml_contents = get_yaml_contents(test_procedure_id)
+    return parse_test_procedure(yaml_contents)
 
-        if not skip_validation:
-            test_procedures.validate()
 
-        return test_procedures
-
-    @staticmethod
-    def from_resource() -> TestProcedures:
-        yaml_resource = resources.files("cactus_test_definitions.server.procedures") / "test-procedures.yaml"
-        with resources.as_file(yaml_resource) as yaml_file:
-            return TestProcedureConfig.from_yamlfile(path=yaml_file)
-
-    @staticmethod
-    def available_tests() -> Iterable[str]:
-        test_procedures: TestProcedures = TestProcedureConfig.from_resource()
-        return test_procedures.test_procedures.keys()
+def get_all_test_procedures() -> dict[TestProcedureId, TestProcedure]:
+    """Gets every TestProcedure, keyed by their TestProcedureId"""
+    return {tp_id: get_test_procedure(tp_id) for tp_id in TestProcedureId}

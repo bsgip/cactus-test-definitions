@@ -122,6 +122,6 @@ def validate_check_parameters(procedure_name: str, check: Check) -> None:
 
     parameter_schema = CHECK_PARAMETER_SCHEMA.get(check.type, None)
     if parameter_schema is None:
-        raise TestProcedureDefinitionError(f"{location} not a valid action name. {VALID_CHECK_NAMES}")
+        raise TestProcedureDefinitionError(f"{location} not a valid check name. {VALID_CHECK_NAMES}")
 
     validate_parameters(location, check.parameters, parameter_schema)

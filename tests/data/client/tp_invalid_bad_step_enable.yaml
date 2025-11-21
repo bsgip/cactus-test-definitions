@@ -1,0 +1,36 @@
+
+Description: Test with Bad Step Name (Enable)
+Category: Registration
+Classes:
+  - A
+  - DR-A
+TargetVersions:
+  - v1.2
+Steps:
+  STEP1:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /dcap
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - STEP2
+            - STEP999 # This DNE
+          
+      - type: remove-steps
+        parameters:
+          steps:
+            - STEP1
+  STEP2:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - STEP2
+  

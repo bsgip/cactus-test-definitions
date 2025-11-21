@@ -124,7 +124,7 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
 VALID_ACTION_NAMES: set[str] = set(ACTION_PARAMETER_SCHEMA.keys())
 
 
-def validate_action_parameters(procedure_name: str, step_name: int, action: Action) -> None:
+def validate_action_parameters(procedure_name: str, step_name: str, action: Action) -> None:
     """Validates the action parameters for the parent TestProcedure based on the  ACTION_PARAMETER_SCHEMA
 
     raises TestProcedureDefinitionError on failure"""

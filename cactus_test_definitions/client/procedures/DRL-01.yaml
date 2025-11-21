@@ -79,7 +79,7 @@ Steps:
       checks:
         - type: der-settings-contents
           parameters:
-            modesEnabled: 80 # bit 7
+            modesEnabled_set: "80" # bit 7
     actions:
       - type: remove-steps
         parameters:
@@ -155,7 +155,7 @@ Steps:
       checks:
         - type: der-settings-contents
           parameters:
-            modesEnabled: 80 # bit 7
+            modesEnabled_set: "80" # bit 7
     actions:
       - type: remove-steps
         parameters:
@@ -230,7 +230,7 @@ Steps:
       checks:
         - type: der-settings-contents
           parameters:
-            modesEnabled: 80 # bit 7
+            modesEnabled_set: "80" # bit 7
     actions:
       - type: remove-steps
         parameters:
@@ -304,7 +304,7 @@ Steps:
       checks:
         - type: der-settings-contents
           parameters:
-            modesEnabled: 80 # bit 7
+            modesEnabled_set: "80" # bit 7
     actions:
       - type: remove-steps
         parameters:

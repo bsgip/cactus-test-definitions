@@ -1,0 +1,21 @@
+
+Description: Test with Bad Step Name (Remove)
+Category: Registration
+Classes:
+  - A
+  - DR-A
+TargetVersions:
+  - v1.2
+Steps:
+  STEP1:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /dcap
+    actions:          
+      - type: remove-steps
+        parameters:
+          steps:
+            - STEP1
+            - STEP1999 # This DNE
+  

@@ -1,18 +1,14 @@
 from dataclasses import dataclass
 from enum import StrEnum
 from importlib import resources
-from pathlib import Path
-from typing import Iterable
 
 import yaml
-import yaml_include
-from cactus_test_definitions.client.actions import Action, validate_action_parameters
-from cactus_test_definitions.client.checks import Check, validate_check_parameters
-from cactus_test_definitions.client.events import Event, validate_event_parameters
+from cactus_test_definitions.client.actions import Action
+from cactus_test_definitions.client.checks import Check
+from cactus_test_definitions.client.events import Event
 from cactus_test_definitions.csipaus import CSIPAusVersion
-from cactus_test_definitions.errors import TestProcedureDefinitionError
 from cactus_test_definitions.schema import UniqueKeyLoader
-from dataclass_wizard import YAMLWizard
+from dataclass_wizard import LoadMeta, YAMLWizard
 
 
 class TestProcedureId(StrEnum):
@@ -86,8 +82,6 @@ class TestProcedureId(StrEnum):
     MUL_01 = "MUL-01"
     MUL_02 = "MUL-02"
     MUL_03 = "MUL-03"
-    OPT_1_IN_BAND = "OPT-1-IN-BAND"
-    OPT_1_OUT_OF_BAND = "OPT-1-OUT-OF-BAND"
 
     # Storage extension
     BES_01 = "BES-01"
@@ -155,151 +149,37 @@ class TestProcedure(YAMLWizard):
     preconditions: Preconditions | None = None  # These execute during "init" and setup the test for a valid start state
     criteria: Criteria | None = None  # How will success/failure of this procedure be determined?
 
-    @staticmethod
-    def get_yaml(test_procedure_id: str) -> str:
-        yaml_resource = resources.files("cactus_test_definitions.client.procedures") / f"{test_procedure_id}.yaml"
-        with resources.as_file(yaml_resource) as yaml_file:
-            with open(yaml_file, "r") as f:
-                yaml_contents = f.read()
-                return yaml_contents
+
+LoadMeta(raise_on_unknown_json_key=True).bind_to(TestProcedure)
 
 
-@dataclass
-class TestProcedures(YAMLWizard):
-    """Represents a collection of CSIP-AUS client test procedure descriptions/specifications
+def parse_test_procedure(yaml_contents: str) -> TestProcedure:
+    """Given a YAML string - parse a TestProcedure.
 
-    By sub-classing the YAMLWizard mixin, we get access to the class method `from_yaml`
-    which we can use to create an instances of `TestProcedures`.
-    """
+    This will ensure the YAML parser will use all the "strict" extensions to reduce the incidence of errors"""
 
-    __test__ = False  # Prevent pytest from picking up this class
-
-    description: str
-    version: str
-    test_procedures: dict[str, TestProcedure]
-
-    def _do_action_validate(self, procedure: TestProcedure, procedure_name: str, location: str, action: Action):
-        """Handles the full validation of an action's definition for a parent procedure.
-
-        procedure: The parent TestProcedure for action
-        procedure_name: The name of procedure (used for labelling errors)
-        location: Where in procedure can you find action? (used for labelling errors)
-        action: The action to validate
-
-        raises TestProcedureDefinitionError on failure
-        """
-        validate_action_parameters(procedure_name, location, action)
-
-        # Provide additional "action specific" validation
-        match action.type:
-            case "enable-steps" | "remove-steps":
-                for step_name in action.parameters["steps"]:
-                    if step_name not in procedure.steps.keys():
-                        raise TestProcedureDefinitionError(
-                            f"{procedure_name}.{location}. Refers to unknown step '{step_name}'."
-                        )
-
-    def _validate_actions(self):
-        """Validate actions of test procedure steps / preconditions
-
-        Ensure,
-        - action has the correct parameters
-        - if parameters refer to steps then those steps are defined for the test procedure
-        """
-
-        for test_procedure_name, test_procedure in self.test_procedures.items():
-            # Validate actions in the preconditions
-            if test_procedure.preconditions:
-                if test_procedure.preconditions.actions:
-                    for action in test_procedure.preconditions.actions:
-                        self._do_action_validate(test_procedure, test_procedure_name, "Precondition", action)
-
-                if test_procedure.preconditions.init_actions:
-                    for action in test_procedure.preconditions.init_actions:
-                        self._do_action_validate(test_procedure, test_procedure_name, "Precondition", action)
-
-            # Validate actions that exist on steps
-            for step_name, step in test_procedure.steps.items():
-                for action in step.actions:
-                    self._do_action_validate(test_procedure, test_procedure_name, step_name, action)
-
-    def _validate_checks(self):
-        """Validate checks of test procedures
-
-        Ensure,
-        - check has the correct parameters
-        """
-
-        for test_procedure_name, test_procedure in self.test_procedures.items():
-            if test_procedure.criteria and test_procedure.criteria.checks:
-                for check in test_procedure.criteria.checks:
-                    validate_check_parameters(test_procedure_name, check)
-
-    def _validate_events(self):
-        """Validate events of test procedure steps
-
-        Ensure,
-        - event has the correct parameters
-        """
-
-        for test_procedure_name, test_procedure in self.test_procedures.items():
-            for step_name, step in test_procedure.steps.items():
-                validate_event_parameters(test_procedure_name, step_name, step.event)
-
-    def validate(self):
-        self._validate_actions()
-        self._validate_checks()
-        self._validate_events()
+    return TestProcedure.from_yaml(
+        yaml_contents,
+        decoder=yaml.load,  # type: ignore
+        Loader=UniqueKeyLoader,
+    )
 
 
-class TestProcedureConfig:
-    __test__ = False  # Prevent pytest from picking up this class
-
-    @staticmethod
-    def from_yamlfile(path: Path, skip_validation: bool = False) -> TestProcedures:
-        """Converts a yaml file given by 'path' into a 'TestProcedures' instance.
-
-        Supports parts of the TestProcedures instance being described by external
-        YAML files. These are referenced in the parent yaml file using the `!include` directive.
-
-        skip_validation: If True, the test_procedures.validate() call will not be made
-
-        Example:
-
-            Description: CSIP-AUS Client Test Procedures
-            Version: 0.1
-            TestProcedures:
-              ALL-01: !include ALL-01.yaml
-        """
-        with open(path, "r") as f:
+def get_yaml_contents(test_procedure_id: TestProcedureId) -> str:
+    """Finds the YAML contents for the TestProcedure with the specified TestProcedureId"""
+    yaml_resource = resources.files("cactus_test_definitions.client.procedures") / f"{test_procedure_id}.yaml"
+    with resources.as_file(yaml_resource) as yaml_file:
+        with open(yaml_file, "r") as f:
             yaml_contents = f.read()
+            return yaml_contents
 
-        # Modifies the pyyaml's load method to support references to external yaml files
-        # through the `!include` directive.
-        yaml.add_constructor(
-            "!include", constructor=yaml_include.Constructor(base_dir=path.parent), Loader=UniqueKeyLoader
-        )
 
-        # ...because we are using YAMLWizard we need to supply a decoder and a Loader to
-        # use this modified version.
-        test_procedures: TestProcedures = TestProcedures.from_yaml(
-            yaml_contents,
-            decoder=yaml.load,  # type: ignore
-            Loader=UniqueKeyLoader,
-        )
+def get_test_procedure(test_procedure_id: TestProcedureId) -> TestProcedure:
+    """Gets the TestProcedure with the nominated ID by loading its definition from disk"""
+    yaml_contents = get_yaml_contents(test_procedure_id)
+    return parse_test_procedure(yaml_contents)
 
-        if not skip_validation:
-            test_procedures.validate()
 
-        return test_procedures
-
-    @staticmethod
-    def from_resource() -> TestProcedures:
-        yaml_resource = resources.files("cactus_test_definitions.client.procedures") / "test-procedures.yaml"
-        with resources.as_file(yaml_resource) as yaml_file:
-            return TestProcedureConfig.from_yamlfile(path=yaml_file)
-
-    @staticmethod
-    def available_tests() -> Iterable[str]:
-        test_procedures: TestProcedures = TestProcedureConfig.from_resource()
-        return test_procedures.test_procedures.keys()
+def get_all_test_procedures() -> dict[TestProcedureId, TestProcedure]:
+    """Gets every TestProcedure, keyed by their TestProcedureId"""
+    return {tp_id: get_test_procedure(tp_id) for tp_id in TestProcedureId}

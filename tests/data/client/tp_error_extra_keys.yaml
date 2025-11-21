@@ -1,0 +1,21 @@
+
+Description: Test with a key being assigned in the wrong place
+Category: Registration
+Classes:
+  - A
+TargetVersions:
+  - v1.2
+Steps:
+  STEP1:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /dcap
+    checks: # This checks element is at the wrong indent depth - should be nested under the event
+      - type: all-steps-complete
+        parameters: {}
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - STEP1

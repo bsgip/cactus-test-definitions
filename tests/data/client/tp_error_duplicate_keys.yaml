@@ -1,0 +1,19 @@
+
+Description: Test with a Duplicated Key
+Category: Registration
+Classes:
+  - A
+TargetVersions:
+  - v1.2
+Steps:
+  STEP1:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /dcap
+        endpoint: /edev
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - STEP1

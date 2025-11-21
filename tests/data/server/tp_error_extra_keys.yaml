@@ -1,0 +1,26 @@
+Description: Has extra keys
+Category: Registration
+Classes:
+ - A
+TargetVersions:
+ - v1.2
+Preconditions:
+  required_clients:
+    - id: client
+Steps:
+  - id: STEP1
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - DeviceCapability
+      checks: # This is at the wrong level and should be treated as an extra key
+        - type: discovered
+          parameters:
+            resources:
+              - DeviceCapability
+    checks:
+      - type: discovered
+        parameters:
+          resources:
+            - DeviceCapability
