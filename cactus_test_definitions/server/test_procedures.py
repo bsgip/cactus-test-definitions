@@ -21,6 +21,7 @@ class TestProcedureId(StrEnum):
     S_ALL_03 = "S-ALL-03"
     S_ALL_04 = "S-ALL-04"
     S_ALL_05 = "S-ALL-05"
+    S_ALL_06 = "S-ALL-06"
     S_OPT_01 = "S-OPT-01"
     S_OPT_02 = "S-OPT-02"
     S_OPT_03 = "S-OPT-03"

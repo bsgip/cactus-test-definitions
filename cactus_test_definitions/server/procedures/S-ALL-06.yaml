@@ -1,0 +1,90 @@
+Description: Mirror Usage Point Creation and Individual Readings
+Category: Monitoring
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+
+Steps:
+  - id: PRECONDITION
+    repeat_until_pass: true
+    instructions:
+      - Create an EndDevice registration for client (or rerun S-ALL-02 / S-ALL-03).
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - DeviceCapability
+          - Time
+          - MirrorUsagePointList
+          - EndDevice
+          - DER
+    checks:
+      - type: end-device # This will be the check that will block UNTIL there is an existing EndDevice registration
+        parameters:
+          matches_client: true 
+
+  - id: DISCOVER INITIAL MUPS
+    repeat_until_pass: true
+    instructions:
+      - MirrorUsagePoints must be initially empty for client.
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - MirrorUsagePoint
+    checks:
+      - type: mirror-usage-point
+        parameters:
+          matches: false # This will only match an empty list
+
+  - id: CREATE MUPS
+    action: 
+      type: upsert-mup
+      parameters:
+        mup_id: mup_all_telemetry
+        reading_types: 
+          - ActivePowerSite
+          - ReactivePowerSite
+          - ActivePowerDevice
+          - ReactivePowerDevice
+          - Frequency
+          - VoltageSite
+          - VoltageDevice
+    checks:
+      - type: mirror-usage-point
+        parameters:
+          matches: true
+          reading_types: 
+            - ActivePowerSite
+            - ReactivePowerSite
+            - ActivePowerDevice
+            - ReactivePowerDevice
+            - Frequency
+            - VoltageSite
+            - VoltageDevice
+
+  - id: POST READINGS
+    action: 
+      type: insert-readings
+      parameters:
+        mup_id: mup_all_telemetry
+        count: 4
+        interval: 60
+        values:
+          ActivePowerSite: [5000, 5100, 5200, 5300]
+          ReactivePowerSite: [1000, 1100, 1200, 1300]
+          ActivePowerDevice: [5000, 5100, 5200, 5300]
+          ReactivePowerDevice: [1000, 1100, 1200, 1300]
+          Frequency: [50.0, 50.1, 49.9, 50.0]
+          VoltageSite: [230.0, 231.0, 229.0, 230.5]
+          VoltageDevice: [230.0, 231.0, 229.0, 230.5]
+
+  # NOTE: The final step of this test is to verify that readings are retained correctly by the server.
+  # As href is optional, it is assumed many servers will not currently support this.
+  # While waiting for a discussion by the CIRG it has been decided to omit this step of testing for now.

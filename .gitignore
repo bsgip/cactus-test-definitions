@@ -2,6 +2,7 @@
 
 # A folder for devs to put files they don't want committed.
 local
+.vscode
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
