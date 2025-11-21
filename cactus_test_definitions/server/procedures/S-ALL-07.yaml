@@ -9,83 +9,105 @@ TargetVersions:
 Preconditions:
   required_clients:
     - id: client
-      client_type: device
 
 Steps:
   - id: PRECONDITION
     repeat_until_pass: true
     instructions:
-      - Create an EndDevice registration for client (or rerun S-ALL-02 / S-ALL-03).
+      - Create an EndDevice registration for client (or rerun S-ALL-01 or S-ALL-02).
+      - Complete MirrorUsagePoint creation process (or rerun S-ALL-06).
+      - Ensure DER is generating at least 50% of rated active power.
+      - Configure utility server with client's Private Enterprise Number (PEN).
     action: 
       type: discovery
       parameters:
         resources:
-          - DeviceCapability
-          - Time
-          - MirrorUsagePointList
           - EndDevice
           - DER
-    checks:
-      - type: end-device # This will be the check that will block UNTIL there is an existing EndDevice registration
-        parameters:
-          matches_client: true 
-
-  - id: DISCOVER INITIAL MUPS
-    repeat_until_pass: true
-    instructions:
-      - MirrorUsagePoints must be initially empty for client.
-    action: 
-      type: discovery
-      parameters:
-        resources:
           - MirrorUsagePoint
     checks:
+      - type: end-device 
+        parameters:
+          matches_client: true 
       - type: mirror-usage-point
         parameters:
-          matches: false # This will only match an empty list
+          matches: true
+          minimum_count: 1
 
-  - id: CREATE MUPS
+  - id: Create MUP
+    instructions:
+      - Post an initial MirrorUsagePoint to be overwritten later.
     action: 
       type: upsert-mup
       parameters:
-        mup_id: mup_all_telemetry
+        mup_id: mup_mrid_1
+        location: Device
         reading_types: 
-          - ActivePowerSite
-          - ReactivePowerSite
-          - ActivePowerDevice
-          - ReactivePowerDevice
-          - Frequency
-          - VoltageSite
-          - VoltageDevice
+          - ActivePowerAverage
+          - VoltageSinglePhaseAverage
+        roleFlags: 1
     checks:
       - type: mirror-usage-point
         parameters:
           matches: true
+          mup_id: mup_mrid_1
+          location: Device
           reading_types: 
-            - ActivePowerSite
-            - ReactivePowerSite
-            - ActivePowerDevice
-            - ReactivePowerDevice
-            - Frequency
-            - VoltageSite
-            - VoltageDevice
+            - ActivePowerAverage
+            - VoltageSinglePhaseAverage
+          roleFlags: 1
+# TODO: STEP 1. Make MUP with two types in it
+# Update the roleflags of one of them
+# STEP 2: Create a reading, then a new reading with the same mrid to overwrite it
+# STEP 3: update the MUP type but leave the reading (change votage to frequency)
+  - id: UPDATE MUP ROLEFLAGS
+    instructions:
+      - Post same MirrorUsagePoint mRID with different roleFlags to verify update (not creation).
+    action: 
+      type: upsert-mup
+      parameters:
+        mup_id: mup_mrid_1
+        location: Device
+        reading_types: 
+          - ActivePowerAverage
+          - VoltageSinglePhaseAverage
+        roleFlags: 2
+    checks:
+      - type: mirror-usage-point
+        parameters:
+          matches: true
+          mup_id: mup_mrid_1
+          location: Device
+          reading_types: 
+            - ActivePowerAverage
+            - VoltageSinglePhaseAverage
+          mmr_mrids:
+            - reading_1
+            - reading_2
+          roleFlags: 2
 
-  - id: POST READINGS
+  - id: POST INITIAL READING
     action: 
       type: insert-readings
       parameters:
-        mup_id: mup_all_telemetry
-        count: 4
-        interval: 60
+        mup_id: mup_mrid_1
         values:
-          ActivePowerSite: [5000, 5100, 5200, 5300]
-          ReactivePowerSite: [1000, 1100, 1200, 1300]
-          ActivePowerDevice: [5000, 5100, 5200, 5300]
-          ReactivePowerDevice: [1000, 1100, 1200, 1300]
-          Frequency: [50.0, 50.1, 49.9, 50.0]
-          VoltageSite: [230.0, 231.0, 229.0, 230.5]
-          VoltageDevice: [230.0, 231.0, 229.0, 230.5]
+          ActivePowerAverage: [5000]
 
-  # NOTE: The final step of this test is to verify that readings are retained correctly by the server.
-  # As href is optional, it is assumed many servers will not currently support this.
-  # While waiting for a discussion by the CIRG it has been decided to omit this step of testing for now.
+  - id: UPDATE READING
+    instructions:
+      - Post MirrorMeterReading with same mRID but different value to verify update behavior.
+    action: 
+      type: insert-readings
+      parameters:
+        mup_id: mup_mrid_1
+        values:
+          ActivePowerAverage: [6000]
+  
+  - id: UPDATE READING
+    instructions:
+      - Post MirrorMeterReading with same mRID and no value.
+    action: 
+      type: insert-readings
+      parameters:
+        mup_id: mup_mrid_1
