@@ -45,6 +45,8 @@ class CSIPAusResource(StrEnum):
     SubscriptionList = "SubscriptionList"
     Subscription = "Subscription"
 
+    Notification = "Notification"  # A Notification isn't normally discoverable - it's received via pub/sub webhook
+
 
 class CSIPAusReadingLocation(StrEnum):
     Site = "Site"  # The reading is measured at the site's connection point

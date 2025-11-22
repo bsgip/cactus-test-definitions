@@ -7,6 +7,8 @@ from cactus_test_definitions.server.test_procedures import (
     TestProcedureId,
     get_all_test_procedures,
     get_test_procedure,
+    get_yaml_contents,
+    parse_test_procedure,
 )
 
 __all__ = [
@@ -20,4 +22,6 @@ __all__ = [
     "TestProcedure",
     "get_all_test_procedures",
     "get_test_procedure",
+    "get_yaml_contents",
+    "parse_test_procedure",
 ]
