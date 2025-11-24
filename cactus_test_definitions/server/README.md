@@ -94,7 +94,7 @@ action:
 | **name** | **params** | **description** |
 | -------- | ---------- | --------------- |
 | `discovery` | `resources: list[CSIPAusResource]` `next_polling_window: bool/None` | Performs a full discovery / refresh of the client's context from DeviceCapability downwards, looking to discover the specific resources. Can be delayed until the next polling window. |
-| `notifications` | `collect: bool` `disable: bool` | If `collect`, consumes subscription notifications and inserts them into the current context, if `disable` causes the subscription notification webhook to simulate an outage (return HTTP 5XX) |
+| `notifications` | `sub_id: str` `collect: bool/None` `disable: bool/None` | `sub_id` must match a previously created subscription. If `collect`, consumes subscription notifications and inserts them into the current context, if `disable` causes the subscription notification webhook to simulate an outage (return HTTP 5XX) |
 | `wait` | `duration_seconds: int` | Performs no action for the nominated period of time |
 | `refresh-resource` | `resource: CSIPAusResource` `expect_rejection: bool/None` `expect_rejection_or_empty: bool/None` | Forces a particular resource to be refreshed (using existing hrefs in context). Can be set to expect a HTTP 4XX ErrorResponse and/or an empty list resource (if appropriate). |
 | `insert-end-device` | `force_lfdi: str/None` `expect_rejection: bool/None` | Causes the client to submit a new EndDevice registration and resolves the returned Location header |
