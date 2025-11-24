@@ -10,24 +10,16 @@ Preconditions:
   required_clients:
     - id: client
 
-Preconditions:
-  required_clients:
-    - id: client
-
 Steps:
   - id: PRECONDITION
     repeat_until_pass: true
-    instructions:
-      - Create an EndDevice registration for client (or rerun S-ALL-01 or S-ALL-02).
-      - Ensure DER is generating at least 50% of rated active power.
-      - Set DER to fully operational state (connected, available, operating).
+    instructions: Create an EndDevice registration.
     action: 
       type: discovery
       parameters:
         resources:
           - EndDevice
           - DER
-          - DERStatus
     checks:
       - type: end-device 
         parameters:
@@ -37,21 +29,17 @@ Steps:
           links:
             - DERStatus
 
-  - id: PRECONDITION
-    instructions:
-      - Set DER to fully operational (all status bits = 1).
+  - id: INITIALISE DER STATUS
     action: 
       type: upsert-der-status
       parameters:
-        genConnectStatus: 7  # 0111 - connected, available, operating
+        genConnectStatus: 7  # 0111 - connected
     checks:
       - type: der-status
         parameters:
           genConnectStatus: 7
 
-  - id: STEP 1 - DISCONNECT
-    instructions:
-      - Disconnect DER (bit 0 = 0).
+  - id: STEP 1 - DISCONNECT # bit 0 = 0
     action: 
       type: upsert-der-status
       parameters:
@@ -62,20 +50,16 @@ Steps:
           genConnectStatus: 6
 
   - id: STEP 2 - RECONNECT
-    instructions:
-      - Reconnect DER
     action: 
       type: upsert-der-status
       parameters:
-        genConnectStatus: 7  # 0111
+        genConnectStatus: 7
     checks:
       - type: der-status
         parameters:
           genConnectStatus: 7
 
-  - id: STEP 3 - UNAVAILABLE
-    instructions:
-      - Set DER to unavailable (bit 1 = 0).
+  - id: STEP 3 - UNAVAILABLE  # bit 1 = 0
     action: 
       type: upsert-der-status
       parameters:
@@ -97,9 +81,7 @@ Steps:
         parameters:
           genConnectStatus: 7
 
-  - id: STEP 5 - NON-OPERATING
-    instructions:
-      - Set DER to non-operating state (bit 2 = 0).
+  - id: STEP 5 - NON-OPERATING # bit 2 = 0
     action: 
       type: upsert-der-status
       parameters:
@@ -115,7 +97,7 @@ Steps:
     action: 
       type: upsert-der-status
       parameters:
-        genConnectStatus: 7  # 0111
+        genConnectStatus: 7
     checks:
       - type: der-status
         parameters:

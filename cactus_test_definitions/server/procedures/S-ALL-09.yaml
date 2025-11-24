@@ -1,0 +1,56 @@
+Description: S-ALL-09 Operational Mode Status 
+Category: Monitoring
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+
+Steps:
+  - id: PRECONDITION
+    repeat_until_pass: true
+    instructions:
+      - Ensure DER is generating at least 50% of rated active power.
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - DER
+          - DERStatus
+    checks:
+      - type: end-device 
+        parameters:
+          matches_client: true
+      - type: discovered
+        parameters:
+          links:
+            - DERStatus
+
+  - id: STEP 1 - Set Online
+    instructions:
+      - Set OperationalModeStatus = 1 
+    action: 
+      type: upsert-der-status
+      parameters:
+        operationalModeStatus: 1
+    checks:
+      - type: der-status
+        parameters:
+          operationalModeStatus: 1
+
+  - id: STEP 2 - Set Offline
+    instructions:
+      - Set OperationalModeStatus = 2 
+    action: 
+      type: upsert-der-status
+      parameters:
+        operationalModeStatus: 2
+    checks:
+      - type: der-status
+        parameters:
+          operationalModeStatus: 2
