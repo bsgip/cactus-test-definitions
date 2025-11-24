@@ -1,0 +1,96 @@
+Description: S-ALL-10 Capabilities and Settings
+Category: Monitoring
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+
+Steps:
+  - id: PRECONDITION
+    repeat_until_pass: true
+    instructions:
+      - Create an EndDevice registration for client (or rerun S-ALL-02 / S-ALL-03).
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - DER
+    checks:
+      - type: end-device 
+        parameters:
+          matches_client: true
+      - type: discovered
+        parameters:
+          links:
+            - DERCapability
+            - DERSettings
+
+  - id: STEP 1A - Put DERCapability
+    action: 
+      type: upsert-der-capability
+      parameters:
+        type: 4
+        rtgMaxW: 10000
+        modesSupported: 3
+        doeModesSupported: 3
+    checks:
+      - type: der-capability
+        parameters:
+          type: 4
+          rtgMaxW: 10000
+          modesSupported: 3
+          doeModesSupported: 3
+
+  - id: STEP 1B - Put DERSettings
+    action: 
+      type: upsert-der-settings
+      parameters:
+        setMaxW: 10000
+        setGradW: 1000
+        modesSupported: 3
+        doeModesSupported: 3
+    checks:
+      - type: der-settings
+        parameters:
+          setMaxW: 10000
+          setGradW: 1000
+          modesSupported: 3
+          doeModesSupported: 3
+
+  - id: STEP 2A - UPSERT DERCapability
+    action: 
+      type: upsert-der-capability
+      parameters:
+        type: 5
+        rtgMaxW: 11000
+        modesSupported: 4
+        doeModesSupported: 4
+    checks:
+      - type: der-capability
+        parameters:
+          type: 5
+          rtgMaxW: 11000
+          modesSupported: 4
+          doeModesSupported: 4
+
+  - id: STEP 2B - UPSERT DERSettings
+    action: 
+      type: upsert-der-settings
+      parameters:
+        setMaxW: 11000
+        setGradW: 1100
+        modesSupported: 4
+        doeModesSupported: 4
+    checks:
+      - type: der-settings
+        parameters:
+          setMaxW: 11000
+          setGradW: 1100
+          modesSupported: 4
+          doeModesSupported: 4

@@ -14,14 +14,13 @@ Steps:
   - id: PRECONDITION
     repeat_until_pass: true
     instructions:
-      - Ensure DER is generating at least 50% of rated active power.
+      - Create an EndDevice registration for client (or rerun S-ALL-02 / S-ALL-03).
     action: 
       type: discovery
       parameters:
         resources:
           - EndDevice
           - DER
-          - DERStatus
     checks:
       - type: end-device 
         parameters:
@@ -32,8 +31,6 @@ Steps:
             - DERStatus
 
   - id: STEP 1 - Set Online
-    instructions:
-      - Set OperationalModeStatus = 1 
     action: 
       type: upsert-der-status
       parameters:
@@ -44,8 +41,6 @@ Steps:
           operationalModeStatus: 1
 
   - id: STEP 2 - Set Offline
-    instructions:
-      - Set OperationalModeStatus = 2 
     action: 
       type: upsert-der-status
       parameters:
