@@ -31,7 +31,6 @@ Steps:
       - type: mirror-usage-point
         parameters:
           matches: true
-          minimum_count: 1
 
   - id: Create MUP # Post an initial MirrorUsagePoint to be overwritten later.
     action: 
@@ -41,7 +40,7 @@ Steps:
         reading_types: 
           - ActivePowerAverage
           - VoltageSinglePhaseAverage
-        roleFlags: 1
+        location: site  # Set the roleflage
     checks:
       - type: mirror-usage-point
         parameters:
@@ -50,7 +49,7 @@ Steps:
           reading_types: 
             - ActivePowerAverage
             - VoltageSinglePhaseAverage
-          roleFlags: 1
+          location: site
 
   - id: STEP 1 - UPDATE MUP ROLEFLAGS # Post same MirrorUsagePoint mRID with different roleFlags
     action: 
@@ -60,7 +59,7 @@ Steps:
         reading_types: 
           - ActivePowerAverage
           - VoltageSinglePhaseAverage
-        roleFlags: 2
+        location: device  # Update the roleflage
     checks:
       - type: mirror-usage-point
         parameters:
@@ -69,7 +68,7 @@ Steps:
           reading_types: 
             - ActivePowerAverage
             - VoltageSinglePhaseAverage
-          roleFlags: 2
+          location: device
 
   - id: POST INITIAL READING
     action: 

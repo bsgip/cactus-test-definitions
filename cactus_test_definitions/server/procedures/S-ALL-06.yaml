@@ -89,8 +89,6 @@ Steps:
       type: insert-readings
       parameters:
         mup_id: mup_site
-        count: 4
-        interval: 60
         values:
           ActivePowerAverage: [5000, 5100, 5200, 5300]
           ReactivePowerAverage: [1000, 1100, 1200, 1300]
@@ -102,8 +100,6 @@ Steps:
       type: insert-readings
       parameters:
         mup_id: mup_device
-        count: 4
-        interval: 60
         values:
           ActivePowerAverage: [5000, 5100, 5200, 5300]
           ReactivePowerAverage: [1000, 1100, 1200, 1300]
