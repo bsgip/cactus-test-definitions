@@ -76,6 +76,5 @@ exclude = ["dist", "build", "tests"]
 version = { attr = "cactus_test_definitions.__version__" }
 readme = { file = ["README.md"], content-type = "text/markdown" }
 
-
 [tool.setuptools.package-data]
 "cactus_test_definitions" = ["py.typed"]
