@@ -1,0 +1,122 @@
+Description: S-ALL-08 Connection Status 
+Category: Monitoring
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+
+Preconditions:
+  required_clients:
+    - id: client
+
+Steps:
+  - id: PRECONDITION
+    repeat_until_pass: true
+    instructions:
+      - Create an EndDevice registration for client (or rerun S-ALL-01 or S-ALL-02).
+      - Ensure DER is generating at least 50% of rated active power.
+      - Set DER to fully operational state (connected, available, operating).
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - DER
+          - DERStatus
+    checks:
+      - type: end-device 
+        parameters:
+          matches_client: true
+      - type: discovered
+        parameters:
+          links:
+            - DERStatus
+
+  - id: PRECONDITION
+    instructions:
+      - Set DER to fully operational (all status bits = 1).
+    action: 
+      type: upsert-der-status
+      parameters:
+        genConnectStatus: 7  # 0111 - connected, available, operating
+    checks:
+      - type: der-status
+        parameters:
+          genConnectStatus: 7
+
+  - id: STEP 1 - DISCONNECT
+    instructions:
+      - Disconnect DER (bit 0 = 0).
+    action: 
+      type: upsert-der-status
+      parameters:
+        genConnectStatus: 6  # 0110
+    checks:
+      - type: der-status
+        parameters:
+          genConnectStatus: 6
+
+  - id: STEP 2 - RECONNECT
+    instructions:
+      - Reconnect DER
+    action: 
+      type: upsert-der-status
+      parameters:
+        genConnectStatus: 7  # 0111
+    checks:
+      - type: der-status
+        parameters:
+          genConnectStatus: 7
+
+  - id: STEP 3 - UNAVAILABLE
+    instructions:
+      - Set DER to unavailable (bit 1 = 0).
+    action: 
+      type: upsert-der-status
+      parameters:
+        genConnectStatus: 5  # 0101
+    checks:
+      - type: der-status
+        parameters:
+          genConnectStatus: 5
+
+  - id: STEP 4 - RECONNECT
+    instructions:
+      - Reconnect DER
+    action: 
+      type: upsert-der-status
+      parameters:
+        genConnectStatus: 7  # 0111
+    checks:
+      - type: der-status
+        parameters:
+          genConnectStatus: 7
+
+  - id: STEP 5 - NON-OPERATING
+    instructions:
+      - Set DER to non-operating state (bit 2 = 0).
+    action: 
+      type: upsert-der-status
+      parameters:
+        genConnectStatus: 3  # 0011
+    checks:
+      - type: der-status
+        parameters:
+          genConnectStatus: 3
+
+  - id: STEP 6 - RECONNECT
+    instructions:
+      - Reconnect DER
+    action: 
+      type: upsert-der-status
+      parameters:
+        genConnectStatus: 7  # 0111
+    checks:
+      - type: der-status
+        parameters:
+          genConnectStatus: 7

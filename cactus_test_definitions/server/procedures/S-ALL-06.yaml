@@ -44,47 +44,75 @@ Steps:
         parameters:
           matches: false # This will only match an empty list
 
-  - id: CREATE MUPS
+  - id: CREATE MUP FOR SITE
     action: 
       type: upsert-mup
       parameters:
-        mup_id: mup_all_telemetry
+        mup_id: mup_site
+        location: Site
         reading_types: 
-          - ActivePowerSite
-          - ReactivePowerSite
-          - ActivePowerDevice
-          - ReactivePowerDevice
-          - Frequency
-          - VoltageSite
-          - VoltageDevice
+          - ActivePowerAverage
+          - ReactivePowerAverage
+          - FrequencyAverage
+          - VoltageSinglePhaseAverage
     checks:
       - type: mirror-usage-point
         parameters:
+          location: Site
           matches: true
           reading_types: 
-            - ActivePowerSite
-            - ReactivePowerSite
-            - ActivePowerDevice
-            - ReactivePowerDevice
-            - Frequency
-            - VoltageSite
-            - VoltageDevice
+          - ActivePowerAverage
+          - ReactivePowerAverage
+          - FrequencyAverage
+          - VoltageSinglePhaseAverage
 
-  - id: POST READINGS
+  - id: CREATE MUP FOR DEVICE
+    action: 
+      type: upsert-mup
+      parameters:
+        mup_id: mup_device
+        location: Device
+        reading_types: 
+          - ActivePowerAverage
+          - ReactivePowerAverage
+          - FrequencyAverage
+          - VoltageSinglePhaseAverage
+    checks:
+      - type: mirror-usage-point
+        parameters:
+          location: Device
+          matches: true
+          reading_types: 
+          - ActivePowerAverage
+          - ReactivePowerAverage
+          - FrequencyAverage
+          - VoltageSinglePhaseAverage
+
+  - id: POST READINGS TO SITE
     action: 
       type: insert-readings
       parameters:
-        mup_id: mup_all_telemetry
+        mup_id: mup_site
         count: 4
         interval: 60
         values:
-          ActivePowerSite: [5000, 5100, 5200, 5300]
-          ReactivePowerSite: [1000, 1100, 1200, 1300]
-          ActivePowerDevice: [5000, 5100, 5200, 5300]
-          ReactivePowerDevice: [1000, 1100, 1200, 1300]
-          Frequency: [50.0, 50.1, 49.9, 50.0]
-          VoltageSite: [230.0, 231.0, 229.0, 230.5]
-          VoltageDevice: [230.0, 231.0, 229.0, 230.5]
+          ActivePowerAverage: [5000, 5100, 5200, 5300]
+          ReactivePowerAverage: [1000, 1100, 1200, 1300]
+          FrequencyAverage: [50.0, 50.1, 49.9, 50.0]
+          VoltageSinglePhaseAverage: [230.0, 231.0, 229.0, 230.5]
+
+  - id: POST READINGS TO DEVICE
+    action: 
+      type: insert-readings
+      parameters:
+        mup_id: mup_device
+        count: 4
+        interval: 60
+        values:
+          ActivePowerAverage: [5000, 5100, 5200, 5300]
+          ReactivePowerAverage: [1000, 1100, 1200, 1300]
+          FrequencyAverage: [50.0, 50.1, 49.9, 50.0]
+          VoltageSinglePhaseAverage: [230.0, 231.0, 229.0, 230.5]
 
   # NOTE: The final step of this test is to verify that readings are retained correctly by the server.
   # As href is optional, it is assumed many servers will not currently support this.

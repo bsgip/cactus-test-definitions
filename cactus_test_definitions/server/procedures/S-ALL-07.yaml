@@ -28,7 +28,7 @@ Steps:
     checks:
       - type: end-device 
         parameters:
-          matches_client: true 
+          matches_client: true
       - type: mirror-usage-point
         parameters:
           matches: true
@@ -41,7 +41,6 @@ Steps:
       type: upsert-mup
       parameters:
         mup_id: mup_mrid_1
-        location: Device
         reading_types: 
           - ActivePowerAverage
           - VoltageSinglePhaseAverage
@@ -51,23 +50,18 @@ Steps:
         parameters:
           matches: true
           mup_id: mup_mrid_1
-          location: Device
           reading_types: 
             - ActivePowerAverage
             - VoltageSinglePhaseAverage
           roleFlags: 1
-# TODO: STEP 1. Make MUP with two types in it
-# Update the roleflags of one of them
-# STEP 2: Create a reading, then a new reading with the same mrid to overwrite it
-# STEP 3: update the MUP type but leave the reading (change votage to frequency)
-  - id: UPDATE MUP ROLEFLAGS
+
+  - id: STEP 1 - UPDATE MUP ROLEFLAGS
     instructions:
       - Post same MirrorUsagePoint mRID with different roleFlags to verify update (not creation).
     action: 
       type: upsert-mup
       parameters:
         mup_id: mup_mrid_1
-        location: Device
         reading_types: 
           - ActivePowerAverage
           - VoltageSinglePhaseAverage
@@ -77,13 +71,9 @@ Steps:
         parameters:
           matches: true
           mup_id: mup_mrid_1
-          location: Device
           reading_types: 
             - ActivePowerAverage
             - VoltageSinglePhaseAverage
-          mmr_mrids:
-            - reading_1
-            - reading_2
           roleFlags: 2
 
   - id: POST INITIAL READING
@@ -93,21 +83,35 @@ Steps:
         mup_id: mup_mrid_1
         values:
           ActivePowerAverage: [5000]
+          VoltageSinglePhaseAverage: [240.0]
 
-  - id: UPDATE READING
+  - id: STEP 2 - UPDATE READING
     instructions:
       - Post MirrorMeterReading with same mRID but different value to verify update behavior.
     action: 
       type: insert-readings
       parameters:
         mup_id: mup_mrid_1
+        mmr_mrids:
+          - activepower1
         values:
-          ActivePowerAverage: [6000]
+          ActivePowerAverage: [6000]  # The mmr mrid will automatically be the same as the initial reading
+        # NOTE: We do not have the option to request readings, so cannot verify the result of this upsert
   
-  - id: UPDATE READING
+  - id: STEP 3 - Update MUP type
     instructions:
-      - Post MirrorMeterReading with same mRID and no value.
+      - Post MirrorMeterReading with same mRID and no value, change the reading type.
     action: 
-      type: insert-readings
+      type: upsert-mup
       parameters:
         mup_id: mup_mrid_1
+        reading_types: 
+          - ReactivePowerAverage
+    checks:
+      - type: mirror-usage-point
+        parameters:
+          matches: true
+          mup_id: mup_mrid_1
+          reading_types:
+            - ReactivePowerAverage
+            - VoltageSinglePhaseAverage
