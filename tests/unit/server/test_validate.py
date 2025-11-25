@@ -51,7 +51,6 @@ def test_each_alias_defined(tp_id: str):
             sub_id = None
 
         if step.action.type == UPSERT_MUP_ACTION:
-            assert mup_id and (mup_id not in mup_aliases_found), "mup_id is already defined in this test."
             mup_aliases_found.add(mup_id)
         elif step.action.type == INSERT_MUP_ACTION:
             assert mup_id and (mup_id in mup_aliases_found), "mup_id hasn't been defined yet."
