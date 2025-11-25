@@ -1,0 +1,155 @@
+Description: Subscribe
+Category: Subscription / Notification
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+  
+Steps:
+  - id: PRECONDITION
+    repeat_until_pass: true
+    instructions:
+      - Create an EndDevice registration for client (with a single FunctionSetAssignment).
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - FunctionSetAssignments
+          - DERProgram
+    checks:
+      - type: end-device 
+        parameters:
+          matches_client: true
+      - type: function-set-assignment
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          matches_client_edev: true
+
+  - id: EDEV LIST SUBSCRIBE
+    action: 
+      type: create-subscription
+      parameters:
+        sub_id: edev_list_sub
+        resource: EndDeviceList
+
+  - id: AWAIT EDEV LIST NOTIFICATION
+    repeat_until_pass: true
+    instructions:
+      - Change the EndDeviceList to have a pollRate of 30 seconds. Ensure it sends a Notification.
+    action: 
+      type: notifications
+      parameters:
+        sub_id: edev_list_sub
+        collect: true
+    checks:
+      - type: end-device-list
+        parameters:
+          matches_poll_rate: 30
+
+  - id: FSA LIST SUBSCRIBE
+    action: 
+      type: create-subscription
+      parameters:
+        sub_id: fsa_list_sub
+        resource: FunctionSetAssignmentsList
+    
+  - id: AWAIT FSA LIST NOTIFICATION
+    repeat_until_pass: true
+    instructions:
+      - Add a new FunctionSetAssignment to client EndDevice. Ensure it sends a Notification.
+    action: 
+      type: notifications
+      parameters:
+        sub_id: fsa_list_sub
+        collect: true
+    checks:
+      - type: function-set-assignment
+        parameters:
+          minimum_count: 2
+          maximum_count: 2
+          matches_client_edev: true
+
+  # This isn't a specific step in the test procedure - it's a mini precondition to ensure
+  # we don't have any superfluous DERPrograms in the new FSA before going to test for the creation of those DERPrograms
+  - id: CONFIRMING DERPROGRAMS
+    repeat_until_pass: true
+    instructions:
+      - Remove any DERPrograms assigned to the newly created FunctionSetAssignment.
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - DERProgram
+    checks:
+      - type: der-program
+        parameters:
+          minimum_count: 0
+          maximum_count: 0
+          fsa_index: 1 # Belonging to the second FunctionSetAssignment
+
+  - id: DERP LIST SUBSCRIBE
+    action: 
+      type: create-subscription
+      parameters:
+        sub_id: derp_list_sub
+        resource: DERProgramList
+
+  - id: AWAIT DERP LIST NOTIFICATION
+    repeat_until_pass: true
+    instructions:
+      - Add a new DERProgram to the newly created FunctionSetAssignment. Ensure it sends a Notification.
+    action: 
+      type: notifications
+      parameters:
+        sub_id: derp_list_sub
+        collect: true
+    checks:
+      - type: der-program
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          fsa_index: 1 # Must belong to the second FunctionSetAssignment
+
+  # This isn't a specific step in the test procedure - it's a mini precondition to ensure
+  # we don't have any superfluous DERPrograms in the new FSA before going to test for the creation of those DERPrograms
+  - id: CONFIRMING DEFAULT DERCONTROL
+    repeat_until_pass: true
+    instructions:
+      - Assign a DefaultDERControl with opModExpLimW 1000 W.
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - DefaultDERControl
+    checks:
+      - type: default-der-control
+        parameters:
+          opModExpLimW: 1000
+          
+  - id: DEFAULT DERC SUBSCRIBE
+    action: 
+      type: create-subscription
+      parameters:
+        sub_id: dderc_sub
+        resource: DefaultDERControl
+
+  - id: AWAIT DEFAULT DERC NOTIFICATION
+    repeat_until_pass: true
+    instructions:
+      - Adjust the DefaultDERControl to have opModeExpLimW 2000 W. Ensure it sends a Notification.
+    action: 
+      type: notifications
+      parameters:
+        sub_id: dderc_sub
+        collect: true
+    checks:
+      - type: default-der-control
+        parameters:
+          opModExpLimW: 2000

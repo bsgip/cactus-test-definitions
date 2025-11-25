@@ -41,6 +41,18 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "links": ParameterSchema(False, ParameterType.ListCSIPAusResource),
     },
     "time-synced": {},  # Passes if the current Time resource is synced with this client's date/time
+    "function-set-assignment": {
+        "minimum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at least this many FSAs to pass
+        "maximum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at most this many FSAs to pass
+        "matches_client_edev": ParameterSchema(
+            False, ParameterType.Boolean
+        ),  # If True - only FSAs assigned to the client's EndDevice will be counted
+    },
+    "end-device-list": {
+        "matches_poll_rate": ParameterSchema(
+            True, ParameterType.Integer
+        ),  # Will only match an EndDevice list with this exact pollRate
+    },
     "end-device": {
         "matches_client": ParameterSchema(
             True, ParameterType.Boolean
