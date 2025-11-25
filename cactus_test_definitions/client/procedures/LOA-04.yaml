@@ -1,7 +1,7 @@
 Description: Default Control – Load Limit
 Category: Control
 Classes:
-  - G
+  - L
 
 TargetVersions:
   - v1.2
