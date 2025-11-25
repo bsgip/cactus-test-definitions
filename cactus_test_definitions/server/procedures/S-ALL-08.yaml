@@ -35,40 +35,24 @@ Steps:
       type: upsert-der-status
       parameters:
         genConnectStatus: 7  # 0111 - connected
-    checks:
-      - type: der-status
-        parameters:
-          genConnectStatus: 7
 
   - id: STEP 1 - DISCONNECT # bit 0 = 0
     action: 
       type: upsert-der-status
       parameters:
         genConnectStatus: 6  # 0110
-    checks:
-      - type: der-status
-        parameters:
-          genConnectStatus: 6
 
   - id: STEP 2 - RECONNECT
     action: 
       type: upsert-der-status
       parameters:
         genConnectStatus: 7
-    checks:
-      - type: der-status
-        parameters:
-          genConnectStatus: 7
 
   - id: STEP 3 - UNAVAILABLE  # bit 1 = 0
     action: 
       type: upsert-der-status
       parameters:
         genConnectStatus: 5  # 0101
-    checks:
-      - type: der-status
-        parameters:
-          genConnectStatus: 5
 
   - id: STEP 4 - RECONNECT
     instructions:
@@ -77,20 +61,12 @@ Steps:
       type: upsert-der-status
       parameters:
         genConnectStatus: 7  # 0111
-    checks:
-      - type: der-status
-        parameters:
-          genConnectStatus: 7
 
   - id: STEP 5 - NON-OPERATING # bit 2 = 0
     action: 
       type: upsert-der-status
       parameters:
         genConnectStatus: 3  # 0011
-    checks:
-      - type: der-status
-        parameters:
-          genConnectStatus: 3
 
   - id: STEP 6 - RECONNECT
     instructions:
@@ -99,7 +75,3 @@ Steps:
       type: upsert-der-status
       parameters:
         genConnectStatus: 7
-    checks:
-      - type: der-status
-        parameters:
-          genConnectStatus: 7

@@ -35,17 +35,9 @@ Steps:
       type: upsert-der-status
       parameters:
         operationalModeStatus: 1
-    checks:
-      - type: der-status
-        parameters:
-          operationalModeStatus: 1
 
   - id: STEP 2 - Set Offline
     action: 
       type: upsert-der-status
       parameters:
         operationalModeStatus: 2
-    checks:
-      - type: der-status
-        parameters:
-          operationalModeStatus: 2

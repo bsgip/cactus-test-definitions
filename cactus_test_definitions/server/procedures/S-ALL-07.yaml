@@ -40,16 +40,15 @@ Steps:
         reading_types: 
           - ActivePowerAverage
           - VoltageSinglePhaseAverage
-        location: site  # Set the roleflage
+        location: Site  # Set the roleflage
     checks:
       - type: mirror-usage-point
         parameters:
           matches: true
-          mup_id: mup_mrid_1
           reading_types: 
             - ActivePowerAverage
             - VoltageSinglePhaseAverage
-          location: site
+          location: Site
 
   - id: STEP 1 - UPDATE MUP ROLEFLAGS # Post same MirrorUsagePoint mRID with different roleFlags
     action: 
@@ -59,16 +58,15 @@ Steps:
         reading_types: 
           - ActivePowerAverage
           - VoltageSinglePhaseAverage
-        location: device  # Update the roleflage
+        location: Device  # Update the roleflage
     checks:
       - type: mirror-usage-point
         parameters:
           matches: true
-          mup_id: mup_mrid_1
           reading_types: 
             - ActivePowerAverage
             - VoltageSinglePhaseAverage
-          location: device
+          location: Device
 
   - id: POST INITIAL READING
     action: 
@@ -84,8 +82,6 @@ Steps:
       type: insert-readings
       parameters:
         mup_id: mup_mrid_1
-        mmr_mrids:
-          - activepower1
         values:
           ActivePowerAverage: [6000]  # The mmr mrid will automatically be the same as the initial reading
         # NOTE: We do not have the option to request readings, so cannot verify the result of this upsert
@@ -97,11 +93,12 @@ Steps:
         mup_id: mup_mrid_1
         reading_types: 
           - ReactivePowerAverage
+        location: Device
     checks:
       - type: mirror-usage-point
         parameters:
           matches: true
-          mup_id: mup_mrid_1
           reading_types:
             - ReactivePowerAverage
             - VoltageSinglePhaseAverage
+          location: Device

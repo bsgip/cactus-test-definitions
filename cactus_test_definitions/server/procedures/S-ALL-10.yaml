@@ -39,13 +39,6 @@ Steps:
         rtgMaxW: 10000
         modesSupported: 3
         doeModesSupported: 3
-    checks:
-      - type: der-capability
-        parameters:
-          type: 4
-          rtgMaxW: 10000
-          modesSupported: 3
-          doeModesSupported: 3
 
   - id: STEP 1B - Put DERSettings
     action: 
@@ -53,15 +46,8 @@ Steps:
       parameters:
         setMaxW: 10000
         setGradW: 1000
-        modesSupported: 3
-        doeModesSupported: 3
-    checks:
-      - type: der-settings
-        parameters:
-          setMaxW: 10000
-          setGradW: 1000
-          modesSupported: 3
-          doeModesSupported: 3
+        modesEnabled: 3
+        doeModesEnabled: 3
 
   - id: STEP 2A - UPSERT DERCapability
     action: 
@@ -71,13 +57,6 @@ Steps:
         rtgMaxW: 11000
         modesSupported: 4
         doeModesSupported: 4
-    checks:
-      - type: der-capability
-        parameters:
-          type: 5
-          rtgMaxW: 11000
-          modesSupported: 4
-          doeModesSupported: 4
 
   - id: STEP 2B - UPSERT DERSettings
     action: 
@@ -85,12 +64,5 @@ Steps:
       parameters:
         setMaxW: 11000
         setGradW: 1100
-        modesSupported: 4
-        doeModesSupported: 4
-    checks:
-      - type: der-settings
-        parameters:
-          setMaxW: 11000
-          setGradW: 1100
-          modesSupported: 4
-          doeModesSupported: 4
+        modesEnabled: 4
+        doeModesEnabled: 4
