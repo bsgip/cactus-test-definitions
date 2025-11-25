@@ -147,7 +147,7 @@ Steps:
         - type: response-contents
           parameters: 
             latest: true
-            status: 1
+            status: 2
     actions:
       - type: cancel-active-der-controls
         parameters: {}
