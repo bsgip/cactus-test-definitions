@@ -14,7 +14,7 @@ Steps:
   - id: PRECONDITION
     repeat_until_pass: true
     instructions:
-      - Create an EndDevice registration for client (or rerun S-ALL-02 / S-ALL-03).
+      - Create an EndDevice registration for client.
     action: 
       type: discovery
       parameters:

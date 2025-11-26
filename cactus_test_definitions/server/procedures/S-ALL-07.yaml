@@ -14,8 +14,7 @@ Steps:
   - id: PRECONDITION
     repeat_until_pass: true
     instructions:
-      - Create an EndDevice registration for client (or rerun S-ALL-01 or S-ALL-02).
-      - Complete MirrorUsagePoint creation process (or rerun S-ALL-06).
+      - Create an EndDevice registration for client.
       - Configure utility server with client's Private Enterprise Number (PEN).
     action: 
       type: discovery
@@ -28,9 +27,6 @@ Steps:
       - type: end-device 
         parameters:
           matches_client: true
-      - type: mirror-usage-point
-        parameters:
-          matches: true
 
   - id: Create MUP # Post an initial MirrorUsagePoint to be overwritten later.
     action: 
