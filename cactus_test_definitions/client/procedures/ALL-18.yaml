@@ -27,10 +27,7 @@ Preconditions:
       parameters: {}
     - type: der-settings-contents
       parameters: {}
-    - type: response-contents
-      parameters:
-        all: true
-        status: 1
+
   actions:
     # (a)
     - type: create-der-control
@@ -147,7 +144,7 @@ Steps:
         - type: response-contents
           parameters: 
             latest: true
-            status: 1
+            status: 2
     actions:
       - type: cancel-active-der-controls
         parameters: {}
