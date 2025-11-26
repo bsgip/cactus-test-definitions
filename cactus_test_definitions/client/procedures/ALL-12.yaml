@@ -49,14 +49,30 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - WAIT-TILL-END
-            - PUT-DERSTATUS-DISCONNECT
+            - WAIT-CONTROL-START
       - type: remove-steps
         parameters:
           steps:
             - GET-DERC
 
-  # (c) This will wait until the client POST's a DERStatus saying it has disconnected
+  # (b) - Wait until just before the opModEnergize: False control before accepting a DERStatus update
+  WAIT-CONTROL-START:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 270
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - PUT-DERSTATUS-DISCONNECT
+            - WAIT-CONTROL-END
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-CONTROL-START
+
+  # (c) waits for a DERStatus disconnected
   PUT-DERSTATUS-DISCONNECT:
     event:
       type: PUT-request-received
@@ -68,6 +84,18 @@ Steps:
           parameters:
             genConnectStatus_bit0: false
     actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - PUT-DERSTATUS-DISCONNECT
+            
+  # (d) - This is soley to prevent a client from reporting reconnect too early
+  WAIT-CONTROL-END:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 630
+    actions:
       - type: enable-steps
         parameters:
           steps:
@@ -75,7 +103,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - PUT-DERSTATUS-DISCONNECT
+            - WAIT-CONTROL-END
 
   # (d) This will wait until the client POST's a DERStatus saying it has reconnected
   PUT-DERSTATUS-RECONNECT:
@@ -94,15 +122,5 @@ Steps:
           steps:
             - PUT-DERSTATUS-RECONNECT
   
-  WAIT-TILL-END:
-    event:
-      type: wait
-      parameters:
-        duration_seconds: 960
-    actions:
-      - type: remove-steps
-        parameters:
-          steps:
-            - WAIT-TILL-END
-      - type: finish-test
-        parameters: {}
+
+
