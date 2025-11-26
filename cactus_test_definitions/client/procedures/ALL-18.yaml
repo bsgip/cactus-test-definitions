@@ -11,6 +11,10 @@ Criteria:
   checks:
     - type: all-steps-complete
       parameters: {}
+    - type: response-contents
+      parameters:
+        all: true
+        status: 1
 
 Preconditions:
   init_actions:
