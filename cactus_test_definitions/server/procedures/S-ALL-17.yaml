@@ -1,0 +1,38 @@
+Description: Active Control - Control Combinations
+Category: Control
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+  
+Steps:
+  - id: (A) PRECONDITION
+    repeat_until_pass: true
+    client: client
+    instructions:
+      - Create an EndDevice registration.
+      - Configure an active control with opModExpLimW = 50% of the DER active power rating, opModGenLimW = 0W, opModImpLimW = 50% the DER active power rating, opModLoadLimW = 0W, opModEnergize = false, opModConnect = false, and without including the rampTms attribute.
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+    checks:
+      - type: end-device 
+        parameters:
+          matches_client: true
+      - type: der-control
+        parameters:
+          opModExpLimW: $(setMaxW * 0.5)
+          opModGenLimW: 0
+          opModImpLimW: $(setMaxW * 0.5)
+          opModLoadLimW: 0
+          opModEnergize: False
+          opModConnect: False
+          rampTms: null
+    
