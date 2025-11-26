@@ -1,7 +1,7 @@
 Description: Default Control – Import Limit
 Category: Control
 Classes:
-  - G
+  - L
 
 TargetVersions:
   - v1.2
