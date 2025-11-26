@@ -24,6 +24,7 @@ Steps:
           - EndDevice
           - DERControlList
           - DER
+          - DERControl
     checks:
       - type: end-device 
         parameters:
