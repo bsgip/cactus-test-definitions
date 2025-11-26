@@ -1,0 +1,77 @@
+Description: S-ALL-08 Connection Status 
+Category: Monitoring
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+
+Steps:
+  - id: PRECONDITION
+    repeat_until_pass: true
+    instructions:
+      - Create an EndDevice registration for client.
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - DER
+    checks:
+      - type: end-device 
+        parameters:
+          matches_client: true
+      - type: discovered
+        parameters:
+          links:
+            - DERStatus
+
+  - id: INITIALISE DER STATUS
+    action: 
+      type: upsert-der-status
+      parameters:
+        genConnectStatus: 7  # 0111 - connected
+
+  - id: STEP 1 - DISCONNECT # bit 0 = 0
+    action: 
+      type: upsert-der-status
+      parameters:
+        genConnectStatus: 6  # 0110
+
+  - id: STEP 2 - RECONNECT
+    action: 
+      type: upsert-der-status
+      parameters:
+        genConnectStatus: 7
+
+  - id: STEP 3 - UNAVAILABLE  # bit 1 = 0
+    action: 
+      type: upsert-der-status
+      parameters:
+        genConnectStatus: 5  # 0101
+
+  - id: STEP 4 - RECONNECT
+    instructions:
+      - Reconnect DER
+    action: 
+      type: upsert-der-status
+      parameters:
+        genConnectStatus: 7  # 0111
+
+  - id: STEP 5 - NON-OPERATING # bit 2 = 0
+    action: 
+      type: upsert-der-status
+      parameters:
+        genConnectStatus: 3  # 0011
+
+  - id: STEP 6 - RECONNECT
+    instructions:
+      - Reconnect DER
+    action: 
+      type: upsert-der-status
+      parameters:
+        genConnectStatus: 7

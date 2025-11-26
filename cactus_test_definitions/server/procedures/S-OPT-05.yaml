@@ -1,0 +1,33 @@
+Description: S-OPT-05 Update Telemetry Post Rates
+Category: Monitoring
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+
+Steps:
+  - id: PRECONDITION
+    repeat_until_pass: true
+    instructions:
+      - The utility server shall be configured to change all default MirrorUsagePoint post-rates for the test client from 60s to 300s.
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - DER
+          - MirrorUsagePoint
+    checks:
+      - type: end-device 
+        parameters:
+          matches_client: true
+      - type: discovered
+      - type: mirror-usage-point
+        parameters:
+          matches: True
+          post_rate_seconds: 300
