@@ -94,7 +94,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 630
+        duration_seconds: 600 # We enable this 30 seconds before the control expires to allow for timing errors
     actions:
       - type: enable-steps
         parameters:
