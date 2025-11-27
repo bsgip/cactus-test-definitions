@@ -574,8 +574,7 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-9
-            - GET-DERC-10
+            - POST-DERC-7-RESPONSE-COMPLETED
       - type: remove-steps
         parameters:
           steps:
@@ -598,6 +597,32 @@ Steps:
         parameters:
           steps:
             - POST-DERC-8-RESPONSE-STARTED
+
+
+  # (x) This isn't strictly in the TS5573 definition but the intention is for this control to finish BEFORE
+  # enabling the subsequent DERControls
+  POST-DERC-7-RESPONSE-COMPLETED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 3
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-9
+            - GET-DERC-10
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC-7-RESPONSE-COMPLETED
+
 
   # (y) (i) Configure DERControl on DERP1
   GET-DERC-9:
