@@ -1,0 +1,34 @@
+Description: Default Control - Generation Limit
+Category: Control
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+  
+Steps:
+  - id: (A) PRECONDITION
+    repeat_until_pass: true
+    client: client
+    instructions:
+      - Create an EndDevice registration.
+      - Configure a default control with opModGenLimW = 30 % of DER max rated active power.
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - DERControlList
+          - DER
+          - DefaultDERControl
+    checks:
+      - type: end-device 
+        parameters:
+          matches_client: true 
+      - type: default-der-control
+        parameters:
+          opModGenLimW: $(setMaxW * 0.3)

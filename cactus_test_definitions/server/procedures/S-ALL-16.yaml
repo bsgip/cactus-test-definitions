@@ -1,0 +1,76 @@
+Description: Active Control - Disconnect 
+Category: Control
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+  
+Steps:
+  - id: (A) PRECONDITION
+    repeat_until_pass: true
+    client: client
+    instructions:
+      - Create an EndDevice registration.
+      - Configure an active control with opModConnect = true and without including the rampTms attribute.
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+    checks:
+      - type: end-device 
+        parameters:
+          matches_client: true
+      - type: der-control
+        parameters:
+          opModConnect: True
+          rampTms: null
+    
+  - id: (1) De-energize
+    repeat_until_pass: true
+    client: client
+    instructions:
+      - Configure an active control with opModConnect = false and without including the rampTms attribute.
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - DERControlList
+          - DER
+          - DERControl
+    checks:
+      - type: end-device 
+        parameters:
+          matches_client: true 
+      - type: der-control
+        parameters:
+          opModConnect: False
+          rampTms: null
+      
+  - id: (2) Energize
+    repeat_until_pass: true
+    client: client
+    instructions:
+      - Configure an active control with opModConnect = true and without including the rampTms attribute.
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - DERControlList
+          - DER
+          - DERControl
+    checks:
+      - type: end-device 
+        parameters:
+          matches_client: true 
+      - type: der-control
+        parameters:
+          opModConnect: True
+          rampTms: null

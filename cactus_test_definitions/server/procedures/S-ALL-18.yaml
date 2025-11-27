@@ -1,0 +1,34 @@
+Description: Active Control - Ramp Rates
+Category: Control
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+  
+Steps:
+  - id: (A) PRECONDITION
+    repeat_until_pass: true
+    client: client
+    instructions:
+      - Create an EndDevice registration.
+      - Configure an active control with opModExpLimW = 0, opModImpLimW = 0, rampTms=30 seconds.
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+    checks:
+      - type: end-device 
+        parameters:
+          matches_client: true
+      - type: der-control
+        parameters:
+          opModExpLimW: 0
+          opModImpLimW: 0
+          rampTms: 30
+    
