@@ -1,7 +1,6 @@
 Description: Active Control – Export Limit
 Category: Control
 Classes:
-  - G
   - S
 
 TargetVersions:
