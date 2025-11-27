@@ -1,7 +1,6 @@
 Description: Default Controls – Import Limit
 Category: Control
 Classes:
-  - L
   - S
 
 TargetVersions:

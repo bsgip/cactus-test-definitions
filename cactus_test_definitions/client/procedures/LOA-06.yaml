@@ -1,7 +1,6 @@
 Description: Active Controls – Load Limit
 Category: Control
 Classes:
-  - L
   - S
 
 TargetVersions:
