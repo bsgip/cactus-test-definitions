@@ -200,7 +200,6 @@ Steps:
           steps:
             - POST-DERC-2-RESPONSE-STARTED
             - POST-DERC-1-RESPONSE-SUPERSEDED
-            - POST-DERC-2-RESPONSE-COMPLETED
       - type: remove-steps
         parameters:
           steps:
@@ -219,6 +218,10 @@ Steps:
             latest: true
             status: 2
     actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-DERC-2-RESPONSE-COMPLETED
       - type: remove-steps
         parameters:
           steps:
