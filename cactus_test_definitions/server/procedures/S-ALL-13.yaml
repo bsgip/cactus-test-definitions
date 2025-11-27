@@ -1,0 +1,35 @@
+Description: Active Control - Import Limit
+Category: Control
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+  
+Steps:
+  - id: (A) PRECONDITION
+    repeat_until_pass: true
+    client: client
+    instructions:
+      - Create an EndDevice registration.
+      - Configure an active control with opModImpLimW = 0W and no rampTms attribute.
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - DERControlList
+          - DER
+          - DERControl
+    checks:
+      - type: end-device 
+        parameters:
+          matches_client: true 
+      - type: der-control
+        parameters:
+          opModImpLimW: 0
+          rampTms: null

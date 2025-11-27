@@ -1,0 +1,37 @@
+Description: Default Control - Control Combinations
+Category: Control
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+  
+Steps:
+  - id: (A) PRECONDITION
+    repeat_until_pass: true
+    client: client
+    instructions:
+      - Create an EndDevice registration.
+      - Configure a default control with - opModExpLimW = 50% of the DER active power rating, opModGenLimW = 0W, opModImpLimW = 50% of the DER active power rating, opModLoadLimW = 0W
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - DERControlList
+          - DER
+          - DefaultDERControl
+    checks:
+      - type: end-device 
+        parameters:
+          matches_client: true 
+      - type: default-der-control
+        parameters:
+          opModExpLimW: $(setMaxW * 0.5)
+          opModGenLimW: 0
+          opModImpLimW: $(setMaxW * 0.5)
+          opModLoadLimW: 0
