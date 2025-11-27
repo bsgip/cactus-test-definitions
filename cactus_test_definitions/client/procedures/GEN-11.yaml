@@ -71,8 +71,6 @@ Steps:
         parameters:
           steps:
             - POST-DERC-2-RESPONSE-RECEIVED
-            - POST-DERC-2-RESPONSE-STARTED
-            - POST-DERC-2-RESPONSE-COMPLETE
       - type: remove-steps
         parameters:
           steps:
@@ -91,6 +89,10 @@ Steps:
             latest: true
             status: 1
     actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-DERC-2-RESPONSE-STARTED
       - type: remove-steps
         parameters:
           steps:
@@ -109,6 +111,10 @@ Steps:
             latest: true
             status: 2
     actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-DERC-2-RESPONSE-COMPLETE
       - type: remove-steps
         parameters:
           steps:
@@ -152,8 +158,6 @@ Steps:
         parameters:
           steps:
             - POST-DERC-3-RESPONSE-RECEIVED
-            - POST-DERC-3-RESPONSE-STARTED
-            - POST-DERC-3-RESPONSE-COMPLETE
       - type: remove-steps
         parameters:
           steps:
@@ -172,6 +176,10 @@ Steps:
             latest: true
             status: 1
     actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-DERC-3-RESPONSE-STARTED
       - type: remove-steps
         parameters:
           steps:
@@ -190,6 +198,10 @@ Steps:
             latest: true
             status: 2
     actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-DERC-3-RESPONSE-COMPLETE
       - type: remove-steps
         parameters:
           steps:
@@ -233,8 +245,6 @@ Steps:
         parameters:
           steps:
             - POST-DERC-4-RESPONSE-RECEIVED
-            - POST-DERC-4-RESPONSE-STARTED
-            - POST-DERC-4-RESPONSE-COMPLETE
       - type: remove-steps
         parameters:
           steps:
@@ -253,6 +263,10 @@ Steps:
             latest: true
             status: 1
     actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-DERC-4-RESPONSE-STARTED
       - type: remove-steps
         parameters:
           steps:
@@ -271,6 +285,10 @@ Steps:
             latest: true
             status: 2
     actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-DERC-4-RESPONSE-COMPLETE
       - type: remove-steps
         parameters:
           steps:
@@ -314,8 +332,6 @@ Steps:
         parameters:
           steps:
             - POST-DERC-5-RESPONSE-RECEIVED
-            - POST-DERC-5-RESPONSE-STARTED
-            - POST-DERC-5-RESPONSE-COMPLETE
       - type: remove-steps
         parameters:
           steps:
@@ -334,6 +350,10 @@ Steps:
             latest: true
             status: 1
     actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-DERC-5-RESPONSE-STARTED
       - type: remove-steps
         parameters:
           steps:
@@ -352,6 +372,10 @@ Steps:
             latest: true
             status: 2
     actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-DERC-5-RESPONSE-COMPLETE
       - type: remove-steps
         parameters:
           steps:
