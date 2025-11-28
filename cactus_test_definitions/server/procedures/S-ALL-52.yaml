@@ -9,12 +9,17 @@ TargetVersions:
 Preconditions:
   required_clients:
     - id: client
-  
+
 Steps:
   - id: PRECONDITION
     repeat_until_pass: true
     instructions:
       - Ensure no end devices are registered, ready for new discovery.
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
     checks:
       - type: end-device # Block UNTIL there is no existing EndDevice registration
         parameters:

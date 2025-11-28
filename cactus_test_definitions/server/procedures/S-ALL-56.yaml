@@ -31,8 +31,6 @@ Steps:
   - id: 1 - Register EndDevice - Expect rejection from malformed LFDI
     action: 
       type: insert-end-device
-    checks:
-      - type: end-device
-        parameters:
-          force_lfdi: "NONHEXCHARS$%^&*()ZXCVB"
+      parameters:
+        force_lfdi: ZZZZZZZZZZZZZZZZ
         expect_rejection: True
