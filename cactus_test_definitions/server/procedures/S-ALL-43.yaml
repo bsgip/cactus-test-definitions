@@ -1,0 +1,152 @@
+Description: Update Poll Rates
+Category: Control
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+  
+Steps:
+  - id: (A) PRECONDITION
+    repeat_until_pass: true
+    client: client
+    instructions:
+      - The client has a device with DeviceCapability, EndDeviceList and FunctionSetAssignments poll-rate set to 300s, DERProgramList, DERList and MirrorUsagePoint to 60s.
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - DeviceCapability
+          - EndDeviceList
+          - FunctionSetAssignments
+          - DERProgramList
+          - DERList
+          - MirrorUsagePoint
+    checks:
+      - type: poll-rate
+        parameters:
+          resource: DeviceCapability
+          poll_rate_seconds: 300
+      - type: poll-rate
+        parameters:
+          resource: EndDeviceList
+          poll_rate_seconds: 300
+      - type: poll-rate
+        parameters:
+          resource: FunctionSetAssignments
+          poll_rate_seconds: 300
+      - type: poll-rate
+        parameters:
+          resource: DERProgramList
+          poll_rate_seconds: 60
+      - type: poll-rate
+        parameters:
+          resource: DERList
+          poll_rate_seconds: 60
+      - type: poll-rate
+        parameters:
+          resource: MirrorUsagePoint
+          poll_rate_seconds: 60
+  
+  - id: (1) UPDATE DeviceCapability poll-rate
+    repeat_until_pass: true
+    client: client
+    instructions:
+      - Set DeviceCapabilitypoll poll rate to 60s.
+    action: 
+      type: refresh-resource
+      parameters:
+        resources:
+          - DeviceCapability
+    checks:
+      - type: poll-rate
+        parameters:
+          resource: DeviceCapability
+          poll_rate_seconds: 60
+
+  - id: (2) UPDATE EndDeviceList poll-rate
+    repeat_until_pass: true
+    client: client
+    instructions:
+      - Set EndDeviceList poll rate to 60s.
+    action: 
+      type: refresh-resource
+      parameters:
+        resources:
+          - EndDeviceList
+    checks:
+      - type: poll-rate
+        parameters:
+          resource: EndDeviceList
+          poll_rate_seconds: 60
+    
+  - id: (3) UPDATE FunctionSetAssignments poll-rate
+    repeat_until_pass: true
+    client: client
+    instructions:
+      - Set FunctionSetAssignments poll rate to 60s.
+    action: 
+      type: refresh-resource
+      parameters:
+        resources:
+          - FunctionSetAssignments
+    checks:
+      - type: poll-rate
+        parameters:
+          resource: EndDeviceList
+          poll_rate_seconds: 60
+
+  - id: (4) UPDATE DERProgramList poll-rate
+    repeat_until_pass: true
+    client: client
+    instructions:
+      - Set DERProgramList poll rate to 120s.
+    action: 
+      type: refresh-resource
+      parameters:
+        resources:
+          - DERProgramList
+    checks:
+      - type: poll-rate
+        parameters:
+          resource: DERProgramList
+          poll_rate_seconds: 120
+
+  - id: (5) UPDATE DERList poll-rate
+    repeat_until_pass: true
+    client: client
+    instructions:
+      - Set DERList poll rate to 120s.
+    action: 
+      type: refresh-resource
+      parameters:
+        resources:
+          - DERList
+    checks:
+      - type: poll-rate
+        parameters:
+          resource: DERList
+          poll_rate_seconds: 120
+
+  - id: (6) UPDATE MirrorUsagePoint poll-rate
+    repeat_until_pass: true
+    client: client
+    instructions:
+      - Set MirrorUsagePoint poll rate to 120s.
+    action: 
+      type: refresh-resource
+      parameters:
+        resources:
+          - MirrorUsagePoint
+    checks:
+      - type: poll-rate
+        parameters:
+          resource: MirrorUsagePoint
+          poll_rate_seconds: 120
+  
+      

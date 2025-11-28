@@ -204,7 +204,7 @@ Steps:
           maximum_count: 1
           opModExpLimW: $(setMaxW * 2)
           opModImpLimW: $(setMaxW * 2)
-          event_status: 2
+          event_status: 2 # Cancelled
 
   - id: (5b) DERControl 2 - Respond to cancelled DERControl
     client: client

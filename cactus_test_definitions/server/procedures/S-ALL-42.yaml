@@ -1,0 +1,81 @@
+Description: Delayed Response to Cancelled Export Control
+Category: Control
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+  
+Steps:
+  - id: (A) PRECONDITION
+    repeat_until_pass: true
+    client: client
+    instructions:
+      - The client has a DER that is exporting at the connection point at least 50% of its rated active power.
+      - The utility server has a current active control in operation with opModExpLimW set to 200% of the DER's rated active power, and a default DER control in-place with opModExpLimW set to 30% of the DER's rated active power.
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - DERControl
+          - DefaultDERControl
+    checks:
+      - type: end-device 
+        parameters:
+          matches_client: true 
+      - type: der-control
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          opModExpLimW: $(setMaxW * 2)
+          event_status: 1 # Active
+      - type: default-der-control
+        parameters:
+          opModExpLimW: $(setMaxW * 0.3)
+
+  - id: (1) Cancel active controls
+    repeat_until_pass: True
+    instructions: The server should set all active controls to cancelled.
+    client: client
+    action: 
+      type: refresh-resource
+      parameters:
+        resource: DERControl
+    checks:
+      - type: der-control # Check event status has been updated
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          opModExpLimW: $(setMaxW * 2)
+          event_status: 2 # Cancelled
+  
+  - id: WAIT to see that cancelled responses are not immediately removed
+    client: client
+    action:
+      type: wait
+      parameters:
+        duration_seconds: 60
+
+  - id: (2) CHECK to see that cancelled responses are not immediately removed
+    client: client
+    action: 
+      type: refresh-resource
+      parameters:
+        resource: DERControl
+    checks:
+      - type: der-control
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          opModExpLimW: $(setMaxW * 2)
+          event_status: 2 # Cancelled
+  
+  - id: (3) Response
+    client: client
+    action:
+      type: respond-der-controls # send response status = 6 (Cancelled)
