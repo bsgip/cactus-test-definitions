@@ -11,24 +11,32 @@ Preconditions:
     - id: client
   
 Steps:
-  - id: (A) PRECONDITION - DERControl 1
+  - id: (A) PRECONDITION
     repeat_until_pass: true
     client: client
     instructions:
       - Create an EndDevice registration.
-      - Configure an active control with opModExpLimW and opModImpLimW = 200% of the DERs rated active power, responseRequired = 03, and replyTo set to the response endpoint on the test utility server.
     action: 
       type: discovery
       parameters:
         resources:
           - EndDevice
-          - DERControlList
-          - DER
-          - DERControl
     checks:
       - type: end-device 
         parameters:
           matches_client: true 
+
+  - id: (1) DERControl 1 - Scheduled
+    repeat_until_pass: true
+    client: client
+    instructions:
+      - Configure an active control with opModExpLimW and opModImpLimW = 200% of the DERs rated active power, responseRequired = 03, and replyTo set to the response endpoint on the test utility server.
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - DERControl
+    checks:
       - type: der-control
         parameters:
           opModExpLimW: $(setMaxW * 2)
@@ -36,13 +44,17 @@ Steps:
           # replyTo should also be set but this check is implicit in later communications
           event_status: 0 # Scheduled
           latest: True
+  
+  - id: (1b) DERControl 1 - Received
+    client: client
+    action: 
+      type: respond-der-controls # send response status = 1 (received)
 
-  - id: (1,2) DERControl 1 - Received and Started
+  - id: (2) DERControl 1 - Active
     repeat_until_pass: true # Wait until event status has been updated
     client: client
     action: 
-      type: respond-der-controls # When relevant, will post control response status = 1 (received) then 2 (started).
-      type: discovery # Update the DER controls
+      type: discovery
       parameters:
         resources:
           - DERControl
@@ -53,12 +65,16 @@ Steps:
           opModImpLimW: $(setMaxW * 2)
           event_status: 1 # Active
           latest: True
+  
+  - id: (2b) DERControl 1 - Started
+    client: client
+    action: 
+      type: respond-der-controls # send response status = 2 (started)
     
   - id: (3) DERControl 1 - Completed
     repeat_until_pass: true # Wait until event status has been updated
     client: client
     action: 
-      type: respond-der-controls # # When relevant, will post control response status = 3 (completed).
       type: discovery # Update the DER controls
       parameters:
         resources:
@@ -70,6 +86,11 @@ Steps:
           opModImpLimW: $(setMaxW * 2)
           event_status: 2 # Completed
           latest: True
+  
+  - id: (3b) DERControl 1 - Completed
+    client: client
+    action: 
+      type: respond-der-controls # send response status = 3 (Completed)
 
   - id: (4) DERControl 2
     repeat_until_pass: true
@@ -91,12 +112,16 @@ Steps:
           event_status: 0 # Scheduled
           # start time should be set to 5 mins but we do not check
           latest: True
+  
+  - id: (4b) DERControl 2 - Received
+    client: client
+    action: 
+      type: respond-der-controls # send response status = 1 (Received)
 
-  - id: (4b) DERControl 2 - Received and Started
+  - id: (4c) DERControl 2 - Started
     repeat_until_pass: true # Wait until event status has been updated
     client: client
     action: 
-      type: respond-der-controls # When relevant, will post control response status = 1 (received) then 2 (started).
       type: discovery # Update the DER controls
       parameters:
         resources:
@@ -109,7 +134,12 @@ Steps:
           event_status: 1 # Active
           latest: True
 
-  - id: (5) DERControl 2 - cancelled.
+  - id: (4d) DERControl 2 - Started
+    client: client
+    action: 
+      type: respond-der-controls # send response status = 2 (Started)
+
+  - id: (5) DERControl 2 - Cancelled.
     repeat_until_pass: true
     client: client
     instructions:
