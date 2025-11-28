@@ -276,4 +276,3 @@ Steps:
           minimum_count: 1
           maximum_count: 1
           latest: False # DER control 5 is scheduled, DER control 4 should be superseeded
-    

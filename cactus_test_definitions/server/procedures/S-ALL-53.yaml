@@ -1,0 +1,42 @@
+Description: Update Connection Point
+Category: Edge Cases
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+  
+Steps:
+  - id: PRECONDITION
+    repeat_until_pass: true
+    instructions:
+      - Create an EndDevice registration.
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - DeviceCapability
+          - MirrorUsagePointList
+          - DER
+    checks:
+      - type: end-device # This will be the check that will block UNTIL there is an existing EndDevice registration
+        parameters:
+          matches_client: true
+
+  - id: SEND CONNECTION POINT ID
+    action:
+      type: upsert-connection-point
+      parameters:
+        connectionPointId: "1234567890" # A valid NMI (in the testing range)
+  
+  - id: UPSERT CONNECTION POINT ID
+    action: 
+      type: upsert-connection-point
+      parameters: 
+        connectionPointId: "2345667890" # Upsert automatically checks server response
+    
