@@ -12,6 +12,9 @@ Preconditions:
   
 Steps:
   - id: DISCOVERY
+    repeat_until_pass: true
+    instructions:
+      - Create an EndDevice record with an lfdi/sfdi that matches your client. Ensure it has a single DER record.
     action: 
       type: discovery
       parameters:
