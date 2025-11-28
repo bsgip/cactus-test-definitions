@@ -28,6 +28,7 @@ Steps:
           matches_client: true
       - type: der-control
         parameters:
+          minimum_count: 1
           opModConnect: True
           rampTms: null
     
@@ -50,6 +51,7 @@ Steps:
           matches_client: true 
       - type: der-control
         parameters:
+          minimum_count: 1
           opModConnect: False
           rampTms: null
       
@@ -72,5 +74,6 @@ Steps:
           matches_client: true 
       - type: der-control
         parameters:
+          minimum_count: 1
           opModConnect: True
           rampTms: null

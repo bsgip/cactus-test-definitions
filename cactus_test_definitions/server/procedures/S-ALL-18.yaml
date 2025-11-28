@@ -28,6 +28,7 @@ Steps:
           matches_client: true
       - type: der-control
         parameters:
+          minimum_count: 1
           opModExpLimW: 0
           opModImpLimW: 0
           rampTms: 30
