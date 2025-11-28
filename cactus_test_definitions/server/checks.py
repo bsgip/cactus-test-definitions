@@ -47,11 +47,19 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "matches_client_edev": ParameterSchema(
             False, ParameterType.Boolean
         ),  # If True - only FSAs assigned to the client's EndDevice will be counted
+        "sub_id": ParameterSchema(
+            False, ParameterType.String
+        ),  # If set - only FSAs received via this subscription will be counted
     },
     "end-device-list": {
-        "matches_poll_rate": ParameterSchema(
-            True, ParameterType.Integer
-        ),  # Will only match an EndDevice list with this exact pollRate
+        "minimum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at least this many edev lists to pass
+        "maximum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at most this many edev lists to pass
+        "poll_rate": ParameterSchema(
+            False, ParameterType.Integer
+        ),  # If set - will only count an EndDeviceList with this exact pollRate
+        "sub_id": ParameterSchema(
+            False, ParameterType.String
+        ),  # If set - only EndDeviceLists received via this subscription will be counted
     },
     "end-device": {
         "matches_client": ParameterSchema(
@@ -68,6 +76,9 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "fsa_index": ParameterSchema(
             False, ParameterType.Integer
         ),  # Filters derps that belong to the nth (0 based) FunctionSetAssignment index
+        "sub_id": ParameterSchema(
+            False, ParameterType.String
+        ),  # Filters derps to only those received via this named subscription
     },
     "der-control": {
         "minimum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at least this many controls to pass
@@ -87,13 +98,21 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "derp_primacy": ParameterSchema(
             False, ParameterType.Integer
         ),  # Filter to control's belonging to a DERProgram with this primacy value
+        "sub_id": ParameterSchema(
+            False, ParameterType.String
+        ),  # Filters control to only those received via this named subscription
     },  # Matches many DERControls (specified by minimum_count) against additional other filter criteria
     "default-der-control": {
+        "minimum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at least this many default der controls
+        "maximum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at most this many default der controls
         "opModImpLimW": ParameterSchema(False, ParameterType.Float),
         "opModExpLimW": ParameterSchema(False, ParameterType.Float),
         "opModGenLimW": ParameterSchema(False, ParameterType.Float),
         "opModLoadLimW": ParameterSchema(False, ParameterType.Float),
         "setGradW": ParameterSchema(False, ParameterType.Integer),  # Hundredths of a percent / second
+        "sub_id": ParameterSchema(
+            False, ParameterType.String
+        ),  # Filters default control to only those received via this named subscription
     },  # matches any DefaultDERControl with the specified values
     "mirror-usage-point": {
         "matches": ParameterSchema(True, ParameterType.Boolean),  # True for positive assert, False for negative assert

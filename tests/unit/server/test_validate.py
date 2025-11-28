@@ -32,11 +32,13 @@ def test_each_alias_defined(tp_id: str):
 
     # sanity check - make sure we are looking for the action names that are valid
     UPSERT_MUP_ACTION = "upsert-mup"
-    INSERT_MUP_ACTION = "insert-readings"
+    INSERT_READING_ACTION = "insert-readings"
     CREATE_SUB_ACTION = "create-subscription"
     DELETE_SUB_ACTION = "delete-subscription"
     assert UPSERT_MUP_ACTION in ACTION_PARAMETER_SCHEMA, "If this fails - the action name has changed. Update this test"
-    assert INSERT_MUP_ACTION in ACTION_PARAMETER_SCHEMA, "If this fails - the action name has changed. Update this test"
+    assert (
+        INSERT_READING_ACTION in ACTION_PARAMETER_SCHEMA
+    ), "If this fails - the action name has changed. Update this test"
     assert CREATE_SUB_ACTION in ACTION_PARAMETER_SCHEMA, "If this fails - the action name has changed. Update this test"
     assert DELETE_SUB_ACTION in ACTION_PARAMETER_SCHEMA, "If this fails - the action name has changed. Update this test"
 
@@ -52,10 +54,22 @@ def test_each_alias_defined(tp_id: str):
 
         if step.action.type == UPSERT_MUP_ACTION:
             mup_aliases_found.add(mup_id)
-        elif step.action.type == INSERT_MUP_ACTION:
+        elif step.action.type == INSERT_READING_ACTION:
             assert mup_id and (mup_id in mup_aliases_found), "mup_id hasn't been defined yet."
         elif step.action.type == CREATE_SUB_ACTION:
             assert sub_id and (sub_id not in sub_aliases_found), "sub_id is already defined in this test."
             sub_aliases_found.add(sub_id)
         elif step.action.type == DELETE_SUB_ACTION:
             assert sub_id and (sub_id in sub_aliases_found), "sub_id hasn't been defined yet."
+
+        # Any instance of "sub_id" / "mup_id" in a check must have ALSO been defined in an earlier action
+        for check in step.checks or []:
+            sub_id = check.parameters.get("sub_id", None)
+            if sub_id:
+                # This will match
+                assert sub_id and (sub_id in sub_aliases_found), "sub_id hasn't been defined yet."
+
+            mup_id = check.parameters.get("mup_id", None)
+            if mup_id:
+                # This will match
+                assert mup_id and (mup_id in mup_aliases_found), "mup_id hasn't been defined yet."
