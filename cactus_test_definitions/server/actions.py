@@ -106,7 +106,7 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
     },  # Sends DERSettings - validates that the server persisted the values correctly
     "send-malformed-der-settings": {
         "updatedTime_missing": ParameterSchema(True, ParameterType.Boolean),  # If true - updatedTime will be stripped
-        "modesEnabled_int": ParameterSchema(True, ParameterType.Boolean),  # If true - modesEnabled will send an int
+        "modesEnabled_as_int": ParameterSchema(True, ParameterType.Boolean),  # If true - modesEnabled will send an int
     },  # Sends a malformed DERSettings - expects a failure and that the server will NOT change anything
     "send-malformed-response": {
         "mrid_unknown": ParameterSchema(True, ParameterType.Boolean),  # If true - mrid will be random

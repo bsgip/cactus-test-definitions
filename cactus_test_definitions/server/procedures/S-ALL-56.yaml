@@ -1,0 +1,38 @@
+Description: Reject String LFDIs
+Category: Edge Cases
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+  
+Steps:
+  - id: PRECONDITION
+    repeat_until_pass: true
+    instructions:
+      - Ensure no end devices are registered.
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - DeviceCapability
+          - Time
+          - MirrorUsagePointList
+          - EndDevice
+    checks:
+      - type: end-device # Block UNTIL there is no existing EndDevice registration
+        parameters:
+          matches_client: false
+
+  - id: 1 - Register EndDevice - Expect rejection from malformed LFDI
+    action: 
+      type: insert-end-device
+    checks:
+      - type: end-device
+        parameters:
+          force_lfdi: "NONHEXCHARS$%^&*()ZXCVB"
+        expect_rejection: True

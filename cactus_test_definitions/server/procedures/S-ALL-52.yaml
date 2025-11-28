@@ -14,7 +14,7 @@ Steps:
   - id: PRECONDITION
     repeat_until_pass: true
     instructions:
-      - There is no registered end device.
+      - Ensure no end devices are registered, ready for new discovery.
     checks:
       - type: end-device # Block UNTIL there is no existing EndDevice registration
         parameters:
