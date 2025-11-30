@@ -1,0 +1,35 @@
+Description: End Device Duplication
+Category: Edge Cases
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+  
+Steps:
+  - id: PRECONDITION
+    repeat_until_pass: true
+    instructions:
+      - Create an EndDevice registration for client.
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - DeviceCapability
+          - MirrorUsagePointList
+          - DER
+    checks:
+      - type: end-device # This will be the check that will block UNTIL there is an existing EndDevice registration
+        parameters:
+          matches_client: true
+
+  - id: Step 1 - Register device with same LFDI.
+    action:
+      type: insert-end-device
+      parameters:
+          expect_rejection: True  # By default the lfdi will be the same as the existing end device.

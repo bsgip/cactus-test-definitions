@@ -1,0 +1,42 @@
+Description: Reject Incomplete DER Settings
+Category: Edge Cases
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+  
+Steps:
+  - id: PRECONDITION
+    repeat_until_pass: true
+    instructions:
+      - Create an EndDevice registration.
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - DeviceCapability
+          - DER
+    checks:
+      - type: end-device # This will be the check that will block UNTIL there is an existing EndDevice registration
+        parameters:
+          matches_client: true
+
+  - id: 1 - SEND MALFORMED DERSettings
+    action:
+      type: send-malformed-der-settings
+      parameters:
+        updatedTime_missing: True
+        modesEnabled_as_int: False
+
+  - id: 2 - SEND MALFORMED DERSettings
+    action:
+      type: send-malformed-der-settings
+      parameters:
+        updatedTime_missing: False
+        modesEnabled_as_int: True

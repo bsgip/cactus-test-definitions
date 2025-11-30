@@ -14,7 +14,7 @@ Steps:
   - id: PRECONDITION
     repeat_until_pass: true
     instructions:
-      - Create an EndDevice registration for client (with a single FunctionSetAssignment).
+      - Create an EndDevice registration for client.
     action: 
       type: discovery
       parameters:
@@ -22,15 +22,11 @@ Steps:
           - EndDevice
           - FunctionSetAssignments
           - DERProgram
+          - SubscriptionList
     checks:
       - type: end-device 
         parameters:
           matches_client: true
-      - type: function-set-assignment
-        parameters:
-          minimum_count: 1
-          maximum_count: 1
-          matches_client_edev: true
 
   - id: EDEV LIST SUBSCRIBE
     action: 
@@ -51,7 +47,10 @@ Steps:
     checks:
       - type: end-device-list
         parameters:
-          matches_poll_rate: 30
+          minimum_count: 1
+          maximum_count: 1
+          poll_rate: 30
+          sub_id: edev_list_sub
 
   - id: FSA LIST SUBSCRIBE
     action: 
@@ -72,27 +71,10 @@ Steps:
     checks:
       - type: function-set-assignment
         parameters:
-          minimum_count: 2
-          maximum_count: 2
+          minimum_count: 1
+          maximum_count: 1
           matches_client_edev: true
-
-  # This isn't a specific step in the test procedure - it's a mini precondition to ensure
-  # we don't have any superfluous DERPrograms in the new FSA before going to test for the creation of those DERPrograms
-  - id: CONFIRMING DERPROGRAMS
-    repeat_until_pass: true
-    instructions:
-      - Remove any DERPrograms assigned to the newly created FunctionSetAssignment.
-    action: 
-      type: discovery
-      parameters:
-        resources:
-          - DERProgram
-    checks:
-      - type: der-program
-        parameters:
-          minimum_count: 0
-          maximum_count: 0
-          fsa_index: 1 # Belonging to the second FunctionSetAssignment
+          sub_id: fsa_list_sub
 
   - id: DERP LIST SUBSCRIBE
     action: 
@@ -115,24 +97,9 @@ Steps:
         parameters:
           minimum_count: 1
           maximum_count: 1
-          fsa_index: 1 # Must belong to the second FunctionSetAssignment
+          fsa_index: -1 # Must belong to the latest FunctionSetAssignment
+          sub_id: derp_list_sub
 
-  # This isn't a specific step in the test procedure - it's a mini precondition to ensure
-  # we don't have any superfluous DERPrograms in the new FSA before going to test for the creation of those DERPrograms
-  - id: CONFIRMING DEFAULT DERCONTROL
-    repeat_until_pass: true
-    instructions:
-      - Assign a DefaultDERControl with opModExpLimW 1000 W.
-    action: 
-      type: discovery
-      parameters:
-        resources:
-          - DefaultDERControl
-    checks:
-      - type: default-der-control
-        parameters:
-          opModExpLimW: 1000
-          
   - id: DEFAULT DERC SUBSCRIBE
     action: 
       type: create-subscription
@@ -153,3 +120,4 @@ Steps:
       - type: default-der-control
         parameters:
           opModExpLimW: 2000
+          sub_id: dderc_sub
