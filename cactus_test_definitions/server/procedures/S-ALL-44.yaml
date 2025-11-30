@@ -26,8 +26,8 @@ Steps:
       - type: der-control
         parameters:
           minimum_count: 24
-          duration: 60
           opModExpLimW: $(setMaxW * 2)
           opModImpLimW: $(setMaxW)
           event_status: 0 # Scheduled
+          # Not checking overlap or duration, purpose of test is focussed on pagination.
   

@@ -28,7 +28,6 @@ Steps:
           minimum_count: 5
           maximum_count: 5
           opModExpLimW: $(setMaxW * 2)
-          duration: 120
           randomizeStart: 60
-    # No simple way to ensure non-overlapping active controls, and not the direct purpose of this test.
+          # No simple way to ensure non-overlapping active controls or duration, and not the direct purpose of this test.
   

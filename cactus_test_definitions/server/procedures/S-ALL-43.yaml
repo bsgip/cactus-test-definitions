@@ -61,8 +61,7 @@ Steps:
     action: 
       type: refresh-resource
       parameters:
-        resources:
-          - DeviceCapability
+        resource: DeviceCapability
     checks:
       - type: poll-rate
         parameters:
@@ -77,8 +76,7 @@ Steps:
     action: 
       type: refresh-resource
       parameters:
-        resources:
-          - EndDeviceList
+        resource: EndDeviceList
     checks:
       - type: poll-rate
         parameters:
@@ -93,12 +91,11 @@ Steps:
     action: 
       type: refresh-resource
       parameters:
-        resources:
-          - FunctionSetAssignments
+        resource: FunctionSetAssignments
     checks:
       - type: poll-rate
         parameters:
-          resource: EndDeviceList
+          resource: FunctionSetAssignments
           poll_rate_seconds: 60
 
   - id: (4) UPDATE DERProgramList poll-rate
@@ -109,8 +106,7 @@ Steps:
     action: 
       type: refresh-resource
       parameters:
-        resources:
-          - DERProgramList
+        resource: DERProgramList
     checks:
       - type: poll-rate
         parameters:
@@ -125,8 +121,7 @@ Steps:
     action: 
       type: refresh-resource
       parameters:
-        resources:
-          - DERList
+        resource: DERList
     checks:
       - type: poll-rate
         parameters:
@@ -141,8 +136,7 @@ Steps:
     action: 
       type: refresh-resource
       parameters:
-        resources:
-          - MirrorUsagePoint
+        resource: MirrorUsagePoint
     checks:
       - type: poll-rate
         parameters:
