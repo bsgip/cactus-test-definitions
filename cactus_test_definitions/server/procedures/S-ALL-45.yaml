@@ -1,0 +1,34 @@
+Description: Randomisation
+Category: Control
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+  
+Steps:
+  - id: (A) PRECONDITION
+    repeat_until_pass: true
+    client: client
+    instructions:
+      - The utility server is configured with five sequential, non-overlapping active controls, each with - Duration = 120s, randomizeStart = 60s, opModExpLimW = 200% of the DER's rated active power.
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - DERControl
+    checks:
+      - type: der-control
+        parameters:
+          minimum_count: 5
+          maximum_count: 5
+          opModExpLimW: $(setMaxW * 2)
+          duration: 120
+          randomizeStart: 60
+    # No simple way to ensure non-overlapping active controls, and not the direct purpose of this test.
+  

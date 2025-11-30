@@ -1,0 +1,33 @@
+Description: Scheduling
+Category: Control
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+  
+Steps:
+  - id: (A) PRECONDITION
+    repeat_until_pass: true
+    client: client
+    instructions:
+      - The utility server is configured to generate a schedule of 24 sequential, non-overlapping controls with a range of export and/or import limits, each with 1min duration.
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - DERControl
+    checks:
+      - type: der-control
+        parameters:
+          minimum_count: 24
+          duration: 60
+          opModExpLimW: $(setMaxW * 2)
+          opModImpLimW: $(setMaxW)
+          event_status: 0 # Scheduled
+  
