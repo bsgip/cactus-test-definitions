@@ -1,4 +1,4 @@
-Description: Changing Ramp-Rates
+Description: Multiple DER Programs
 Category: Control
 Classes:
  - A
@@ -15,15 +15,39 @@ Steps:
     repeat_until_pass: true
     client: client
     instructions:
-      - The utility server is configured with a DefaultDERControl with setGradW = 1% per second.
+      - The utility server has two FunctionSetAssignments - FSA1 and FSA2, and each FunctionSetAssignment contains one DERProgram configured under it (DERP1 and DERP2 respectively). DERP1 has a primacy of 1 and DERP2 has a primacy of 2. The utility server has DERP1 with a default DER control with opModExpLimW set to 30% of the DER's rated active power, and an active control on DERP2 with opModExpLimW = 200% of the DER's rated active power.
     action: 
       type: discovery
       parameters:
         resources:
           - EndDevice
           - DefaultDERControl
+          - FunctionSetAssignments
     checks:
+      - type: function-set-assignment
+        parameters:
+          minimum_count: 2
+          maximum_count: 2
+          matches_client_edev: True
+      - type: der-program # DERP 1
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          primacy: 1
+          fsa_index: 1
+      - type: der-program # DERP 2
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          primacy: 2
+          fsa_index: 2
       - type: default-der-control
         parameters:
           minimum_count: 1
-          setGradW: 1
+          derp_primacy: 1
+          import_limit_w: $(setMaxW * 0.3)
+      - type: der-control
+        parameters:
+          minimum_count: 1
+          derp_primacy: 2
+          import_limit_w: $(setMaxW * 2)

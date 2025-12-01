@@ -28,6 +28,24 @@ Steps:
           minimum_count: 24
           opModExpLimW: $(setMaxW * 2)
           opModImpLimW: $(setMaxW)
-          event_status: 0 # Scheduled
+          event_status: 0 # Scheduled (will ensure non overlapping , superseeded)
+          # Not checking overlap or duration, purpose of test is focussed on pagination.
+  
+  - id: (1) DERControlQuery
+    client: client
+    action: 
+      type: discovery
+      parameters:
+        list_limit: 10  # sets s=0, l=10 for paging
+        resources:
+          - DERControl
+    checks:
+      - type: der-control
+        parameters:
+          minimum_count: 10
+          maximum_count: 10
+          opModExpLimW: $(setMaxW * 2)
+          opModImpLimW: $(setMaxW)
+          event_status: 0 # Scheduled (will ensure non overlapping , superseeded)
           # Not checking overlap or duration, purpose of test is focussed on pagination.
   

@@ -38,6 +38,7 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "next_polling_window": ParameterSchema(
             False, ParameterType.Boolean
         ),  # If set - delay this until the upcoming polling window (eg- wait for the next whole minute)
+        "list_limit": ParameterSchema(False, ParameterType.Integer),
     },  # Performs a full discovery / refresh of the client's context from DeviceCapability downwards
     "notifications": {
         "sub_id": ParameterSchema(True, ParameterType.String),  # Must match a previously created subscription

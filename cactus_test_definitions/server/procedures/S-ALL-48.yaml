@@ -1,0 +1,29 @@
+Description: Changing Ramp-Rates
+Category: Control
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+  
+Steps:
+  - id: (A) PRECONDITION
+    repeat_until_pass: true
+    client: client
+    instructions:
+      - The utility server is configured with a DefaultDERControl with setGradW = 1% per second.
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - DefaultDERControl
+    checks:
+      - type: default-der-control
+        parameters:
+          minimum_count: 1
+          setGradW: 1

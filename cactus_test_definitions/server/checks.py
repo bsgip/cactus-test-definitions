@@ -101,6 +101,7 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "sub_id": ParameterSchema(
             False, ParameterType.String
         ),  # Filters control to only those received via this named subscription
+        "duration": ParameterSchema(False, ParameterType.Integer),  # Filter on duration value
     },  # Matches many DERControls (specified by minimum_count) against additional other filter criteria
     "default-der-control": {
         "minimum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at least this many default der controls
@@ -113,6 +114,9 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "sub_id": ParameterSchema(
             False, ParameterType.String
         ),  # Filters default control to only those received via this named subscription
+        "derp_primacy": ParameterSchema(
+            False, ParameterType.Integer
+        ),  # Filter to control's belonging to a DERProgram with this primacy value
     },  # matches any DefaultDERControl with the specified values
     "mirror-usage-point": {
         "matches": ParameterSchema(True, ParameterType.Boolean),  # True for positive assert, False for negative assert
