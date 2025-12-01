@@ -29,7 +29,7 @@ Steps:
           opModExpLimW: $(setMaxW * 2)
           opModImpLimW: $(setMaxW)
           event_status: 0 # Scheduled (will ensure non overlapping , superseeded)
-          # Not checking overlap or duration, purpose of test is focussed on pagination.
+          duration: 60
   
   - id: (1) DERControlQuery
     client: client
@@ -46,6 +46,6 @@ Steps:
           maximum_count: 10
           opModExpLimW: $(setMaxW * 2)
           opModImpLimW: $(setMaxW)
-          event_status: 0 # Scheduled (will ensure non overlapping , superseeded)
-          # Not checking overlap or duration, purpose of test is focussed on pagination.
+          event_status: 0
+          duration: 60
   

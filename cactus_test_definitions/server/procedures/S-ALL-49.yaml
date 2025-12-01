@@ -15,7 +15,10 @@ Steps:
     repeat_until_pass: true
     client: client
     instructions:
-      - The utility server has two FunctionSetAssignments - FSA1 and FSA2, and each FunctionSetAssignment contains one DERProgram configured under it (DERP1 and DERP2 respectively). DERP1 has a primacy of 1 and DERP2 has a primacy of 2. The utility server has DERP1 with a default DER control with opModExpLimW set to 30% of the DER's rated active power, and an active control on DERP2 with opModExpLimW = 200% of the DER's rated active power.
+      - Configure two FunctionSetAssignments - FSA1 and FSA2
+      - Each FunctionSetAssignment contains one DERProgram configured under it (DERP1 and DERP2 respectively). DERP1 has a primacy of 1 and DERP2 has a primacy of 2. 
+      - Give DERP1 a default DER control with opModExpLimW set to 30% of the DER's rated active power.
+      - Give DERP2 an active control with opModExpLimW = 200% of the DER's rated active power.
     action: 
       type: discovery
       parameters:
