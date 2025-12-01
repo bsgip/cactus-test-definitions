@@ -45,9 +45,9 @@ Steps:
         parameters:
           minimum_count: 1
           derp_primacy: 1
-          import_limit_w: $(setMaxW * 0.3)
+          opModExpLimW: $(setMaxW * 0.3)
       - type: der-control
         parameters:
           minimum_count: 1
           derp_primacy: 2
-          import_limit_w: $(setMaxW * 2)
+          opModExpLimW: $(setMaxW * 2)
