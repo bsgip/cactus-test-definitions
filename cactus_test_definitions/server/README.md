@@ -93,7 +93,7 @@ action:
 
 | **name** | **params** | **description** |
 | -------- | ---------- | --------------- |
-| `discovery` | `resources: list[CSIPAusResource]` `next_polling_window: bool/None` | Performs a full discovery / refresh of the client's context from DeviceCapability downwards, looking to discover the specific resources. Can be delayed until the next polling window. |
+| `discovery` | `resources: list[CSIPAusResource]` `next_polling_window: bool/None` `list_limit: int/None` | Performs a full discovery / refresh of the client's context from DeviceCapability downwards, looking to discover the specific resources. Can be delayed until the next polling window and/or fixed to ONLY fetch a maximum number of entities. |
 | `notifications` | `sub_id: str` `collect: bool/None` `disable: bool/None` | `sub_id` must match a previously created subscription. If `collect`, consumes subscription notifications and inserts them into the current context, if `disable` causes the subscription notification webhook to simulate an outage (return HTTP 5XX) |
 | `wait` | `duration_seconds: int` | Performs no action for the nominated period of time |
 | `refresh-resource` | `resource: CSIPAusResource` `expect_rejection: bool/None` `expect_rejection_or_empty: bool/None` | Forces a particular resource to be refreshed (using existing hrefs in context). Can be set to expect a HTTP 4XX ErrorResponse and/or an empty list resource (if appropriate). |
@@ -104,7 +104,7 @@ action:
 | `upsert-der-status` | `genConnectStatus: int/None` `operationalModeStatus: int/None` `alarmStatus: int/None` `expect_rejection: bool/None` | Sends DERStatus - validates that the server persisted the values correctly |
 | `upsert-der-capability` | `type: int` `rtgMaxW: int` `modesSupported: int` `doeModesSupported: int` | Sends DERCapability - validates that the server persisted the values correctly |
 | `upsert-der-settings` | `setMaxW: int` `setGradW: int` `modesEnabled: int` `doeModesEnabled: int` | Sends DERSettings - validates that the server persisted the values correctly |
-| `send-malformed-der-settings` | `updatedTime_missing: bool` `modesEnabled_int: bool`  | Sends a malformed DERSettings - expects a failure and that the server will NOT change anything |
+| `send-malformed-der-settings` | `updatedTime_missing: bool` | Sends a malformed DERSettings - expects a failure and that the server will NOT change anything |
 | `send-malformed-response` | `mrid_unknown: bool` `endDeviceLFDI_unknown: bool` `response_invalid: bool`  | Sends a malformed Response (using the most recent DERControl replyTo) - expects a failure response |
 | `create-subscription` | `sub_id: str` `resource: CSIPAusResource` | Sends a new Subscription - validates that the server persisted the values correctly via Location. `sub_id` will alias this subscription for future action calls. |
 | `delete-subscription` | `sub_id: str` | Sends a deletion for a previously created Subscription. |
