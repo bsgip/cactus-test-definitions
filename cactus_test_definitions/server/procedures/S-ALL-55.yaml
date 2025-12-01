@@ -32,11 +32,14 @@ Steps:
       type: send-malformed-der-settings
       parameters:
         updatedTime_missing: True
-        modesEnabled_as_int: False
 
-  - id: 2 - SEND MALFORMED DERSettings
+  - id: 2 - Upsert modes enabled
+  # NOTE: Cannot test for 400 error when sending int vs hexBinary - the server cannot distinguish them.
+  # Instead, this test verifies the server correctly handles valid hexBinary values.
     action:
-      type: send-malformed-der-settings
+      type: upsert-der-settings
       parameters:
-        updatedTime_missing: False
-        modesEnabled_as_int: True
+        setMaxW: 10000
+        setGradW: 1000
+        modesEnabled: 12 # Double digit, will be checked by the upsert and refetch
+        doeModesEnabled: 3
