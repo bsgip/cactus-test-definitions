@@ -76,6 +76,19 @@ Steps:
           matches_client_edev: true
           sub_id: fsa_list_sub
 
+
+  # At this point the client will have a FunctionSetAssignment with a LINK to a DERProgramList but NO
+  # physical record of that DERProgramList - we can't just subscribe to a ListLink.href as the actual underlying
+  # record might NOT be subscribable (we can only discover that by resolving the record)
+  #
+  # For these reasons - we are forced to actually resolve the DERProgramList via discovery.
+  - id: DISCOVER NEW DERP LIST
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - DERProgramList
+
   - id: DERP LIST SUBSCRIBE
     action: 
       type: create-subscription
@@ -99,6 +112,21 @@ Steps:
           maximum_count: 1
           fsa_index: -1 # Must belong to the latest FunctionSetAssignment
           sub_id: derp_list_sub
+
+  # Same as above - we don't have the DefaultDERControl (only a link) - we need to resolve it
+  - id: DISCOVER NEW DERC
+    repeat_until_pass: true
+    instructions:
+      - Add a DefaultDERControl to the recently created DERProgram. Ensure it's subscribable.
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - DefaultDERControl
+    checks:
+      - type: default-der-control
+        parameters: 
+          minimum_count: 1
 
   - id: DEFAULT DERC SUBSCRIBE
     action: 
