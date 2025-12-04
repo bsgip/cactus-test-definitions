@@ -30,11 +30,7 @@ Preconditions:
   actions:
     - type: create-der-program
       parameters:
-        primacy: 0  
-    - type: set-default-der-control
-      parameters:
-        opModImpLimW: 0
-        opModExpLimW: 0
+        primacy: 0
   instructions:
     - DER is exporting or importing at the connection point at least 50% of its rated power.
 
@@ -245,7 +241,6 @@ Steps:
           duration_seconds: 300
           opModExpLimW: $(setMaxW * 0.3)
           opModImpLimW: $(setMaxW * 0.3)
-          ramp_time_seconds: 60
       - type: enable-steps
         parameters:
           steps:
