@@ -50,12 +50,6 @@ Steps:
       parameters:
         endpoint: /edev/1/derp/1/derc
     actions:
-      - type: create-der-control
-        parameters:
-          start: $(now)
-          duration_seconds: 240
-          opModExpLimW: $(setMaxW * 2)
-          opModImpLimW: $(setMaxW * 2)
       - type: enable-steps
         parameters:
           steps:
