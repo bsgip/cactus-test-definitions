@@ -374,8 +374,8 @@ Steps:
           start: $(now)
           duration_seconds: 1200 # 20 minutes
           opModImpLimW: $(setMaxW * 2)
-          fsa_id: 1
-          primacy: 1
+          fsa_id: 2
+          primacy: 2
       - type: enable-steps
         parameters:
           steps:
