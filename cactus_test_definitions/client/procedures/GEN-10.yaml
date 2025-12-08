@@ -134,6 +134,7 @@ Steps:
           opModExpLimW: $(setMaxW * 2)
           fsa_id: 2
           primacy: 2
+          tag: DERC1
       - type: enable-steps
         parameters:
           steps:
@@ -155,6 +156,7 @@ Steps:
           parameters: 
             latest: true
             status: 2
+            tag: DERC1
     actions:
       - type: enable-steps
         parameters:
@@ -195,6 +197,7 @@ Steps:
           opModExpLimW: 0
           fsa_id: 1
           primacy: 1
+          tag: DERC2
       - type: enable-steps
         parameters:
           steps:
@@ -217,6 +220,7 @@ Steps:
           parameters: 
             latest: true
             status: 2
+            tag: DERC2
     actions:
       - type: enable-steps
         parameters:
@@ -239,6 +243,7 @@ Steps:
           parameters: 
             latest: true
             status: 7
+            tag: DERC1
     actions:
       - type: remove-steps
         parameters:
@@ -258,6 +263,7 @@ Steps:
           parameters: 
             latest: true
             status: 3
+            tag: DERC2
     actions:
       - type: enable-steps
         parameters:
@@ -282,6 +288,7 @@ Steps:
           opModExpLimW: $(setMaxW * 2)
           fsa_id: 2
           primacy: 2
+          tag: DERC3
       - type: enable-steps
         parameters:
           steps:
@@ -291,7 +298,7 @@ Steps:
           steps:
             - GET-DERC-3
 
-  # (j) Receive response started for DERControl 2
+  # (j) Receive response started for DERControl 3
   POST-DERC-3-RESPONSE-STARTED:
     event:
       type: POST-request-received
@@ -303,6 +310,7 @@ Steps:
           parameters: 
             latest: true
             status: 2
+            tag: DERC3
     actions:
       - type: enable-steps
         parameters:
@@ -325,6 +333,7 @@ Steps:
           parameters: 
             latest: true
             status: 3
+            tag: DERC3
     actions:
       - type: enable-steps
         parameters:
@@ -351,6 +360,7 @@ Steps:
           opModConnect: false
           fsa_id: 1
           primacy: 1
+          tag: DERC4
       - type: enable-steps
         parameters:
           steps:
@@ -374,6 +384,7 @@ Steps:
           opModExpLimW: $(setMaxW * 2)
           fsa_id: 2
           primacy: 2
+          tag: DERC5
       - type: enable-steps
         parameters:
           steps:
@@ -395,6 +406,7 @@ Steps:
           parameters: 
             latest: true
             status: 2
+            tag: DERC4
     actions:
       - type: enable-steps
         parameters:
@@ -417,6 +429,7 @@ Steps:
           parameters: 
             latest: true
             status: 2
+            tag: DERC5
     actions:
       - type: remove-steps
         parameters:
@@ -436,6 +449,7 @@ Steps:
           parameters: 
             latest: true
             status: 3
+            tag: DERC4
     actions:
       - type: enable-steps
         parameters:
@@ -460,6 +474,7 @@ Steps:
           opModExpLimW: $(setMaxW * 0.5)
           fsa_id: 2
           primacy: 2
+          tag: DERC6
       - type: enable-steps
         parameters:
           steps:
@@ -482,6 +497,7 @@ Steps:
           parameters: 
             latest: true
             status: 2
+            tag: DERC6
     actions:
       - type: enable-steps
         parameters:
@@ -505,6 +521,7 @@ Steps:
           parameters: 
             latest: true
             status: 7
+            tag: DERC5
     actions:
       - type: remove-steps
         parameters:
@@ -525,6 +542,7 @@ Steps:
           opModExpLimW: 0
           fsa_id: 1
           primacy: 1
+          tag: DERC7
       - type: enable-steps
         parameters:
           steps:
@@ -549,6 +567,7 @@ Steps:
           opModGenLimW: $(setMaxW * 0.3)
           fsa_id: 2
           primacy: 2
+          tag: DERC8
       - type: enable-steps
         parameters:
           steps:
@@ -570,6 +589,7 @@ Steps:
           parameters: 
             latest: true
             status: 2
+            tag: DERC7
     actions:
       - type: enable-steps
         parameters:
@@ -592,6 +612,7 @@ Steps:
           parameters: 
             latest: true
             status: 2
+            tag: DERC8
     actions:
       - type: remove-steps
         parameters:
@@ -612,6 +633,7 @@ Steps:
           parameters: 
             latest: true
             status: 3
+            tag: DERC7
     actions:
       - type: enable-steps
         parameters:
@@ -638,6 +660,7 @@ Steps:
           opModGenLimW: $(setMaxW * 0.5)
           fsa_id: 1
           primacy: 1
+          tag: DERC9
       - type: enable-steps
         parameters:
           steps:
@@ -661,7 +684,7 @@ Steps:
           opModExpLimW: $(setMaxW * 0.2)
           fsa_id: 2
           primacy: 2
-          tag: DERP6
+          tag: DERC10
       - type: enable-steps
         parameters:
           steps:
@@ -683,6 +706,7 @@ Steps:
           parameters: 
             latest: true
             status: 2
+            tag: DERC9
     actions:
       - type: enable-steps
         parameters:
@@ -706,6 +730,7 @@ Steps:
           parameters: 
             latest: true
             status: 2
+            tag: DERC10
     actions:
       - type: remove-steps
         parameters:
