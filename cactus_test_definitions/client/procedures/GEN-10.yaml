@@ -156,7 +156,7 @@ Steps:
           parameters: 
             latest: true
             status: 2
-            tag: DERC1
+            subject_tag: DERC1
     actions:
       - type: enable-steps
         parameters:
@@ -220,7 +220,7 @@ Steps:
           parameters: 
             latest: true
             status: 2
-            tag: DERC2
+            subject_tag: DERC2
     actions:
       - type: enable-steps
         parameters:
@@ -243,7 +243,7 @@ Steps:
           parameters: 
             latest: true
             status: 7
-            tag: DERC1
+            subject_tag: DERC1
     actions:
       - type: remove-steps
         parameters:
@@ -263,7 +263,7 @@ Steps:
           parameters: 
             latest: true
             status: 3
-            tag: DERC2
+            subject_tag: DERC2
     actions:
       - type: enable-steps
         parameters:
@@ -310,7 +310,7 @@ Steps:
           parameters: 
             latest: true
             status: 2
-            tag: DERC3
+            subject_tag: DERC3
     actions:
       - type: enable-steps
         parameters:
@@ -333,7 +333,7 @@ Steps:
           parameters: 
             latest: true
             status: 3
-            tag: DERC3
+            subject_tag: DERC3
     actions:
       - type: enable-steps
         parameters:
@@ -406,7 +406,7 @@ Steps:
           parameters: 
             latest: true
             status: 2
-            tag: DERC4
+            subject_tag: DERC4
     actions:
       - type: enable-steps
         parameters:
@@ -429,7 +429,7 @@ Steps:
           parameters: 
             latest: true
             status: 2
-            tag: DERC5
+            subject_tag: DERC5
     actions:
       - type: remove-steps
         parameters:
@@ -449,7 +449,7 @@ Steps:
           parameters: 
             latest: true
             status: 3
-            tag: DERC4
+            subject_tag: DERC4
     actions:
       - type: enable-steps
         parameters:
@@ -497,7 +497,7 @@ Steps:
           parameters: 
             latest: true
             status: 2
-            tag: DERC6
+            subject_tag: DERC6
     actions:
       - type: enable-steps
         parameters:
@@ -521,7 +521,7 @@ Steps:
           parameters: 
             latest: true
             status: 7
-            tag: DERC5
+            subject_tag: DERC5
     actions:
       - type: remove-steps
         parameters:
@@ -589,7 +589,7 @@ Steps:
           parameters: 
             latest: true
             status: 2
-            tag: DERC7
+            subject_tag: DERC7
     actions:
       - type: enable-steps
         parameters:
@@ -612,7 +612,7 @@ Steps:
           parameters: 
             latest: true
             status: 2
-            tag: DERC8
+            subject_tag: DERC8
     actions:
       - type: remove-steps
         parameters:
@@ -633,7 +633,7 @@ Steps:
           parameters: 
             latest: true
             status: 3
-            tag: DERC7
+            subject_tag: DERC7
     actions:
       - type: enable-steps
         parameters:
@@ -706,7 +706,7 @@ Steps:
           parameters: 
             latest: true
             status: 2
-            tag: DERC9
+            subject_tag: DERC9
     actions:
       - type: enable-steps
         parameters:
@@ -730,7 +730,7 @@ Steps:
           parameters: 
             latest: true
             status: 2
-            tag: DERC10
+            subject_tag: DERC10
     actions:
       - type: remove-steps
         parameters:

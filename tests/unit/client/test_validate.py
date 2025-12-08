@@ -151,3 +151,48 @@ def test_procedures_have_required_preconditions(tp_id: TestProcedureId):
                 ):
                     assert tp.preconditions.checks is not None
                     assert any([check.type == "der-settings-contents" for check in tp.preconditions.checks])
+
+
+@pytest.mark.parametrize("tp_id", TestProcedureId)
+def test_response_subject_tags_have_corresponding_der_control_tags(tp_id: TestProcedureId):
+    """Ensures that every subject_tag in response-contents checks has a corresponding
+    tag defined in a create-der-control action in the same test procedure."""
+
+    tp = get_test_procedure(tp_id)
+
+    # Collect all tags defined in create-der-control actions
+    der_control_tags: set[str] = set()
+
+    # Check preconditions actions
+    if tp.preconditions and tp.preconditions.actions:
+        for action in tp.preconditions.actions:
+            if action.type == "create-der-control" and action.parameters:
+                tag = action.parameters.get("tag")
+                if tag:
+                    der_control_tags.add(tag)
+
+    # Check all step actions
+    for step in tp.steps.values():
+        for action in step.actions:
+            if action.type == "create-der-control" and action.parameters:
+                tag = action.parameters.get("tag")
+                if tag:
+                    der_control_tags.add(tag)
+
+    # Collect all subject_tags referenced in response-contents checks
+    referenced_subject_tags: set[str] = set()
+
+    for step in tp.steps.values():
+        if step.event.checks:
+            for check in step.event.checks:
+                if check.type == "response-contents" and check.parameters:
+                    subject_tag = check.parameters.get("subject_tag")
+                    if subject_tag:
+                        referenced_subject_tags.add(subject_tag)
+
+    # Verify all referenced subject_tags have corresponding der-control tags
+    missing_tags = referenced_subject_tags - der_control_tags
+    assert not missing_tags, (
+        f"The following subject_tags in response-contents checks do not have corresponding "
+        f"tags in create-der-control actions: {missing_tags}"
+    )
