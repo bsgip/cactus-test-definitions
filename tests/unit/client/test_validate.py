@@ -161,34 +161,36 @@ def test_response_subject_tags_have_corresponding_der_control_tags(tp_id: TestPr
     tp = get_test_procedure(tp_id)
 
     # Collect all tags defined in create-der-control actions
-    der_control_tags: set[str] = set()
+    der_control_tags = set()
 
-    # Check preconditions actions
     if tp.preconditions and tp.preconditions.actions:
-        for action in tp.preconditions.actions:
-            if action.type == "create-der-control" and action.parameters:
-                tag = action.parameters.get("tag")
-                if tag:
-                    der_control_tags.add(tag)
+        der_control_tags.update(
+            [
+                a.parameters.get("tag")
+                for a in tp.preconditions.actions
+                if a.type == "create-der-control" and a.parameters and a.parameters.get("tag")
+            ]
+        )
 
-    # Check all step actions
-    for step in tp.steps.values():
-        for action in step.actions:
-            if action.type == "create-der-control" and action.parameters:
-                tag = action.parameters.get("tag")
-                if tag:
-                    der_control_tags.add(tag)
+    der_control_tags.update(
+        [
+            a.parameters.get("tag")
+            for s in tp.steps.values()
+            for a in s.actions
+            if a.type == "create-der-control" and a.parameters and a.parameters.get("tag")
+        ]
+    )
 
     # Collect all subject_tags referenced in response-contents checks
-    referenced_subject_tags: set[str] = set()
-
-    for step in tp.steps.values():
-        if step.event.checks:
-            for check in step.event.checks:
-                if check.type == "response-contents" and check.parameters:
-                    subject_tag = check.parameters.get("subject_tag")
-                    if subject_tag:
-                        referenced_subject_tags.add(subject_tag)
+    referenced_subject_tags = set(
+        [
+            c.parameters.get("subject_tag")
+            for s in tp.steps.values()
+            if s.event.checks
+            for c in s.event.checks
+            if c.type == "response-contents" and c.parameters and c.parameters.get("subject_tag")
+        ]
+    )
 
     # Verify all referenced subject_tags have corresponding der-control tags
     missing_tags = referenced_subject_tags - der_control_tags
