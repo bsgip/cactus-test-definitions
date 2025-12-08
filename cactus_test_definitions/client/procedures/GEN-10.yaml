@@ -661,6 +661,7 @@ Steps:
           opModExpLimW: $(setMaxW * 0.2)
           fsa_id: 2
           primacy: 2
+          tag: DERP6
       - type: enable-steps
         parameters:
           steps:

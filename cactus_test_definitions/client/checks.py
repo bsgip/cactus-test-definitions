@@ -109,6 +109,7 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "latest": ParameterSchema(False, ParameterType.Boolean),
         "status": ParameterSchema(False, ParameterType.Integer),
         "all": ParameterSchema(False, ParameterType.Boolean),
+        "tag": ParameterSchema(False, ParameterType.String),
     },
 }
 VALID_CHECK_NAMES: set[str] = set(CHECK_PARAMETER_SCHEMA.keys())
