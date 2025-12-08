@@ -245,7 +245,6 @@ Steps:
           duration_seconds: 300
           opModExpLimW: $(setMaxW * 0.3)
           opModImpLimW: $(setMaxW * 0.3)
-          ramp_time_seconds: 60
       - type: enable-steps
         parameters:
           steps:
