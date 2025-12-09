@@ -44,14 +44,14 @@ Steps:
       type: refresh-resource
       parameters:
         resource: DERControl
-      checks:
-        - type: der-control
-          parameters:
-            minimum_count: 1
-            maximum_count: 1
-            opModConnect: True
-            event_status: 1 # Active
-            sub_id: derc_list_sub
+    checks:
+      - type: der-control
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          opModConnect: True
+          event_status: 1 # Active
+          sub_id: derc_list_sub
 
   - id: STEP 1 - CREATE DERC
     repeat_until_pass: true
