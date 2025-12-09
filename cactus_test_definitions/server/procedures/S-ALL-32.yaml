@@ -11,11 +11,10 @@ Preconditions:
     - id: client
   
 Steps:
-  - id: PRECONDITION
+  - id: PRECONDITION 1 - CREATE END DEVICE
     repeat_until_pass: true
     instructions:
       - Create an EndDevice registration for client and the subscription process as defined in test S-ALL-25. 
-      - Create an active DERControl with opModConnect=True.
     action: 
       type: discovery
       parameters:
@@ -29,13 +28,30 @@ Steps:
       - type: end-device 
         parameters:
           matches_client: true
-      - type: der-control
-        parameters:
-          minimum_count: 1
-          maximum_count: 1
-          opModConnect: True
-          event_status: 1 # Active
-          sub_id: derc_list_sub
+    
+  - id: PRECONDITION2 - DERC LIST SUBSCRIBE
+    action: 
+      type: create-subscription
+      parameters:
+        sub_id: derc_list_sub
+        resource: DERControlList
+
+  - id: PRECONDITION 3 - CREATE DERC
+    repeat_until_pass: true
+    instructions:
+      - Create an active DERControl with opModConnect=True.
+    action: 
+      type: refresh-resource
+      parameters:
+        resource: DERControl
+      checks:
+        - type: der-control
+          parameters:
+            minimum_count: 1
+            maximum_count: 1
+            opModConnect: True
+            event_status: 1 # Active
+            sub_id: derc_list_sub
 
   - id: STEP 1 - CREATE DERC
     repeat_until_pass: true

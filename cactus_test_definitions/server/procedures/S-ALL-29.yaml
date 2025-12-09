@@ -28,9 +28,13 @@ Steps:
       - type: end-device 
         parameters:
           matches_client: true
-      - type: der-control-list
-        parameters:
-          minimum_count: 1
+      
+  - id: PRECONDITION2 - DERC LIST SUBSCRIBE
+    action: 
+      type: create-subscription
+      parameters:
+        sub_id: derc_list_sub
+        resource: DERControlList
 
   - id: STEP 1 - CREATE DERC
     repeat_until_pass: true

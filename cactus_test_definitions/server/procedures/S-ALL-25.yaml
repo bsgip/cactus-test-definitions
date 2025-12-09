@@ -123,10 +123,6 @@ Steps:
       parameters:
         resources:
           - DERControlList
-    checks:
-      - type: der-control-list
-        parameters:
-          minimum_count: 1
 
   - id: 7B - DERC LIST SUBSCRIBE
     action: 
