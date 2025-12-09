@@ -1,4 +1,4 @@
-Description: Update and Delete Subscription
+Description: Active Controls - Generation Limit 
 Category: Subscription / Notification
 Classes:
  - A
@@ -23,6 +23,7 @@ Steps:
           - FunctionSetAssignments
           - DERProgram
           - SubscriptionList
+          - DERControl
     checks:
       - type: end-device 
         parameters:
@@ -31,22 +32,18 @@ Steps:
         parameters:
           minimum_count: 1
 
-  - id: STEP 1 - DERC LIST SUBSCRIBE SAME RESOURCE
+  - id: STEP 1 - CREATE DERC
+    repeat_until_pass: true
+    instructions: The server is configured with an active control with  opModGenLimW = 0W and null rampTms for the same EndDevice updated in Step 2. 
     action: 
-      type: create-subscription
+      type: notifications
       parameters:
         sub_id: derc_list_sub
-        resource: DERControlList # Automatically checks for a 200
-  
-  - id: STEP 2 - DELETE DERC LIST SUBSCRIPTION
-    action: 
-      type: delete-subscription
-      parameters:
-        sub_id: derc_list_sub # Automatically checks for a 200
-
-  - id: POST-TEST, RESUBSCRIBE DERC LIST
-    action: 
-      type: create-subscription
-      parameters:
-        sub_id: derc_list_sub
-        resource: DERControlList
+        collect: true
+    checks:
+      - type: der-control
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          opModGenLimW: 0
+          sub_id: derc_list_sub
