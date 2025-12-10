@@ -24,6 +24,7 @@ Steps:
           - DERProgram
           - SubscriptionList
           - DERControl
+          - DefaultDERControl
           - DERControlList
     checks:
       - type: end-device 
