@@ -24,6 +24,7 @@ Steps:
           - DERProgram
           - SubscriptionList
           - DERControl
+          - DERControlList
     checks:
       - type: end-device 
         parameters:
@@ -41,9 +42,10 @@ Steps:
     instructions:
       - Create an active DERControl with opModConnect=True.
     action: 
-      type: refresh-resource
+      type: discovery
       parameters:
-        resource: DERControl
+        resources: 
+          - DERControl
     checks:
       - type: der-control
         parameters:
@@ -55,7 +57,8 @@ Steps:
 
   - id: STEP 1 - CREATE DERC
     repeat_until_pass: true
-    instructions: The server is configured with an active control with opModConnect = False and null rampTms for the same EndDevice.
+    instructions: 
+      - Configure an active control with opModConnect = False and null rampTms for the same EndDevice.
     action: 
       type: notifications
       parameters:

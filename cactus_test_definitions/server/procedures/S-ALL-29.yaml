@@ -24,6 +24,7 @@ Steps:
           - DERProgram
           - SubscriptionList
           - DERControl
+          - DERControlList
     checks:
       - type: end-device 
         parameters:
@@ -38,7 +39,8 @@ Steps:
 
   - id: STEP 1 - CREATE DERC
     repeat_until_pass: true
-    instructions: The server is configured with an active control with opModImpLimW = 0W and null rampTms for the same EndDevice updated in Step 2. 
+    instructions: 
+      - Configure an active control with opModImpLimW = 0W and null rampTms. 
     action: 
       type: notifications
       parameters:

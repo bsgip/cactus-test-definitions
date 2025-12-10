@@ -23,6 +23,7 @@ Steps:
           - FunctionSetAssignments
           - DERProgram
           - SubscriptionList
+          - DERControlList
     checks:
       - type: end-device 
         parameters:

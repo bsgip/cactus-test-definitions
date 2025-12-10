@@ -24,6 +24,7 @@ Steps:
           - DERProgram
           - SubscriptionList
           - DERControl
+          - DERControlList
     checks:
       - type: end-device 
         parameters:
@@ -41,9 +42,10 @@ Steps:
     instructions:
       - Create an active DERControl with opModConnect=True.
     action: 
-      type: refresh-resource
+      type: discovery
       parameters:
-        resource: DERControl
+        resources: 
+          - DERControl
     checks:
       - type: der-control
         parameters:
