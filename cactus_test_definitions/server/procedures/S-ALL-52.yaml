@@ -32,4 +32,4 @@ Steps:
     action:
       type: insert-end-device
       parameters:
-          expect_rejection: True 
+          expect_rejection: true 

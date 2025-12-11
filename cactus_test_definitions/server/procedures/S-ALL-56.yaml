@@ -33,4 +33,4 @@ Steps:
       type: insert-end-device
       parameters:
         force_lfdi: ZZZZZZZZZZZZZZZZ
-        expect_rejection: True
+        expect_rejection: true

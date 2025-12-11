@@ -39,7 +39,7 @@ Steps:
           opModExpLimW: $(setMaxW * 0.3)
 
   - id: (1) Cancel active controls
-    repeat_until_pass: True
+    repeat_until_pass: true
     instructions: The server should set all active controls to cancelled.
     client: client
     action: 

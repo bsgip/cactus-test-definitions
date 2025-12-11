@@ -46,7 +46,7 @@ Steps:
       type: respond-der-controls # send response status = 1 (received) immediately after it is sent
 
   - id: (2) DERControl 1 - Active
-    repeat_until_pass: True # The first DER Control can start any time and be of any duration.
+    repeat_until_pass: true # The first DER Control can start any time and be of any duration.
     client: client
     action: 
       type: refresh-resource

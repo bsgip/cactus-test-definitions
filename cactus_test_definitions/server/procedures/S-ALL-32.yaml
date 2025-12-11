@@ -40,7 +40,7 @@ Steps:
   - id: PRECONDITION 3 - CREATE DERC
     repeat_until_pass: true
     instructions:
-      - Create an active DERControl with opModConnect=True.
+      - Create an active DERControl with opModConnect=true.
     action: 
       type: discovery
       parameters:
@@ -51,7 +51,7 @@ Steps:
         parameters:
           minimum_count: 1
           maximum_count: 1
-          opModConnect: True
+          opModConnect: true
           event_status: 1 # Active
           sub_id: derc_list_sub
 

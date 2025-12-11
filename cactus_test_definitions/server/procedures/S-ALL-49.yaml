@@ -31,7 +31,7 @@ Steps:
         parameters:
           minimum_count: 2
           maximum_count: 2
-          matches_client_edev: True
+          matches_client_edev: true
       - type: der-program # DERP 1
         parameters:
           minimum_count: 1

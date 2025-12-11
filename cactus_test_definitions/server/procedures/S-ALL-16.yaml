@@ -29,7 +29,7 @@ Steps:
       - type: der-control
         parameters:
           minimum_count: 1
-          opModConnect: True
+          opModConnect: true
           rampTms: null
     
   - id: (1) De-energize
@@ -75,5 +75,5 @@ Steps:
       - type: der-control
         parameters:
           minimum_count: 1
-          opModConnect: True
+          opModConnect: true
           rampTms: null

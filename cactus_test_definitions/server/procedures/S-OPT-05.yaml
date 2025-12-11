@@ -29,5 +29,5 @@ Steps:
       - type: discovered
       - type: mirror-usage-point
         parameters:
-          matches: True
+          matches: true
           post_rate_seconds: 300
