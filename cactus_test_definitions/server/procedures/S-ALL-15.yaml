@@ -50,7 +50,7 @@ Steps:
       - type: der-control
         parameters:
           minimum_count: 1
-          opModEnergize: False
+          opModEnergize: false
           rampTms: null
           event_status: 1 # Active
       

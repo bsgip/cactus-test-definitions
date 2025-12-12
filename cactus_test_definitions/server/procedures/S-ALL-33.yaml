@@ -80,7 +80,7 @@ Steps:
           opModGenLimW: 0
           opModImpLimW: $(setMaxW * 0.5)
           opModLoadLimW: 0
-          opModEnergize: False
-          opModConnect: False
+          opModEnergize: false
+          opModConnect: false
           event_status: 1 # Active
           sub_id: derc_list_sub

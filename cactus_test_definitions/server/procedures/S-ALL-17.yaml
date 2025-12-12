@@ -41,8 +41,8 @@ Steps:
           opModGenLimW: 0
           opModImpLimW: $(setMaxW * 0.5)
           opModLoadLimW: 0
-          opModEnergize: False
-          opModConnect: False
+          opModEnergize: false
+          opModConnect: false
           rampTms: null
           event_status: 1 # Active
     

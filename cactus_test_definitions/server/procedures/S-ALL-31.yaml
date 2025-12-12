@@ -58,7 +58,7 @@ Steps:
   - id: STEP 1 - CREATE DERC
     repeat_until_pass: true
     instructions: 
-      - Configure with an active control with opModEnergize = False and null rampTms for the same EndDevice.
+      - Configure with an active control with opModEnergize = false and null rampTms for the same EndDevice.
     action: 
       type: notifications
       parameters:
@@ -69,6 +69,6 @@ Steps:
         parameters:
           minimum_count: 1
           maximum_count: 1
-          opModEnergize: False
+          opModEnergize: false
           event_status: 1 # Active
           sub_id: derc_list_sub

@@ -54,7 +54,7 @@ Steps:
       - type: der-control
         parameters:
           minimum_count: 1
-          opModConnect: False
+          opModConnect: false
           rampTms: null
           event_status: 1 # Active
       
