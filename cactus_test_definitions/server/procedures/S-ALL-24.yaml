@@ -35,3 +35,4 @@ Steps:
           opModGenLimW: 0
           opModImpLimW: $(setMaxW * 0.5)
           opModLoadLimW: 0
+          minimum_count: 1

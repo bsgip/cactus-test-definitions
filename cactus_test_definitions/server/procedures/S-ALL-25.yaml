@@ -183,3 +183,4 @@ Steps:
         parameters:
           opModExpLimW: 2000
           sub_id: dderc_sub
+          minimum_count: 1

@@ -37,6 +37,7 @@ Steps:
       - type: default-der-control
         parameters:
           opModExpLimW: $(setMaxW * 0.3)
+          minimum_count: 1
 
   - id: (1) Cancel active controls
     repeat_until_pass: true
