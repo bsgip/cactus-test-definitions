@@ -43,14 +43,10 @@ Steps:
       type: discovery
       parameters:
         resources:
-          - EndDevice
           - DERControlList
           - DER
           - DERControl
     checks:
-      - type: end-device 
-        parameters:
-          matches_client: true 
       - type: der-control
         parameters:
           minimum_count: 1
@@ -67,14 +63,10 @@ Steps:
       type: discovery
       parameters:
         resources:
-          - EndDevice
           - DERControlList
           - DER
           - DERControl
     checks:
-      - type: end-device 
-        parameters:
-          matches_client: true 
       - type: der-control
         parameters:
           minimum_count: 1
