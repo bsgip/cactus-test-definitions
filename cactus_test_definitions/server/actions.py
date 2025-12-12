@@ -79,6 +79,7 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "pow10_multiplier": ParameterSchema(
             False, ParameterType.Integer
         ),  # Force the use a particular pow10. Defaults to 0 otherwise
+        "set_mup_mrid": ParameterSchema(False, ParameterType.String),  # If set, forces mup mrid identity
     },  # Register a MUP with the specified values. MMR's based on hash of current client / reading types
     "insert-readings": {
         "mup_id": ParameterSchema(True, ParameterType.String),  # Must be previously defined with register-mup
