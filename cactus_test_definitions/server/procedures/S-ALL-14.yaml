@@ -34,3 +34,4 @@ Steps:
           minimum_count: 1
           opModLoadLimW: 0
           rampTms: null
+          event_status: 1 # Active

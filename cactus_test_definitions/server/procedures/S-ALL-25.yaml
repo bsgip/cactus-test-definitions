@@ -28,14 +28,14 @@ Steps:
         parameters:
           matches_client: true
 
-  - id: EDEV LIST SUBSCRIBE
+  - id: 1 - EDEV LIST SUBSCRIBE
     action: 
       type: create-subscription
       parameters:
         sub_id: edev_list_sub
         resource: EndDeviceList
 
-  - id: AWAIT EDEV LIST NOTIFICATION
+  - id: 2- AWAIT EDEV LIST NOTIFICATION
     repeat_until_pass: true
     instructions:
       - Change the EndDeviceList to have a pollRate of 30 seconds. Ensure it sends a Notification.
@@ -52,14 +52,14 @@ Steps:
           poll_rate: 30
           sub_id: edev_list_sub
 
-  - id: FSA LIST SUBSCRIBE
+  - id: 3 - FSA LIST SUBSCRIBE
     action: 
       type: create-subscription
       parameters:
         sub_id: fsa_list_sub
         resource: FunctionSetAssignmentsList
     
-  - id: AWAIT FSA LIST NOTIFICATION
+  - id: 4 - AWAIT FSA LIST NOTIFICATION
     repeat_until_pass: true
     instructions:
       - Add a new FunctionSetAssignment to client EndDevice. Ensure it sends a Notification.
@@ -89,14 +89,14 @@ Steps:
         resources:
           - DERProgramList
 
-  - id: DERP LIST SUBSCRIBE
+  - id: 5 - DERP LIST SUBSCRIBE
     action: 
       type: create-subscription
       parameters:
         sub_id: derp_list_sub
         resource: DERProgramList
 
-  - id: AWAIT DERP LIST NOTIFICATION
+  - id: 6 - AWAIT DERP LIST NOTIFICATION
     repeat_until_pass: true
     instructions:
       - Add a new DERProgram to the newly created FunctionSetAssignment. Ensure it sends a Notification.
@@ -113,8 +113,42 @@ Steps:
           fsa_index: -1 # Must belong to the latest FunctionSetAssignment
           sub_id: derp_list_sub
 
+  # Same as above - we don't have the DERControlList (only a link) - we need to resolve it
+  - id: 7A - DISCOVER DERC LIST
+    repeat_until_pass: true
+    instructions:
+      - Ensure the DERProgram has a DERControlList that can be subscribed to.
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - DERControlList
+
+  - id: 7B - DERC LIST SUBSCRIBE
+    action: 
+      type: create-subscription
+      parameters:
+        sub_id: derc_list_sub
+        resource: DERControlList
+
+  - id: 8- AWAIT DERC NOTIFICATION
+    repeat_until_pass: true
+    instructions:
+      - Add a new DERControl to the same EndDevice updated in Step 2.
+    action: 
+      type: notifications
+      parameters:
+        sub_id: derc_list_sub
+        collect: true
+    checks:
+      - type: der-control
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          sub_id: derc_list_sub
+
   # Same as above - we don't have the DefaultDERControl (only a link) - we need to resolve it
-  - id: DISCOVER NEW DERC
+  - id: 9A - DISCOVER NEW DERC
     repeat_until_pass: true
     instructions:
       - Add a DefaultDERControl to the recently created DERProgram. Ensure it's subscribable.
@@ -128,14 +162,14 @@ Steps:
         parameters: 
           minimum_count: 1
 
-  - id: DEFAULT DERC SUBSCRIBE
+  - id: 9B - DEFAULT DERC SUBSCRIBE
     action: 
       type: create-subscription
       parameters:
         sub_id: dderc_sub
         resource: DefaultDERControl
 
-  - id: AWAIT DEFAULT DERC NOTIFICATION
+  - id: 10 - AWAIT DEFAULT DERC NOTIFICATION
     repeat_until_pass: true
     instructions:
       - Adjust the DefaultDERControl to have opModeExpLimW 2000 W. Ensure it sends a Notification.
@@ -149,3 +183,4 @@ Steps:
         parameters:
           opModExpLimW: 2000
           sub_id: dderc_sub
+          minimum_count: 1

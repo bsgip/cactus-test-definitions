@@ -41,16 +41,35 @@ class TestProcedureId(StrEnum):
     S_ALL_23 = "S-ALL-23"
     S_ALL_24 = "S-ALL-24"
     S_ALL_25 = "S-ALL-25"
+    S_ALL_26 = "S-ALL-26"
+    S_ALL_27 = "S-ALL-27"
+    S_ALL_28 = "S-ALL-28"
+    S_ALL_29 = "S-ALL-29"
+    S_ALL_30 = "S-ALL-30"
+    S_ALL_31 = "S-ALL-31"
+    S_ALL_32 = "S-ALL-32"
+    S_ALL_33 = "S-ALL-33"
+    S_ALL_34 = "S-ALL-34"
+    S_ALL_35 = "S-ALL-35"
+    S_ALL_36 = "S-ALL-36"
+    S_ALL_37 = "S-ALL-37"
+    S_ALL_38 = "S-ALL-38"
+    S_ALL_39 = "S-ALL-39"
+    S_ALL_40 = "S-ALL-40"
     S_ALL_41 = "S-ALL-41"
     S_ALL_42 = "S-ALL-42"
     S_ALL_43 = "S-ALL-43"
     S_ALL_44 = "S-ALL-44"
     S_ALL_45 = "S-ALL-45"
+    # 46
+    # 47
     S_ALL_48 = "S-ALL-48"
     S_ALL_49 = "S-ALL-49"
+    # 50
     S_ALL_51 = "S-ALL-51"
     S_ALL_52 = "S-ALL-52"
     S_ALL_53 = "S-ALL-53"
+    # 54
     S_ALL_55 = "S-ALL-55"
     S_ALL_56 = "S-ALL-56"
     S_ALL_57 = "S-ALL-57"
@@ -59,6 +78,7 @@ class TestProcedureId(StrEnum):
     S_OPT_03 = "S-OPT-03"
     S_OPT_04 = "S-OPT-04"
     S_OPT_05 = "S-OPT-05"
+    # S-OPT-06 DRED
 
 
 class ClientType(StrEnum):

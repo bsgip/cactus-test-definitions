@@ -32,3 +32,4 @@ Steps:
       - type: default-der-control
         parameters:
           opModGenLimW: $(setMaxW * 0.3)
+          minimum_count: 1

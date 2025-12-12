@@ -1,0 +1,57 @@
+Description: Update and Delete Subscription
+Category: Subscription / Notification
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+  
+Steps:
+  - id: PRECONDITION
+    repeat_until_pass: true
+    instructions:
+      - Create an EndDevice registration for client and the subscription process as defined in test S-ALL-25.
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - FunctionSetAssignments
+          - DERProgram
+          - SubscriptionList
+          - DERControlList
+    checks:
+      - type: end-device 
+        parameters:
+          matches_client: true
+
+  - id: PRECONDITION2 - DERC LIST SUBSCRIBE
+    action: 
+      type: create-subscription
+      parameters:
+        sub_id: derc_list_sub
+        resource: DERControlList
+
+  - id: STEP 1 - DERC LIST SUBSCRIBE SAME RESOURCE
+    action: 
+      type: create-subscription
+      parameters:
+        sub_id: derc_list_sub
+        resource: DERControlList # Automatically checks for a 200
+  
+  - id: STEP 2 - DELETE DERC LIST SUBSCRIPTION
+    action: 
+      type: delete-subscription
+      parameters:
+        sub_id: derc_list_sub # Automatically checks for a 200
+
+  - id: POST-TEST, RESUBSCRIBE DERC LIST
+    action: 
+      type: create-subscription
+      parameters:
+        sub_id: derc_list_sub
+        resource: DERControlList

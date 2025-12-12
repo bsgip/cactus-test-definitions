@@ -22,6 +22,7 @@ Steps:
       parameters:
         resources:
           - EndDevice
+          - DERControl
     checks:
       - type: end-device 
         parameters:
@@ -32,4 +33,5 @@ Steps:
           opModExpLimW: 0
           opModImpLimW: 0
           rampTms: 30
+          event_status: 1 # Active
     

@@ -37,15 +37,17 @@ Steps:
       - type: default-der-control
         parameters:
           opModExpLimW: $(setMaxW * 0.3)
+          minimum_count: 1
 
   - id: (1) Cancel active controls
-    repeat_until_pass: True
+    repeat_until_pass: true
     instructions: The server should set all active controls to cancelled.
     client: client
     action: 
-      type: refresh-resource
+      type: discovery
       parameters:
-        resource: DERControl
+        resources:
+          - DERControl
     checks:
       - type: der-control # Check event status has been updated
         parameters:
@@ -64,9 +66,10 @@ Steps:
   - id: (2) CHECK to see that cancelled responses are not immediately removed
     client: client
     action: 
-      type: refresh-resource
+      type: discovery
       parameters:
-        resource: DERControl
+        resources:
+          - DERControl
     checks:
       - type: der-control
         parameters:

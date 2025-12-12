@@ -1,0 +1,74 @@
+Description: Active Controls - Disconnect
+Category: Subscription / Notification
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+  
+Steps:
+  - id: PRECONDITION 1 - CREATE END DEVICE
+    repeat_until_pass: true
+    instructions:
+      - Create an EndDevice registration for client and the subscription process as defined in test S-ALL-25. 
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - FunctionSetAssignments
+          - DERProgram
+          - SubscriptionList
+          - DERControl
+          - DERControlList
+    checks:
+      - type: end-device 
+        parameters:
+          matches_client: true
+    
+  - id: PRECONDITION2 - DERC LIST SUBSCRIBE
+    action: 
+      type: create-subscription
+      parameters:
+        sub_id: derc_list_sub
+        resource: DERControlList
+
+  - id: PRECONDITION 3 - CREATE DERC
+    repeat_until_pass: true
+    instructions:
+      - Create an active DERControl with opModConnect=true.
+    action: 
+      type: discovery
+      parameters:
+        resources: 
+          - DERControl
+    checks:
+      - type: der-control
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          opModConnect: true
+          event_status: 1 # Active
+          sub_id: derc_list_sub
+
+  - id: STEP 1 - CREATE DERC
+    repeat_until_pass: true
+    instructions: 
+      - Configure an active control with opModConnect = false and null rampTms for the same EndDevice.
+    action: 
+      type: notifications
+      parameters:
+        sub_id: derc_list_sub
+        collect: true
+    checks:
+      - type: der-control
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          opModConnect: false
+          event_status: 1 # Active
+          sub_id: derc_list_sub

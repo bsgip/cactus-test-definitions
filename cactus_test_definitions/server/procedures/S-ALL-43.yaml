@@ -83,19 +83,19 @@ Steps:
           resource: EndDeviceList
           poll_rate_seconds: 60
     
-  - id: (3) UPDATE FunctionSetAssignments poll-rate
+  - id: (3) UPDATE FunctionSetAssignmentsList poll-rate
     repeat_until_pass: true
     client: client
     instructions:
-      - Set FunctionSetAssignments poll rate to 60s.
+      - Set FunctionSetAssignmentsList poll rate to 60s.
     action: 
       type: refresh-resource
       parameters:
-        resource: FunctionSetAssignments
+        resource: FunctionSetAssignmentsList
     checks:
       - type: poll-rate
         parameters:
-          resource: FunctionSetAssignments
+          resource: FunctionSetAssignmentsList
           poll_rate_seconds: 60
 
   - id: (4) UPDATE DERProgramList poll-rate

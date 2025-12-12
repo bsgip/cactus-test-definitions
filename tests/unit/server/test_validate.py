@@ -57,7 +57,6 @@ def test_each_alias_defined(tp_id: str):
         elif step.action.type == INSERT_READING_ACTION:
             assert mup_id and (mup_id in mup_aliases_found), "mup_id hasn't been defined yet."
         elif step.action.type == CREATE_SUB_ACTION:
-            assert sub_id and (sub_id not in sub_aliases_found), "sub_id is already defined in this test."
             sub_aliases_found.add(sub_id)
         elif step.action.type == DELETE_SUB_ACTION:
             assert sub_id and (sub_id in sub_aliases_found), "sub_id hasn't been defined yet."

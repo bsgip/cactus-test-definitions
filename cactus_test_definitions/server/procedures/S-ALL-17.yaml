@@ -16,12 +16,20 @@ Steps:
     client: client
     instructions:
       - Create an EndDevice registration.
-      - Configure an active control with opModExpLimW = 50% of the DER active power rating, opModGenLimW = 0W, opModImpLimW = 50% the DER active power rating, opModLoadLimW = 0W, opModEnergize = false, opModConnect = false, and without including the rampTms attribute.
+      - Configure an active control with - 
+      - opModExpLimW = 50% of the DER active power rating
+      - opModGenLimW = 0W
+      - opModImpLimW = 50% the DER active power rating
+      - opModLoadLimW = 0W
+      - opModEnergize = false
+      - opModConnect = false
+      - without including the rampTms attribute.
     action: 
       type: discovery
       parameters:
         resources:
           - EndDevice
+          - DERControl
     checks:
       - type: end-device 
         parameters:
@@ -33,7 +41,8 @@ Steps:
           opModGenLimW: 0
           opModImpLimW: $(setMaxW * 0.5)
           opModLoadLimW: 0
-          opModEnergize: False
-          opModConnect: False
+          opModEnergize: false
+          opModConnect: false
           rampTms: null
+          event_status: 1 # Active
     

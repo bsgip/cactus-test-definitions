@@ -14,7 +14,7 @@ Preconditions:
       client_type: device
   
 Steps:
-  - id: (A) PRECONDITION
+  - id: (A) PRECONDITION REGISTRATION
     repeat_until_pass: true
     client: CLIENT-A
     instructions:
@@ -31,7 +31,7 @@ Steps:
         parameters:
           matches_client: true 
 
-  - id: (B) PRECONDITION
+  - id: (B) PRECONDITION REGISTRATION
     repeat_until_pass: true
     client: CLIENT-B
     instructions:
@@ -48,16 +48,50 @@ Steps:
         parameters:
           matches_client: true 
 
-  - id: (A-B) AUTH EndDeviceList
+  - id: CLIENT-A CREATE MUP
+    client: CLIENT-A
+    action: 
+      type: upsert-mup
+      parameters:
+        mup_id: mupa
+        location: Device
+        reading_types: 
+          - ActivePowerAverage
+    checks:
+      - type: mirror-usage-point
+        parameters:
+          matches: true
+          location: Device
+          reading_types: 
+            - ActivePowerAverage
+
+  - id: CLIENT-B CREATE MUP
+    client: CLIENT-B
+    action: 
+      type: upsert-mup
+      parameters:
+        mup_id: mupb
+        location: Device
+        reading_types: 
+          - ActivePowerAverage
+    checks:
+      - type: mirror-usage-point
+        parameters:
+          matches: true
+          location: Device
+          reading_types: 
+            - ActivePowerAverage
+
+  - id: 1 - REJECT EDEV
     client: CLIENT-A
     use_client_context: CLIENT-B 
     action: 
       type: refresh-resource
       parameters:
-        resource: EndDeviceList
+        resource: EndDevice
         expect_rejection: true
 
-  - id: (A-B) AUTH DerControlList
+  - id: 2 - REJECT DERCONTROLLIST
     client: CLIENT-A
     use_client_context: CLIENT-B 
     action: 
@@ -66,7 +100,7 @@ Steps:
         resource: DERControlList
         expect_rejection: true
 
-  - id: (A-B) AUTH DERStatus
+  - id: 3 - REJECT DERSTATUS
     client: CLIENT-A
     use_client_context: CLIENT-B 
     action: 
@@ -75,20 +109,7 @@ Steps:
         genConnectStatus: 1
         expect_rejection: true
 
-  - id: (A-B) AUTH MirrorUsagePoint
-    client: CLIENT-A
-    use_client_context: CLIENT-B 
-    action: 
-      type: upsert-mup
-      parameters:
-        expect_rejection: true
-        mup_id: mupa
-        location: Device
-        reading_types: 
-          - ActivePowerAverage
-          - VoltageSinglePhaseAverage
-
-  - id: (A) OK EndDeviceList
+  - id: 4 - ALLOW EDEVLIST
     client: CLIENT-A
     action: 
       type: refresh-resource
@@ -99,7 +120,7 @@ Steps:
         parameters:
           matches_client: true 
 
-  - id: (A) DISALLOW ACCESS
+  - id: 5 - DISALLOW ACCESS
     repeat_until_pass: true
     instructions:
       - Remove EndDevice entry for ClientA (or disallow access).
@@ -107,5 +128,16 @@ Steps:
     action: 
       type: refresh-resource
       parameters:
-        resource: EndDeviceList
+        resource: EndDevice
         expect_rejection_or_empty: true
+
+  - id: 6 - AUTH MirrorUsagePoint
+    client: CLIENT-A
+    action: 
+      type: upsert-mup
+      parameters:
+        expect_rejection: true
+        mup_id: mupb  # Mrid is for device B
+        location: Device
+        reading_types: 
+          - ActivePowerAverage

@@ -22,6 +22,7 @@ Steps:
       parameters:
         resources:
           - EndDevice
+          - DERControl
     checks:
       - type: end-device 
         parameters:
@@ -29,8 +30,9 @@ Steps:
       - type: der-control
         parameters:
           minimum_count: 1
-          opModConnect: True
+          opModConnect: true
           rampTms: null
+          event_status: 1 # Active
     
   - id: (1) De-energize
     repeat_until_pass: true
@@ -52,8 +54,9 @@ Steps:
       - type: der-control
         parameters:
           minimum_count: 1
-          opModConnect: False
+          opModConnect: false
           rampTms: null
+          event_status: 1 # Active
       
   - id: (2) Energize
     repeat_until_pass: true
@@ -75,5 +78,6 @@ Steps:
       - type: der-control
         parameters:
           minimum_count: 1
-          opModConnect: True
+          opModConnect: true
           rampTms: null
+          event_status: 1 # Active

@@ -46,12 +46,13 @@ Steps:
       type: respond-der-controls # send response status = 1 (received) immediately after it is sent
 
   - id: (2) DERControl 1 - Active
-    repeat_until_pass: True # The first DER Control can start any time and be of any duration.
+    repeat_until_pass: true # The first DER Control can start any time and be of any duration.
     client: client
     action: 
-      type: refresh-resource
+      type: discovery
       parameters:
-        resource: DERControl
+        resources:
+          - DERControl
     checks:
       - type: der-control # Check event status has been updated
         parameters:
@@ -70,9 +71,10 @@ Steps:
     repeat_until_pass: true # Wait until event status has been updated
     client: client
     action: 
-      type: refresh-resource
+      type: discovery
       parameters:
-        resource: DERControl
+        resources:
+          - DERControl
     checks:
       - type: der-control # Check event status has been updated
         parameters:
@@ -148,9 +150,10 @@ Steps:
   - id: (4c) DERControl 2 - Started
     client: client
     action: 
-      type: refresh-resource
+      type: discovery
       parameters:
-        resource: DERControl
+        resources:
+          - DERControl
     checks:
       - type: der-control # Check event status has been updated
         parameters:
@@ -171,9 +174,10 @@ Steps:
     instructions:
       - The utility server is configured to cancel the active control while it is still active.
     action: 
-      type: refresh-resource
+      type: discovery
       parameters:
-        resource: DERControl
+        resources:
+          - DERControl
     checks:
       - type: der-control
         parameters:
@@ -194,9 +198,10 @@ Steps:
   - id: CHECK pt. 2 - Cancelled DERControl isnt just removed immediately (client has a chance to see cancellation)
     client: client
     action: 
-      type: refresh-resource
+      type: discovery
       parameters:
-        resource: DERControl
+        resources:
+          - DERControl
     checks:
       - type: der-control # Check DER Control still exists
         parameters:
@@ -262,9 +267,10 @@ Steps:
     instructions:
       - The utility server is configured to cancel the scheduled control before it is active.
     action: 
-      type: refresh-resource
+      type: discovery
       parameters:
-        resource: DERControl
+        resources:
+          - DERControl
     checks:
       - type: der-control
         parameters:
@@ -286,9 +292,10 @@ Steps:
     instructions:
       - The utility server configures an active control with opModExpLimW and opModImpLimW = 200% of the DERs rated active power to begin in 10 minutes.
     action: 
-      type: refresh-resource
+      type: discovery
       parameters:
-        resource: DERControl
+        resources:
+          - DERControl
     checks:
       - type: der-control
         parameters:
@@ -309,9 +316,10 @@ Steps:
     instructions:
       - The utility server configures an active control with the same primacy and an overlapping control window.
     action: 
-      type: refresh-resource
+      type: discovery
       parameters:
-        resource: DERControl
+        resources:
+          - DERControl
     checks:
       - type: der-control
         parameters:
@@ -330,9 +338,10 @@ Steps:
     repeat_until_pass: true
     client: client
     action: 
-      type: refresh-resource
+      type: discovery
       parameters:
-        resource: DERControl
+        resources:
+          - DERControl
     checks:
       - type: der-control
         parameters:

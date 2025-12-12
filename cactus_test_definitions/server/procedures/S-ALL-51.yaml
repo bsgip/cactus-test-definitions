@@ -32,4 +32,4 @@ Steps:
     action:
       type: insert-end-device
       parameters:
-          expect_rejection: True  # By default the lfdi will be the same as the existing end device.
+          expect_rejection: true  # By default the lfdi will be the same as the existing end device.

@@ -22,6 +22,7 @@ Steps:
       parameters:
         resources:
           - EndDevice
+          - DERControl
     checks:
       - type: end-device 
         parameters:
@@ -29,8 +30,9 @@ Steps:
       - type: der-control
         parameters:
           minimum_count: 1
-          opModEnergize: True
+          opModEnergize: true
           rampTms: null
+          event_status: 1 # Active
     
   - id: (1) De-energize
     repeat_until_pass: true
@@ -41,19 +43,16 @@ Steps:
       type: discovery
       parameters:
         resources:
-          - EndDevice
           - DERControlList
           - DER
           - DERControl
     checks:
-      - type: end-device 
-        parameters:
-          matches_client: true 
       - type: der-control
         parameters:
           minimum_count: 1
-          opModEnergize: False
+          opModEnergize: false
           rampTms: null
+          event_status: 1 # Active
       
   - id: (2) Energize
     repeat_until_pass: true
@@ -64,16 +63,13 @@ Steps:
       type: discovery
       parameters:
         resources:
-          - EndDevice
           - DERControlList
           - DER
           - DERControl
     checks:
-      - type: end-device 
-        parameters:
-          matches_client: true 
       - type: der-control
         parameters:
           minimum_count: 1
-          opModEnergize: True
+          opModEnergize: true
           rampTms: null
+          event_status: 1 # Active

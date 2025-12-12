@@ -39,24 +39,24 @@ Steps:
     action: 
       type: send-malformed-response
       parameters:
-        mrid_unknown: True
-        endDeviceLFDI_unknown: False
-        response_invalid: False
+        mrid_unknown: true
+        endDeviceLFDI_unknown: false
+        response_invalid: false
 
   - id: (2) Malformed response - lfdi doesnt exist # Expects 4XX response
     action: 
       type: send-malformed-response
       parameters:
-        mrid_unknown: False
-        endDeviceLFDI_unknown: True
-        response_invalid: False
+        mrid_unknown: false
+        endDeviceLFDI_unknown: true
+        response_invalid: false
 
   - id: (3) Malformed response - lfdi doesnt exist # Expects 4XX response
     action: 
       type: send-malformed-response
       parameters:
-        mrid_unknown: False
-        endDeviceLFDI_unknown: False
-        response_invalid: True
+        mrid_unknown: false
+        endDeviceLFDI_unknown: false
+        response_invalid: true
 
 

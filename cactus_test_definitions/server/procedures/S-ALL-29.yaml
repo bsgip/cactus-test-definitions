@@ -1,0 +1,55 @@
+Description: Active Controls - Import Limit 
+Category: Subscription / Notification
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+  
+Steps:
+  - id: PRECONDITION
+    repeat_until_pass: true
+    instructions:
+      - Create an EndDevice registration for client and the subscription process as defined in test S-ALL-25.
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - FunctionSetAssignments
+          - DERProgram
+          - SubscriptionList
+          - DERControl
+          - DERControlList
+    checks:
+      - type: end-device 
+        parameters:
+          matches_client: true
+      
+  - id: PRECONDITION2 - DERC LIST SUBSCRIBE
+    action: 
+      type: create-subscription
+      parameters:
+        sub_id: derc_list_sub
+        resource: DERControlList
+
+  - id: STEP 1 - CREATE DERC
+    repeat_until_pass: true
+    instructions: 
+      - Configure an active control with opModImpLimW = 0W and null rampTms. 
+    action: 
+      type: notifications
+      parameters:
+        sub_id: derc_list_sub
+        collect: true
+    checks:
+      - type: der-control
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          opModImpLimW: 0
+          sub_id: derc_list_sub
