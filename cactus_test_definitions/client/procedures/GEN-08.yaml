@@ -1,7 +1,6 @@
 Description: Default Controls – Generation Limit
 Category: Control
 Classes:
-  - G
   - S
 
 TargetVersions:
