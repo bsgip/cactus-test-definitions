@@ -11,6 +11,66 @@ Criteria:
   checks:
     - type: all-steps-complete
       parameters: {}
+    - type: response-contents # DERC 1
+      parameters: 
+        status: 1 # Received
+        subject_tag: DERC1
+    - type: response-contents
+      parameters: 
+        status: 2 # Started
+        subject_tag: DERC1
+    - type: response-contents
+      parameters: 
+        status: 3 # Completed
+        subject_tag: DERC1
+    - type: response-contents # DERC 2
+      parameters: 
+        status: 1
+        subject_tag: DERC2
+    - type: response-contents
+      parameters: 
+        status: 2
+        subject_tag: DERC2
+    - type: response-contents
+      parameters: 
+        status: 3
+        subject_tag: DERC2
+    - type: response-contents # DERC 3
+      parameters: 
+        status: 1
+        subject_tag: DERC3
+    - type: response-contents
+      parameters: 
+        status: 2
+        subject_tag: DERC3
+    - type: response-contents
+      parameters: 
+        status: 3
+        subject_tag: DERC3
+    - type: response-contents # DERC 4
+      parameters: 
+        status: 1
+        subject_tag: DERC4
+    - type: response-contents
+      parameters: 
+        status: 2
+        subject_tag: DERC4
+    - type: response-contents
+      parameters: 
+        status: 3
+        subject_tag: DERC4
+    - type: response-contents # DERC 5
+      parameters: 
+        status: 1
+        subject_tag: DERC5
+    - type: response-contents
+      parameters: 
+        status: 2
+        subject_tag: DERC5
+    - type: response-contents
+      parameters: 
+        status: 3
+        subject_tag: DERC5
 
 Preconditions:
   init_actions:
@@ -70,86 +130,7 @@ Steps:
           duration_seconds: 60
           opModExpLimW: 0
           tag: DERC5
-      - type: enable-steps
-        parameters:
-          steps:
-            - CHECK-DER-CONTROL-RESPONSES
       - type: remove-steps
         parameters:
           steps:
             - GET-DER-CONTROLS
-
-  CHECK-DER-CONTROL-RESPONSES:  # Each control should have received, started, completed
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/rsps/site_control/rsp
-        serve_request_first: true
-      checks:
-        - type: response-contents # DERC 1
-          parameters: 
-            status: 1 # Received
-            subject_tag: DERC1
-        - type: response-contents
-          parameters: 
-            status: 2 # Started
-            subject_tag: DERC1
-        - type: response-contents
-          parameters: 
-            status: 3 # Completed
-            subject_tag: DERC1
-        - type: response-contents # DERC 2
-          parameters: 
-            status: 1
-            subject_tag: DERC2
-        - type: response-contents
-          parameters: 
-            status: 2
-            subject_tag: DERC2
-        - type: response-contents
-          parameters: 
-            status: 3
-            subject_tag: DERC2
-        - type: response-contents # DERC 3
-          parameters: 
-            status: 1
-            subject_tag: DERC3
-        - type: response-contents
-          parameters: 
-            status: 2
-            subject_tag: DERC3
-        - type: response-contents
-          parameters: 
-            status: 3
-            subject_tag: DERC3
-        - type: response-contents # DERC 4
-          parameters: 
-            status: 1
-            subject_tag: DERC4
-        - type: response-contents
-          parameters: 
-            status: 2
-            subject_tag: DERC4
-        - type: response-contents
-          parameters: 
-            status: 3
-            subject_tag: DERC4
-        - type: response-contents # DERC 5
-          parameters: 
-            status: 1
-            subject_tag: DERC5
-        - type: response-contents
-          parameters: 
-            status: 2
-            subject_tag: DERC5
-        - type: response-contents
-          parameters: 
-            status: 3
-            subject_tag: DERC5
-    actions:
-      - type: remove-steps
-        parameters:
-          steps:
-            - CHECK-DER-CONTROL-RESPONSES
-      - type: finish-test
-        parameters: {}
