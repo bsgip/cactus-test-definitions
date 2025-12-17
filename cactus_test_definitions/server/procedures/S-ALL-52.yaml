@@ -29,7 +29,8 @@ Steps:
 
   - id: Step 1 - Attempt to upsert end device with that the client doesnt own - expect rejection
     client: CLIENT-B
+    use_client_context: CLIENT-A
     action:
       type: insert-end-device
       parameters:
-          expect_rejection: true 
+          expect_rejection: true
