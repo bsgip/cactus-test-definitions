@@ -53,6 +53,7 @@ class TestProcedureId(StrEnum):
     DRA_02 = "DRA-02"
     DRD_01 = "DRD-01"
     DRL_01 = "DRL-01"
+    DRG_01 = "DRG-01"
     GEN_01 = "GEN-01"
     GEN_02 = "GEN-02"
     GEN_03 = "GEN-03"

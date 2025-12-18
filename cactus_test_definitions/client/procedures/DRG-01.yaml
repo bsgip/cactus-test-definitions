@@ -1,0 +1,168 @@
+Description: Generation operational instructions
+Category: Demand Response
+Classes:
+  - DR-G
+
+TargetVersions:
+  - v1.2
+  - v1.3-beta/storage
+
+Preconditions:
+  init_actions:
+      - type: create-der-program
+        parameters:
+          primacy: 0
+  checks:
+    - type: end-device-contents
+      parameters: {}
+    - type: der-settings-contents
+      parameters: {}
+  actions:
+    - type: set-comms-rate
+      parameters:
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+  instructions:
+    - The controlled device should be connected to the grid and generating 90% (+/- 5%) of its nameplate rating maximum.
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+    
+Steps:
+
+  # (a, b)
+  GET-DERC-1:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now + '60 seconds')
+          duration_seconds: 60
+          opModFixedW: 75
+      - type: enable-steps
+        parameters:
+          steps:
+            - PUT-DERSTATUS-1
+            - PUT-DERSETTINGS-1
+            - WAIT-DERC-1
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-1
+
+  # (c)
+  PUT-DERSTATUS-1:
+    event:
+      type: PUT-request-received
+      parameters:
+        endpoint: /edev/1/der/1/ders
+        serve_request_first: true # Run this AFTER server receives the request
+      checks:
+        - type: der-status-contents
+          parameters:
+            alarmStatus: 0
+            operationalModeStatus: 107
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - PUT-DERSTATUS-1
+
+  # (c)
+  PUT-DERSETTINGS-1:
+    event:
+      type: PUT-request-received
+      parameters:
+        endpoint: /edev/1/der/1/derg
+        serve_request_first: true # Run this AFTER server receives the request
+      checks:
+        - type: der-settings-contents
+          parameters:
+            modesEnabled_set: "80" # bit 7
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - PUT-DERSETTINGS-1
+
+
+  # (d) After the end of the previous control...
+  WAIT-DERC-1:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 120 # Wait for DERControls to fully complete
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-2
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-DERC-1
+
+  # (d) ... create a new DERControl
+  GET-DERC-2:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now + '60 seconds')
+          duration_seconds: 60
+          opModFixedW: 50
+      - type: enable-steps
+        parameters:
+          steps:
+            - PUT-DERSTATUS-2
+            - PUT-DERSETTINGS-2
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-2
+
+
+  # (e, f)
+  PUT-DERSTATUS-2:
+    event:
+      type: PUT-request-received
+      parameters:
+        endpoint: /edev/1/der/1/ders
+        serve_request_first: true # Run this AFTER server receives the request
+      checks:
+        - type: der-status-contents
+          parameters:
+            alarmStatus: 0
+            operationalModeStatus: 106
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - PUT-DERSTATUS-2
+
+  # (e, f)
+  PUT-DERSETTINGS-2:
+    event:
+      type: PUT-request-received
+      parameters:
+        endpoint: /edev/1/der/1/derg
+        serve_request_first: true # Run this AFTER server receives the request
+      checks:
+        - type: der-settings-contents
+          parameters:
+            modesEnabled_set: "80" # bit 7
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - PUT-DERSETTINGS-2
+      - type: finish-test
+        parameters: {}
