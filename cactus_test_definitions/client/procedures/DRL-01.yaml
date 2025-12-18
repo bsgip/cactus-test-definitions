@@ -8,6 +8,10 @@ TargetVersions:
   - v1.3-beta/storage
 
 Preconditions:
+  init_actions:
+      - type: create-der-program
+        parameters:
+          primacy: 0
   checks:
     - type: end-device-contents
       parameters: {}
