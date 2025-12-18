@@ -26,6 +26,7 @@ Steps:
           - EndDevice
           - DERControlList
           - DER
+          - MirrorUsagePoint
     checks:
       - type: end-device 
         parameters:
@@ -43,6 +44,7 @@ Steps:
           - EndDevice
           - DERControlList
           - DER
+          - MirrorUsagePoint
     checks:
       - type: end-device 
         parameters:
