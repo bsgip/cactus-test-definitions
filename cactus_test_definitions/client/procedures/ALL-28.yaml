@@ -135,10 +135,26 @@ Steps:
       - type: create-der-control
         parameters:
           start: $(now)
-          duration_seconds: 600 # Extra long but will be cancelled (give clients enough time to see cancellation)
+          duration_seconds: 900 # Extra long but will be cancelled (give clients enough time to see cancellation)
           opModExpLimW: $(setMaxW * 0.5)
           opModImpLimW: $(setMaxW * 0.5)
           ramp_time_seconds: 60
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-RAMP-DERC-3
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-3
+
+  # (d)
+  WAIT-RAMP-DERC-3:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 60
+    actions:
       - type: enable-steps
         parameters:
           steps:
@@ -146,7 +162,9 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - GET-DERC-3
+            - WAIT-RAMP-DERC-3
+    instructions:
+      - The DER shall ramp export/import to 50% in 60 seconds (due to rampTms being 60s).
 
   # (e)
   GET-DEFAULT-DERC:
@@ -208,14 +226,14 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - WAIT-RAMP
+            - WAIT-RAMP-DEFAULT
       - type: remove-steps
         parameters:
           steps:
             - POST-RESPONSE-CANCELLED
 
   # (i)
-  WAIT-RAMP:
+  WAIT-RAMP-DEFAULT:
     event:
       type: wait
       parameters:
@@ -228,7 +246,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-RAMP
+            - WAIT-RAMP-DEFAULT
     instructions:
       - The DER shall reduce export/import to the current DefaultDERControl limit of 0W at the new ramp rate of 1 %/s.
 

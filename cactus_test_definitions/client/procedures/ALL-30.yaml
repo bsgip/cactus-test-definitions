@@ -134,7 +134,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 180 
+        duration_seconds: 300 
     actions:
       - type: communications-status
         parameters:
