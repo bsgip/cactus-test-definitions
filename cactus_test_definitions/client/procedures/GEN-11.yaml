@@ -103,31 +103,31 @@ Steps:
       - type: create-der-control # Create DERControl 1 - set to 200% of max
         parameters:
           start: $(now)
-          duration_seconds: 60
+          duration_seconds: 120
           opModExpLimW: $(setMaxW * 2)
           tag: DERC1
       - type: create-der-control # Create DERControl 2 - set to 100% of max
         parameters:
-          start: $(now + '1 minute')
-          duration_seconds: 60
+          start: $(now + '2 minutes')
+          duration_seconds: 120
           opModExpLimW: $(setMaxW)
           tag: DERC2
       - type: create-der-control # Create DERControl 3 - set to 40% of max
         parameters:
-          start: $(now + '2 minutes')
-          duration_seconds: 60
+          start: $(now + '4 minutes')
+          duration_seconds: 120
           opModExpLimW: $(setMaxW * 0.4)
           tag: DERC3
       - type: create-der-control  # Create DERControl 4 - set to 25% of max
         parameters:
-          start: $(now + '3 minutes')
-          duration_seconds: 60
+          start: $(now + '6 minutes')
+          duration_seconds: 120
           opModExpLimW: $(setMaxW * 0.25)
           tag: DERC4
       - type: create-der-control # Create DERControl 5 - set to 0
         parameters:
-          start: $(now + '4 minutes')
-          duration_seconds: 60
+          start: $(now + '8 minutes')
+          duration_seconds: 120
           opModExpLimW: 0
           tag: DERC5
       - type: remove-steps
