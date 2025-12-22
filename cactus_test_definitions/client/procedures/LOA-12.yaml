@@ -11,6 +11,66 @@ Criteria:
   checks:
     - type: all-steps-complete
       parameters: {}
+    - type: response-contents # DERC 1
+      parameters: 
+        status: 1 # Received
+        subject_tag: DERC1
+    - type: response-contents
+      parameters: 
+        status: 2 # Started
+        subject_tag: DERC1
+    - type: response-contents
+      parameters: 
+        status: 3 # Completed
+        subject_tag: DERC1
+    - type: response-contents # DERC 2
+      parameters: 
+        status: 1
+        subject_tag: DERC2
+    - type: response-contents
+      parameters: 
+        status: 2
+        subject_tag: DERC2
+    - type: response-contents
+      parameters: 
+        status: 3
+        subject_tag: DERC2
+    - type: response-contents # DERC 3
+      parameters: 
+        status: 1
+        subject_tag: DERC3
+    - type: response-contents
+      parameters: 
+        status: 2
+        subject_tag: DERC3
+    - type: response-contents
+      parameters: 
+        status: 3
+        subject_tag: DERC3
+    - type: response-contents # DERC 4
+      parameters: 
+        status: 1
+        subject_tag: DERC4
+    - type: response-contents
+      parameters: 
+        status: 2
+        subject_tag: DERC4
+    - type: response-contents
+      parameters: 
+        status: 3
+        subject_tag: DERC4
+    - type: response-contents # DERC 5
+      parameters: 
+        status: 1
+        subject_tag: DERC5
+    - type: response-contents
+      parameters: 
+        status: 2
+        subject_tag: DERC5
+    - type: response-contents
+      parameters: 
+        status: 3
+        subject_tag: DERC5
 
 Preconditions:
   init_actions:
@@ -33,370 +93,44 @@ Preconditions:
       parameters: {}
 
 Steps:
-
-  # (precondition) - Create a DERControl - set to 200% of max
-  GET-DERC-1:
+  # CREATE DER CONTROLS (all at once to avoid gaps between controls)
+  GET-DER-CONTROLS:
     event:
       type: GET-request-received
       parameters:
         endpoint: /edev/1/derp/1/derc
     actions:
-      - type: create-der-control
+      - type: create-der-control # Create DERControl 1 - set to 200% of max
         parameters:
           start: $(now)
-          duration_seconds: 60
+          duration_seconds: 120
           opModLoadLimW: $(setMaxW * 2)
-      - type: enable-steps
+          tag: DERC1
+      - type: create-der-control # Create DERControl 2 - set to 100% of max
         parameters:
-          steps:
-            - GET-DERC-2
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-DERC-1
-
-  # (a,b) - Create a DERControl - set to 100% of max
-  GET-DERC-2:
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /edev/1/derp/1/derc
-    actions:
-      - type: create-der-control
-        parameters:
-          start: $(now)
-          duration_seconds: 60
+          start: $(now + '2 minutes')
+          duration_seconds: 120
           opModLoadLimW: $(setMaxW)
-      - type: enable-steps
+          tag: DERC2
+      - type: create-der-control # Create DERControl 3 - set to 40% of max
         parameters:
-          steps:
-            - POST-DERC-2-RESPONSE-RECEIVED
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-DERC-2
-
-  # (b) Wait for "received" response from DERC-2
-  POST-DERC-2-RESPONSE-RECEIVED:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/rsps/site_control/rsp
-        serve_request_first: true
-      checks:
-        - type: response-contents
-          parameters: 
-            latest: true
-            status: 1
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-DERC-2-RESPONSE-STARTED
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-DERC-2-RESPONSE-RECEIVED
-
-  # (b) Wait for "Started" response from DERC-2
-  POST-DERC-2-RESPONSE-STARTED:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/rsps/site_control/rsp
-        serve_request_first: true
-      checks:
-        - type: response-contents
-          parameters: 
-            latest: true
-            status: 2
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-DERC-2-RESPONSE-COMPLETE
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-DERC-2-RESPONSE-STARTED
-
-  # (b) Wait for "complete" response from DERC-2 - this will trigger the injection of the next control
-  POST-DERC-2-RESPONSE-COMPLETE:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/rsps/site_control/rsp
-        serve_request_first: true
-      checks:
-        - type: response-contents
-          parameters: 
-            latest: true
-            status: 3
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - GET-DERC-3
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-DERC-2-RESPONSE-COMPLETE
-
-  # (c,d) - Create a DERControl - set to 40% of max
-  GET-DERC-3:
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /edev/1/derp/1/derc
-    actions:
-      - type: create-der-control
-        parameters:
-          start: $(now)
-          duration_seconds: 60
+          start: $(now + '4 minutes')
+          duration_seconds: 120
           opModLoadLimW: $(setMaxW * 0.4)
-      - type: enable-steps
+          tag: DERC3
+      - type: create-der-control  # Create DERControl 4 - set to 25% of max
         parameters:
-          steps:
-            - POST-DERC-3-RESPONSE-RECEIVED
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-DERC-3
-
-  # (b) Wait for "received" response from DERC-3
-  POST-DERC-3-RESPONSE-RECEIVED:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/rsps/site_control/rsp
-        serve_request_first: true
-      checks:
-        - type: response-contents
-          parameters: 
-            latest: true
-            status: 1
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-DERC-3-RESPONSE-STARTED
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-DERC-3-RESPONSE-RECEIVED
-
-  # (b) Wait for "Started" response from DERC-3
-  POST-DERC-3-RESPONSE-STARTED:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/rsps/site_control/rsp
-        serve_request_first: true
-      checks:
-        - type: response-contents
-          parameters: 
-            latest: true
-            status: 2
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-DERC-3-RESPONSE-COMPLETE
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-DERC-3-RESPONSE-STARTED
-
-  # (b) Wait for "complete" response from DERC-3
-  POST-DERC-3-RESPONSE-COMPLETE:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/rsps/site_control/rsp
-        serve_request_first: true
-      checks:
-        - type: response-contents
-          parameters: 
-            latest: true
-            status: 3
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - GET-DERC-4
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-DERC-3-RESPONSE-COMPLETE
-
-  # (e, f) - Create a DERControl - set to 25% of max
-  GET-DERC-4:
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /edev/1/derp/1/derc
-    actions:
-      - type: create-der-control
-        parameters:
-          start: $(now)
-          duration_seconds: 60
+          start: $(now + '6 minutes')
+          duration_seconds: 120
           opModLoadLimW: $(setMaxW * 0.25)
-      - type: enable-steps
+          tag: DERC4
+      - type: create-der-control # Create DERControl 5 - set to 0
         parameters:
-          steps:
-            - POST-DERC-4-RESPONSE-RECEIVED
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-DERC-4
-
-  # (f) Wait for "received" response from DERC-4
-  POST-DERC-4-RESPONSE-RECEIVED:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/rsps/site_control/rsp
-        serve_request_first: true
-      checks:
-        - type: response-contents
-          parameters: 
-            latest: true
-            status: 1
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-DERC-4-RESPONSE-STARTED
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-DERC-4-RESPONSE-RECEIVED
-
-  # (f) Wait for "Started" response from DERC-4
-  POST-DERC-4-RESPONSE-STARTED:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/rsps/site_control/rsp
-        serve_request_first: true
-      checks:
-        - type: response-contents
-          parameters: 
-            latest: true
-            status: 2
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-DERC-4-RESPONSE-COMPLETE
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-DERC-4-RESPONSE-STARTED
-
-  # (f) Wait for "complete" response from DERC-4
-  POST-DERC-4-RESPONSE-COMPLETE:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/rsps/site_control/rsp
-        serve_request_first: true
-      checks:
-        - type: response-contents
-          parameters: 
-            latest: true
-            status: 3
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - GET-DERC-5
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-DERC-4-RESPONSE-COMPLETE
-  
-  # (g, h) - Create a DERControl - set to 0% of max
-  GET-DERC-5:
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /edev/1/derp/1/derc
-    actions:
-      - type: create-der-control
-        parameters:
-          start: $(now)
-          duration_seconds: 60
+          start: $(now + '8 minutes')
+          duration_seconds: 120
           opModLoadLimW: 0
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-DERC-5-RESPONSE-RECEIVED
+          tag: DERC5
       - type: remove-steps
         parameters:
           steps:
-            - GET-DERC-5
-
-  # (h) Wait for "received" response from DERC-5
-  POST-DERC-5-RESPONSE-RECEIVED:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/rsps/site_control/rsp
-        serve_request_first: true
-      checks:
-        - type: response-contents
-          parameters: 
-            latest: true
-            status: 1
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-DERC-5-RESPONSE-STARTED
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-DERC-5-RESPONSE-RECEIVED
-
-  # (h) Wait for "Started" response from DERC-5
-  POST-DERC-5-RESPONSE-STARTED:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/rsps/site_control/rsp
-        serve_request_first: true
-      checks:
-        - type: response-contents
-          parameters: 
-            latest: true
-            status: 2
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-DERC-5-RESPONSE-COMPLETE
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-DERC-5-RESPONSE-STARTED
-
-  # (f) Wait for "complete" response from DERC-5
-  POST-DERC-5-RESPONSE-COMPLETE:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /edev/1/rsps/site_control/rsp
-        serve_request_first: true
-      checks:
-        - type: response-contents
-          parameters: 
-            latest: true
-            status: 3
-    actions:
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-DERC-5-RESPONSE-COMPLETE
-      - type: finish-test
-        parameters: {}
+            - GET-DER-CONTROLS
