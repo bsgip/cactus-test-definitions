@@ -21,6 +21,8 @@ Steps:
       parameters:
         resources:
           - EndDevice
+          - DERControlList
+          - DER
           - DERControl
     checks:
       - type: der-control
@@ -38,6 +40,9 @@ Steps:
       parameters:
         list_limit: 10  # sets s=0, l=10 for paging
         resources:
+          - EndDevice
+          - DERControlList
+          - DER
           - DERControl
     checks:
       - type: der-control

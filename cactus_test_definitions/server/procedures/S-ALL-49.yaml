@@ -26,6 +26,9 @@ Steps:
           - EndDevice
           - DefaultDERControl
           - FunctionSetAssignments
+          - DERControlList
+          - DER
+          - DERControl
     checks:
       - type: function-set-assignment
         parameters:

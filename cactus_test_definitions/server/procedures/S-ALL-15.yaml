@@ -22,6 +22,8 @@ Steps:
       parameters:
         resources:
           - EndDevice
+          - DERControlList
+          - DER
           - DERControl
     checks:
       - type: end-device 
@@ -43,6 +45,7 @@ Steps:
       type: discovery
       parameters:
         resources:
+          - EndDevice
           - DERControlList
           - DER
           - DERControl
@@ -63,6 +66,7 @@ Steps:
       type: discovery
       parameters:
         resources:
+          - EndDevice
           - DERControlList
           - DER
           - DERControl

@@ -22,6 +22,8 @@ Steps:
       parameters:
         resources:
           - EndDevice
+          - DERControlList
+          - DER
           - DERControl
     checks:
       - type: end-device 
@@ -52,6 +54,9 @@ Steps:
       type: discovery
       parameters:
         resources:
+          - EndDevice
+          - DERControlList
+          - DER
           - DERControl
     checks:
       - type: der-control # Check event status has been updated
@@ -74,6 +79,9 @@ Steps:
       type: discovery
       parameters:
         resources:
+          - EndDevice
+          - DERControlList
+          - DER
           - DERControl
     checks:
       - type: der-control # Check event status has been updated
@@ -103,6 +111,9 @@ Steps:
       type: discovery
       parameters:
         resources:
+          - EndDevice
+          - DERControlList
+          - DER
           - DERControl
     checks:
       - type: der-control
@@ -122,6 +133,9 @@ Steps:
       type: discovery
       parameters:
         resources:
+          - EndDevice
+          - DERControlList
+          - DER
           - DERControl
     checks:
       - type: der-control
@@ -153,6 +167,9 @@ Steps:
       type: discovery
       parameters:
         resources:
+          - EndDevice
+          - DERControlList
+          - DER
           - DERControl
     checks:
       - type: der-control # Check event status has been updated
@@ -177,6 +194,9 @@ Steps:
       type: discovery
       parameters:
         resources:
+          - EndDevice
+          - DERControlList
+          - DER
           - DERControl
     checks:
       - type: der-control
@@ -201,6 +221,9 @@ Steps:
       type: discovery
       parameters:
         resources:
+          - EndDevice
+          - DERControlList
+          - DER
           - DERControl
     checks:
       - type: der-control # Check DER Control still exists
@@ -224,6 +247,9 @@ Steps:
       type: discovery
       parameters:
         resources:
+          - EndDevice
+          - DERControlList
+          - DER
           - DERControl
     checks:
       - type: der-control
@@ -243,6 +269,9 @@ Steps:
       type: discovery
       parameters:
         resources:
+          - EndDevice
+          - DERControlList
+          - DER
           - DERControl
     checks:
       - type: der-control
@@ -270,6 +299,9 @@ Steps:
       type: discovery
       parameters:
         resources:
+          - EndDevice
+          - DERControlList
+          - DER
           - DERControl
     checks:
       - type: der-control
@@ -295,6 +327,9 @@ Steps:
       type: discovery
       parameters:
         resources:
+          - EndDevice
+          - DERControlList
+          - DER
           - DERControl
     checks:
       - type: der-control
@@ -319,6 +354,9 @@ Steps:
       type: discovery
       parameters:
         resources:
+          - EndDevice
+          - DERControlList
+          - DER
           - DERControl
     checks:
       - type: der-control
@@ -341,6 +379,9 @@ Steps:
       type: discovery
       parameters:
         resources:
+          - EndDevice
+          - DERControlList
+          - DER
           - DERControl
     checks:
       - type: der-control

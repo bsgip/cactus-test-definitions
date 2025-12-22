@@ -21,6 +21,8 @@ Steps:
       parameters:
         resources:
           - EndDevice
+          - DERControlList
+          - DER
           - DERControl
     checks:
       - type: der-control

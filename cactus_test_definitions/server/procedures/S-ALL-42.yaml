@@ -22,8 +22,10 @@ Steps:
       parameters:
         resources:
           - EndDevice
-          - DERControl
+          - DERControlList
+          - DER
           - DefaultDERControl
+          - DERControl
     checks:
       - type: end-device 
         parameters:
@@ -47,6 +49,9 @@ Steps:
       type: discovery
       parameters:
         resources:
+          - EndDevice
+          - DERControlList
+          - DER
           - DERControl
     checks:
       - type: der-control # Check event status has been updated
@@ -69,6 +74,9 @@ Steps:
       type: discovery
       parameters:
         resources:
+          - EndDevice
+          - DERControlList
+          - DER
           - DERControl
     checks:
       - type: der-control
