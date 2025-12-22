@@ -56,6 +56,6 @@ Steps:
           maximum_count: 1
           opModExpLimW: 0
           opModImpLimW: 0
-          rampTms: 30
+          rampTms: 3000 # 1/100 of a second: 30s
           event_status: 1 # Active
           sub_id: derc_list_sub
