@@ -23,19 +23,18 @@ Criteria:
     - type: all-steps-complete
       parameters: {}
     - type: der-capability-contents
-      parameters: {
-        "rtgMaxChargeRateW": "$(this > 0)",
-        "rtgMaxDischargeRateW": "$(this > 0)",
-        "rtgMaxWh": "$(this > 0)",
-        "vppModesSupported_set": "01",
-      }
+      parameters: 
+         rtgMaxChargeRateW: true
+         rtgMaxDischargeRateW": true
+         rtgMaxWh: true
+         vppModesSupported_set: true
     - type: der-settings-contents
-      parameters: {
-        "setMaxChargeRateW": "$(this <= rtgMaxChargeRateW)",
-        "setMaxDischargeRateW": "$(this <= rtgMaxDischargeRateW)",
-        "setMaxWh": "$(this <= rtgMaxWh)",
-        "setMinWh": "$(this >= 0)",
-        "vppModesEnabled_set": "01",
+      parameters: 
+        setMaxChargeRateW: true
+        setMaxDischargeRateW: true
+        setMaxWh: true
+        setMinWh: true
+        vppModesEnabled_set: true
       }
 
 Steps:
