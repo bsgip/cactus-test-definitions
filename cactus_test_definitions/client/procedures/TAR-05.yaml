@@ -34,7 +34,7 @@ Criteria:
          "rtgMaxChargeRateW": "$(this > 0)"
          "rtgMaxDischargeRateW": "$(this > 0)"
          "rtgMaxWh": "$(this > 0)"
-         "vppModesSupported": "$((int(this, 16) & 0x1) == 1)"
+         "vppModesSupported_set": "01"
     - type: der-settings-contents
       parameters: 
         "setMaxVA": "$(this <= rtgMaxVA)" # Maximum apparent power
@@ -48,4 +48,4 @@ Criteria:
         "setMaxDischargeRateW": "$(this > 0)"
         "setMaxWh": "$(this > 0)"
         setMinWh: true 
-        "vppModesEnabled": "$((int(this, 16) & 0x1) == 1)"
+        "vppModesEnabled": "01"
