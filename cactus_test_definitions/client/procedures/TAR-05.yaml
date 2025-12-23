@@ -37,12 +37,12 @@ Criteria:
          "vppModesSupported": "$((int(this, 16) & 0x1) == 1)"
     - type: der-settings-contents
       parameters: 
-        setMaxVA: true # Maximum apparent power
-        setMaxVar: true # Maximum reactive power delivered
-        setMaxVarNeg: true # Maximum reactive power received
-        setMaxW: true # Maximum active power
-        setMinPFOverExcited: true # Minimum power factor displacement
-        setMinPFUnderExcited: true # Minimum power factor displacement
+        "setMaxVA": "$(this <= rtgMaxVA)" # Maximum apparent power
+        "setMaxVar": "$(this <= rtgMaxVar)" # Maximum reactive power delivered
+        "setMaxVarNeg": "$(this <= rtgMaxVarNeg)" # Maximum reactive power received
+        "setMaxW": "$(this <= rtgMaxW)" # Maximum active power
+        "setMinPFOverExcited":  "$(this >= rtgMinPFOverExcited)" # Minimum power factor displacement
+        "setMinPFUnderExcited": "$(this >= rtgMinPFUnderExcited)" # Minimum power factor displacement
         doeModesEnabled: true # CSIP-Aus DOE modes supported
         "setMaxChargeRateW": "$(this > 0)"
         "setMaxDischargeRateW": "$(this > 0)"
