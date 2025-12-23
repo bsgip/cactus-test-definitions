@@ -1,0 +1,92 @@
+Description: Individual readings - storage
+Category: Monitoring
+Classes:
+  - L
+
+TargetVersions:
+  - v1.3-beta/storage
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+
+    # Test includes ~ 6 minutes of waiting 
+    # A minimum of 4 readings is required by the test procedure
+    - type: readings-der-stored-energy
+      parameters: { "minimum_count": 4 }
+
+Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+
+  checks:
+    - type: end-device-contents
+      parameters: {}
+
+Steps:
+  GET-MUP:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /mup
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-MUP
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-MUP
+
+  POST-MUP:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /mup
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-MUP-2
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-MUP
+
+  GET-MUP-2:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /mup
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-READINGS
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-MUP-2
+
+  # Wait for at least 4 readings to arrive
+  WAIT-READINGS:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 300 # Wait for at least 4 sets of readings to arrive (with post rate 60 seconds)
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-READINGS
+      - type: finish-test
+        parameters: {}
