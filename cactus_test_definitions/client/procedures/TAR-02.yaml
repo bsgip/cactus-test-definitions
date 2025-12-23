@@ -34,7 +34,7 @@ Criteria:
          rtgMaxChargeRateW: true 
          rtgMaxDischargeRateW: true 
          rtgMaxWh: true 
-         vppModesSupported_set: true 
+         vppModesSupported: true 
     - type: der-settings-contents
       parameters: 
         setMaxVA: true # Maximum apparent power
@@ -48,7 +48,7 @@ Criteria:
         setMaxDischargeRateW: true 
         setMaxWh: true 
         setMinWh: true 
-        vppModesEnabled_set: true 
+        vppModesEnabled: true 
 
 Steps:
   GET-DER:
