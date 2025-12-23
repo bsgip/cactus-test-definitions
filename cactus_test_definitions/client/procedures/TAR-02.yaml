@@ -24,17 +24,31 @@ Criteria:
       parameters: {}
     - type: der-capability-contents
       parameters: 
-         rtgMaxChargeRateW: true
-         rtgMaxDischargeRateW": true
-         rtgMaxWh: true
-         vppModesSupported_set: true
+         rtgMaxVA: true # Maximum apparent power
+         rtgMaxVar: true # Maximum reactive power delivered
+         rtgMaxVarNeg: true # Maximum reactive power received
+         rtgMaxW: true # Maximum active power
+         rtgMinPFOverExcited: true # Minimum power factor displacement
+         rtgMinPFUnderExcited: true # Minimum power factor displacement
+         doeModesSupported: true # CSIP-Aus DOE modes supported
+         rtgMaxChargeRateW: true 
+         rtgMaxDischargeRateW": true 
+         rtgMaxWh: true 
+         vppModesSupported_set: true 
     - type: der-settings-contents
       parameters: 
-        setMaxChargeRateW: true
-        setMaxDischargeRateW: true
-        setMaxWh: true
-        setMinWh: true
-        vppModesEnabled_set: true
+        setMaxVA: true # Maximum apparent power
+        setMaxVar: true # Maximum reactive power delivered
+        setMaxVarNeg: true # Maximum reactive power received
+        setMaxW: true # Maximum active power
+        setMinPFOverExcited: true # Minimum power factor displacement
+        setMinPFUnderExcited: true # Minimum power factor displacement
+        doeModesEnabled: true # CSIP-Aus DOE modes enabled
+        setMaxChargeRateW: true 
+        setMaxDischargeRateW: true 
+        setMaxWh: true 
+        setMinWh: true 
+        vppModesEnabled_set: true 
 
 Steps:
   GET-DER:
