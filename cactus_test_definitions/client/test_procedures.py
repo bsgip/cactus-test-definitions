@@ -85,7 +85,7 @@ class TestProcedureId(StrEnum):
     MUL_03 = "MUL-03"
 
     # Storage extension
-    BES_01 = "BES-01"
+    TAR_01 = "TAR-01"
     BES_02 = "BES-02"
     BES_03 = "BES-03"
     BES_04 = "BES-04"
