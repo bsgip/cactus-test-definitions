@@ -66,22 +66,69 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - WAIT-CONTROL-END-1
+            - POST-RESPONSE-RECEIVED
       - type: remove-steps
         parameters:
           steps:
             - GET-DERC-1
-  
-  # Waits for the new control to finish (with a bit of overtime)
-  WAIT-CONTROL-END-1:
+
+  POST-RESPONSE-RECEIVED:
     event:
-      type: wait
+      type: POST-request-received
       parameters:
-        duration_seconds: 660
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 1
     actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-STARTED
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-CONTROL-END-1
+            - POST-RESPONSE-RECEIVED
 
+  # (c, d)
+  POST-RESPONSE-STARTED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-COMPLETED
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-STARTED
 
+  # (e, f, g)
+  POST-RESPONSE-COMPLETED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 3
+    actions:
+        - type: remove-steps
+          parameters:
+          steps:
+            - POST-RESPONSE-COMPLETED
