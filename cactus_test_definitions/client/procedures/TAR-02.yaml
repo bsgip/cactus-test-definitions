@@ -32,7 +32,7 @@ Criteria:
          rtgMinPFUnderExcited: true # Minimum power factor displacement
          doeModesSupported: true # CSIP-Aus DOE modes supported
          rtgMaxChargeRateW: true 
-         rtgMaxDischargeRateW": true 
+         rtgMaxDischargeRateW: true 
          rtgMaxWh: true 
          vppModesSupported_set: true 
     - type: der-settings-contents
