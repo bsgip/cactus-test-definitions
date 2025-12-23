@@ -57,6 +57,7 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "doeModesEnabled": ParameterSchema(False, ParameterType.Boolean),  # Is ANY value set?
         "doeModesEnabled_set": ParameterSchema(False, ParameterType.HexBinary),  # Minimum bits set to one
         "doeModesEnabled_unset": ParameterSchema(False, ParameterType.HexBinary),  # Minimum bits set to zero
+        "modesEnabled": ParameterSchema(False, ParameterType.Boolean),  # Is ANY value set?
         "modesEnabled_set": ParameterSchema(False, ParameterType.HexBinary),  # Minimum bits set to one
         "modesEnabled_unset": ParameterSchema(False, ParameterType.HexBinary),  # Minimum bits set to zero
         "vppModesEnabled": ParameterSchema(False, ParameterType.Boolean),  # Is ANY value set?
@@ -77,6 +78,7 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "doeModesSupported": ParameterSchema(False, ParameterType.Boolean),  # Is ANY value set?
         "doeModesSupported_set": ParameterSchema(False, ParameterType.HexBinary),  # Minimum bits set to one
         "doeModesSupported_unset": ParameterSchema(False, ParameterType.HexBinary),  # Minimum bits set to zero
+        "modesSupported": ParameterSchema(False, ParameterType.Boolean),  # Is ANY value set?
         "modesSupported_set": ParameterSchema(False, ParameterType.HexBinary),  # Minimum bits set to one
         "modesSupported_unset": ParameterSchema(False, ParameterType.HexBinary),  # Minimum bits set to zero
         "vppModesSupported": ParameterSchema(False, ParameterType.Boolean),  # Is ANY value set?
