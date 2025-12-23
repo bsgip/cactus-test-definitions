@@ -48,4 +48,4 @@ Criteria:
         "setMaxDischargeRateW": "$(this > 0)"
         "setMaxWh": "$(this > 0)"
         setMinWh: true 
-        "vppModesEnabled": "01"
+        "vppModesEnabled_set": "01"
