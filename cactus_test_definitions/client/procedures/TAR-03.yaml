@@ -38,15 +38,15 @@ Preconditions:
       parameters: {
         "rtgMaxChargeRateW": "$(this == rtgMaxVA)",
         "rtgMaxDischargeRateW": "$(this == rtgMaxVA)",
-        "vppModesSupported": "$((int(this, 16) & 0x1) == 1)",
-        "doeModesSupported": "$((int(this, 16) & 0x1) == 1)",  
+        "vppModesSupported_set": "01",
+        "doeModesSupported_set": "01",  
       }
     - type: der-settings-contents
       parameters: {
         "setMaxChargeRateW": "$(this == rtgMaxVA)",
         "setMaxDischargeRateW": "$(this == rtgMaxVA)",
-        "vppModesEnabled": "$((int(this, 16) & 0x1) == 1)",
-        "doeModesEnabled": "$((int(this, 16) & 0x1) == 1)",  
+        "vppModesEnabled_set": "01",
+        "doeModesEnabled_set": "01",  
     }
     - type: der
     # Confirm stored energy requirement (which should contain 50% charge upon inspection) 
