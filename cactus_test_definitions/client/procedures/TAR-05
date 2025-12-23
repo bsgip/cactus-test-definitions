@@ -1,0 +1,90 @@
+Description: Capabilities and settings - storage
+Category: Monitoring
+Classes:
+  - L
+
+TargetVersions:
+  - v1.3-beta/storage
+
+Preconditions:
+  immediate_start: true  # There will be no "init" phase - all interactions will be immediately logged against the test
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+    - type: der-capability-contents
+      parameters: 
+         rtgMaxVA: true # Maximum apparent power
+         rtgMaxVar: true # Maximum reactive power delivered
+         rtgMaxVarNeg: true # Maximum reactive power received
+         rtgMaxW: true # Maximum active power
+         rtgMinPFOverExcited: true # Minimum power factor displacement
+         rtgMinPFUnderExcited: true # Minimum power factor displacement
+         doeModesSupported: true # CSIP-Aus DOE modes supported
+         rtgMaxChargeRateW: true 
+         rtgMaxDischargeRateW": true 
+         rtgMaxWh: true 
+         vppModesSupported_set: true 
+    - type: der-settings-contents
+      parameters: 
+        setMaxVA: true # Maximum apparent power
+        setMaxVar: true # Maximum reactive power delivered
+        setMaxVarNeg: true # Maximum reactive power received
+        setMaxW: true # Maximum active power
+        setMinPFOverExcited: true # Minimum power factor displacement
+        setMinPFUnderExcited: true # Minimum power factor displacement
+        doeModesEnabled: true # CSIP-Aus DOE modes enabled
+        setMaxChargeRateW: true 
+        setMaxDischargeRateW: true 
+        setMaxWh: true 
+        setMinWh: true 
+        vppModesEnabled_set: true 
+
+Steps:
+  GET-DER:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/der
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - PUT-DERCAPABILITY
+            - PUT-DERSETTINGS
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DER
+
+  PUT-DERCAPABILITY:
+    event:
+      type: PUT-request-received
+      parameters:
+        endpoint: /edev/1/der/1/dercap
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - PUT-DERCAPABILITY
+
+  PUT-DERSETTINGS:
+    event:
+      type: PUT-request-received
+      parameters:
+        endpoint: /edev/1/der/1/derg
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - PUT-DERSETTINGS
