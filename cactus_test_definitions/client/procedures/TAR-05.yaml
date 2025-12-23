@@ -31,10 +31,10 @@ Criteria:
          rtgMinPFOverExcited: true # Minimum power factor displacement
          rtgMinPFUnderExcited: true # Minimum power factor displacement
          doeModesSupported: true # CSIP-Aus DOE modes supported
-         rtgMaxChargeRateW: true 
-         rtgMaxDischargeRateW": true 
-         rtgMaxWh: true 
-         vppModesSupported_set: true 
+         "rtgMaxChargeRateW": "$(this > 0)"
+         "rtgMaxDischargeRateW": "$(this > 0)"
+         "rtgMaxWh": "$(this > 0)"
+         "vppModesSupported": "$((int(this, 16) & 0x1) == 1)"
     - type: der-settings-contents
       parameters: 
         setMaxVA: true # Maximum apparent power
@@ -43,48 +43,9 @@ Criteria:
         setMaxW: true # Maximum active power
         setMinPFOverExcited: true # Minimum power factor displacement
         setMinPFUnderExcited: true # Minimum power factor displacement
-        doeModesEnabled: true # CSIP-Aus DOE modes enabled
-        setMaxChargeRateW: true 
-        setMaxDischargeRateW: true 
-        setMaxWh: true 
+        doeModesEnabled: true # CSIP-Aus DOE modes supported
+        "setMaxChargeRateW": "$(this > 0)"
+        "setMaxDischargeRateW": "$(this > 0)"
+        "setMaxWh": "$(this > 0)"
         setMinWh: true 
-        vppModesEnabled_set: true 
-
-Steps:
-  GET-DER:
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /edev/1/der
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - PUT-DERCAPABILITY
-            - PUT-DERSETTINGS
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-DER
-
-  PUT-DERCAPABILITY:
-    event:
-      type: PUT-request-received
-      parameters:
-        endpoint: /edev/1/der/1/dercap
-    actions:
-      - type: remove-steps
-        parameters:
-          steps:
-            - PUT-DERCAPABILITY
-
-  PUT-DERSETTINGS:
-    event:
-      type: PUT-request-received
-      parameters:
-        endpoint: /edev/1/der/1/derg
-    actions:
-      - type: remove-steps
-        parameters:
-          steps:
-            - PUT-DERSETTINGS
+        "vppModesEnabled": "$((int(this, 16) & 0x1) == 1)"
