@@ -86,10 +86,11 @@ class TestProcedureId(StrEnum):
 
     # Storage extension
     TAR_01 = "TAR-01"
-    BES_02 = "BES-02"
-    BES_03 = "BES-03"
-    BES_04 = "BES-04"
-
+    TAR_02 = "TAR-02"
+    TAR_03 = "TAR-03"
+    TAR_04 = "TAR-04"
+    TAR_05 = "TAR-05"
+    TAR_06 = "TAR-06"
 
 @dataclass
 class Step:
