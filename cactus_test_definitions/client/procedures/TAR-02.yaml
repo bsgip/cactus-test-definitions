@@ -59,10 +59,6 @@ Steps:
       parameters:
         endpoint: /edev/1/der/1/dercap
     actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - PUT-DERCAPABILITY-2
       - type: remove-steps
         parameters:
           steps:
@@ -74,33 +70,7 @@ Steps:
       parameters:
         endpoint: /edev/1/der/1/derg
     actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - PUT-DERSETTINGS-2
       - type: remove-steps
         parameters:
           steps:
             - PUT-DERSETTINGS
-
-  PUT-DERCAPABILITY-2:
-    event:
-      type: PUT-request-received
-      parameters:
-        endpoint: /edev/1/der/1/dercap
-    actions:
-      - type: remove-steps
-        parameters:
-          steps:
-            - PUT-DERCAPABILITY-2
-
-  PUT-DERSETTINGS-2:
-    event:
-      type: PUT-request-received
-      parameters:
-        endpoint: /edev/1/der/1/derg
-    actions:
-      - type: remove-steps
-        parameters:
-          steps:
-            - PUT-DERSETTINGS-2
