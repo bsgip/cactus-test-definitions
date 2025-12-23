@@ -35,7 +35,6 @@ Criteria:
         setMaxWh: true
         setMinWh: true
         vppModesEnabled_set: true
-      }
 
 Steps:
   GET-DER:
@@ -47,28 +46,12 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - PUT-DERSTATUS
             - PUT-DERCAPABILITY
             - PUT-DERSETTINGS
       - type: remove-steps
         parameters:
           steps:
             - GET-DER
-
-  PUT-DERSTATUS:
-    event:
-      type: PUT-request-received
-      parameters:
-        endpoint: /edev/1/der/1/ders
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - PUT-DERSTATUS-2
-      - type: remove-steps
-        parameters:
-          steps:
-            - PUT-DERSTATUS
 
   PUT-DERCAPABILITY:
     event:
@@ -100,18 +83,6 @@ Steps:
           steps:
             - PUT-DERSETTINGS
 
-
-  PUT-DERSTATUS-2:
-    event:
-      type: PUT-request-received
-      parameters:
-        endpoint: /edev/1/der/1/ders
-    actions:
-      - type: remove-steps
-        parameters:
-          steps:
-            - PUT-DERSTATUS-2
-  
   PUT-DERCAPABILITY-2:
     event:
       type: PUT-request-received
