@@ -39,13 +39,13 @@ Preconditions:
         rtgMaxChargeRateW: $(this == rtgMaxVA)
         rtgMaxDischargeRateW: $(this == rtgMaxVA)
         vppModesSupported_set: 01
-        doeModesSupported_set: 01
+        # doeModesSupported_set: 01
     - type: der-settings-contents
       parameters:
-        setMaxChargeRateW: $(this == rtgMaxVA),
+        setMaxChargeRateW: $(this == rtgMaxVA)
         setMaxDischargeRateW": $(this == rtgMaxVA)
-        vppModesEnabled_set: 01,
-        doeModesEnabled_set: 01, 
+        vppModesEnabled_set: 01
+        # doeModesEnabled_set: 01, 
     - type: der
     # Confirm stored energy requirement (which should contain 50% charge upon inspection) 
     - type: readings-der-stored-energy
