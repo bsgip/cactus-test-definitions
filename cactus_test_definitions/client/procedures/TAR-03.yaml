@@ -43,7 +43,7 @@ Preconditions:
     - type: der-settings-contents
       parameters:
         setMaxChargeRateW: $(this == rtgMaxVA)
-        setMaxDischargeRateW": $(this == rtgMaxVA)
+        setMaxDischargeRateW: $(this == rtgMaxVA)
         vppModesEnabled_set: 01
         # doeModesEnabled_set: 01, 
     - type: der
