@@ -45,8 +45,10 @@ from cactus_test_definitions.errors import TestProcedureDefinitionError
         # Storage extension
         (Check("der-settings-contents", {"vppModesEnabled_set": "1"}), True),
         (Check("der-settings-contents", {"vppModesEnabled_unset": "1"}), True),
+        (Check("der-settings-contents", {"vppModesEnabled": True}), True),
         (Check("der-capability-contents", {"vppModesSupported_set": "1"}), True),
         (Check("der-capability-contents", {"vppModesSupported_unset": "1"}), True),
+        (Check("der-capability-contents", {"vppModesSupported": True}), True),
         (Check("readings-der-stored-energy", {"minimum_count": 3}), True),
     ],
 )

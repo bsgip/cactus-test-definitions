@@ -59,6 +59,7 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "doeModesEnabled_unset": ParameterSchema(False, ParameterType.HexBinary),  # Minimum bits set to zero
         "modesEnabled_set": ParameterSchema(False, ParameterType.HexBinary),  # Minimum bits set to one
         "modesEnabled_unset": ParameterSchema(False, ParameterType.HexBinary),  # Minimum bits set to zero
+        "vppModesEnabled": ParameterSchema(False, ParameterType.Boolean),  # Is ANY value set?
         "vppModesEnabled_set": ParameterSchema(False, ParameterType.HexBinary),  # Minimum bits set to one
         "vppModesEnabled_unset": ParameterSchema(False, ParameterType.HexBinary),  # Minimum bits set to zero
         "setMaxVA": ParameterSchema(False, ParameterType.Boolean),  # Is ANY value set?
@@ -78,6 +79,7 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "doeModesSupported_unset": ParameterSchema(False, ParameterType.HexBinary),  # Minimum bits set to zero
         "modesSupported_set": ParameterSchema(False, ParameterType.HexBinary),  # Minimum bits set to one
         "modesSupported_unset": ParameterSchema(False, ParameterType.HexBinary),  # Minimum bits set to zero
+        "vppModesSupported": ParameterSchema(False, ParameterType.Boolean),  # Is ANY value set?
         "vppModesSupported_set": ParameterSchema(False, ParameterType.HexBinary),  # Minimum bits set to one
         "vppModesSupported_unset": ParameterSchema(False, ParameterType.HexBinary),  # Minimum bits set to zero
         "rtgMaxVA": ParameterSchema(False, ParameterType.Boolean),  # Is ANY value set?
