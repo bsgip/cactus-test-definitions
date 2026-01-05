@@ -97,6 +97,10 @@ Preconditions:
       parameters:
         derp_id: 1
         opModExpLimW: 0
+    - type: set-default-der-control
+      parameters:
+        derp_id: 6
+        opModExpLimW: 0
 
 Steps:
 
