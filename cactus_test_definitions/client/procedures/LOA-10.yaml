@@ -97,6 +97,9 @@ Preconditions:
       parameters:
         derp_id: 1
         opModImpLimW: 0
+    # This second default control is not explicitly in the standards (SA TS5573), but we are adding it here to let the 
+    # client know to keep polling at /edev/1/derp/6/dderc, which allows step-bb-ii to work without using notifications.
+    # Previously, polling at /edev/1/derp/6/dderc was expected without any defaults being set.
     - type: set-default-der-control
       parameters:
         derp_id: 6
