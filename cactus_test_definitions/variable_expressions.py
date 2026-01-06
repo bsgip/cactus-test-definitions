@@ -64,6 +64,7 @@ class NamedVariableType(IntEnum):
     # Must resolve to DERCapablity of the current EndDevice under test
     DERCAPABILITY_RTG_MAX_VA = auto()  # VA ( after multiplier applied), reference $rtgMaxVA
     DERCAPABILITY_RTG_MAX_VAR = auto()  # VAr ( atfer multiplier applied), reference $rtgMaxVar
+    DERCAPABILITY_RTG_MAX_VAR_NEG = auto()  # VAr ( atfer multiplier applied), reference $rtgMaxVarNeg
     DERCAPABILITY_RTG_MAX_W = auto()  # W ( after multiplier applied), reference $rtgMaxW
     DERCAPABILITY_RTG_MAX_CHARGE_RATE_W = auto()  # W ( after multiiplier applied), reference $rtgMaxChargeRateW
     DERCAPABILITY_RTG_MAX_DISCHARGE_RATE_W = auto()  # W ( after multiplier applied), reference $rtgMaxDischargeRateW
@@ -254,6 +255,8 @@ def parse_unary_expression(token: Token) -> Constant | NamedVariable:
                 return NamedVariable(NamedVariableType.DERCAPABILITY_RTG_MAX_VA)
             case "rtgMaxVar":
                 return NamedVariable(NamedVariableType.DERCAPABILITY_RTG_MAX_VAR)
+            case "rtgMaxVarNeg":
+                return NamedVariable(NamedVariableType.DERCAPABILITY_RTG_MAX_VAR_NEG)
             case "rtgMaxW":
                 return NamedVariable(NamedVariableType.DERCAPABILITY_RTG_MAX_W)
             case "rtgMaxChargeRateW":

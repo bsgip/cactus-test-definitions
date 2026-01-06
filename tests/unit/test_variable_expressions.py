@@ -192,6 +192,10 @@ def test_parse_time_delta(unquoted_raw: str, expected: timedelta | type[Exceptio
             Expression(OperationType.EQ, NamedVariable(NamedVariableType.DERCAPABILITY_RTG_MAX_VAR), Constant(5.0)),
         ),
         (
+            "rtgMaxVarNeg == 5.0",
+            Expression(OperationType.EQ, NamedVariable(NamedVariableType.DERCAPABILITY_RTG_MAX_VAR_NEG), Constant(5.0)),
+        ),
+        (
             "rtgMaxW != 0.5",
             Expression(OperationType.NE, NamedVariable(NamedVariableType.DERCAPABILITY_RTG_MAX_W), Constant(0.5)),
         ),
@@ -358,6 +362,7 @@ def test_snake_to_camel(input: str, expected: str) -> None:
     "input,expected",
     [
         (NamedVariableType.DERCAPABILITY_RTG_MAX_VAR, "DERCapability.rtgMaxVar"),
+        (NamedVariableType.DERCAPABILITY_RTG_MAX_VAR_NEG, "DERCapability.rtgMaxVarNeg"),
         (NamedVariableType.DERSETTING_SET_MIN_WH, "DERSetting.setMinWh"),
         (NamedVariableType.DERCAPABILITY_RTG_MAX_VA, "DERCapability.rtgMaxVA"),
         (NamedVariableType.DERSETTING_SET_MAX_VA, "DERSetting.setMaxVA"),

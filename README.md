@@ -220,6 +220,7 @@ The following are all the `NamedVariable` types currently implemented
 | `$setMaxWh` | Resolves to the last supplied value to `DERSetting.setMaxWh` as a number. Can raise exceptions if this value hasn't been set (which will trigger a test evaluation to fail) |
 | `$rtgMaxVA` | Resolves to last supplied `DERCapability.rtgMaxVA` as a number. Raises exceptions if value hasn't been set, causing test to fail.
 | `$rtgMaxVar` | Resolves to last supplied `DERCapability.rtgMaxVar` as a number. Raises exceptions if value hasn't been set, causing test to fail.
+| `$rtgMaxVarNeg` | Resolves to last supplied `DERCapability.rtgMaxVarNeg` as a number. Raises exceptions if value hasn't been set, causing test to fail.
 | `$rtgMaxW` | Resolves to last supplied `DERCapability.rtgMaxW` as a number. Raises exceptions if value hasn't been set, causing test to fail.
 | `$rtgMaxChargeRateW` | Resolves to last supplied `DERCapability.rtgMaxChargeRateW` as a number. Raises exceptions if value hasn't been set, causing test to fail.
 | `$rtgMaxDischargeRateW` | Resolves to last supplied `DERCapability.rtgMaxDischargeRateW` as a number. Raises exceptions if value hasn't been set, causing test to fail.
