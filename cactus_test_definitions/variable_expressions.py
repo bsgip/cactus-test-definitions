@@ -56,6 +56,7 @@ class NamedVariableType(IntEnum):
     DERSETTING_SET_MAX_W = auto()
     DERSETTING_SET_MAX_VA = auto()
     DERSETTING_SET_MAX_VAR = auto()
+    DERSETTING_SET_MAX_VAR_NEG = auto()
     DERSETTING_SET_MAX_CHARGE_RATE_W = auto()
     DERSETTING_SET_MAX_DISCHARGE_RATE_W = auto()
     DERSETTING_SET_MAX_WH = auto()
@@ -241,6 +242,8 @@ def parse_unary_expression(token: Token) -> Constant | NamedVariable:
                 return NamedVariable(NamedVariableType.DERSETTING_SET_MAX_VA)
             case "setMaxVar":
                 return NamedVariable(NamedVariableType.DERSETTING_SET_MAX_VAR)
+            case "setMaxVarNeg":
+                return NamedVariable(NamedVariableType.DERSETTING_SET_MAX_VAR_NEG)
             case "setMaxChargeRateW":
                 return NamedVariable(NamedVariableType.DERSETTING_SET_MAX_CHARGE_RATE_W)
             case "setMaxDischargeRateW":

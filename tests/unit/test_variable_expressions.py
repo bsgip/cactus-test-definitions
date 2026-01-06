@@ -183,6 +183,7 @@ def test_parse_time_delta(unquoted_raw: str, expected: timedelta | type[Exceptio
         ),
         ("setMaxVA", NamedVariable(NamedVariableType.DERSETTING_SET_MAX_VA)),
         ("setMaxVar", NamedVariable(NamedVariableType.DERSETTING_SET_MAX_VAR)),
+        ("setMaxVarNeg", NamedVariable(NamedVariableType.DERSETTING_SET_MAX_VAR_NEG)),
         ("setMaxChargeRateW", NamedVariable(NamedVariableType.DERSETTING_SET_MAX_CHARGE_RATE_W)),
         ("setMaxDischargeRateW", NamedVariable(NamedVariableType.DERSETTING_SET_MAX_DISCHARGE_RATE_W)),
         ("setMaxWh", NamedVariable(NamedVariableType.DERSETTING_SET_MAX_WH)),

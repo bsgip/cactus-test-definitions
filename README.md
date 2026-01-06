@@ -214,6 +214,7 @@ The following are all the `NamedVariable` types currently implemented
 | `$setMaxW` | Resolves to the last supplied value to `DERSetting.setMaxW` as a number. Can raise exceptions if this value hasn't been set (which will trigger a test evaluation to fail) |
 | `$setMaxVA` | Resolves to the last supplied value to `DERSetting.setMaxVA` as a number. Can raise exceptions if this value hasn't been set (which will trigger a test evaluation to fail) |
 | `$setMaxVar` | Resolves to the last supplied value to `DERSetting.setMaxVar` as a number. Can raise exceptions if this value hasn't been set (which will trigger a test evaluation to fail) |
+| `$setMaxVarNeg` | Resolves to the last supplied value to `DERSetting.setMaxVarNeg` as a number. Can raise exceptions if this value hasn't been set (which will trigger a test evaluation to fail) |
 | `$setMaxChargeRateW` | Resolves to the last supplied value to `DERSetting.setMaxChargeRateW` as a number. Can raise exceptions if this value hasn't been set (which will trigger a test evaluation to fail) |
 | `$setMaxDischargeRateW` | Resolves to the last supplied value to `DERSetting.setMaxDischargeRateW` as a number. Can raise exceptions if this value hasn't been set (which will trigger a test evaluation to fail) |
 | `$setMaxWh` | Resolves to the last supplied value to `DERSetting.setMaxWh` as a number. Can raise exceptions if this value hasn't been set (which will trigger a test evaluation to fail) |
