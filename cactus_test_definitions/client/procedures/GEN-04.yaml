@@ -34,6 +34,8 @@ Preconditions:
         start: $(now)
         duration_seconds: 900
         opModGenLimW: $(setMaxW * 2)
+    - type: set-default-der-control
+      parameters: {}
   instructions:
     - DER shall be generating at least 50% of its active power rating.
     

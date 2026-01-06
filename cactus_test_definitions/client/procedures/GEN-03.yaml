@@ -33,6 +33,8 @@ Preconditions:
         start: $(now)
         duration_seconds: 900
         opModExpLimW: $(setMaxW * 2)
+    - type: set-default-der-control
+      parameters: {}
   instructions:
     - DER shall be exporting at the connection point at least 50% of its active power rating.
     

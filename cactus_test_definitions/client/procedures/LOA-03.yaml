@@ -33,6 +33,8 @@ Preconditions:
         start: $(now)
         duration_seconds: 900
         opModImpLimW: $(setMaxW * 2)
+    - type: set-default-der-control
+      parameters: {}
   instructions:
     - DER shall be importing at the connection point at least 50% of its active power rating.
     

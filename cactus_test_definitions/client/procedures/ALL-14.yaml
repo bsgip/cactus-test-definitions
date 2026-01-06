@@ -30,6 +30,8 @@ Preconditions:
     - type: create-der-program
       parameters:
         primacy: 0
+    - type: set-default-der-control
+      parameters: {}
     # Start by enabling everything at the beginning as each step is (mostly) independent of the others
     - type: enable-steps
       parameters:
