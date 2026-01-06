@@ -44,7 +44,7 @@ Steps:
     action: 
       type: discovery
       parameters:
-        resources: 
+        resources:
           - DERControl
     checks:
       - type: der-control
@@ -53,7 +53,6 @@ Steps:
           maximum_count: 1
           opModEnergize: true
           event_status: 1 # Active
-          sub_id: derc_list_sub
 
   - id: STEP 1 - CREATE DERC
     repeat_until_pass: true

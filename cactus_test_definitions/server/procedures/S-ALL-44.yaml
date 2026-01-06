@@ -26,8 +26,6 @@ Steps:
       - type: der-control
         parameters:
           minimum_count: 24
-          opModExpLimW: $(setMaxW * 2)
-          opModImpLimW: $(setMaxW)
           event_status: 0 # Scheduled (will ensure non overlapping , superseeded)
           duration: 60
   
@@ -44,8 +42,6 @@ Steps:
         parameters:
           minimum_count: 10
           maximum_count: 10
-          opModExpLimW: $(setMaxW * 2)
-          opModImpLimW: $(setMaxW)
           event_status: 0
           duration: 60
   
