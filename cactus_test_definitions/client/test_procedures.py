@@ -92,6 +92,7 @@ class TestProcedureId(StrEnum):
     TAR_05 = "TAR-05"
     TAR_06 = "TAR-06"
 
+
 @dataclass
 class Step:
     """A step is a part of the test procedure that waits for some form of event before running a set of actions.
