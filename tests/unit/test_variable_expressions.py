@@ -222,7 +222,9 @@ def test_parse_time_delta(unquoted_raw: str, expected: timedelta | type[Exceptio
         (
             "rtgMinPFUnderExcited <= 0.5",
             Expression(
-                OperationType.LTE, NamedVariable(NamedVariableType.DERCAPABILITY_RTG_MIN_PF_UNDER_EXCITED), Constant(0.5)
+                OperationType.LTE,
+                NamedVariable(NamedVariableType.DERCAPABILITY_RTG_MIN_PF_UNDER_EXCITED),
+                Constant(0.5),
             ),
         ),
         (
