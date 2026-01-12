@@ -217,6 +217,8 @@ The following are all the `NamedVariable` types currently implemented
 | `$setMaxVarNeg` | Resolves to the last supplied value to `DERSetting.setMaxVarNeg` as a number. Can raise exceptions if this value hasn't been set (which will trigger a test evaluation to fail) |
 | `$setMaxChargeRateW` | Resolves to the last supplied value to `DERSetting.setMaxChargeRateW` as a number. Can raise exceptions if this value hasn't been set (which will trigger a test evaluation to fail) |
 | `$setMaxDischargeRateW` | Resolves to the last supplied value to `DERSetting.setMaxDischargeRateW` as a number. Can raise exceptions if this value hasn't been set (which will trigger a test evaluation to fail) |
+| `$setMinPFOverExcited` | Resolves to the last supplied value to `DERSetting.setMinPFOverExcited` as a number. Can raise exceptions if this value hasn't been set (which will trigger a test evaluation to fail) |
+| `$setMinPFUnderExcited` | Resolves to the last supplied value to `DERSetting.setMinPFUnderExcited` as a number. Can raise exceptions if this value hasn't been set (which will trigger a test evaluation to fail) |
 | `$setMaxWh` | Resolves to the last supplied value to `DERSetting.setMaxWh` as a number. Can raise exceptions if this value hasn't been set (which will trigger a test evaluation to fail) |
 | `$rtgMaxVA` | Resolves to last supplied `DERCapability.rtgMaxVA` as a number. Raises exceptions if value hasn't been set, causing test to fail.
 | `$rtgMaxVar` | Resolves to last supplied `DERCapability.rtgMaxVar` as a number. Raises exceptions if value hasn't been set, causing test to fail.
@@ -224,6 +226,8 @@ The following are all the `NamedVariable` types currently implemented
 | `$rtgMaxW` | Resolves to last supplied `DERCapability.rtgMaxW` as a number. Raises exceptions if value hasn't been set, causing test to fail.
 | `$rtgMaxChargeRateW` | Resolves to last supplied `DERCapability.rtgMaxChargeRateW` as a number. Raises exceptions if value hasn't been set, causing test to fail.
 | `$rtgMaxDischargeRateW` | Resolves to last supplied `DERCapability.rtgMaxDischargeRateW` as a number. Raises exceptions if value hasn't been set, causing test to fail.
+| `$rtgMinPFOverExcited` | Resolves to last supplied `DERCapability.rtgMinPFOverExcited` as a number. Raises exceptions if value hasn't been set, causing test to fail.
+| `$rtgMinPFUnderExcited` | Resolves to last supplied `DERCapability.rtgMinPFUnderExcited` as a number. Raises exceptions if value hasn't been set, causing test to fail.
 | `$rtgMaxWh` | Resolves to last supplied `DERCapability.rtgMaxWh` as a number. Raises exceptions if value hasn't been set, causing test to fail.
 
 The following are csipaus.org/ns/v1.3-beta/storage extension specific `NamedVariable` types implemented

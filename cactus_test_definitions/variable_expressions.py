@@ -59,6 +59,8 @@ class NamedVariableType(IntEnum):
     DERSETTING_SET_MAX_VAR_NEG = auto()
     DERSETTING_SET_MAX_CHARGE_RATE_W = auto()
     DERSETTING_SET_MAX_DISCHARGE_RATE_W = auto()
+    DERSETTING_SET_MIN_PF_OVER_EXCITED = auto()
+    DERSETTING_SET_MIN_PF_UNDER_EXCITED = auto()
     DERSETTING_SET_MAX_WH = auto()
 
     # Must resolve to DERCapablity of the current EndDevice under test
@@ -68,6 +70,8 @@ class NamedVariableType(IntEnum):
     DERCAPABILITY_RTG_MAX_W = auto()  # W ( after multiplier applied), reference $rtgMaxW
     DERCAPABILITY_RTG_MAX_CHARGE_RATE_W = auto()  # W ( after multiiplier applied), reference $rtgMaxChargeRateW
     DERCAPABILITY_RTG_MAX_DISCHARGE_RATE_W = auto()  # W ( after multiplier applied), reference $rtgMaxDischargeRateW
+    DERCAPABILITY_RTG_MIN_PF_OVER_EXCITED = auto()  # Unitless ( after multiplier applied), reference $rtgMinPFOverExcited
+    DERCAPABILITY_RTG_MIN_PF_UNDER_EXCITED = auto()  # Unitless ( after multiplier applied), reference $rtgMinPFUnderExcited
     DERCAPABILITY_RTG_MAX_WH = auto()  # Wh ( after multiplier applied), reference $rtgMaxWh
 
     # Storage extension
@@ -249,6 +253,10 @@ def parse_unary_expression(token: Token) -> Constant | NamedVariable:
                 return NamedVariable(NamedVariableType.DERSETTING_SET_MAX_CHARGE_RATE_W)
             case "setMaxDischargeRateW":
                 return NamedVariable(NamedVariableType.DERSETTING_SET_MAX_DISCHARGE_RATE_W)
+            case "setMinPFOverExcited":
+                return NamedVariable(NamedVariableType.DERSETTING_SET_MIN_PF_OVER_EXCITED)
+            case "setMinPFUnderExcited":
+                return NamedVariable(NamedVariableType.DERSETTING_SET_MIN_PF_UNDER_EXCITED)
             case "setMaxWh":
                 return NamedVariable(NamedVariableType.DERSETTING_SET_MAX_WH)
             case "rtgMaxVA":
@@ -263,6 +271,10 @@ def parse_unary_expression(token: Token) -> Constant | NamedVariable:
                 return NamedVariable(NamedVariableType.DERCAPABILITY_RTG_MAX_CHARGE_RATE_W)
             case "rtgMaxDischargeRateW":
                 return NamedVariable(NamedVariableType.DERCAPABILITY_RTG_MAX_DISCHARGE_RATE_W)
+            case "rtgMinPFOverExcited":
+                return NamedVariable(NamedVariableType.DERCAPABILITY_RTG_MIN_PF_OVER_EXCITED)
+            case "rtgMinPFUnderExcited":
+                return NamedVariable(NamedVariableType.DERCAPABILITY_RTG_MIN_PF_UNDER_EXCITED)
             case "rtgMaxWh":
                 return NamedVariable(NamedVariableType.DERCAPABILITY_RTG_MAX_WH)
             # Storage extension

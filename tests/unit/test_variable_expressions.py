@@ -186,6 +186,8 @@ def test_parse_time_delta(unquoted_raw: str, expected: timedelta | type[Exceptio
         ("setMaxVarNeg", NamedVariable(NamedVariableType.DERSETTING_SET_MAX_VAR_NEG)),
         ("setMaxChargeRateW", NamedVariable(NamedVariableType.DERSETTING_SET_MAX_CHARGE_RATE_W)),
         ("setMaxDischargeRateW", NamedVariable(NamedVariableType.DERSETTING_SET_MAX_DISCHARGE_RATE_W)),
+        ("setMinPFOverExcited", NamedVariable(NamedVariableType.DERSETTING_SET_MIN_PF_OVER_EXCITED)),
+        ("setMinPFUnderExcited", NamedVariable(NamedVariableType.DERSETTING_SET_MIN_PF_UNDER_EXCITED)),
         ("setMaxWh", NamedVariable(NamedVariableType.DERSETTING_SET_MAX_WH)),
         (
             "rtgMaxVar == 5.0",
@@ -209,6 +211,18 @@ def test_parse_time_delta(unquoted_raw: str, expected: timedelta | type[Exceptio
             "rtgMaxDischargeRateW > 0.5",
             Expression(
                 OperationType.GT, NamedVariable(NamedVariableType.DERCAPABILITY_RTG_MAX_DISCHARGE_RATE_W), Constant(0.5)
+            ),
+        ),
+        (
+            "rtgMinPFOverExcited > 0.5",
+            Expression(
+                OperationType.GT, NamedVariable(NamedVariableType.DERCAPABILITY_RTG_MIN_PF_OVER_EXCITED), Constant(0.5)
+            ),
+        ),
+        (
+            "rtgMinPFUnderExcited <= 0.5",
+            Expression(
+                OperationType.LTE, NamedVariable(NamedVariableType.DERCAPABILITY_RTG_MIN_PF_UNDER_EXCITED), Constant(0.5)
             ),
         ),
         (
