@@ -97,13 +97,13 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - OBSERVE-30-PERCENT
+            - WAIT-RAMP-DERC-1
       - type: remove-steps
         parameters:
           steps:
             - GET-DERC-1
 
-  OBSERVE-30-PERCENT:
+  WAIT-RAMP-DERC-1:
     instructions:
       - Observe that DER ramps to 30% limit.
     event:
@@ -118,7 +118,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - OBSERVE-30-PERCENT
+            - WAIT-RAMP-DERC-1
 
   # (a, b)
   GET-DERC-2:
@@ -136,13 +136,13 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - OBSERVE-10-PERCENT
+            - WAIT-RAMP-DERC-2
       - type: remove-steps
         parameters:
           steps:
             - GET-DERC-2
 
-  OBSERVE-10-PERCENT:
+  WAIT-RAMP-DERC-2:
     instructions:
       - Observe that DER ramps to 10% limit within 15s as per step (b).
     event:
@@ -157,7 +157,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - OBSERVE-10-PERCENT
+            - WAIT-RAMP-DERC-2
 
   # (c, d)
   GET-DERC-3:
@@ -187,25 +187,6 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 60
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - OBSERVE-50-PERCENT
-      - type: remove-steps
-        parameters:
-          steps:
-            - WAIT-RAMP-DERC-3
-    instructions:
-      - The DER shall ramp export/import to 50% in 60 seconds (due to rampTms being 60s).
-
-  OBSERVE-50-PERCENT:
-    instructions:
-      - Observe that DER completes ramp to 50% limit.
-    event:
-      type: wait
-      parameters:
         duration_seconds: 180
     actions:
       - type: enable-steps
@@ -215,7 +196,9 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - OBSERVE-50-PERCENT
+            - WAIT-RAMP-DERC-3
+    instructions:
+      - The DER shall ramp export/import to 50% in 60 seconds (due to rampTms being 60s).
 
   # (e)
   GET-DEFAULT-DERC:
@@ -285,25 +268,8 @@ Steps:
 
   # (i)
   WAIT-RAMP-DEFAULT:
-    event:
-      type: wait
-      parameters:
-        duration_seconds: 120
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - OBSERVE-ZERO-POWER
-      - type: remove-steps
-        parameters:
-          steps:
-            - WAIT-RAMP-DEFAULT
     instructions:
-      - The DER shall reduce export/import to the current DefaultDERControl limit of 0W at the new ramp rate of 1 %/s.
-
-  OBSERVE-ZERO-POWER:
-    instructions:
-      - Observe that DER has ramped down to 0W per DefaultDERControl.
+        - The DER shall reduce export/import to the current DefaultDERControl limit of 0W at the new ramp rate of 1 %/s.
     event:
       type: wait
       parameters:
@@ -316,7 +282,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - OBSERVE-ZERO-POWER
+            - WAIT-RAMP-DEFAULT
 
   # (j)
   GET-DERC-4:
@@ -331,16 +297,17 @@ Steps:
           duration_seconds: 300
           opModExpLimW: $(setMaxW * 0.3)
           opModImpLimW: $(setMaxW * 0.3)
+          tag: DERC4
       - type: enable-steps
         parameters:
           steps:
-            - OBSERVE-30-PERCENT-FINAL
+            - WAIT-RAMP-DERC-4
       - type: remove-steps
         parameters:
           steps:
             - GET-DERC-4
 
-  OBSERVE-30-PERCENT-FINAL:
+  WAIT-RAMP-DERC-4:
     instructions:
       - Observe that DER ramps to 30% at new ramp rate of 1% per step (l).
     event:
@@ -355,7 +322,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - OBSERVE-30-PERCENT-FINAL
+            - WAIT-RAMP-DERC-4
 
   # (k)
   POST-RESPONSE-STARTED:
@@ -369,6 +336,7 @@ Steps:
           parameters: 
             latest: true
             status: 2
+            subject_tag: DERC4
     actions:
       - type: remove-steps
         parameters:
