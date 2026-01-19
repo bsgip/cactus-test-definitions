@@ -60,6 +60,6 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-CONTROL-END
+            - WAIT-NOOP
     instructions:
     - DER should be registered as per TAR-02 with appropriate parameter values

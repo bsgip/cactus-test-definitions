@@ -6,11 +6,6 @@ Classes:
 TargetVersions:
   - v1.3-beta/storage
 
-Criteria:
-  checks:
-    - type: all-steps-complete
-      parameters: {}
-
 Preconditions:
   init_actions:
     - type: set-comms-rate
@@ -27,30 +22,33 @@ Preconditions:
         opModExpLimW: 1500
     - type: create-der-control
       parameters:
-        start: $(now + '300 seconds')
+        start: "$(now + '300 seconds')"
         duration_seconds: 300
-        opModStorageTargetW: $(rtgMaxDischargeRateW)
-        opModExpLimW: $(2 * rtgMaxDischargeRateW)
+        opModStorageTargetW: "$(rtgMaxDischargeRateW)"
+        opModExpLimW: "$(2 * rtgMaxDischargeRateW)"
   checks:
     - type: end-device-contents
       parameters: {}
     - type: der-capability-contents
       parameters: 
-        rtgMaxChargeRateW: $(this == rtgMaxVA)
-        rtgMaxDischargeRateW: $(this == rtgMaxVA)
-        vppModesSupported_set: 01
-        # doeModesSupported_set: 01
+        rtgMaxChargeRateW: "$(this == rtgMaxVA)"
+        rtgMaxDischargeRateW: "$(this == rtgMaxVA)"
+        vppModesSupported_set: "01"
+        doeModesSupported_set: "01"
     - type: der-settings-contents
       parameters:
-        setMaxChargeRateW: $(this == rtgMaxVA)
-        setMaxDischargeRateW: $(this == rtgMaxVA)
-        vppModesEnabled_set: 01
-        # doeModesEnabled_set: 01, 
-    - type: der
-    # Confirm stored energy requirement (which should contain 50% charge upon inspection) 
+        setMaxChargeRateW: "$(this == rtgMaxVA)"
+        setMaxDischargeRateW: "$(this == rtgMaxVA)"
+        vppModesEnabled_set: "01"
+        doeModesEnabled_set: "01" 
     - type: readings-der-stored-energy
       parameters: 
         minimum_count: 1
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
 
 Steps:
   # Client discovers control for opModStorageTargetW and opModExpLimW
@@ -125,7 +123,7 @@ Steps:
             latest: true
             status: 3
     actions:
-        - type: remove-steps
-          parameters:
+      - type: remove-steps
+        parameters:
           steps:
             - POST-RESPONSE-COMPLETED
