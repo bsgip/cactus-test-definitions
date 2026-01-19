@@ -31,21 +31,35 @@ Criteria:
          rtgMinPFOverExcited: true # Minimum power factor displacement
          rtgMinPFUnderExcited: true # Minimum power factor displacement
          doeModesSupported: true # CSIP-Aus DOE modes supported
-         "rtgMaxChargeRateW": "$(this > 0)"
-         "rtgMaxDischargeRateW": "$(this > 0)"
-         "rtgMaxWh": "$(this > 0)"
-         "vppModesSupported_set": "01"
+         rtgMaxChargeRateW: "$(this > 0)"
+         rtgMaxDischargeRateW: "$(this > 0)"
+         rtgMaxWh: "$(this > 0)"
+         vppModesSupported_set: "01"
     - type: der-settings-contents
       parameters: 
-        "setMaxVA": "$(this <= rtgMaxVA)" # Maximum apparent power
-        "setMaxVar": "$(this <= rtgMaxVar)" # Maximum reactive power delivered
-        "setMaxVarNeg": "$(this <= rtgMaxVarNeg)" # Maximum reactive power received
-        "setMaxW": "$(this <= rtgMaxW)" # Maximum active power
-        "setMinPFOverExcited":  "$(this >= rtgMinPFOverExcited)" # Minimum power factor displacement
-        "setMinPFUnderExcited": "$(this >= rtgMinPFUnderExcited)" # Minimum power factor displacement
+        setMaxVA: "$(this <= rtgMaxVA)" # Maximum apparent power
+        setMaxVar: "$(this <= rtgMaxVar)" # Maximum reactive power delivered
+        setMaxVarNeg: "$(this <= rtgMaxVarNeg)" # Maximum reactive power received
+        setMaxW: "$(this <= rtgMaxW)" # Maximum active power
+        setMinPFOverExcited:  "$(this >= rtgMinPFOverExcited)" # Minimum power factor displacement
+        setMinPFUnderExcited: "$(this >= rtgMinPFUnderExcited)" # Minimum power factor displacement
         doeModesEnabled: true # CSIP-Aus DOE modes supported
-        "setMaxChargeRateW": "$(this > 0)"
-        "setMaxDischargeRateW": "$(this > 0)"
-        "setMaxWh": "$(this > 0)"
+        setMaxChargeRateW: "$(this > 0)"
+        setMaxDischargeRateW: "$(this > 0)"
+        setMaxWh: "$(this > 0)"
         setMinWh: true 
-        "vppModesEnabled_set": "01"
+        vppModesEnabled_set: "01"
+
+Steps:
+  WAIT-NOOP:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 60
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-CONTROL-END
+    instructions:
+    - DER should be registered as per TAR-02 with appropriate parameter values
