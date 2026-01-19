@@ -62,4 +62,4 @@ Steps:
           steps:
             - WAIT-NOOP
     instructions:
-    - DER should be registered as per TAR-02 with appropriate parameter values
+    - DER should be registered as per STO-02 with appropriate parameter values
