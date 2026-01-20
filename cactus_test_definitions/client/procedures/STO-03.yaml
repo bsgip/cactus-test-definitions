@@ -16,16 +16,19 @@ Preconditions:
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
+    - type: create-der-program
+      parameters:
+        primacy: 0
   actions:
     - type: set-default-der-control
       parameters:
         opModExpLimW: 1500
     - type: create-der-control
       parameters:
-        start: "$(now + '300 seconds')"
-        duration_seconds: 300
-        opModStorageTargetW: "$(rtgMaxDischargeRateW)"
-        opModExpLimW: "$(2 * rtgMaxDischargeRateW)"
+        start: $(now + '300 seconds')
+        duration_seconds: 900
+        opModStorageTargetW: $(rtgMaxDischargeRateW)
+        opModExpLimW: $(2 * rtgMaxDischargeRateW)
   checks:
     - type: end-device-contents
       parameters: {}
