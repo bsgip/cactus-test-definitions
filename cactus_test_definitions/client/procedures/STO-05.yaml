@@ -7,7 +7,6 @@ TargetVersions:
   - v1.3-beta/storage
 
 Preconditions:
-  immediate_start: true  # There will be no "init" phase - all interactions will be immediately logged against the test
   init_actions:
     - type: set-comms-rate
       parameters:
@@ -17,6 +16,13 @@ Preconditions:
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
+
+  checks:
+    - type: end-device-contents
+      parameters: {}
+
+  instructions:
+    - DER should be registered as per STO-02 with appropriate parameter values
 
 Criteria:
   checks:
@@ -55,11 +61,9 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 60
+        duration_seconds: 0
     actions:
       - type: remove-steps
         parameters:
           steps:
             - WAIT-NOOP
-    instructions:
-    - DER should be registered as per STO-02 with appropriate parameter values
