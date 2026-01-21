@@ -85,10 +85,12 @@ class TestProcedureId(StrEnum):
     MUL_03 = "MUL-03"
 
     # Storage extension
-    BES_01 = "BES-01"
-    BES_02 = "BES-02"
-    BES_03 = "BES-03"
-    BES_04 = "BES-04"
+    STO_01 = "STO-01"
+    STO_02 = "STO-02"
+    STO_03 = "STO-03"
+    STO_04 = "STO-04"
+    STO_05 = "STO-05"
+    STO_06 = "STO-06"
 
 
 @dataclass

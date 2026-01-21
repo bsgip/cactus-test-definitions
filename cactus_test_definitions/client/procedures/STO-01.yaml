@@ -26,11 +26,6 @@ Preconditions:
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
-    # Placeholder for later controls
-    - type: create-der-program
-      parameters:
-        primacy: 0
-        fsa_id: 1
 
   checks:
     - type: end-device-contents
@@ -82,55 +77,16 @@ Steps:
           steps:
             - GET-MUP-2
 
-  # Wait for at least 2 readings to arrive
+  # Wait for at least 4 readings to arrive
   WAIT-READINGS:
     event:
       type: wait
       parameters:
-        duration_seconds: 180 # Wait for at least 2 sets of readings to arrive (with post rate 60 seconds)
+        duration_seconds: 300 # Wait for at least 4 sets of readings to arrive (with post rate 60 seconds)
     actions:
-      - type: create-der-control
-        parameters:
-          start: $(now)
-          duration_seconds: 600
-          opModStorageTargetW: 0
-          primacy: 0
-      - type: enable-steps
-        parameters:
-          steps:
-            - GET-DERC
       - type: remove-steps
         parameters:
           steps:
             - WAIT-READINGS
-
-  # On this poll, client will discover new 0W control is in place
-  GET-DERC:
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /edev/1/derp/1/derc
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - WAIT-CONTROL
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-DERC
-
-  # This just lets the test run for a few more posts after the control comes into effect
-  # after which, we will force the test to shutdown (as Criteria is partially defined by this ONLY running for a few posts)
-  WAIT-CONTROL:
-    event:
-      type: wait
-      parameters:
-        duration_seconds: 180 # Wait for at least 2 sets of readings to arrive (with post rate 60 seconds)
-    actions:
-      - type: remove-steps
-        parameters:
-          steps:
-            - WAIT-CONTROL
       - type: finish-test
         parameters: {}

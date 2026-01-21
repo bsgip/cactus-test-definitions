@@ -21,16 +21,13 @@ Preconditions:
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
+    - type: create-der-program
+      parameters:
+        primacy: 0
   actions:
     - type: set-default-der-control
       parameters:
         opModExpLimW: 1500
-    - type: create-der-control
-      parameters:
-        start: $(now + '300 seconds')
-        duration_seconds: 900
-        opModStorageTargetW: $(rtgMaxDischargeRateW)
-        opModExpLimW: $(2 * rtgMaxDischargeRateW)
   checks:
     - type: end-device-contents
       parameters: {}
@@ -38,6 +35,15 @@ Preconditions:
       parameters: {
         "rtgMaxChargeRateW": "$(this == rtgMaxVA)",
         "rtgMaxDischargeRateW": "$(this == rtgMaxVA)",
+        "vppModesSupported_set": "01",
+        "doeModesSupported_set": "01",
+      }
+    - type: der-settings-contents
+      parameters: {
+        "setMaxChargeRateW": "$(this == rtgMaxVA)",
+        "setMaxDischargeRateW": "$(this == rtgMaxVA)",
+        "vppModesEnabled_set": "01",
+        "doeModesEnabled_set": "01",  
       }
     # Confirm stored energy requirement (which should contain 50% charge upon inspection) 
     - type: readings-der-stored-energy
@@ -53,6 +59,12 @@ Steps:
       parameters:
         endpoint: /edev/1/derp/1/derc
     actions:
+      - type: create-der-control
+        parameters:
+          start: $(now + '300 seconds')
+          duration_seconds: 900
+          opModStorageTargetW: $(rtgMaxDischargeRateW)
+          opModExpLimW: $(2 * rtgMaxDischargeRateW)
       - type: enable-steps
         parameters:
           steps:
@@ -225,4 +237,3 @@ Steps:
         parameters:
           steps:
             - WAIT-CONTROL-END-5
-

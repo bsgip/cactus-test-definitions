@@ -1,0 +1,132 @@
+Description: Storage control with export limits - opModStorageTargetW with opModExpLimW
+Category: Control
+Classes:
+  - L
+
+TargetVersions:
+  - v1.3-beta/storage
+
+Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+    - type: create-der-program
+      parameters:
+        primacy: 0
+  actions:
+    - type: set-default-der-control
+      parameters:
+        opModExpLimW: 1500
+    - type: create-der-control
+      parameters:
+        start: $(now + '300 seconds')
+        duration_seconds: 900
+        opModStorageTargetW: $(rtgMaxDischargeRateW)
+        opModExpLimW: $(2 * rtgMaxDischargeRateW)
+  checks:
+    - type: end-device-contents
+      parameters: {}
+    - type: der-capability-contents
+      parameters: 
+        rtgMaxChargeRateW: "$(this == rtgMaxVA)"
+        rtgMaxDischargeRateW: "$(this == rtgMaxVA)"
+        vppModesSupported_set: "01"
+        doeModesSupported_set: "01"
+    - type: der-settings-contents
+      parameters:
+        setMaxChargeRateW: "$(this == rtgMaxVA)"
+        setMaxDischargeRateW: "$(this == rtgMaxVA)"
+        vppModesEnabled_set: "01"
+        doeModesEnabled_set: "01" 
+    - type: readings-der-stored-energy
+      parameters: 
+        minimum_count: 1
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+
+Steps:
+  # Client discovers control for opModStorageTargetW and opModExpLimW
+  GET-DERC-1:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-RECEIVED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-1
+
+  POST-RESPONSE-RECEIVED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 1
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-RECEIVED
+
+  # (c, d)
+  POST-RESPONSE-STARTED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-COMPLETED
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-STARTED
+
+  # (e, f, g)
+  POST-RESPONSE-COMPLETED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 3
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-COMPLETED
