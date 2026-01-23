@@ -31,12 +31,12 @@ Steps:
         parameters:
           matches_client: true
     
-  - id: PRECONDITION2 - DERC LIST SUBSCRIBE
+  - id: PRECONDITION2 - DDERC SUBSCRIBE
     action: 
       type: create-subscription
       parameters:
-        sub_id: derc_list_sub
-        resource: DERControlList
+        sub_id: dderc_sub
+        resource: DefaultDERControl
 
   - id: STEP 1 - CREATE Default DERC
     repeat_until_pass: true
@@ -45,7 +45,7 @@ Steps:
     action: 
       type: notifications
       parameters:
-        sub_id: derc_list_sub
+        sub_id: dderc_sub
         collect: true
     checks:
       - type: default-der-control
@@ -53,4 +53,4 @@ Steps:
           minimum_count: 1
           maximum_count: 1
           opModImpLimW: 0
-          sub_id: derc_list_sub
+          sub_id: dderc_sub
