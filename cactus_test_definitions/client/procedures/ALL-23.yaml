@@ -59,6 +59,9 @@ Preconditions:
         duration_seconds: 60
         opModExpLimW: $(setMaxW * 1.3)
         opModImpLimW: $(setMaxW * 1.3)
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 0 # Not explicit in TS5573 tests, but shows clients to poll at the default der control href
   instructions:
     - DER shall be generating or consuming at least 50% of its active power rating.
     
