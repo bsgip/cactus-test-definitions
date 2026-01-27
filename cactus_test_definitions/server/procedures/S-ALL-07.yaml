@@ -34,7 +34,7 @@ Steps:
       parameters:
         mup_id: mup_mrid_1
         set_mup_mrid: AAAAAAAAAAAAAAAAAAAAAAA000000001
-        reading_types: 
+        reading_types:
           - ActivePowerAverage
           - VoltageSinglePhaseAverage
         location: Site  # Set the roleflags
@@ -42,7 +42,8 @@ Steps:
       - type: mirror-usage-point
         parameters:
           matches: true
-          reading_types: 
+          check_mup_mrid: AAAAAAAAAAAAAAAAAAAAAAA000000001
+          reading_types:
             - ActivePowerAverage
             - VoltageSinglePhaseAverage
           location: Site
@@ -61,6 +62,7 @@ Steps:
       - type: mirror-usage-point
         parameters:
           matches: true
+          check_mup_mrid: AAAAAAAAAAAAAAAAAAAAAAA000000001
           reading_types: 
             - ActivePowerAverage
             - VoltageSinglePhaseAverage
@@ -98,6 +100,7 @@ Steps:
       - type: mirror-usage-point
         parameters:
           matches: true
+          check_mup_mrid: AAAAAAAAAAAAAAAAAAAAAAA000000001
           reading_types:
             - ReactivePowerAverage
             - VoltageSinglePhaseAverage

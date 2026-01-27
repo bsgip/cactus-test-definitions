@@ -120,6 +120,7 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
     },  # matches any DefaultDERControl with the specified values
     "mirror-usage-point": {
         "matches": ParameterSchema(True, ParameterType.Boolean),  # True for positive assert, False for negative assert
+        "check_mup_mrid": ParameterSchema(False, ParameterType.String),
         "location": ParameterSchema(False, ParameterType.CSIPAusReadingLocation),  # If not specified - match anything
         "reading_types": ParameterSchema(False, ParameterType.ListCSIPAusReadingType),  # If not specified - match all
         "mmr_mrids": ParameterSchema(
