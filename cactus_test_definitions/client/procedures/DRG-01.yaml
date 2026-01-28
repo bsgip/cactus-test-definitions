@@ -122,13 +122,27 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - PUT-DERSTATUS-2
-            - PUT-DERSETTINGS-2
+            - WAIT-DERC-2
       - type: remove-steps
         parameters:
           steps:
             - GET-DERC-2
 
+  WAIT-DERC-2:
+    event:
+        type: wait
+        parameters:
+          duration_seconds: 70 # Wait for DERC2 to begin, so the status will be updated
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - PUT-DERSTATUS-2
+            - PUT-DERSETTINGS-2
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-DERC-2
 
   # (e, f)
   PUT-DERSTATUS-2:

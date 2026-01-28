@@ -485,7 +485,7 @@ Steps:
         - type: der-status-contents
           parameters:
             alarmStatus: 0
-            operationalModeStatus: 107
+            operationalModeStatus: 106
     actions:
       - type: remove-steps
         parameters:
