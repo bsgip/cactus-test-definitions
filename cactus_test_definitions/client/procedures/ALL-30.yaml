@@ -110,7 +110,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 120 # Wait for two polls
+        duration_seconds: 240 # Give the user time to power off the device (needs to happen before DER control sends)
     actions:
       - type: create-der-control
         parameters:
