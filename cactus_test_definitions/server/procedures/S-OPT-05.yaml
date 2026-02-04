@@ -26,7 +26,6 @@ Steps:
       - type: end-device 
         parameters:
           matches_client: true
-      - type: discovered
       - type: mirror-usage-point
         parameters:
           matches: true

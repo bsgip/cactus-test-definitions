@@ -19,6 +19,7 @@ Steps:
     client: CLIENT-A
     instructions:
       - Create an EndDevice registration for CLIENT-A (or rerun S-ALL-02 / S-ALL-03).
+      - Ensure there is an accessible DERControlList
     action: 
       type: discovery
       parameters:
@@ -30,13 +31,18 @@ Steps:
     checks:
       - type: end-device 
         parameters:
-          matches_client: true 
+          matches_client: true
+      - type: discovered
+        parameters:
+          links:
+            - DERControlList
 
   - id: (B) PRECONDITION REGISTRATION
     repeat_until_pass: true
     client: CLIENT-B
     instructions:
       - Create an EndDevice registration for CLIENT-B (or rerun S-ALL-02 / S-ALL-03).
+      - Ensure there is an accessible DERControlList
     action: 
       type: discovery
       parameters:
@@ -48,7 +54,11 @@ Steps:
     checks:
       - type: end-device 
         parameters:
-          matches_client: true 
+          matches_client: true
+      - type: discovered
+        parameters:
+          links:
+            - DERControlList
 
   - id: CLIENT-A CREATE MUP
     client: CLIENT-A
@@ -96,7 +106,7 @@ Steps:
   - id: 2 - REJECT DERCONTROLLIST
     client: CLIENT-A
     use_client_context: CLIENT-B 
-    action: 
+    action:
       type: refresh-resource
       parameters:
         resource: DERControlList
