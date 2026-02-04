@@ -34,7 +34,7 @@ Steps:
           matches_client: true
       - type: discovered
         parameters:
-          links:
+          resources:
             - DERControlList
 
   - id: (B) PRECONDITION REGISTRATION
@@ -57,7 +57,7 @@ Steps:
           matches_client: true
       - type: discovered
         parameters:
-          links:
+          resources:
             - DERControlList
 
   - id: CLIENT-A CREATE MUP
