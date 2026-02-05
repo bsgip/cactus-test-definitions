@@ -796,5 +796,3 @@ Steps:
         parameters:
           steps:
             - WAIT-TEST-FINISH
-      - type: finish-test
-        parameters: {}
