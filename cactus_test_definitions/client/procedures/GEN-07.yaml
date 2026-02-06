@@ -1,7 +1,6 @@
 Description: Default Controls – Export Limit
 Category: Control
 Classes:
-  - G
   - S
 
 TargetVersions:

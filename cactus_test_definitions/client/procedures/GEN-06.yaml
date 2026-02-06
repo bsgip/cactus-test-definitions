@@ -1,7 +1,6 @@
 Description: Active Control – Generation Limit
 Category: Control
 Classes:
-  - G
   - S
 
 TargetVersions:
