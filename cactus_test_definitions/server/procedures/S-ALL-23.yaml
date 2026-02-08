@@ -31,5 +31,5 @@ Steps:
           matches_client: true 
       - type: default-der-control
         parameters:
-          setGradW: 1
+          setGradW: 100
           minimum_count: 1
