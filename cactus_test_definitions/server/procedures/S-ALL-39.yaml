@@ -52,5 +52,5 @@ Steps:
         parameters:
           minimum_count: 1
           maximum_count: 1
-          setGradW: 1
+          setGradW: 100
           sub_id: dderc_sub

@@ -26,4 +26,4 @@ Steps:
       - type: default-der-control
         parameters:
           minimum_count: 1
-          setGradW: 1
+          setGradW: 100
