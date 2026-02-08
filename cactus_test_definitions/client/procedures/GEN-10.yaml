@@ -96,14 +96,14 @@ Preconditions:
     - type: set-default-der-control
       parameters:
         derp_id: 1
-        opModExpLimW: 0
-    # This second default control is not explicitly in the standards (SA TS5573), but we are adding it here to let the 
-    # client know to keep polling at /edev/1/derp/6/dderc, which allows step-bb-ii to work without using notifications.
+        opModImpLimW: 0
+    # These default controls are not explicitly in the standards (SA TS5573), but we are adding here to let the 
+    # client know to keep polling at, e.g., /edev/1/derp/6/dderc, which allows step-bb-ii to work without using notifications.
     # Previously, polling at /edev/1/derp/6/dderc was expected without any defaults being set.
     - type: set-default-der-control
       parameters:
         derp_id: 6
-        opModExpLimW: 0
+        opModImpLimW: 0 # Set to import to not interefere with export observations in witness test
 
 Steps:
 
@@ -121,11 +121,27 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-1
+            - WAIT-DEFAULT-DERC
       - type: remove-steps
         parameters:
           steps:
             - GET-DEFAULT-DERC
+  
+  # Wait to observe the 30% default control
+  WAIT-DEFAULT-DERC:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 180
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-1
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-DEFAULT-DERC
 
   # (c, d) - Create a DERControl at DERP 6 - set to 200% of max
   GET-DERC-1:
