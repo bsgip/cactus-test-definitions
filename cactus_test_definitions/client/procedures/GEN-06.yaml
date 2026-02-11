@@ -1,8 +1,8 @@
 Description: Active Control – Generation Limit
 Category: Control
 Classes:
-  - G
-  - S
+  # Note - G is explicitly omitted, this test is ONLY for subscription clients who ALSO certify against G class
+  - S-G
 
 TargetVersions:
   - v1.2
