@@ -361,12 +361,28 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
+            - WAIT-DEFAULT-DERC2
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC-3-RESPONSE-COMPLETED
+
+  # Wait to observe the 30% default control again
+  WAIT-DEFAULT-DERC2:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 60
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
             - GET-DERC-4
             - GET-DERC-5
       - type: remove-steps
         parameters:
           steps:
-            - POST-DERC-3-RESPONSE-COMPLETED
+            - WAIT-DEFAULT-DERC2
 
   # (m, n) (i) Configure the first DERControl on DERP1
   GET-DERC-4:
