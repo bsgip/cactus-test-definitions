@@ -1,7 +1,8 @@
 Description: Subscribe
 Category: Control
 Classes:
-  - S
+  - S-L
+  - S-G
 
 TargetVersions:
   - v1.2
