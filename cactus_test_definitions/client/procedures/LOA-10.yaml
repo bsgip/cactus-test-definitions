@@ -372,7 +372,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 60
+        duration_seconds: 120
     actions:
       - type: enable-steps
         parameters:
@@ -384,8 +384,7 @@ Steps:
           steps:
             - WAIT-DEFAULT-DERC2
 
-  # (m) (i) Configure the first DERControl on DERP1
-  # (n)
+  # (m, n) (i) Configure the first DERControl on DERP1
   GET-DERC-4:
     event:
       type: GET-request-received
@@ -495,11 +494,27 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-6
+            - WAIT-DEFAULT-30-PERCENT
       - type: remove-steps
         parameters:
           steps:
             - POST-DERC-4-RESPONSE-COMPLETED
+
+  # Wait to observe the 30% default control again
+  WAIT-DEFAULT-30-PERCENT:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 120
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-6
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-DEFAULT-30-PERCENT
 
   # (s) Create a DERControl on DERP6 at 50%
   GET-DERC-6:
@@ -511,7 +526,7 @@ Steps:
       - type: create-der-control
         parameters:
           start: $(now)
-          duration_seconds: 300 # 20 minutes
+          duration_seconds: 300 # 5 minutes
           opModImpLimW: $(setMaxW * 0.5)
           fsa_id: 2
           primacy: 2
@@ -543,8 +558,7 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-7
-            - GET-DERC-8
+            - WAIT-DERC-6
       - type: remove-steps
         parameters:
           steps:
@@ -568,6 +582,23 @@ Steps:
         parameters:
           steps:
             - POST-DERC-5-RESPONSE-SUPERSEDED
+  
+  # Observe DERControl 6
+  WAIT-DERC-6:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 120
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-7
+            - GET-DERC-8
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-DERC-6
 
   # (v) (i) Create a DERControl on DERP1 at 0%
   GET-DERC-7:
@@ -750,8 +781,7 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-UPDATED-DEFAULT-DERP-1
-            - GET-UPDATED-DEFAULT-DERP-6
+            - WAIT-DERC-9
       - type: remove-steps
         parameters:
           steps:
@@ -775,6 +805,23 @@ Steps:
         parameters:
           steps:
             - POST-DERC-10-RESPONSE-STARTED
+
+  # Wait to observe 20% on DERC9
+  WAIT-DERC-9:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 120
+      actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-UPDATED-DEFAULT-DERP-1
+            - GET-UPDATED-DEFAULT-DERP-6
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-DERC-9
     
   # (bb) (i) Create an updated default for DERProgram 1 at 50%
   # (cc)
@@ -822,7 +869,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 60
+        duration_seconds: 120
     actions:
       - type: remove-steps
         parameters:
