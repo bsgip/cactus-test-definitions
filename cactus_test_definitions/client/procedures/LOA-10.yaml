@@ -812,7 +812,7 @@ Steps:
       type: wait
       parameters:
         duration_seconds: 120
-      actions:
+    actions:
       - type: enable-steps
         parameters:
           steps:
