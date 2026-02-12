@@ -121,14 +121,16 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - WAIT-DEFAULT-DERC
+            - WAIT-OBSERVE-DEFAULT-DERC
       - type: remove-steps
         parameters:
           steps:
             - GET-DEFAULT-DERC
   
-  # Wait to observe the 30% default control
-  WAIT-DEFAULT-DERC:
+  # (b) Wait to observe the 30% default control
+  WAIT-OBSERVE-DEFAULT-DERC:
+    instructions:
+      - The device should ramp to DERP1 DefaultDERControl opModExpLimW = 30% (as per TS 5573 [b])
     event:
       type: wait
       parameters:
@@ -141,7 +143,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-DEFAULT-DERC
+            - WAIT-OBSERVE-DEFAULT-DERC
 
   # (c, d) - Create a DERControl at DERP 6 - set to 200% of max
   GET-DERC-1:
@@ -361,14 +363,16 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - WAIT-DEFAULT-DERC2
+            - WAIT-OBSERVE-DEFAULT-AFTER-DERC-3
       - type: remove-steps
         parameters:
           steps:
             - POST-DERC-3-RESPONSE-COMPLETED
 
-  # Wait to observe the 30% default control again
-  WAIT-DEFAULT-DERC2:
+  # (l) Wait to observe the 30% default control again
+  WAIT-OBSERVE-DEFAULT-AFTER-DERC-3:
+    instructions:
+      - The device should ramp to DERP1 DefaultDERControl opModExpLimW = 30% (as per TS 5573 [l])
     event:
       type: wait
       parameters:
@@ -382,7 +386,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-DEFAULT-DERC2
+            - WAIT-OBSERVE-DEFAULT-AFTER-DERC-3
 
   # (m, n) (i) Configure the first DERControl on DERP1
   GET-DERC-4:
@@ -493,14 +497,16 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - WAIT-DEFAULT-30-PERCENT
+            - WAIT-OBSERVE-DERC-5
       - type: remove-steps
         parameters:
           steps:
             - POST-DERC-4-RESPONSE-COMPLETED
 
-  # Wait to observe the 30% default control again
-  WAIT-DEFAULT-30-PERCENT:
+  # (q) Wait to observe the return to DERC 5
+  WAIT-OBSERVE-DERC-5:
+    instructions:
+      - The device should ramp to DERC5 opModExpLimW = 200% (as per TS 5573 [q])
     event:
       type: wait
       parameters:
@@ -513,7 +519,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-DEFAULT-30-PERCENT
+            - WAIT-OBSERVE-DERC-5
 
   # (s) Create a DERControl on DERP6 at 50%
   GET-DERC-6:
@@ -557,7 +563,7 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - WAIT-DERC-6
+            - WAIT-OBSERVE-DERC-6
       - type: remove-steps
         parameters:
           steps:
@@ -582,8 +588,10 @@ Steps:
           steps:
             - POST-DERC-5-RESPONSE-SUPERSEDED
 
-  # Observe DERControl 6
-  WAIT-DERC-6:
+  # (t) Observe DERControl 6
+  WAIT-OBSERVE-DERC-6:
+    instructions:
+      - The device should ramp to DERC6 opModExpLimW = 50% (as per TS 5573 [t])
     event:
       type: wait
       parameters:
@@ -597,7 +605,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-DERC-6
+            - WAIT-OBSERVE-DERC-6
 
   # (v) (i) Create a DERControl on DERP1 at 0%
   GET-DERC-7:
@@ -782,7 +790,7 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - WAIT-DERC-9
+            - WAIT-OBSERVE-DERC-9-10
       - type: remove-steps
         parameters:
           steps:
@@ -807,8 +815,10 @@ Steps:
           steps:
             - POST-DERC-10-RESPONSE-STARTED
 
-  # Wait to observe 20% on DERC9
-  WAIT-DERC-9:
+  # (z) Wait to observe 20% on DERC9
+  WAIT-OBSERVE-DERC-9-10:
+    instructions:
+      - The device should ramp to DERC 9/10 opModExpLimW = 20% (as per TS 5573 [z])
     event:
       type: wait
       parameters:
@@ -822,7 +832,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-DERC-9
+            - WAIT-OBSERVE-DERC-9-10
     
   # (bb) (i) Create an updated default for DERProgram 1 at 50%
   # (cc)
@@ -859,14 +869,16 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - WAIT-TEST-FINISH
+            - WAIT-OBSERVE-DERP-5-6-DEFAULTS
       - type: remove-steps
         parameters:
           steps:
             - GET-UPDATED-DEFAULT-DERP-6
 
   # (ee) Wait for DER to increase to 50%
-  WAIT-TEST-FINISH:
+  WAIT-OBSERVE-DERP-5-6-DEFAULTS:
+    instructions:
+      - The device should ramp to DERP 5 DefaultDERControl opModExpLimW = 50% (as per TS 5573 [ee])
     event:
       type: wait
       parameters:
@@ -875,4 +887,4 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-TEST-FINISH
+            - WAIT-OBSERVE-DERP-5-6-DEFAULTS
