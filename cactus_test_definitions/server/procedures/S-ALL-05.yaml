@@ -140,7 +140,7 @@ Steps:
     action: 
       type: refresh-resource
       parameters:
-        resource: EndDevice
+        resource: EndDeviceList
         expect_rejection_or_empty: true
 
   - id: 6 - AUTH MirrorUsagePoint
