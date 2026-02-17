@@ -1,0 +1,65 @@
+Description: Update Aggregator Certificate
+Category: Edge Cases
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client_current
+      client_type: aggregator
+    - id: client_new
+      client_type: aggregator
+  
+Steps:
+  - id: PRECONDITION 1 - CLIENT_CURRENT
+    client: client_current
+    repeat_until_pass: true
+    instructions:
+      - Create an EndDevice registration for client_current.
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+    checks:
+      - type: end-device # This will be the check that will block UNTIL there is an existing EndDevice registration
+        parameters:
+          matches_client: true
+
+  # Don't start the test with the new client having access
+  - id: PRECONDITION 2 - CLIENT_NEW REMOVE ACCESS
+    client: client_new
+    use_client_context: client_current
+    repeat_until_pass: true
+    instructions:
+      - Remove any access that client_new has to client_current's aggregator tenancy
+    action:
+      type: refresh-resource
+      parameters:
+        resource: EndDevice
+        expect_rejection: true
+
+  # Wait for the access to be granted
+  - id: 1A - CLIENT_NEW ENABLE ACCESS
+    client: client_new
+    use_client_context: client_current
+    repeat_until_pass: true
+    instructions:
+      - Enable client_new's access to client_current's aggregator tenancy
+    action:
+      type: refresh-resource
+      parameters:
+        resource: EndDevice
+        expect_rejection: false # The false value is explicitly allowing this action to retry on failure
+
+
+  # Ensure that the client_current access is preserved
+  - id: 1B - CLIENT_CURRENT RETAIN ACCESS
+    client: client_current
+    action:
+      type: refresh-resource
+      parameters:
+        resource: EndDevice
