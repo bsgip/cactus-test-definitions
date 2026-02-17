@@ -75,13 +75,23 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 660 # Wait for all controls to expire
+        duration_seconds: 480 # Wait 8 mins to ensure 5th control has started
     actions:
       - type: remove-steps
         parameters:
           steps:
             - WAIT-TEST-END
+      - type: enable-steps
+        parameters:
+          steps:
+            - FINISH-TEST
+  
+  FINISH-TEST:
+    instructions:
+        - Ensure that the device has adhered to all 5 der controls (approx 8-10 mins) before proceeding.
+    event:
+      type: proceed
+      parameters: {}
+    actions:
       - type: finish-test
         parameters: {}
-    instructions:
-      - Client should continue submitting regular readings for the duration of the test.
