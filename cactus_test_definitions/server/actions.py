@@ -50,9 +50,6 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
     "wait": {
         "duration_seconds": ParameterSchema(True, ParameterType.Integer)
     },  # Waits (doing nothing - blocking other step actions) until the specified time period has passed
-    "comms-status": {
-        "notifications_enabled": ParameterSchema(True, ParameterType.Boolean)  # Enable/Disble notification webhook
-    },  # Enables or disables certain communications
     "refresh-resource": {
         "resource": ParameterSchema(True, ParameterType.CSIPAusResource),
         "expect_rejection": ParameterSchema(False, ParameterType.Boolean),  # if set - expect 4XX and ErrorPayload
@@ -122,6 +119,9 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "sub_id": ParameterSchema(True, ParameterType.String),  # Must match a previously
     },  # Sends a Subscription deletion
     "respond-der-controls": {},  # Enumerates all known DERControls and sends a Response for any that require it
+    "forget": {
+        "resources": ParameterSchema(True, ParameterType.ListCSIPAusResource),  # What resources to forget?
+    },  # Forces the removal/forgetting of a client's store for the specified resource types
 }
 VALID_ACTION_NAMES: set[str] = set(ACTION_PARAMETER_SCHEMA.keys())
 
