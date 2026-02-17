@@ -107,10 +107,10 @@ Steps:
   WAIT-POWER-OFF:
     instructions:
       - Power cycle (turn off then back on again) the communications client, and while it is offline, disable the communications interface between the client and utility server (e.g. by unplugging an appropriate network cable).
+      - AFTER completing the above instructions, proceed to the next step by clicking the button below.
     event:
-      type: wait
-      parameters:
-        duration_seconds: 240 # Give the user time to power off the device (needs to happen before DER control sends)
+      type: proceed
+      parameters: {}
     actions:
       - type: create-der-control
         parameters:
