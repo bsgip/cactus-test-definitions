@@ -13,6 +13,7 @@ from cactus_test_definitions.errors import TestProcedureDefinitionError
         (Event("wait", {"duration_seconds": 3}), True),
         (Event("wait", {"duration_seconds": 3, "other": 4}), False),
         (Event("GET-request-received", {"endpoint": "/dcap"}), True),
+        (Event("proceed", {}), True),
     ],
 )
 def test_validate_event_parameters(event: Event, is_valid: bool):
