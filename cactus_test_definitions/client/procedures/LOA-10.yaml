@@ -878,12 +878,15 @@ Steps:
   WAIT-OBSERVE-DERP-5-6-DEFAULTS:
     instructions:
       - The device should ramp to DERP 5 DefaultDERControl opModImpLimW = 50% (as per TS 5573 [ee])
+      - Click Proceed AFTER the DER is importing at the correct limit. 
     event:
-      type: wait
-      parameters:
-        duration_seconds: 120
+      type: proceed
+      parameters: {}
     actions:
       - type: remove-steps
         parameters:
           steps:
             - WAIT-OBSERVE-DERP-5-6-DEFAULTS
+      - type: finish-test
+        parameters: {}
+
