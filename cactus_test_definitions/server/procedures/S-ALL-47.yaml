@@ -1,0 +1,84 @@
+Description: Validation of Scaling Factors
+Category: Control
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+  
+Steps:
+  - id: 1 - 100K DERCONTROL
+    repeat_until_pass: true
+    instructions:
+      - The utility server is configured with a DERControl with opModExpLimW = 100,000 Watts.
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - DERControl
+          - MirrorUsagePointList
+    checks:
+      - type: der-control
+        parameters:
+          minimum_count: 1
+          opModExpLimW: 100000
+
+  # Our site level readings will transmit with pow10 of 1
+  - id: 2A - ENSURE SITE MUP/MMR
+    action: 
+      type: upsert-mup
+      parameters:
+        mup_id: mup_site
+        location: Site
+        pow10_multiplier: 1
+        reading_types: 
+          - ActivePowerAverage
+    checks:
+      - type: mirror-usage-point
+        parameters:
+          location: Site
+          matches: true
+          reading_types: 
+          - ActivePowerAverage
+
+  - id: 2B - POST READINGS
+    action: 
+      type: insert-readings
+      parameters:
+        mup_id: mup_site
+        values:
+          ActivePowerAverage: [100000] # 100k when combined with pow10 of 1
+
+  # Our device level readings will transmit with pow10 of 0
+  - id: 3A - ENSURE DEVICE MUP/MMR
+    action: 
+      type: upsert-mup
+      parameters:
+        mup_id: mup_device
+        location: Device
+        pow10_multiplier: 0
+        reading_types: 
+          - ActivePowerAverage
+    checks:
+      - type: mirror-usage-point
+        parameters:
+          location: Device
+          matches: true
+          reading_types: 
+          - ActivePowerAverage
+
+  - id: 3B - POST BAD POW10 READINGS
+    action: 
+      type: insert-readings
+      parameters:
+        mup_id: mup_device
+        expect_rejection: true
+        values:
+          ActivePowerAverage: [100000] # 100k is larger than the int32 max (pow10 is zero)
+          
+
+  
