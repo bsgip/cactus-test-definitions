@@ -31,14 +31,14 @@ Steps:
           minimum_count: 0
           maximum_count: 0
   
-  - id: PRECONDITION2 - DERC LIST SUBSCRIBE
+  - id: PRECONDITION 2 - DERC LIST SUBSCRIBE
     action: 
       type: create-subscription
       parameters:
         sub_id: derc_list_sub
         resource: DERControlList
 
-  - id: STEP1 - DISABLE NOTIFICATIONS
+  - id: 1A - DISABLE NOTIFICATIONS
     action: 
       type: notifications
       parameters:
@@ -49,7 +49,7 @@ Steps:
   # We force the admin to create the DERControl we want AFTER shutting down notifications
   # This will allow us to check (via polling) whether the DERControl has been created  
   # but NOT allow the notification to arrive
-  - id: STEP1 - AWAIT DERCONTROL
+  - id: 1B - AWAIT DERCONTROL
     repeat_until_pass: true
     instructions:
       - Schedule a future DERControl with opModExpLimW=0
@@ -67,20 +67,20 @@ Steps:
           event_status: 0 # Scheduled
 
   # By clearing out the DERControl - we can let any future DERControl's we discover to happen via notification
-  - id: STEP1 - FORGET
+  - id: 1C - FORGET
     action: 
       type: forget
       parameters:
         resources:
           - DERControl
 
-  - id: STEP1 - WAIT
+  - id: 1D - WAIT
     action: 
       type: wait
       parameters:
         duration_seconds: 300
 
-  - id: STEP2 - ENABLE NOTIFICATIONS
+  - id: 2A - ENABLE NOTIFICATIONS
     action: 
       type: notifications
       parameters:
@@ -88,7 +88,7 @@ Steps:
         disable: false
 
 
-  - id: STEP2 - AWAIT DERCONTROL NOTIFICATION
+  - id: 2B - AWAIT DERCONTROL NOTIFICATION
     repeat_until_pass: true
     instructions: 
       - The notification from the DERControl.
@@ -107,7 +107,7 @@ Steps:
   # Ensure that no other DERControls were snuck in
   # Technically an admin could get around this by scheduling multiple controls to expire at the right times
   # but trying to guard against "malicious" compliance is out of scope
-  - id: STEP2 - CHECK DERCONTROLS
+  - id: 2C - CHECK DERCONTROLS
     action: 
       type: discovery
       parameters:
