@@ -1,0 +1,122 @@
+Description: Communication Loss
+Category: Subscription / Notification
+Classes:
+ - A
+
+TargetVersions:
+ - v1.2
+
+Preconditions:
+  required_clients:
+    - id: client
+  
+Steps:
+  - id: PRECONDITION 1 - NO DERCONTROLS
+    repeat_until_pass: true
+    instructions:
+      - Create an EndDevice registration for client and ensure the DERControlList is empty. 
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - Subscription
+          - DERControl
+    checks:
+      - type: end-device 
+        parameters:
+          matches_client: true
+      - type: der-control
+        parameters:
+          minimum_count: 0
+          maximum_count: 0
+  
+  - id: PRECONDITION2 - DERC LIST SUBSCRIBE
+    action: 
+      type: create-subscription
+      parameters:
+        sub_id: derc_list_sub
+        resource: DERControlList
+
+  - id: STEP1 - DISABLE NOTIFICATIONS
+    action: 
+      type: notifications
+      parameters:
+        sub_id: derc_list_sub
+        disable: true
+  
+
+  # We force the admin to create the DERControl we want AFTER shutting down notifications
+  # This will allow us to check (via polling) whether the DERControl has been created  
+  # but NOT allow the notification to arrive
+  - id: STEP1 - AWAIT DERCONTROL
+    repeat_until_pass: true
+    instructions:
+      - Schedule a future DERControl with opModExpLimW=0
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - DERControl
+    checks:
+      - type: der-control
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          opModExpLimW: 0
+          event_status: 0 # Scheduled
+
+  # By clearing out the DERControl - we can let any future DERControl's we discover to happen via notification
+  - id: STEP1 - FORGET
+    action: 
+      type: forget
+      parameters:
+        resources:
+          - DERControl
+
+  - id: STEP1 - WAIT
+    action: 
+      type: wait
+      parameters:
+        duration_seconds: 300
+
+  - id: STEP2 - ENABLE NOTIFICATIONS
+    action: 
+      type: notifications
+      parameters:
+        sub_id: derc_list_sub
+        disable: false
+
+
+  - id: STEP2 - AWAIT DERCONTROL NOTIFICATION
+    repeat_until_pass: true
+    instructions: 
+      - The notification from the DERControl.
+    action: 
+      type: notifications
+      parameters:
+        sub_id: derc_list_sub
+        collect: true
+    checks:
+      - type: der-control
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          opModExpLimW: 0
+
+  # Ensure that no other DERControls were snuck in
+  # Technically an admin could get around this by scheduling multiple controls to expire at the right times
+  # but trying to guard against "malicious" compliance is out of scope
+  - id: STEP2 - CHECK DERCONTROLS
+    action: 
+      type: discovery
+      parameters:
+        resources:
+          - DERControl
+    checks:
+      - type: der-control
+        parameters:
+          minimum_count: 1 
+          maximum_count: 1
+          opModExpLimW: 0
+          event_status: 0 # Scheduled
