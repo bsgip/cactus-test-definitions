@@ -31,7 +31,7 @@ Preconditions:
     - type: create-der-control
       parameters:
         start: $(now)
-        duration_seconds: 900
+        duration_seconds: 300
         opModEnergize: true
     - type: create-der-control
       parameters:
@@ -70,7 +70,7 @@ Steps:
       checks:
         - type: der-status-contents
           parameters:
-            genConnectStatus_bit0: false
+            genConnectStatus_bit2: false
     actions:
       - type: remove-steps
         parameters:
@@ -82,7 +82,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 600
+        duration_seconds: 280
     actions:
       - type: enable-steps
         parameters:
@@ -103,7 +103,7 @@ Steps:
       checks:
         - type: der-status-contents
           parameters:
-            genConnectStatus_bit0: true
+            genConnectStatus_bit2: true
     actions:
       - type: remove-steps
         parameters:
