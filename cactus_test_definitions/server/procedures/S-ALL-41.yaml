@@ -16,8 +16,8 @@ Steps:
     client: client
     instructions:
       - Create an EndDevice registration.
-      - Configure an active control with opModExpLimW and opModImpLimW = 200% of the DERs rated active power, responseRequired = 03, and replyTo set to the response endpoint on the test utility server.
-    action: 
+      - Configure a scheduled control with opModExpLimW and opModImpLimW = 200% of the DERs rated active power, responseRequired = 03, and replyTo set to the response endpoint on the test utility server.
+    action:
       type: discovery
       parameters:
         resources:
