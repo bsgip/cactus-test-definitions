@@ -110,6 +110,7 @@ action:
 | `delete-subscription` | `sub_id: str` | Sends a deletion for a previously created Subscription. |
 | `respond-der-controls` | None | Enumerates all known DERControls and sends a Response for any that require it. |
 | `forget` | `resources: list[CSIPAusResource]` | Forces the client context to clear any entries of the specified type. |
+| `simulate-client` | `frequency_seconds: int` `total_simulations: int` | Simulates a real client (polling, responses and readings) every `frequency_seconds` seconds. Will repeat the simulation a total of `total_simulations` (total duration being approximately `total_simulations` * `frequency_seconds`) |
 
 
 ### Checks
