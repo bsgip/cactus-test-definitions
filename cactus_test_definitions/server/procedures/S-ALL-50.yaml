@@ -32,8 +32,8 @@ Steps:
     action:
       type: simulate-client
       parameters:
-          duration_seconds: 300
-          post_poll_rate_seconds: 60
+          frequency_seconds: 60
+          total_simulations: 4320 # 72 hours if frequency_seconds is 60
     
   - id: 2 - No change in Registration
     action:
