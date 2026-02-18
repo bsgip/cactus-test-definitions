@@ -68,11 +68,10 @@ Steps:
   # (precondition)
   PRECONDITION-STARTUP-WAIT:
     instructions:
-      - This step is to give time for the DER to start importing/exporting at least 50% of its rated power.
+      - Click proceed ONLY AFTER the DER is importing/exporting at least 50% of its rated power.
     event:
-      type: wait
-      parameters:
-        duration_seconds: 120
+      type: proceed
+      parameters: {}
     actions:
       - type: enable-steps
         parameters:

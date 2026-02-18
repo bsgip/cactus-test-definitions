@@ -61,11 +61,27 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 500
+        duration_seconds: 360
     actions:
       - type: remove-steps
         parameters:
           steps:
             - WAIT-TEST-END
+      - type: enable-steps
+        parameters:
+          steps:
+              - FINISH-TEST
+
+  FINISH-TEST:
+    instructions: 
+      - AFTER the last DERControl is correctly adhered to, click proceed to end the test.
+    event:
+        type: proceed
+        parameters: {}
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - FINISH-TEST
       - type: finish-test
         parameters: {}
