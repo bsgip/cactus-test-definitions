@@ -69,11 +69,12 @@ Steps:
             - WAIT-TEST-END
       - type: enable-steps
         parameters:
-        steps:
-            - FINISH-TEST
+          steps:
+              - FINISH-TEST
 
   FINISH-TEST:
-    instructions: AFTER the last DERControl is correctly adhered to, click proceed to end the test.
+    instructions: 
+      - AFTER the last DERControl is correctly adhered to, click proceed to end the test.
     event:
         type: proceed
         parameters: {}
