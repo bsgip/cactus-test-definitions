@@ -52,7 +52,7 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
     },  # Waits (doing nothing - blocking other step actions) until the specified time period has passed
     "refresh-resource": {
         "resource": ParameterSchema(True, ParameterType.CSIPAusResource),
-        "expect_rejection": ParameterSchema(False, ParameterType.Boolean),  # if set - expect 4XX and ErrorPayload
+        "expect_rejection": ParameterSchema(False, ParameterType.Boolean),  # True - expect 4XX and ErrorPayload.
         "expect_rejection_or_empty": ParameterSchema(
             False, ParameterType.Boolean
         ),  # Similar to expect_rejection but also allow en empty list (if it's a list resource)
@@ -122,6 +122,10 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
     "forget": {
         "resources": ParameterSchema(True, ParameterType.ListCSIPAusResource),  # What resources to forget?
     },  # Forces the removal/forgetting of a client's store for the specified resource types
+    "simulate-client": {
+        "frequency_seconds": ParameterSchema(True, ParameterType.Integer),
+        "total_simulations": ParameterSchema(True, ParameterType.Integer),
+    },  # Client will perform discovery, reading and response handling at the specified rate for total_simulations
 }
 VALID_ACTION_NAMES: set[str] = set(ACTION_PARAMETER_SCHEMA.keys())
 

@@ -65,11 +65,11 @@ class TestProcedureId(StrEnum):
     S_ALL_47 = "S-ALL-47"
     S_ALL_48 = "S-ALL-48"
     S_ALL_49 = "S-ALL-49"
-    # 50
+    S_ALL_50 = "S-ALL-50"
     S_ALL_51 = "S-ALL-51"
     S_ALL_52 = "S-ALL-52"
     S_ALL_53 = "S-ALL-53"
-    # 54
+    S_ALL_54 = "S-ALL-54"
     S_ALL_55 = "S-ALL-55"
     S_ALL_56 = "S-ALL-56"
     S_ALL_57 = "S-ALL-57"
