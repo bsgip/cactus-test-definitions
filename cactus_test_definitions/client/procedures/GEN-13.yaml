@@ -74,7 +74,6 @@ Steps:
   FINISH-TEST:
     instructions: AFTER the last DERControl is correctly adhered to, click proceed to end the test.
     event:
-      - event:
         type: proceed
         parameters: {}
     actions:

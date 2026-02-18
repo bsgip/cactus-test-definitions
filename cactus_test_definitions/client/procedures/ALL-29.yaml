@@ -93,5 +93,9 @@ Steps:
       type: proceed
       parameters: {}
     actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - FINISH-TEST
       - type: finish-test
         parameters: {}
