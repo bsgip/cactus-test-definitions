@@ -53,7 +53,6 @@ Steps:
       type: refresh-resource
       parameters:
         resource: EndDevice
-        expect_rejection: false # The false value is explicitly allowing this action to retry on failure
 
 
   # Ensure that the client_current access is preserved
