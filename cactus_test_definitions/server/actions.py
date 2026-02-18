@@ -122,6 +122,10 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
     "forget": {
         "resources": ParameterSchema(True, ParameterType.ListCSIPAusResource),  # What resources to forget?
     },  # Forces the removal/forgetting of a client's store for the specified resource types
+    "simulate-client": {
+        "frequency_seconds": ParameterSchema(True, ParameterType.Integer),
+        "total_simulations": ParameterSchema(True, ParameterType.Integer),
+    },  # Client will perform discovery, reading and response handling at the specified rate for total_simulations
 }
 VALID_ACTION_NAMES: set[str] = set(ACTION_PARAMETER_SCHEMA.keys())
 
