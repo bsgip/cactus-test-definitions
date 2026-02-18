@@ -88,7 +88,7 @@ Steps:
   
   FINISH-TEST:
     instructions:
-        - Ensure that the device has adhered to all 5 der controls (approx 8-10 mins) before proceeding.
+      - Ensure that the device has adhered to all 5 der controls (approx 8-10 mins) before proceeding.
     event:
       type: proceed
       parameters: {}
