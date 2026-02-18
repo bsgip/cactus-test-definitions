@@ -16,7 +16,7 @@ Steps:
     client: client
     instructions:
       - Create an EndDevice registration.
-      - Configure a scheduled control with opModExpLimW and opModImpLimW = 200% of the DERs rated active power, responseRequired = 03, and replyTo set to the response endpoint on the test utility server.
+      - Configure a scheduled control with opModExpLimW = 200% of the DERs rated active power, responseRequired = 03, and replyTo set to the response endpoint on the test utility server.
     action:
       type: discovery
       parameters:
@@ -32,7 +32,6 @@ Steps:
           minimum_count: 1
           maximum_count: 1
           opModExpLimW: $(setMaxW * 2)
-          opModImpLimW: $(setMaxW * 2)
           # replyTo should also be set but this check is implicit in later communications
           event_status: 0 # Scheduled
 
@@ -59,7 +58,6 @@ Steps:
           minimum_count: 1
           maximum_count: 1
           opModExpLimW: $(setMaxW * 2)
-          opModImpLimW: $(setMaxW * 2)
           event_status: 1 # Active
   
   - id: (2b) DERControl 1 - Started
@@ -81,7 +79,6 @@ Steps:
           minimum_count: 1
           maximum_count: 1
           opModExpLimW: $(setMaxW * 2)
-          opModImpLimW: $(setMaxW * 2)
           event_status: 2 # Completed
 
   - id: (3b) DERControl 1 - Completed
@@ -117,7 +114,7 @@ Steps:
     repeat_until_pass: true
     client: client
     instructions:
-      - The utility server is configured with an active control with opModExpLimW and opModImpLimW = 200% of the DERs rated active power, responseRequired = 03 and replyTo set to the response endpoint on the test utility server, to begin in 5 minutes.
+      - The utility server is configured with a scheduled control with opModExpLimW = 200% of the DERs rated active power, responseRequired = 03 and replyTo set to the response endpoint on the test utility server, to begin in 5 minutes.
     action: 
       type: discovery
       parameters:
@@ -129,7 +126,6 @@ Steps:
           minimum_count: 1
           maximum_count: 1
           opModExpLimW: $(setMaxW * 2)
-          opModImpLimW: $(setMaxW * 2)
           responseRequired: 3
           # replyTo should also be set but this check is implicit in later communications
           event_status: 0 # Scheduled
@@ -160,7 +156,6 @@ Steps:
           minimum_count: 1
           maximum_count: 1
           opModExpLimW: $(setMaxW * 2)
-          opModImpLimW: $(setMaxW * 2)
           event_status: 1 # Active
 
   - id: (4d) DERControl 2 - Started
@@ -184,7 +179,6 @@ Steps:
           minimum_count: 1
           maximum_count: 1
           opModExpLimW: $(setMaxW * 2)
-          opModImpLimW: $(setMaxW * 2)
           responseRequired: 3
           event_status: 2 # Cancelled
   
@@ -208,7 +202,6 @@ Steps:
           minimum_count: 1
           maximum_count: 1
           opModExpLimW: $(setMaxW * 2)
-          opModImpLimW: $(setMaxW * 2)
           event_status: 2 # Cancelled
 
   - id: (5b) DERControl 2 - Respond to cancelled DERControl
@@ -238,7 +231,7 @@ Steps:
     repeat_until_pass: true
     client: client
     instructions:
-      - The utility server is configured with an active control with opModExpLimW and opModImpLimW = 200% of the DERs rated active power, responseRequired = 03 and replyTo set to the response endpoint on the test utility server, to begin in 10 minutes.
+      - The utility server is configured with a scheduled control with opModExpLimW = 200% of the DERs rated active power, responseRequired = 03 and replyTo set to the response endpoint on the test utility server, to begin in 10 minutes.
     action: 
       type: discovery
       parameters:
@@ -250,7 +243,6 @@ Steps:
           minimum_count: 1
           maximum_count: 1
           opModExpLimW: $(setMaxW * 2)
-          opModImpLimW: $(setMaxW * 2)
           responseRequired: 3
           # replyTo should also be set but this check is implicit in later communications
           event_status: 0 # Scheduled
@@ -277,7 +269,6 @@ Steps:
           minimum_count: 1
           maximum_count: 1
           opModExpLimW: $(setMaxW * 2)
-          opModImpLimW: $(setMaxW * 2)
           responseRequired: 3
           event_status: 2 # Cancelled
 
@@ -290,7 +281,7 @@ Steps:
     repeat_until_pass: true
     client: client
     instructions:
-      - The utility server configures an active control with opModExpLimW and opModImpLimW = 200% of the DERs rated active power to begin in 10 minutes.
+      - The utility server configures a scheduled control with opModExpLimW = 200% of the DERs rated active power to begin in 10 minutes.
     action: 
       type: discovery
       parameters:
@@ -302,7 +293,6 @@ Steps:
           minimum_count: 1
           maximum_count: 1
           opModExpLimW: $(setMaxW * 2)
-          opModImpLimW: $(setMaxW * 2)
           event_status: 0 # Scheduled
 
   - id: (8b) Respond to scheduled DERControl 4
@@ -314,7 +304,7 @@ Steps:
     repeat_until_pass: true
     client: client
     instructions:
-      - The utility server configures an active control with the same primacy and an overlapping control window.
+      - The utility server configures a scheduled control with the same primacy and an overlapping control window.
     action: 
       type: discovery
       parameters:
@@ -326,7 +316,6 @@ Steps:
           minimum_count: 1 # The control above should now be set to superseeded not scheduled, so still only one expected.
           maximum_count: 1
           opModExpLimW: $(setMaxW * 2)
-          opModImpLimW: $(setMaxW * 2)
           event_status: 0 # Scheduled
 
   - id: (9b) Respond to scheduled DERControls 4 and 5
@@ -346,7 +335,6 @@ Steps:
       - type: der-control
         parameters:
           opModExpLimW: $(setMaxW * 2)
-          opModImpLimW: $(setMaxW * 2)
           event_status: 4 # Superseeded
           minimum_count: 1
           maximum_count: 1

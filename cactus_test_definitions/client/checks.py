@@ -113,6 +113,11 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "all": ParameterSchema(False, ParameterType.Boolean),
         "subject_tag": ParameterSchema(False, ParameterType.String),
     },
+    "all-polls-at-correct-time": {
+        "endpoint": ParameterSchema(True, ParameterType.String),  # e.g. /dcap
+        "poll_interval_seconds": ParameterSchema(True, ParameterType.Integer),
+        "request_type_str": ParameterSchema(True, ParameterType.String),  # e.g. GET, POST
+    },
 }
 VALID_CHECK_NAMES: set[str] = set(CHECK_PARAMETER_SCHEMA.keys())
 
