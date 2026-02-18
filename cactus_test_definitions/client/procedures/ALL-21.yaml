@@ -193,6 +193,37 @@ Steps:
       type: wait
       parameters:
         duration_seconds: 1500 # 25 minutes
+    checks:
+      - type: all-polls-at-correct-time
+        parameters:
+          endpoint: /dcap
+          poll_interval_seconds: 60
+          request_type_str: GET
+      - type: all-polls-at-correct-time
+        parameters:
+          endpoint: /edev
+          poll_interval_seconds: 60
+          request_type_str: GET
+      - type: all-polls-at-correct-time
+        parameters:
+          endpoint: /edev/1/fsa
+          poll_interval_seconds: 60
+          request_type_str: GET
+      - type: all-polls-at-correct-time
+        parameters:
+          endpoint: /edev/1/der
+          poll_interval_seconds: 60
+          request_type_str: GET
+      - type: all-polls-at-correct-time
+        parameters:
+          endpoint: /edev/1/fsa/1/derp
+          poll_interval_seconds: 60
+          request_type_str: GET
+      - type: all-polls-at-correct-time
+        parameters:
+          endpoint: /mup
+          poll_interval_seconds: 60
+          request_type_str: POST
     actions:
       - type: remove-steps
         parameters:
