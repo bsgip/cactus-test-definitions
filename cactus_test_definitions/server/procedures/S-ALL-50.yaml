@@ -34,14 +34,7 @@ Steps:
       parameters:
           frequency_seconds: 60
           total_simulations: 4320 # 72 hours if frequency_seconds is 60
-    
-  - id: 2 - No change in Registration
-    action:
-      type: discovery
-      parameters:
-        resources:
-          - EndDevice
     checks:
       - type: end-device
         parameters:
-          matches_client: true
+          matches_client: true # Client should never get de-registered
