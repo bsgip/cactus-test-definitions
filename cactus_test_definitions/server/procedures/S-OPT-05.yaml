@@ -66,4 +66,4 @@ Steps:
       - type: mirror-usage-point
         parameters:
           matches: true
-          poll_rate_seconds: 300
+          post_rate_seconds: 300
