@@ -14,7 +14,7 @@ Steps:
   - id: PRECONDITION
     repeat_until_pass: true
     instructions:
-      - The utility server shall be configured to change all default MirrorUsagePoint post-rates for the test client from 60s to 300s.
+      - Register an end device
     action: 
       type: discovery
       parameters:
@@ -26,6 +26,43 @@ Steps:
       - type: end-device 
         parameters:
           matches_client: true
+
+  - id: CREATE MUP
+    action: 
+      type: upsert-mup
+      parameters:
+        mup_id: mupa
+        location: Device
+        reading_types: 
+          - ActivePowerAverage
+    checks:
+      - type: mirror-usage-point
+        parameters:
+          matches: true
+    
+  - id: ENSURE MUP POLLRATE
+    repeat_until_pass: true
+    instructions:
+      - The utility server shall be configured to change all default MirrorUsagePoint post-rates for the test client to 60s.
+    action: 
+      type: refresh-resource
+      parameters:
+        resource: MirrorUsagePoint
+    checks:
+      - type: mirror-usage-point
+        parameters:
+          matches: true
+          post_rate_seconds: 60
+
+  - id: UPDATE-MUP-POLLRATE
+    repeat_until_pass: true
+    instructions:
+      - The utility server shall be configured to change all default MirrorUsagePoint post-rates for the test client from 60s to 300s.
+    action: 
+      type: refresh-resource
+      parameters:
+        resource: MirrorUsagePoint
+    checks:
       - type: mirror-usage-point
         parameters:
           matches: true
