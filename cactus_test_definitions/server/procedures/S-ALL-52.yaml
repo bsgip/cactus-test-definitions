@@ -9,7 +9,9 @@ TargetVersions:
 Preconditions:
   required_clients:
     - id: CLIENT-A
+      client_type: device
     - id: CLIENT-B
+      client_type: device
 
 Steps:
   - id: PRECONDITION - register end device on clientA.
