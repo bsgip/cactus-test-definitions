@@ -52,7 +52,7 @@ Steps:
   - id: 1B - AWAIT DERCONTROL
     repeat_until_pass: true
     instructions:
-      - Schedule a future DERControl with opModExpLimW=0
+      - Schedule a DERControl to start in 1 hour with opModExpLimW=0
     action: 
       type: discovery
       parameters:
