@@ -103,6 +103,7 @@ Steps:
           minimum_count: 1
           maximum_count: 1
           opModExpLimW: 0
+          event_status: 0 # Scheduled
 
   # Ensure that no other DERControls were snuck in
   # Technically an admin could get around this by scheduling multiple controls to expire at the right times
