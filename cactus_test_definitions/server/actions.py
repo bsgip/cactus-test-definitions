@@ -72,7 +72,7 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "expect_rejection": ParameterSchema(False, ParameterType.Boolean),  # If set - expect 4XX and ErrorPayload
         "mmr_mrids": ParameterSchema(
             False, ParameterType.ListString
-        ),  # Must correspond 1-1 with reading_types. Used for forcing specific mrid values
+        ),  # Must correspond 1-1 with reading_types. Used for forcing specific mrid values (must be 32 hex chars)
         "pow10_multiplier": ParameterSchema(
             False, ParameterType.Integer
         ),  # Force the use a particular pow10. Defaults to 0 otherwise
