@@ -57,6 +57,9 @@ Steps:
         reading_types: 
           - ActivePowerAverage
           - VoltageSinglePhaseAverage
+        mmr_mrids:
+          - BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+          - CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
         location: Device  # Update the roleflage
     checks:
       - type: mirror-usage-point
@@ -76,6 +79,9 @@ Steps:
         values:
           ActivePowerAverage: [5000]
           VoltageSinglePhaseAverage: [240.0]
+        mmr_mrids:
+          - BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+          - CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
   - id: STEP 2 - UPDATE READING # Post MirrorMeterReading with same mmr mRID but different value
     action: 
@@ -95,6 +101,9 @@ Steps:
         reading_types:
           - ReactivePowerAverage  # From active power
           - VoltageSinglePhaseAverage
+        mmr_mrids:
+          - BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+          - CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
         location: Device
     checks:
       - type: mirror-usage-point
@@ -104,4 +113,7 @@ Steps:
           reading_types:
             - ReactivePowerAverage
             - VoltageSinglePhaseAverage
+          mmr_mrids:
+          - BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+          - CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
           location: Device

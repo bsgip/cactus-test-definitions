@@ -83,6 +83,9 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "values": ParameterSchema(
             True, ParameterType.ReadingTypeValues
         ),  # The sequences of values to send at the MUP post rate
+        "mmr_mrids": ParameterSchema(
+            False, ParameterType.ListString
+        ),  # Must correspond 1-1 with values. Used for forcing specific mrid values
         "expect_rejection": ParameterSchema(False, ParameterType.Boolean),  # If set - expect 4XX and ErrorPayload
     },  # Sends readings - validates that the telemetry is parsed correctly by the server
     "upsert-der-status": {
