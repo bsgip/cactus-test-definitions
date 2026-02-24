@@ -34,7 +34,7 @@ Steps:
           rampTms: null
           event_status: 1 # Active
     
-  - id: (1) De-energize
+  - id: (1) Disconnect
     repeat_until_pass: true
     client: client
     instructions:
@@ -58,7 +58,7 @@ Steps:
           rampTms: null
           event_status: 1 # Active
       
-  - id: (2) Energize
+  - id: (2) Connect
     repeat_until_pass: true
     client: client
     instructions:
