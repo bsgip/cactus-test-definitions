@@ -71,6 +71,9 @@ Steps:
           reading_types: 
           - ActivePowerAverage
 
+  # Note: This is a slight change from the 100k limit prescribed in Step 3
+  # This is because the 100k limit is well within the int48 limit set for Reading.value
+  # We've adjusted the amount to set outside the ACTUAL int48 maximum
   - id: 3B - POST BAD POW10 READINGS
     action: 
       type: insert-readings
@@ -78,7 +81,7 @@ Steps:
         mup_id: mup_device
         expect_rejection: true
         values:
-          ActivePowerAverage: [100000] # 100k is larger than the int32 max (pow10 is zero)
+          ActivePowerAverage: [3000000000000000] # 30 peta watts (3*10^14 Watts) is larger than the int48 maximum
           
 
   
