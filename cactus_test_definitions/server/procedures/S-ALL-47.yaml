@@ -81,7 +81,7 @@ Steps:
         mup_id: mup_device
         expect_rejection: true
         values:
-          ActivePowerAverage: [3000000000000000] # 30 peta watts (3*10^14 Watts) is larger than the int48 maximum
+          ActivePowerAverage: [3000000000000000] # 3 peta watts (3*10^15 Watts) is greater than int48 max (2.8*10^14)
           
 
   
