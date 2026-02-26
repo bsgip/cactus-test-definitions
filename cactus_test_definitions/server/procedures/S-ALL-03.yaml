@@ -10,7 +10,7 @@ Preconditions:
   required_clients:
     - id: client
       client_type: aggregator
-  
+
 Steps:
   - id: PRECONDITION
     repeat_until_pass: true
@@ -23,22 +23,16 @@ Steps:
       parameters:
         resources:
           - DeviceCapability
-          - Time
-          - MirrorUsagePointList
           - EndDevice
-          - DER
     checks:
       - type: discovered
         parameters:
           resources:
             - DeviceCapability
-            - Time
-            - MirrorUsagePointList
             - EndDeviceList
       - type: end-device # This will be the check that will block if there is an existing EndDevice registration
         parameters:
           matches_client: false 
-      - type: time-synced
 
   - id: REGISTER
     action: 
@@ -60,11 +54,15 @@ Steps:
       parameters:
         resources:
           - DER
+          - Time
+          - MirrorUsagePointList
     checks:
       - type: discovered
         parameters:
           links:
+            - Time
+            - MirrorUsagePointList
             - DERCapability
             - DERSettings
             - DERStatus
-    
+      - type: time-synced
