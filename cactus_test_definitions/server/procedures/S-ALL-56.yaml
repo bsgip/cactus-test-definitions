@@ -20,8 +20,6 @@ Steps:
       parameters:
         resources:
           - DeviceCapability
-          - Time
-          - MirrorUsagePointList
           - EndDevice
     checks:
       - type: end-device # Block UNTIL there is no existing EndDevice registration
