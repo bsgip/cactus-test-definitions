@@ -35,11 +35,72 @@ class AdminInstruction:
 ADMIN_INSTRUCTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
     # Ensure an EndDevice registration exists (or does not exist) for the client.
     # has_der_list=True ensures the DER record includes DERCapabilityLink, DERSettingsLink, DERStatusLink.
+    # Ensure an EndDevice registration exists (or does not exist) for the client.
+    # has_der_list=True ensures the DER record includes DERCapabilityLink, DERSettingsLink, DERStatusLink.
     "ensure-end-device": {
         "registered": ParameterSchema(True, ParameterType.Boolean),
         "client_type": ParameterSchema(False, ParameterType.String),  # "device" or "aggregator"
         "has_der_list": ParameterSchema(False, ParameterType.Boolean),
         "has_registration_link": ParameterSchema(False, ParameterType.Boolean),
+    },
+    # Ensure the MirrorUsagePointList is empty (no registered MUPs).
+    "ensure-mup-list-empty": {},
+    # Ensure a FunctionSetAssignment is attached to the client's EndDevice.
+    # annotation is a label used to reference this FSA from later instructions (e.g. in ensure-der-program).
+    "ensure-fsa": {
+        "annotation": ParameterSchema(False, ParameterType.String),
+        "primacy": ParameterSchema(False, ParameterType.Integer),
+    },
+    # Ensure a DERProgram exists within the FSA identified by fsa_annotation.
+    "ensure-der-program": {
+        "fsa_annotation": ParameterSchema(False, ParameterType.String),
+        "primacy": ParameterSchema(False, ParameterType.Integer),
+    },
+    # Grant or revoke a client's access to the aggregator tenancy under test.
+    # Covers the ENABLE/REMOVE ACCESS pattern from multi-client certificate rotation tests.
+    "set-client-access": {
+        "granted": ParameterSchema(True, ParameterType.Boolean),
+    },
+    # Ensure the DERControlList is accessible to the client, optionally requiring it to be subscribable.
+    "ensure-der-control-list": {
+        "subscribable": ParameterSchema(False, ParameterType.Boolean),
+    },
+    # Create an active DERControl on the server. All control mode parameters are optional;
+    # at least one should be provided. Variable expressions (e.g. $(setMaxW * 0.3)) are supported.
+    "create-der-control": {
+        "opModExpLimW": ParameterSchema(False, ParameterType.Float),
+        "opModImpLimW": ParameterSchema(False, ParameterType.Float),
+        "opModGenLimW": ParameterSchema(False, ParameterType.Float),
+        "opModLoadLimW": ParameterSchema(False, ParameterType.Float),
+        "opModConnect": ParameterSchema(False, ParameterType.Boolean),
+        "opModEnergize": ParameterSchema(False, ParameterType.Boolean),
+        "opModFixedW": ParameterSchema(False, ParameterType.Float),
+        "rampTms": ParameterSchema(False, ParameterType.Integer),
+        "duration_seconds": ParameterSchema(False, ParameterType.Integer),
+        "primacy": ParameterSchema(False, ParameterType.Integer),
+    },
+    # Create or replace the DefaultDERControl on the server. Variable expressions are supported.
+    "create-default-der-control": {
+        "opModExpLimW": ParameterSchema(False, ParameterType.Float),
+        "opModImpLimW": ParameterSchema(False, ParameterType.Float),
+        "opModGenLimW": ParameterSchema(False, ParameterType.Float),
+        "opModLoadLimW": ParameterSchema(False, ParameterType.Float),
+        "setGradW": ParameterSchema(False, ParameterType.Integer),
+        "primacy": ParameterSchema(False, ParameterType.Integer),
+    },
+    # Cancel active DERControls. If all=True, cancel all active controls; otherwise cancel the most recent.
+    "clear-der-controls": {
+        "all": ParameterSchema(False, ParameterType.Boolean),
+    },
+    # Set the poll rate for a given CSIP-Aus resource (e.g. DERProgramList, EndDeviceList).
+    "set-poll-rate": {
+        "resource": ParameterSchema(True, ParameterType.CSIPAusResource),
+        "rate_seconds": ParameterSchema(True, ParameterType.Integer),
+    },
+    # Set the post rate for a MirrorUsagePoint resource.
+    "set-post-rate": {
+        "resource": ParameterSchema(True, ParameterType.CSIPAusResource),
+        "rate_seconds": ParameterSchema(True, ParameterType.Integer),
     },
 }
 VALID_ADMIN_INSTRUCTION_NAMES: set[str] = set(ADMIN_INSTRUCTION_PARAMETER_SCHEMA.keys())
