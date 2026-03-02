@@ -6,6 +6,7 @@ import yaml
 from cactus_test_definitions.csipaus import CSIPAusVersion
 from cactus_test_definitions.schema import UniqueKeyLoader
 from cactus_test_definitions.server.actions import Action
+from cactus_test_definitions.server.admin_instructions import AdminInstruction
 from cactus_test_definitions.server.checks import Check
 from dataclass_wizard import LoadMeta, YAMLWizard
 
@@ -111,6 +112,7 @@ class Step:
     )
     checks: list[Check] | None = None  # The checks (if any) to execute AFTER action completes to determine success
     instructions: list[str] | None = None  # Text to display while this step executes
+    admin_instructions: list[AdminInstruction] | None = None  # Machine-readable server setup instructions
 
     repeat_until_pass: bool = False  # If True - failing checks will cause this step to re-execute until successful
 
