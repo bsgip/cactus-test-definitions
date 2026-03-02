@@ -37,6 +37,9 @@ Steps:
         reading_types:
           - ActivePowerAverage
           - VoltageSinglePhaseAverage
+        mmr_mrids:
+          - BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+          - CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
         location: Site  # Set the roleflags
     checks:
       - type: mirror-usage-point
