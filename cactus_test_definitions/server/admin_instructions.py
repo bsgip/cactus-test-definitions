@@ -62,9 +62,12 @@ ADMIN_INSTRUCTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
     "ensure-der-control-list": {
         "subscribable": ParameterSchema(False, ParameterType.Boolean),
     },
-    # Create an active DERControl on the server. All control mode parameters are optional;
+    # Create a DERControl on the server. All control mode parameters are optional;
     # at least one should be provided. Variable expressions (e.g. $(setMaxW * 0.3)) are supported.
+    # status: "active" (default) sets startTime in the past; "scheduled" sets startTime in the future.
+    # Multiple "scheduled" controls should be stacked sequentially (non-overlapping) by the implementation.
     "create-der-control": {
+        "status": ParameterSchema(False, ParameterType.String),  # "active" or "scheduled"
         "opModExpLimW": ParameterSchema(False, ParameterType.Float),
         "opModImpLimW": ParameterSchema(False, ParameterType.Float),
         "opModGenLimW": ParameterSchema(False, ParameterType.Float),
