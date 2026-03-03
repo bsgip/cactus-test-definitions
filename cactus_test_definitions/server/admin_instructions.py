@@ -16,7 +16,6 @@ from cactus_test_definitions.variable_expressions import (
 @dataclass
 class AdminInstruction:
     type: str
-    description: str
     client: str | None = None  # The RequiredClient.id this instruction refers to. If None - applies to the 0th client
     parameters: dict[str, Any] = None  # type: ignore # Forced in __post_init__
 
@@ -33,8 +32,6 @@ class AdminInstruction:
 # The parameter schema for each admin instruction type, keyed by type name.
 # Admin instructions describe desired server state to be sent to the server's admin API.
 ADMIN_INSTRUCTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
-    # Ensure an EndDevice registration exists (or does not exist) for the client.
-    # has_der_list=True ensures the DER record includes DERCapabilityLink, DERSettingsLink, DERStatusLink.
     # Ensure an EndDevice registration exists (or does not exist) for the client.
     # has_der_list=True ensures the DER record includes DERCapabilityLink, DERSettingsLink, DERStatusLink.
     "ensure-end-device": {
