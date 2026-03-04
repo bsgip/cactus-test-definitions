@@ -1,0 +1,165 @@
+Description: Provisional - EndDevice FunctionSetAssignmentList Changes
+Category: Provisional
+Classes:
+  - A
+
+TargetVersions:
+  - v1.2
+  - v1.3-beta/storage
+
+Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+  
+  actions:
+    - type: create-der-program
+      parameters:
+        primacy: 1
+        fsa_id: 1
+    - type: create-der-program
+      parameters:
+        primacy: 2
+        fsa_id: 2
+        
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters:
+        ignored_steps: 
+          - FAIL-RESPONSE
+      
+Steps:
+  GET-DERC-1:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 120
+          opModExpLimW: $(setMaxW * 2)
+          opModImpLimW: $(setMaxW * 2)
+          fsa_id: 2
+          primacy: 2
+          tag: DERC1
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-DERC-1-RESPONSE-RECEIVED
+            - POST-DERC-1-RESPONSE-STARTED
+            - POST-DERC-1-RESPONSE-COMPLETED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-1
+  POST-DERC1-RESPONSE-RECEIVED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 1
+            subject_tag: DERC1
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-RECEIVED
+
+  POST-RESPONSE-STARTED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
+            subject_tag: DERC1
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-STARTED
+
+  POST-RESPONSE-COMPLETED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 3
+            subject_tag: DERC1
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - FAIL-RESPONSE
+            - WAIT-FINISH
+
+      - type: remove-function-set-assignment
+        parameters:
+          fsa_id: 2 # This will NOT remove the DERProgram but will remove it from the FSA list
+
+      # This should be "invisible" to the EndDevice as its FunctionSetAssignments have been updated
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 120
+          opModExpLimW: $(setMaxW * 2)
+          opModImpLimW: $(setMaxW * 2)
+          fsa_id: 2
+          primacy: 2
+          tag: DERC2
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-COMPLETED
+
+  # This will ONLY trigger if the client is polling /edev/1/derp/2 despite having no FSA link to it
+  FAIL-RESPONSE:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+      checks:
+        - type: finish-test
+          parameters: 
+            failed_message: No responses should be returned as EndDevice FunctionSetAssignments no longer reference this DERProgram
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - FAIL-RESPONSE
+
+  WAIT-FINISH:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 180 # Wait for the control to potentially be picked up and responded to
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-FINISH
+      - type: finish-test
+        parameters: {}

@@ -31,6 +31,7 @@ class ParameterType(IntEnum):
     CSIPAusReadingLocation = auto()  # Member of cactus_test_definitions.csipaus.CSIPAusReadingLocation
     ReadingTypeValues = auto()  # A dict of type dict[CSIPAusReadingType, list[float]], each list has the same length
     UnsignedInteger = auto()
+    ListInteger = auto()  # List of integers
 
 
 @dataclass(frozen=True)
@@ -73,6 +74,8 @@ def is_valid_parameter_type(expected_type: ParameterType, value: Any) -> bool:
             return isinstance(value, datetime)
         case ParameterType.ListString:
             return isinstance(value, list) and all((isinstance(e, str) for e in value))
+        case ParameterType.ListInteger:
+            return isinstance(value, list) and all((isinstance(e, int) for e in value))
         case ParameterType.HexBinary:
             try:
                 int(value, 16)

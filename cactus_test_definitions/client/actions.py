@@ -31,7 +31,9 @@ class Action:
 ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
     "enable-steps": {"steps": ParameterSchema(True, ParameterType.ListString)},
     "remove-steps": {"steps": ParameterSchema(True, ParameterType.ListString)},
-    "finish-test": {},
+    "finish-test": {
+        "failed_message": ParameterSchema(False, ParameterType.String),  # If set - the test is considered failed
+    },
     "set-default-der-control": {
         "derp_id": ParameterSchema(False, ParameterType.Integer),
         "opModImpLimW": ParameterSchema(False, ParameterType.Float),
@@ -59,10 +61,16 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "opModFixedW": ParameterSchema(False, ParameterType.Float),
         "opModStorageTargetW": ParameterSchema(False, ParameterType.Float),
         "tag": ParameterSchema(False, ParameterType.String),
+        "end_device_indexes": ParameterSchema(
+            False, ParameterType.ListInteger
+        ),  # If set - have this control be "shared" across these specified EndDevice's
     },
     "create-der-program": {
         "primacy": ParameterSchema(True, ParameterType.Integer),
         "fsa_id": ParameterSchema(False, ParameterType.Integer),
+        "end_device_indexes": ParameterSchema(
+            False, ParameterType.ListInteger
+        ),  # If set - have this DERProgram be "shared" across these specified EndDevice's
     },
     "cancel-active-der-controls": {},
     "set-comms-rate": {

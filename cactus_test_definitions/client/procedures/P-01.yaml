@@ -1,0 +1,177 @@
+Description: Provisional - Multiple EndDevice shared DERControls
+Category: Provisional
+Classes:
+  - A
+
+TargetVersions:
+  - v1.2
+  - v1.3-beta/storage
+
+Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+
+  checks:
+    - type: end-device-count # Can't start until 2 EndDevice's are registered
+      parameters:
+        min_count: 2
+        max_count: 2
+  
+  actions:
+    - type: create-der-program
+      parameters:
+        primacy: 1
+        fsa_id: 1
+        end_device_indexes: # This is the trigger for the server implementation to ensure the DERP mrids are "shared"
+          - 0
+          - 1
+    - type: create-der-program
+      parameters:
+        primacy: 2
+        fsa_id: 1
+        end_device_indexes: # This is the trigger for the server implementation to ensure the DERP mrids are "shared"
+          - 0
+          - 1
+    - type: create-der-control
+      parameters:
+        start: $(now + '2 minutes')
+        duration_seconds: 120
+        primacy: 1
+        fsa_id: 1
+        opModExpLimW: 0
+        opModImpLimW: 0
+        tag: DERC1
+        end_device_indexes: # This is the trigger for the server implementation to ensure the mrids are "shared"
+          - 0
+          - 1
+    # Start by enabling everything at the beginning as each step is (mostly) independent of the others
+    - type: enable-steps
+      parameters:
+        steps:
+          - POST-EDEV1-RESPONSE-STARTED
+          - POST-EDEV1-RESPONSE-COMPLETED
+          - POST-EDEV2-RESPONSE-RECEIVED
+          - POST-EDEV2-RESPONSE-STARTED
+          - POST-EDEV2-RESPONSE-COMPLETED
+        
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+      
+Steps:
+
+  POST-EDEV1-RESPONSE-RECEIVED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 1
+            subject_tag: DERC1
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-EDEV1-RESPONSE-RECEIVED
+
+  POST-EDEV1-RESPONSE-STARTED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
+            subject_tag: DERC1
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-EDEV1-RESPONSE-STARTED
+
+  POST-EDEV1-RESPONSE-COMPLETED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 3
+            subject_tag: DERC1
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-EDEV1-RESPONSE-COMPLETED
+
+  POST-EDEV2-RESPONSE-RECEIVED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/2/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 1
+            subject_tag: DERC1
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-EDEV2-RESPONSE-RECEIVED
+
+  POST-EDEV2-RESPONSE-STARTED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/2/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
+            subject_tag: DERC1
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-EDEV2-RESPONSE-STARTED
+
+  POST-EDEV2-RESPONSE-COMPLETED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/2/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 3
+            subject_tag: DERC1
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-EDEV2-RESPONSE-COMPLETED
