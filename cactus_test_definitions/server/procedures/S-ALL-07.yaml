@@ -16,7 +16,11 @@ Steps:
     instructions:
       - Create an EndDevice registration for client.
       - Configure utility server with client's Private Enterprise Number (PEN).
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+    action:
       type: discovery
       parameters:
         resources:
