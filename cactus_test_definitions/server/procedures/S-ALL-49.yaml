@@ -16,10 +16,37 @@ Steps:
     client: client
     instructions:
       - Configure two FunctionSetAssignments - FSA1 and FSA2
-      - Each FunctionSetAssignment contains one DERProgram configured under it (DERP1 and DERP2 respectively). DERP1 has a primacy of 1 and DERP2 has a primacy of 2. 
+      - Each FunctionSetAssignment contains one DERProgram configured under it (DERP1 and DERP2 respectively). DERP1 has a primacy of 1 and DERP2 has a primacy of 2.
       - Give DERP1 a default DER control with opModExpLimW set to 30% of the DER's rated active power.
       - Give DERP2 an active control with opModExpLimW = 200% of the DER's rated active power.
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+      - type: ensure-fsa
+        parameters:
+          annotation: fsa1
+      - type: ensure-fsa
+        parameters:
+          annotation: fsa2
+      - type: ensure-der-program
+        parameters:
+          fsa_annotation: fsa1
+          primacy: 1
+      - type: ensure-der-program
+        parameters:
+          fsa_annotation: fsa2
+          primacy: 2
+      - type: create-default-der-control
+        parameters:
+          primacy: 1
+          opModExpLimW: $(setMaxW * 0.3)
+      - type: create-der-control
+        parameters:
+          status: active
+          primacy: 2
+          opModExpLimW: $(setMaxW * 2)
+    action:
       type: discovery
       parameters:
         resources:
