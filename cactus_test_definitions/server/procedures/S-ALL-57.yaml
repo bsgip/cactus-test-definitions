@@ -15,7 +15,16 @@ Steps:
     repeat_until_pass: true
     instructions:
       - The utility server is configured with active control with opModExpLimW / opModImpLimW = 200% of the DER's rated active power, responseRequired = 03, and replyTo set to the response endpoint on the test utility server.
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+      - type: create-der-control
+        parameters:
+          status: active
+          opModExpLimW: $(setMaxW * 2)
+          opModImpLimW: $(setMaxW * 2)
+    action:
       type: discovery
       parameters:
         resources:
