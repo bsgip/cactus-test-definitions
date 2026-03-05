@@ -15,7 +15,20 @@ Steps:
     repeat_until_pass: true
     instructions:
       - Create an EndDevice registration for client and the subscription process as defined in test S-ALL-25.
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+      - type: ensure-fsa
+        parameters:
+          annotation: fsa1
+      - type: ensure-der-program
+        parameters:
+          fsa_annotation: fsa1
+      - type: ensure-der-control-list
+        parameters:
+          subscribable: true
+    action:
       type: discovery
       parameters:
         resources:
