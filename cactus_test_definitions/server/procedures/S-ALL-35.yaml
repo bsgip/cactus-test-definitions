@@ -21,10 +21,10 @@ Steps:
           registered: true
       - type: ensure-fsa
         parameters:
-          annotation: main_fsa
+          annotation: fsa1
       - type: ensure-der-program
         parameters:
-          fsa_annotation: main_fsa
+          fsa_annotation: fsa1
       - type: ensure-der-control-list
         parameters:
           subscribable: true

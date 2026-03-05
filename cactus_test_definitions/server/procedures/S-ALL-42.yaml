@@ -17,7 +17,17 @@ Steps:
     instructions:
       - The client has a DER that is exporting at the connection point at least 50% of its rated active power.
       - The utility server has a current active control in operation with opModExpLimW set to 200% of the DER's rated active power, and a default DER control in-place with opModExpLimW set to 30% of the DER's rated active power.
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+      - type: create-der-control
+        parameters:
+          opModExpLimW: $(setMaxW * 2)
+      - type: create-default-der-control
+        parameters:
+          opModExpLimW: $(setMaxW * 0.3)
+    action:
       type: discovery
       parameters:
         resources:
@@ -43,7 +53,11 @@ Steps:
     repeat_until_pass: true
     instructions: The server should set all active controls to cancelled.
     client: client
-    action: 
+    admin_instructions:
+      - type: clear-der-controls
+        parameters:
+          all: true
+    action:
       type: discovery
       parameters:
         resources:

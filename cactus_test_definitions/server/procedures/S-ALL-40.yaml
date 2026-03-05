@@ -14,8 +14,21 @@ Steps:
   - id: PRECONDITION 1 - CREATE END DEVICE
     repeat_until_pass: true
     instructions:
-      - Create an EndDevice registration for client and the subscription process as defined in test S-ALL-25. 
-    action: 
+      - Create an EndDevice registration for client and the subscription process as defined in test S-ALL-25.
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+      - type: ensure-fsa
+        parameters:
+          annotation: fsa1
+      - type: ensure-der-program
+        parameters:
+          fsa_annotation: fsa1
+      - type: ensure-der-control-list
+        parameters:
+          subscribable: true
+    action:
       type: discovery
       parameters:
         resources:
@@ -39,13 +52,20 @@ Steps:
 
   - id: STEP 1 - CREATE Default DERC
     repeat_until_pass: true
-    instructions: 
+    instructions:
       - The server is configured with a default control with
       - opModExpLimW = 50% of the DER active power rating
       - opModGenLimW = 0W
       - opModImpLimW = 50% of the DER active power rating
       - opModLoadLimW = 0W
-    action: 
+    admin_instructions:
+      - type: create-default-der-control
+        parameters:
+          opModExpLimW: $(setMaxW * 0.5)
+          opModGenLimW: 0
+          opModImpLimW: $(setMaxW * 0.5)
+          opModLoadLimW: 0
+    action:
       type: notifications
       parameters:
         sub_id: dderc_sub

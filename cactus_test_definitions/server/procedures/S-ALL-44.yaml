@@ -16,7 +16,104 @@ Steps:
     client: client
     instructions:
       - The utility server is configured to generate a schedule of 24 sequential, non-overlapping controls with a range of export and/or import limits, each with 1min duration.
-    action: 
+    admin_instructions:
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          duration_seconds: 60
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          duration_seconds: 60
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          duration_seconds: 60
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          duration_seconds: 60
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          duration_seconds: 60
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          duration_seconds: 60
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          duration_seconds: 60
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          duration_seconds: 60
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          duration_seconds: 60
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          duration_seconds: 60
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          duration_seconds: 60
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          duration_seconds: 60
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          duration_seconds: 60
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          duration_seconds: 60
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          duration_seconds: 60
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          duration_seconds: 60
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          duration_seconds: 60
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          duration_seconds: 60
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          duration_seconds: 60
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          duration_seconds: 60
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          duration_seconds: 60
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          duration_seconds: 60
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          duration_seconds: 60
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          duration_seconds: 60
+    action:
       type: discovery
       parameters:
         resources:
