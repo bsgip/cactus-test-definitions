@@ -57,6 +57,7 @@ Steps:
     admin_instructions:
       - type: create-der-control
         parameters:
+          status: active
           opModConnect: true
     action:
       type: discovery
@@ -85,6 +86,7 @@ Steps:
     admin_instructions:
       - type: create-der-control
         parameters:
+          status: active
           opModExpLimW: $(setMaxW * 0.5)
           opModGenLimW: 0
           opModImpLimW: $(setMaxW * 0.5)

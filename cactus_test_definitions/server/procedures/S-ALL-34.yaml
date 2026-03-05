@@ -60,6 +60,7 @@ Steps:
     admin_instructions:
       - type: create-der-control
         parameters:
+          status: active
           opModExpLimW: 0
           opModImpLimW: 0
           rampTms: 3000

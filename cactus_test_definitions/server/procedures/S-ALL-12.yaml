@@ -23,6 +23,7 @@ Steps:
           registered: true
       - type: create-der-control
         parameters:
+          status: active
           opModGenLimW: 0
     action:
       type: discovery

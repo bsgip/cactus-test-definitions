@@ -57,6 +57,7 @@ Steps:
     admin_instructions:
       - type: create-der-control
         parameters:
+          status: active
           opModGenLimW: 0
     action:
       type: notifications

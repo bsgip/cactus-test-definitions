@@ -23,6 +23,7 @@ Steps:
           registered: true
       - type: create-der-control
         parameters:
+          status: active
           opModEnergize: true
     action:
       type: discovery
@@ -49,6 +50,7 @@ Steps:
     admin_instructions:
       - type: create-der-control
         parameters:
+          status: active
           opModEnergize: false
     action:
       type: discovery
@@ -73,6 +75,7 @@ Steps:
     admin_instructions:
       - type: create-der-control
         parameters:
+          status: active
           opModEnergize: true
     action:
       type: discovery

@@ -25,22 +25,27 @@ Steps:
       - type: create-der-control
         client: CLIENT-A
         parameters:
+          status: scheduled
           opModExpLimW: 0
       - type: create-der-control
         client: CLIENT-A
         parameters:
+          status: scheduled
           opModExpLimW: 0
       - type: create-der-control
         client: CLIENT-A
         parameters:
+          status: scheduled
           opModExpLimW: 0
       - type: create-der-control
         client: CLIENT-A
         parameters:
+          status: scheduled
           opModExpLimW: 0
       - type: create-der-control
         client: CLIENT-A
         parameters:
+          status: scheduled
           opModExpLimW: 0
     action:
       type: discovery
@@ -68,22 +73,27 @@ Steps:
       - type: create-der-control
         client: CLIENT-B
         parameters:
+          status: scheduled
           opModExpLimW: 0
       - type: create-der-control
         client: CLIENT-B
         parameters:
+          status: scheduled
           opModExpLimW: 0
       - type: create-der-control
         client: CLIENT-B
         parameters:
+          status: scheduled
           opModExpLimW: 0
       - type: create-der-control
         client: CLIENT-B
         parameters:
+          status: scheduled
           opModExpLimW: 0
       - type: create-der-control
         client: CLIENT-B
         parameters:
+          status: scheduled
           opModExpLimW: 0
     action:
       type: discovery

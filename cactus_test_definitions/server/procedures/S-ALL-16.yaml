@@ -23,6 +23,7 @@ Steps:
           registered: true
       - type: create-der-control
         parameters:
+          status: active
           opModConnect: true
     action:
       type: discovery
@@ -49,6 +50,7 @@ Steps:
     admin_instructions:
       - type: create-der-control
         parameters:
+          status: active
           opModConnect: false
     action:
       type: discovery
@@ -77,6 +79,7 @@ Steps:
     admin_instructions:
       - type: create-der-control
         parameters:
+          status: active
           opModConnect: true
     action:
       type: discovery
