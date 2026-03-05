@@ -24,7 +24,19 @@ Steps:
       - opModEnergize = false
       - opModConnect = false
       - without including the rampTms attribute.
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+      - type: create-der-control
+        parameters:
+          opModExpLimW: $(setMaxW * 0.5)
+          opModGenLimW: 0
+          opModImpLimW: $(setMaxW * 0.5)
+          opModLoadLimW: 0
+          opModEnergize: false
+          opModConnect: false
+    action:
       type: discovery
       parameters:
         resources:
