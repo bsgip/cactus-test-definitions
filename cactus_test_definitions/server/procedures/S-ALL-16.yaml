@@ -17,7 +17,14 @@ Steps:
     instructions:
       - Create an EndDevice registration.
       - Configure an active control with opModConnect = true and without including the rampTms attribute.
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+      - type: create-der-control
+        parameters:
+          opModConnect: true
+    action:
       type: discovery
       parameters:
         resources:
@@ -39,7 +46,11 @@ Steps:
     client: client
     instructions:
       - Configure an active control with opModConnect = false and without including the rampTms attribute.
-    action: 
+    admin_instructions:
+      - type: create-der-control
+        parameters:
+          opModConnect: false
+    action:
       type: discovery
       parameters:
         resources:
@@ -63,7 +74,11 @@ Steps:
     client: client
     instructions:
       - Configure an active control with opModConnect = true and without including the rampTms attribute.
-    action: 
+    admin_instructions:
+      - type: create-der-control
+        parameters:
+          opModConnect: true
+    action:
       type: discovery
       parameters:
         resources:

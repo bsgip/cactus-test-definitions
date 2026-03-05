@@ -17,7 +17,14 @@ Steps:
     instructions:
       - Create an EndDevice registration.
       - Configure an active control with opModEnergize = true and without including the rampTms attribute.
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+      - type: create-der-control
+        parameters:
+          opModEnergize: true
+    action:
       type: discovery
       parameters:
         resources:
@@ -39,7 +46,11 @@ Steps:
     client: client
     instructions:
       - Configure an active control with opModEnergize = false and without including the rampTms attribute.
-    action: 
+    admin_instructions:
+      - type: create-der-control
+        parameters:
+          opModEnergize: false
+    action:
       type: discovery
       parameters:
         resources:
@@ -59,7 +70,11 @@ Steps:
     client: client
     instructions:
       - Configure an active control with opModEnergize = true and without including the rampTms attribute.
-    action: 
+    admin_instructions:
+      - type: create-der-control
+        parameters:
+          opModEnergize: true
+    action:
       type: discovery
       parameters:
         resources:
