@@ -1,7 +1,7 @@
 Description: Provisional - EndDevice FunctionSetAssignmentList Changes
 Category: Provisional
 Classes:
-  - A
+  - P-A
 
 TargetVersions:
   - v1.2
@@ -27,6 +27,9 @@ Preconditions:
       parameters:
         primacy: 2
         fsa_id: 2
+  checks:
+    - type: end-device-contents
+      parameters: {}
         
 Criteria:
   checks:
@@ -40,7 +43,7 @@ Steps:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/1/derc
+        endpoint: /edev/1/derp/2/derc
     actions:
       - type: create-der-control
         parameters:
@@ -113,13 +116,30 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - FAIL-RESPONSE
-            - WAIT-FINISH
+            - GET-UPDATED-FSA
 
       - type: remove-function-set-assignment
         parameters:
           fsa_id: 2 # This will NOT remove the DERProgram but will remove it from the FSA list
 
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-COMPLETED
+
+  # Wait for the client to pickup the changed function set assignments before we create any new DERControls on the "old"
+  # DERProgram
+  GET-UPDATED-FSA:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa
+    actions:
+      - type: enable-steps
+        parameters:
+        steps:
+          - FAIL-RESPONSE
+          - WAIT-FINISH
       # This should be "invisible" to the EndDevice as its FunctionSetAssignments have been updated
       - type: create-der-control
         parameters:
@@ -133,7 +153,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-RESPONSE-COMPLETED
+            - GET-UPDATED-FSA
 
   # This will ONLY trigger if the client is polling /edev/1/derp/2 despite having no FSA link to it
   FAIL-RESPONSE:

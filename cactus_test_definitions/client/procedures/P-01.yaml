@@ -1,7 +1,7 @@
 Description: Provisional - Multiple EndDevice shared DERControls
 Category: Provisional
 Classes:
-  - A
+  - P-A
 
 TargetVersions:
   - v1.2
@@ -29,14 +29,14 @@ Preconditions:
       parameters:
         primacy: 1
         fsa_id: 1
-        end_device_indexes: # This is the trigger for the server implementation to ensure the DERP mrids are "shared"
+        end_device_indexes: # This is the trigger for the server to ensure the FSA/DERP mrids are "shared"
           - 0
           - 1
     - type: create-der-program
       parameters:
         primacy: 2
-        fsa_id: 1
-        end_device_indexes: # This is the trigger for the server implementation to ensure the DERP mrids are "shared"
+        fsa_id: 1 
+        end_device_indexes: # This is the trigger for the server to ensure the FSA/DERP mrids are "shared"
           - 0
           - 1
     - type: create-der-control
