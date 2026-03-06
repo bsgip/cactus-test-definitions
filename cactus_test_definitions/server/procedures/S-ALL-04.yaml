@@ -17,7 +17,37 @@ Steps:
     client: CLIENT-A
     instructions:
       - Create at least 5 DERControls for CLIENT-A
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        client: CLIENT-A
+        parameters:
+          registered: true
+      - type: create-der-control
+        client: CLIENT-A
+        parameters:
+          status: scheduled
+          opModExpLimW: 0
+      - type: create-der-control
+        client: CLIENT-A
+        parameters:
+          status: scheduled
+          opModExpLimW: 0
+      - type: create-der-control
+        client: CLIENT-A
+        parameters:
+          status: scheduled
+          opModExpLimW: 0
+      - type: create-der-control
+        client: CLIENT-A
+        parameters:
+          status: scheduled
+          opModExpLimW: 0
+      - type: create-der-control
+        client: CLIENT-A
+        parameters:
+          status: scheduled
+          opModExpLimW: 0
+    action:
       type: discovery
       parameters:
         resources:
@@ -30,12 +60,42 @@ Steps:
         parameters:
           minimum_count: 5
 
-  - id: CLIENT-B PRECONDITION 
+  - id: CLIENT-B PRECONDITION
     repeat_until_pass: true
     client: CLIENT-B
     instructions:
       - Create at least 5 DERControls for CLIENT-B
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        client: CLIENT-B
+        parameters:
+          registered: true
+      - type: create-der-control
+        client: CLIENT-B
+        parameters:
+          status: scheduled
+          opModExpLimW: 0
+      - type: create-der-control
+        client: CLIENT-B
+        parameters:
+          status: scheduled
+          opModExpLimW: 0
+      - type: create-der-control
+        client: CLIENT-B
+        parameters:
+          status: scheduled
+          opModExpLimW: 0
+      - type: create-der-control
+        client: CLIENT-B
+        parameters:
+          status: scheduled
+          opModExpLimW: 0
+      - type: create-der-control
+        client: CLIENT-B
+        parameters:
+          status: scheduled
+          opModExpLimW: 0
+    action:
       type: discovery
       parameters:
         resources:
@@ -53,7 +113,10 @@ Steps:
     client: CLIENT-A
     instructions:
       - MirrorUsagePoints for CLIENT-A must be initially empty.
-    action: 
+    admin_instructions:
+      - type: ensure-mup-list-empty
+        client: CLIENT-A
+    action:
       type: discovery
       parameters:
         resources:
@@ -68,7 +131,10 @@ Steps:
     client: CLIENT-B
     instructions:
       - MirrorUsagePoints for CLIENT-B must be initially empty.
-    action: 
+    admin_instructions:
+      - type: ensure-mup-list-empty
+        client: CLIENT-B
+    action:
       type: discovery
       parameters:
         resources:

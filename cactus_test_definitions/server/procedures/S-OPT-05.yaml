@@ -15,7 +15,11 @@ Steps:
     repeat_until_pass: true
     instructions:
       - Register an end device
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+    action:
       type: discovery
       parameters:
         resources:
@@ -44,7 +48,12 @@ Steps:
     repeat_until_pass: true
     instructions:
       - The utility server shall be configured to change all default MirrorUsagePoint post-rates for the test client to 60s.
-    action: 
+    admin_instructions:
+      - type: set-post-rate
+        parameters:
+          resource: MirrorUsagePoint
+          rate_seconds: 60
+    action:
       type: refresh-resource
       parameters:
         resource: MirrorUsagePoint
@@ -58,7 +67,12 @@ Steps:
     repeat_until_pass: true
     instructions:
       - The utility server shall be configured to change all default MirrorUsagePoint post-rates for the test client from 60s to 300s.
-    action: 
+    admin_instructions:
+      - type: set-post-rate
+        parameters:
+          resource: MirrorUsagePoint
+          rate_seconds: 300
+    action:
       type: refresh-resource
       parameters:
         resource: MirrorUsagePoint

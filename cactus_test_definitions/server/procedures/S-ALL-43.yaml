@@ -16,7 +16,32 @@ Steps:
     client: client
     instructions:
       - The client has a device with DeviceCapability, EndDeviceList and FunctionSetAssignmentsList poll-rate set to 300s, DERProgramList, DERList and MirrorUsagePointList to 60s.
-    action: 
+    admin_instructions:
+      - type: set-poll-rate
+        parameters:
+          resource: DeviceCapability
+          rate_seconds: 300
+      - type: set-poll-rate
+        parameters:
+          resource: EndDeviceList
+          rate_seconds: 300
+      - type: set-poll-rate
+        parameters:
+          resource: FunctionSetAssignmentsList
+          rate_seconds: 300
+      - type: set-poll-rate
+        parameters:
+          resource: DERProgramList
+          rate_seconds: 60
+      - type: set-poll-rate
+        parameters:
+          resource: DERList
+          rate_seconds: 60
+      - type: set-poll-rate
+        parameters:
+          resource: MirrorUsagePointList
+          rate_seconds: 60
+    action:
       type: discovery
       parameters:
         resources:
@@ -59,7 +84,12 @@ Steps:
     client: client
     instructions:
       - Set DeviceCapabilitypoll poll rate to 60s.
-    action: 
+    admin_instructions:
+      - type: set-poll-rate
+        parameters:
+          resource: DeviceCapability
+          rate_seconds: 60
+    action:
       type: refresh-resource
       parameters:
         resource: DeviceCapability
@@ -74,7 +104,12 @@ Steps:
     client: client
     instructions:
       - Set EndDeviceList poll rate to 60s.
-    action: 
+    admin_instructions:
+      - type: set-poll-rate
+        parameters:
+          resource: EndDeviceList
+          rate_seconds: 60
+    action:
       type: refresh-resource
       parameters:
         resource: EndDeviceList
@@ -89,7 +124,12 @@ Steps:
     client: client
     instructions:
       - Set FunctionSetAssignmentsList poll rate to 60s.
-    action: 
+    admin_instructions:
+      - type: set-poll-rate
+        parameters:
+          resource: FunctionSetAssignmentsList
+          rate_seconds: 60
+    action:
       type: refresh-resource
       parameters:
         resource: FunctionSetAssignmentsList
@@ -104,7 +144,12 @@ Steps:
     client: client
     instructions:
       - Set DERProgramList poll rate to 120s.
-    action: 
+    admin_instructions:
+      - type: set-poll-rate
+        parameters:
+          resource: DERProgramList
+          rate_seconds: 120
+    action:
       type: refresh-resource
       parameters:
         resource: DERProgramList
@@ -119,7 +164,12 @@ Steps:
     client: client
     instructions:
       - Set DERList poll rate to 120s.
-    action: 
+    admin_instructions:
+      - type: set-poll-rate
+        parameters:
+          resource: DERList
+          rate_seconds: 120
+    action:
       type: refresh-resource
       parameters:
         resource: DERList
@@ -134,7 +184,12 @@ Steps:
     client: client
     instructions:
       - Set MirrorUsagePointList poll rate to 120s.
-    action: 
+    admin_instructions:
+      - type: set-poll-rate
+        parameters:
+          resource: MirrorUsagePointList
+          rate_seconds: 120
+    action:
       type: refresh-resource
       parameters:
         resource: MirrorUsagePointList

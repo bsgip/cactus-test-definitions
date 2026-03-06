@@ -20,7 +20,14 @@ Steps:
     instructions:
       - Create an EndDevice registration for CLIENT-A (or rerun S-ALL-02 / S-ALL-03).
       - Ensure there is an accessible DERControlList
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        client: CLIENT-A
+        parameters:
+          registered: true
+      - type: ensure-der-control-list
+        client: CLIENT-A
+    action:
       type: discovery
       parameters:
         resources:
@@ -43,7 +50,14 @@ Steps:
     instructions:
       - Create an EndDevice registration for CLIENT-B (or rerun S-ALL-02 / S-ALL-03).
       - Ensure there is an accessible DERControlList
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        client: CLIENT-B
+        parameters:
+          registered: true
+      - type: ensure-der-control-list
+        client: CLIENT-B
+    action:
       type: discovery
       parameters:
         resources:
@@ -155,8 +169,13 @@ Steps:
     repeat_until_pass: true
     instructions:
       - Remove EndDevice entry for ClientA (or disallow access).
+    admin_instructions:
+      - type: set-client-access
+        client: CLIENT-A
+        parameters:
+          granted: false
     client: CLIENT-A
-    action: 
+    action:
       type: refresh-resource
       parameters:
         resource: EndDeviceList

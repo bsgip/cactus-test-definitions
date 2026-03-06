@@ -19,6 +19,11 @@ Steps:
     repeat_until_pass: true
     instructions:
       - Create an EndDevice registration for clientA.
+    admin_instructions:
+      - type: ensure-end-device
+        client: CLIENT-A
+        parameters:
+          registered: true
     action:
       type: discovery
       parameters:

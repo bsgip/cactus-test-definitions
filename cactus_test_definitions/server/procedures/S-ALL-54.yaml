@@ -19,6 +19,11 @@ Steps:
     repeat_until_pass: true
     instructions:
       - Create an EndDevice registration for client_current.
+    admin_instructions:
+      - type: ensure-end-device
+        client: client_current
+        parameters:
+          registered: true
     action:
       type: discovery
       parameters:
@@ -36,6 +41,11 @@ Steps:
     repeat_until_pass: true
     instructions:
       - Remove any access that client_new has to client_current's aggregator tenancy
+    admin_instructions:
+      - type: set-client-access
+        client: client_new
+        parameters:
+          granted: false
     action:
       type: refresh-resource
       parameters:
@@ -49,6 +59,11 @@ Steps:
     repeat_until_pass: true
     instructions:
       - Enable client_new's access to client_current's aggregator tenancy
+    admin_instructions:
+      - type: set-client-access
+        client: client_new
+        parameters:
+          granted: true
     action:
       type: refresh-resource
       parameters:
