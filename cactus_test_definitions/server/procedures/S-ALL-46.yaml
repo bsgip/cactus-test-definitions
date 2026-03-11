@@ -57,11 +57,12 @@ Steps:
   - id: 1B - AWAIT DERCONTROL
     repeat_until_pass: true
     instructions:
-      - Schedule a DERControl to start in 1 hour with opModExpLimW=0 # NOTE: Tricky for admin instructions
+      - Schedule a DERControl to start in 1 hour with opModExpLimW=0
     admin_instructions:
       - type: create-der-control
         parameters:
           status: scheduled
+          start_offset_seconds: 3600
           opModExpLimW: 0
     action:
       type: discovery

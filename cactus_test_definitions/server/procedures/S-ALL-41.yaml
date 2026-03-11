@@ -122,6 +122,7 @@ Steps:
       - type: create-der-control
         parameters:
           status: scheduled
+          start_offset_seconds: 300
           opModExpLimW: $(setMaxW * 2)
     action:
       type: discovery
@@ -244,11 +245,12 @@ Steps:
     repeat_until_pass: true
     client: client
     instructions:
-      - The utility server is configured with a scheduled control with opModExpLimW = 200% of the DERs rated active power, responseRequired = 03 and replyTo set to the response endpoint on the test utility server, to begin in 10 minutes. # NOTE: Tricky for admin instructions
+      - The utility server is configured with a scheduled control with opModExpLimW = 200% of the DERs rated active power, responseRequired = 03 and replyTo set to the response endpoint on the test utility server, to begin in 10 minutes.
     admin_instructions:
       - type: create-der-control
         parameters:
           status: scheduled
+          start_offset_seconds: 600
           opModExpLimW: $(setMaxW * 2)
     action:
       type: discovery
@@ -301,11 +303,12 @@ Steps:
     repeat_until_pass: true
     client: client
     instructions:
-      - The utility server configures a scheduled control with opModExpLimW = 200% of the DERs rated active power to begin in 10 minutes. # NOTE: Tricky for admin instructions
+      - The utility server configures a scheduled control with opModExpLimW = 200% of the DERs rated active power to begin in 10 minutes.
     admin_instructions:
       - type: create-der-control
         parameters:
           status: scheduled
+          start_offset_seconds: 600
           opModExpLimW: $(setMaxW * 2)
     action:
       type: discovery
@@ -329,11 +332,12 @@ Steps:
     repeat_until_pass: true
     client: client
     instructions:
-      - The utility server configures a scheduled control with the same primacy and an overlapping control window. # NOTE: Tricky for admin instructions
+      - The utility server configures a scheduled control with the same primacy and an overlapping control window.
     admin_instructions:
       - type: create-der-control
         parameters:
           status: scheduled
+          start_offset_seconds: 300
           opModExpLimW: $(setMaxW * 2)
     action:
       type: discovery
