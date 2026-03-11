@@ -65,42 +65,32 @@ Steps:
           opModExpLimW: $(setMaxW * 2)
           event_status: 1 # Active
   
-  - id: (2b) DERControl 1 - Started
+  - id: (2,3) DERControl 1 - Wait for started, completed
+    repeat_until_pass: true # Wait until we have submitted started and completed Responses
     client: client
     action: 
-      type: respond-der-controls # send response status = 2 (started)
-    
-  - id: (3) DERControl 1 - Completed
-    repeat_until_pass: true # Wait until event status has been updated
-    client: client
-    action: 
-      type: discovery
-      parameters:
-        resources:
-          - DERControl
+      type: respond-der-controls # keep checking for Responses - continue until we've sent 2 (started) and 3 (completed)
     checks:
-      - type: der-control # Check event status has been updated
+      - type: der-control-responses
         parameters:
           minimum_count: 1
           maximum_count: 1
-          opModExpLimW: $(setMaxW * 2)
-          event_status: 2 # Completed
+          sent_response_type: 2 # EVENT_STARTED
+      - type: der-control-responses
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          sent_response_type: 3 # EVENT_COMPLETED
 
-  - id: (3b) DERControl 1 - Completed
-    client: client
-    action:
-      type: respond-der-controls # send response status = 3 (Completed)
-
-  - id: WAIT for completed DERControl to be removed from server (20 seconds buffer from completion time)
+  - id: WAIT for completed DERControl to be removed from server
     client: client
     action:
       type: wait
       parameters:
         duration_seconds: 20
 
-  - id: CLEAR OUT DERControls
+  - id: Check for Empty DERControls
     client: client
-    instructions: The server should clear out the completed control ready to begin the next controls.
     action: 
       type: discovery
       parameters:
@@ -302,8 +292,6 @@ Steps:
   - id: (8) DERControl 4
     repeat_until_pass: true
     client: client
-    instructions:
-      - The utility server configures a scheduled control with opModExpLimW = 200% of the DERs rated active power to begin in 10 minutes.
     admin_instructions:
       - type: create-der-control
         parameters:
