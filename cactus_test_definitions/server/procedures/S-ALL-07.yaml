@@ -53,6 +53,9 @@ Steps:
           reading_types:
             - ActivePowerAverage
             - VoltageSinglePhaseAverage
+          mmr_mrids:
+            - BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+            - CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
           location: Site
 
   - id: STEP 1 - UPDATE MUP ROLEFLAGS # Post same MirrorUsagePoint mRID with different roleFlags
@@ -76,6 +79,9 @@ Steps:
           reading_types: 
             - ActivePowerAverage
             - VoltageSinglePhaseAverage
+          mmr_mrids:
+            - BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+            - CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
           location: Device
 
   - id: POST INITIAL READING
