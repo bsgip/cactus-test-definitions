@@ -15,6 +15,10 @@ Steps:
     repeat_until_pass: true
     instructions:
       - Ensure no end devices are registered.
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: false
     action:
       type: discovery
       parameters:

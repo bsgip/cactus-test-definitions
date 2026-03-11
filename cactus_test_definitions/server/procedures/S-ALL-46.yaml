@@ -14,8 +14,15 @@ Steps:
   - id: PRECONDITION 1 - NO DERCONTROLS
     repeat_until_pass: true
     instructions:
-      - Create an EndDevice registration for client and ensure the DERControlList is empty. 
-    action: 
+      - Create an EndDevice registration for client and ensure the DERControlList is empty.
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+      - type: clear-der-controls
+        parameters:
+          all: true
+    action:
       type: discovery
       parameters:
         resources:
@@ -53,7 +60,12 @@ Steps:
     repeat_until_pass: true
     instructions:
       - Schedule a DERControl to start in 1 hour with opModExpLimW=0
-    action: 
+    admin_instructions:
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          opModExpLimW: 0
+    action:
       type: discovery
       parameters:
         resources:

@@ -67,7 +67,7 @@ ADMIN_INSTRUCTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
     # status: "active" (default) sets startTime in the past; "scheduled" sets startTime in the future.
     # Multiple "scheduled" controls should be stacked sequentially (non-overlapping) by the implementation.
     "create-der-control": {
-        "status": ParameterSchema(False, ParameterType.String),  # "active" or "scheduled"
+        "status": ParameterSchema(True, ParameterType.String),  # "active" or "scheduled"
         "opModExpLimW": ParameterSchema(False, ParameterType.Float),
         "opModImpLimW": ParameterSchema(False, ParameterType.Float),
         "opModGenLimW": ParameterSchema(False, ParameterType.Float),

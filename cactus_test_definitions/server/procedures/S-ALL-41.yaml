@@ -17,6 +17,14 @@ Steps:
     instructions:
       - Create an EndDevice registration.
       - Configure a scheduled control with opModExpLimW = 200% of the DERs rated active power, responseRequired = 03, and replyTo set to the response endpoint on the test utility server.
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          opModExpLimW: $(setMaxW * 2)
     action:
       type: discovery
       parameters:
@@ -115,7 +123,12 @@ Steps:
     client: client
     instructions:
       - The utility server is configured with a scheduled control with opModExpLimW = 200% of the DERs rated active power, responseRequired = 03 and replyTo set to the response endpoint on the test utility server, to begin in 5 minutes.
-    action: 
+    admin_instructions:
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          opModExpLimW: $(setMaxW * 2)
+    action:
       type: discovery
       parameters:
         resources:
@@ -168,7 +181,11 @@ Steps:
     client: client
     instructions:
       - The utility server is configured to cancel the active control while it is still active.
-    action: 
+    admin_instructions:
+      - type: clear-der-controls
+        parameters:
+          all: true
+    action:
       type: discovery
       parameters:
         resources:
@@ -213,7 +230,11 @@ Steps:
     repeat_until_pass: true
     client: client
     instructions: The server should clear out the cancelled control ready to begin the next controls (not written but makes next section easier to test).
-    action: 
+    admin_instructions:
+      - type: clear-der-controls
+        parameters:
+          all: true
+    action:
       type: discovery
       parameters:
         resources:
@@ -232,7 +253,12 @@ Steps:
     client: client
     instructions:
       - The utility server is configured with a scheduled control with opModExpLimW = 200% of the DERs rated active power, responseRequired = 03 and replyTo set to the response endpoint on the test utility server, to begin in 10 minutes.
-    action: 
+    admin_instructions:
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          opModExpLimW: $(setMaxW * 2)
+    action:
       type: discovery
       parameters:
         resources:
@@ -258,7 +284,11 @@ Steps:
     client: client
     instructions:
       - The utility server is configured to cancel the scheduled control before it is active.
-    action: 
+    admin_instructions:
+      - type: clear-der-controls
+        parameters:
+          all: true
+    action:
       type: discovery
       parameters:
         resources:
@@ -282,7 +312,12 @@ Steps:
     client: client
     instructions:
       - The utility server configures a scheduled control with opModExpLimW = 200% of the DERs rated active power to begin in 10 minutes.
-    action: 
+    admin_instructions:
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          opModExpLimW: $(setMaxW * 2)
+    action:
       type: discovery
       parameters:
         resources:
@@ -305,7 +340,12 @@ Steps:
     client: client
     instructions:
       - The utility server configures a scheduled control with the same primacy and an overlapping control window.
-    action: 
+    admin_instructions:
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          opModExpLimW: $(setMaxW * 2)
+    action:
       type: discovery
       parameters:
         resources:

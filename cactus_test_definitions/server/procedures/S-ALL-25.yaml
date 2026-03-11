@@ -15,7 +15,11 @@ Steps:
     repeat_until_pass: true
     instructions:
       - Create an EndDevice registration for client.
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+    action:
       type: discovery
       parameters:
         resources:
@@ -39,7 +43,12 @@ Steps:
     repeat_until_pass: true
     instructions:
       - Change the EndDeviceList to have a pollRate of 30 seconds. Ensure it sends a Notification.
-    action: 
+    admin_instructions:
+      - type: set-poll-rate
+        parameters:
+          resource: EndDeviceList
+          rate_seconds: 30
+    action:
       type: notifications
       parameters:
         sub_id: edev_list_sub
@@ -63,7 +72,11 @@ Steps:
     repeat_until_pass: true
     instructions:
       - Add a new FunctionSetAssignment to client EndDevice. Ensure it sends a Notification.
-    action: 
+    admin_instructions:
+      - type: ensure-fsa
+        parameters:
+          annotation: fsa1
+    action:
       type: notifications
       parameters:
         sub_id: fsa_list_sub
@@ -100,7 +113,11 @@ Steps:
     repeat_until_pass: true
     instructions:
       - Add a new DERProgram to the newly created FunctionSetAssignment. Ensure it sends a Notification.
-    action: 
+    admin_instructions:
+      - type: ensure-der-program
+        parameters:
+          fsa_annotation: fsa1
+    action:
       type: notifications
       parameters:
         sub_id: derp_list_sub
@@ -118,6 +135,10 @@ Steps:
     repeat_until_pass: true
     instructions:
       - Ensure the DERProgram has a DERControlList that can be subscribed to.
+    admin_instructions:
+      - type: ensure-der-control-list
+        parameters:
+          subscribable: true
     action:
       type: discovery
       parameters:
@@ -135,7 +156,12 @@ Steps:
     repeat_until_pass: true
     instructions:
       - Add a new DERControl to the same EndDevice updated in Step 2.
-    action: 
+    admin_instructions:
+      - type: create-der-control
+        parameters:
+          status: active
+          opModExpLimW: 0
+    action:
       type: notifications
       parameters:
         sub_id: derc_list_sub
@@ -152,6 +178,10 @@ Steps:
     repeat_until_pass: true
     instructions:
       - Add a DefaultDERControl to the recently created DERProgram. Ensure it's subscribable.
+    admin_instructions:
+      - type: create-default-der-control
+        parameters:
+          opModExpLimW: 0
     action:
       type: discovery
       parameters:
@@ -172,8 +202,12 @@ Steps:
   - id: 10 - AWAIT DEFAULT DERC NOTIFICATION
     repeat_until_pass: true
     instructions:
-      - Adjust the DefaultDERControl to have opModeExpLimW 2000 W. Ensure it sends a Notification.
-    action: 
+      - Adjust the DefaultDERControl to have opModExpLimW 2000 W. Ensure it sends a Notification.
+    admin_instructions:
+      - type: create-default-der-control
+        parameters:
+          opModExpLimW: 2000
+    action:
       type: notifications
       parameters:
         sub_id: dderc_sub

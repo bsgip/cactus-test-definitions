@@ -17,7 +17,15 @@ Steps:
     instructions:
       - Create an EndDevice registration.
       - Configure an active control with opModExpLimW = 0W and no rampTms attribute.
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+      - type: create-der-control
+        parameters:
+          status: active
+          opModExpLimW: 0
+    action:
       type: discovery
       parameters:
         resources:

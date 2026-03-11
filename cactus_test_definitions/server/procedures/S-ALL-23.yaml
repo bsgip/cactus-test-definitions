@@ -17,7 +17,14 @@ Steps:
     instructions:
       - Create an EndDevice registration.
       - Configure a default control with setGradW = 1 % per second.
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+      - type: create-default-der-control
+        parameters:
+          setGradW: 100
+    action:
       type: discovery
       parameters:
         resources:
