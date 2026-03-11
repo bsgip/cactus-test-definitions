@@ -136,6 +136,13 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "resource": ParameterSchema(True, ParameterType.CSIPAusResource),
         "poll_rate_seconds": ParameterSchema(True, ParameterType.Integer),
     },  # Asserts a specific poll rate value
+    "der-control-responses": {
+        "minimum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at least this many matches to pass
+        "maximum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at most this many matches to pass
+        "sent_response_type": ParameterSchema(
+            True, ParameterType.Integer
+        ),  # Filters for DERControls that have sent this response type
+    },  # Counts DERControls in context that have sent the specified ResponseType
 }
 VALID_CHECK_NAMES: set[str] = set(CHECK_PARAMETER_SCHEMA.keys())
 
