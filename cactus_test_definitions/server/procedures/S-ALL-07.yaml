@@ -53,6 +53,9 @@ Steps:
           reading_types:
             - ActivePowerAverage
             - VoltageSinglePhaseAverage
+          mmr_mrids:
+            - BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+            - CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
           location: Site
 
   - id: STEP 1 - UPDATE MUP ROLEFLAGS # Post same MirrorUsagePoint mRID with different roleFlags
@@ -76,6 +79,9 @@ Steps:
           reading_types: 
             - ActivePowerAverage
             - VoltageSinglePhaseAverage
+          mmr_mrids:
+            - BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+            - CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
           location: Device
 
   - id: POST INITIAL READING
@@ -91,22 +97,24 @@ Steps:
           - CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
   - id: STEP 2 - UPDATE READING # Post MirrorMeterReading with same mmr mRID but different value
-    action: 
+    action:
       type: insert-readings
       parameters:
         mup_id: mup_mrid_1
         values:
-          ActivePowerAverage: [6000]  # The mmr mrid will automatically be the same as the initial reading
+          ActivePowerAverage: [6000]
+        mmr_mrids:
+          - BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
         # NOTE: We do not have the option to request readings, so cannot verify the result of this upsert
-  
-  - id: STEP 3 - Update MUP type  # Post MirrorMeterReading with same mRID and no value (change the reading type)
-    action: 
+
+  - id: STEP 3 - UPDATE MUP TYPE # Post MirrorUsagePoint with same mRID but different reading type - server must overwrite, not duplicate
+    action:
       type: upsert-mup
       parameters:
         mup_id: mup_mrid_1
         set_mup_mrid: AAAAAAAAAAAAAAAAAAAAAAA000000001
         reading_types:
-          - ReactivePowerAverage  # From active power
+          - ReactivePowerAverage  # Changed from ActivePowerAverage
           - VoltageSinglePhaseAverage
         mmr_mrids:
           - BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
@@ -121,6 +129,6 @@ Steps:
             - ReactivePowerAverage
             - VoltageSinglePhaseAverage
           mmr_mrids:
-          - BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
-          - CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+            - BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB
+            - CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
           location: Device
