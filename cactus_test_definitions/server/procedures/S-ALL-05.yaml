@@ -17,9 +17,6 @@ Steps:
   - id: (A) PRECONDITION REGISTRATION
     repeat_until_pass: true
     client: CLIENT-A
-    instructions:
-      - Create an EndDevice registration for CLIENT-A (or rerun S-ALL-02 / S-ALL-03).
-      - Ensure there is an accessible DERControlList
     admin_instructions:
       - type: ensure-end-device
         client: CLIENT-A
@@ -47,9 +44,6 @@ Steps:
   - id: (B) PRECONDITION REGISTRATION
     repeat_until_pass: true
     client: CLIENT-B
-    instructions:
-      - Create an EndDevice registration for CLIENT-B (or rerun S-ALL-02 / S-ALL-03).
-      - Ensure there is an accessible DERControlList
     admin_instructions:
       - type: ensure-end-device
         client: CLIENT-B
@@ -167,8 +161,6 @@ Steps:
 
   - id: 5 - DISALLOW ACCESS
     repeat_until_pass: true
-    instructions:
-      - Remove EndDevice entry for ClientA (or disallow access).
     admin_instructions:
       - type: set-client-access
         client: CLIENT-A

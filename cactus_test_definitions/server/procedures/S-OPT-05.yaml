@@ -13,8 +13,6 @@ Preconditions:
 Steps:
   - id: PRECONDITION
     repeat_until_pass: true
-    instructions:
-      - Register an end device
     admin_instructions:
       - type: ensure-end-device
         parameters:
@@ -46,8 +44,6 @@ Steps:
     
   - id: ENSURE MUP POLLRATE
     repeat_until_pass: true
-    instructions:
-      - The utility server shall be configured to change all default MirrorUsagePoint post-rates for the test client to 60s.
     admin_instructions:
       - type: set-post-rate
         parameters:
@@ -65,8 +61,6 @@ Steps:
 
   - id: UPDATE-MUP-POLLRATE
     repeat_until_pass: true
-    instructions:
-      - The utility server shall be configured to change all default MirrorUsagePoint post-rates for the test client from 60s to 300s.
     admin_instructions:
       - type: set-post-rate
         parameters:

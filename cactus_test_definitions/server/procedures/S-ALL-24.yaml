@@ -14,9 +14,6 @@ Steps:
   - id: (A) PRECONDITION
     repeat_until_pass: true
     client: client
-    instructions:
-      - Create an EndDevice registration.
-      - Configure a default control with - opModExpLimW = 50% of the DER active power rating, opModGenLimW = 0W, opModImpLimW = 50% of the DER active power rating, opModLoadLimW = 0W
     admin_instructions:
       - type: ensure-end-device
         parameters:

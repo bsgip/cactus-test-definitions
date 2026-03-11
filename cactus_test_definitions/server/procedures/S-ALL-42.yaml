@@ -14,9 +14,6 @@ Steps:
   - id: (A) PRECONDITION
     repeat_until_pass: true
     client: client
-    instructions:
-      - The client has a DER that is exporting at the connection point at least 50% of its rated active power.
-      - The utility server has a current active control in operation with opModExpLimW set to 200% of the DER's rated active power, and a default DER control in-place with opModExpLimW set to 30% of the DER's rated active power.
     admin_instructions:
       - type: ensure-end-device
         parameters:
@@ -52,7 +49,6 @@ Steps:
 
   - id: (1) Cancel active controls
     repeat_until_pass: true
-    instructions: The server should set all active controls to cancelled.
     client: client
     admin_instructions:
       - type: clear-der-controls

@@ -17,8 +17,6 @@ Steps:
   - id: PRECONDITION - register end device on clientA.
     client: CLIENT-A
     repeat_until_pass: true
-    instructions:
-      - Create an EndDevice registration for clientA.
     admin_instructions:
       - type: ensure-end-device
         client: CLIENT-A

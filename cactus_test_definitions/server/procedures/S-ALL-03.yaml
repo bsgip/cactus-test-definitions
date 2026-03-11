@@ -14,8 +14,6 @@ Preconditions:
 Steps:
   - id: PRECONDITION
     repeat_until_pass: true
-    instructions:
-      - Remove any existing EndDevice registrations for client.
     admin_instructions:
       - type: ensure-end-device
         parameters:
@@ -52,8 +50,6 @@ Steps:
 
   - id: FETCHING DER INFO
     repeat_until_pass: true
-    instructions:
-      - Populate DERList with an entry that has a DERCapabilityLink, DERSettingsLink and DERStatusLink.
     admin_instructions:
       - type: ensure-end-device
         parameters:

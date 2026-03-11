@@ -14,9 +14,6 @@ Steps:
   - id: (A) PRECONDITION
     repeat_until_pass: true
     client: client
-    instructions:
-      - Create an EndDevice registration.
-      - Configure an active control with opModConnect = true and without including the rampTms attribute.
     admin_instructions:
       - type: ensure-end-device
         parameters:
@@ -45,8 +42,6 @@ Steps:
   - id: (1) Disconnect
     repeat_until_pass: true
     client: client
-    instructions:
-      - Configure an active control with opModConnect = false and without including the rampTms attribute.
     admin_instructions:
       - type: create-der-control
         parameters:
@@ -74,8 +69,6 @@ Steps:
   - id: (2) Connect
     repeat_until_pass: true
     client: client
-    instructions:
-      - Configure an active control with opModConnect = true and without including the rampTms attribute.
     admin_instructions:
       - type: create-der-control
         parameters:
