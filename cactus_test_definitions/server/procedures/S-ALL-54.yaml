@@ -17,8 +17,6 @@ Steps:
   - id: PRECONDITION 1 - CLIENT_CURRENT
     client: client_current
     repeat_until_pass: true
-    instructions:
-      - Create an EndDevice registration for client_current.
     admin_instructions:
       - type: ensure-end-device
         client: client_current
@@ -39,8 +37,6 @@ Steps:
     client: client_new
     use_client_context: client_current
     repeat_until_pass: true
-    instructions:
-      - Remove any access that client_new has to client_current's aggregator tenancy
     admin_instructions:
       - type: set-client-access
         client: client_new
@@ -57,8 +53,6 @@ Steps:
     client: client_new
     use_client_context: client_current
     repeat_until_pass: true
-    instructions:
-      - Enable client_new's access to client_current's aggregator tenancy
     admin_instructions:
       - type: set-client-access
         client: client_new

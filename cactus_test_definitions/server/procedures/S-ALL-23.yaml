@@ -14,9 +14,6 @@ Steps:
   - id: (A) PRECONDITION
     repeat_until_pass: true
     client: client
-    instructions:
-      - Create an EndDevice registration.
-      - Configure a default control with setGradW = 1 % per second.
     admin_instructions:
       - type: ensure-end-device
         parameters:

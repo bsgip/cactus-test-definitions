@@ -14,7 +14,7 @@ Steps:
   - id: PRECONDITION 1 - CREATE END DEVICE
     repeat_until_pass: true
     instructions:
-      - Create an EndDevice registration for client and the subscription process as defined in test S-ALL-25.
+      - Create an EndDevice registration, and follow the subscription process as defined in test S-ALL-25.
     admin_instructions:
       - type: ensure-end-device
         parameters:
@@ -52,8 +52,6 @@ Steps:
 
   - id: PRECONDITION 3 - CREATE DERC
     repeat_until_pass: true
-    instructions:
-      - Create an active DERControl with opModConnect=true.
     admin_instructions:
       - type: create-der-control
         parameters:
@@ -74,15 +72,6 @@ Steps:
 
   - id: STEP 1 - CREATE DERC
     repeat_until_pass: true
-    instructions:
-      - The server is configured with an active control.
-      - opModExpLimW = 50% of the DER active power rating
-      - opModGenLimW = 0W
-      - opModImpLimW = 50% of the DER active power rating
-      - opModLoadLimW = 0W
-      - opModEnergize = false
-      - opModConnect = false
-      - rampTms not included
     admin_instructions:
       - type: create-der-control
         parameters:

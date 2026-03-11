@@ -13,8 +13,6 @@ Preconditions:
 Steps:
   - id: PRECONDITION
     repeat_until_pass: true
-    instructions:
-      - Create an EndDevice registration for client.
     admin_instructions:
       - type: ensure-end-device
         parameters:
@@ -41,8 +39,6 @@ Steps:
 
   - id: 2- AWAIT EDEV LIST NOTIFICATION
     repeat_until_pass: true
-    instructions:
-      - Change the EndDeviceList to have a pollRate of 30 seconds. Ensure it sends a Notification.
     admin_instructions:
       - type: set-poll-rate
         parameters:
@@ -70,8 +66,6 @@ Steps:
     
   - id: 4 - AWAIT FSA LIST NOTIFICATION
     repeat_until_pass: true
-    instructions:
-      - Add a new FunctionSetAssignment to client EndDevice. Ensure it sends a Notification.
     admin_instructions:
       - type: ensure-fsa
         parameters:
@@ -111,8 +105,6 @@ Steps:
 
   - id: 6 - AWAIT DERP LIST NOTIFICATION
     repeat_until_pass: true
-    instructions:
-      - Add a new DERProgram to the newly created FunctionSetAssignment. Ensure it sends a Notification.
     admin_instructions:
       - type: ensure-der-program
         parameters:
@@ -133,8 +125,6 @@ Steps:
   # Same as above - we don't have the DERControlList (only a link) - we need to resolve it
   - id: 7A - DISCOVER DERC LIST
     repeat_until_pass: true
-    instructions:
-      - Ensure the DERProgram has a DERControlList that can be subscribed to.
     admin_instructions:
       - type: ensure-der-control-list
         parameters:
@@ -154,8 +144,6 @@ Steps:
 
   - id: 8- AWAIT DERC NOTIFICATION
     repeat_until_pass: true
-    instructions:
-      - Add a new DERControl to the same EndDevice updated in Step 2.
     admin_instructions:
       - type: create-der-control
         parameters:
@@ -176,8 +164,6 @@ Steps:
   # Same as above - we don't have the DefaultDERControl (only a link) - we need to resolve it
   - id: 9A - DISCOVER NEW DERC
     repeat_until_pass: true
-    instructions:
-      - Add a DefaultDERControl to the recently created DERProgram. Ensure it's subscribable.
     admin_instructions:
       - type: create-default-der-control
         parameters:
@@ -201,8 +187,6 @@ Steps:
 
   - id: 10 - AWAIT DEFAULT DERC NOTIFICATION
     repeat_until_pass: true
-    instructions:
-      - Adjust the DefaultDERControl to have opModExpLimW 2000 W. Ensure it sends a Notification.
     admin_instructions:
       - type: create-default-der-control
         parameters:

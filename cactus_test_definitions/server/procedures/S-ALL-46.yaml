@@ -13,8 +13,6 @@ Preconditions:
 Steps:
   - id: PRECONDITION 1 - NO DERCONTROLS
     repeat_until_pass: true
-    instructions:
-      - Create an EndDevice registration for client and ensure the DERControlList is empty.
     admin_instructions:
       - type: ensure-end-device
         parameters:
@@ -64,6 +62,7 @@ Steps:
       - type: create-der-control
         parameters:
           status: scheduled
+          start_offset_seconds: 3600
           opModExpLimW: 0
     action:
       type: discovery
@@ -102,8 +101,6 @@ Steps:
 
   - id: 2B - AWAIT DERCONTROL NOTIFICATION
     repeat_until_pass: true
-    instructions: 
-      - The notification from the DERControl.
     action: 
       type: notifications
       parameters:

@@ -111,8 +111,6 @@ Steps:
   - id: CLIENT-A DISCOVER MUPS
     repeat_until_pass: true
     client: CLIENT-A
-    instructions:
-      - MirrorUsagePoints for CLIENT-A must be initially empty.
     admin_instructions:
       - type: ensure-mup-list-empty
         client: CLIENT-A
@@ -129,8 +127,6 @@ Steps:
   - id: CLIENT-B DISCOVER MUPS
     repeat_until_pass: true
     client: CLIENT-B
-    instructions:
-      - MirrorUsagePoints for CLIENT-B must be initially empty.
     admin_instructions:
       - type: ensure-mup-list-empty
         client: CLIENT-B

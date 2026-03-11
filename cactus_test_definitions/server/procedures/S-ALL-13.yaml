@@ -14,9 +14,6 @@ Steps:
   - id: (A) PRECONDITION
     repeat_until_pass: true
     client: client
-    instructions:
-      - Create an EndDevice registration.
-      - Configure an active control with opModImpLimW = 0W and no rampTms attribute.
     admin_instructions:
       - type: ensure-end-device
         parameters:

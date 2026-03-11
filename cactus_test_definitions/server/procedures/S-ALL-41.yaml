@@ -14,9 +14,6 @@ Steps:
   - id: (A) PRECONDITION
     repeat_until_pass: true
     client: client
-    instructions:
-      - Create an EndDevice registration.
-      - Configure a scheduled control with opModExpLimW = 200% of the DERs rated active power, responseRequired = 03, and replyTo set to the response endpoint on the test utility server.
     admin_instructions:
       - type: ensure-end-device
         parameters:
@@ -121,12 +118,11 @@ Steps:
   - id: (4) DERControl 2
     repeat_until_pass: true
     client: client
-    instructions:
-      - The utility server is configured with a scheduled control with opModExpLimW = 200% of the DERs rated active power, responseRequired = 03 and replyTo set to the response endpoint on the test utility server, to begin in 5 minutes.
     admin_instructions:
       - type: create-der-control
         parameters:
           status: scheduled
+          start_offset_seconds: 300
           opModExpLimW: $(setMaxW * 2)
     action:
       type: discovery
@@ -179,8 +175,6 @@ Steps:
   - id: (5) DERControl 2 - Cancelled.
     repeat_until_pass: true
     client: client
-    instructions:
-      - The utility server is configured to cancel the active control while it is still active.
     admin_instructions:
       - type: clear-der-controls
         parameters:
@@ -229,9 +223,8 @@ Steps:
   - id: CLEAR OUT DERControls for next section of the test
     repeat_until_pass: true
     client: client
-    instructions: The server should clear out the cancelled control ready to begin the next controls (not written but makes next section easier to test).
     admin_instructions:
-      - type: clear-der-controls
+      - type: clear-der-controls # not written but makes next section easier to test
         parameters:
           all: true
     action:
@@ -257,6 +250,7 @@ Steps:
       - type: create-der-control
         parameters:
           status: scheduled
+          start_offset_seconds: 600
           opModExpLimW: $(setMaxW * 2)
     action:
       type: discovery
@@ -282,8 +276,6 @@ Steps:
   - id: (7) DERControl 3 - Cancel
     repeat_until_pass: true
     client: client
-    instructions:
-      - The utility server is configured to cancel the scheduled control before it is active.
     admin_instructions:
       - type: clear-der-controls
         parameters:
@@ -316,6 +308,7 @@ Steps:
       - type: create-der-control
         parameters:
           status: scheduled
+          start_offset_seconds: 600
           opModExpLimW: $(setMaxW * 2)
     action:
       type: discovery
@@ -344,6 +337,7 @@ Steps:
       - type: create-der-control
         parameters:
           status: scheduled
+          start_offset_seconds: 300
           opModExpLimW: $(setMaxW * 2)
     action:
       type: discovery

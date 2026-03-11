@@ -13,8 +13,6 @@ Preconditions:
 Steps:
   - id: PRECONDITION
     repeat_until_pass: true
-    instructions:
-      - The utility server is configured with active control with opModExpLimW / opModImpLimW = 200% of the DER's rated active power, responseRequired = 03, and replyTo set to the response endpoint on the test utility server.
     admin_instructions:
       - type: ensure-end-device
         parameters:
