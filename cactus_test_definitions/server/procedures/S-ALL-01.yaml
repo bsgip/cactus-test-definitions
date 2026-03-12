@@ -11,6 +11,9 @@ Preconditions:
     - id: client
   
 Steps:
+  - id: OUT-OF-BAND-REGISTER
+    action:
+      type: admin-device-register
   - id: DISCOVERY
     repeat_until_pass: true
     admin_instructions:

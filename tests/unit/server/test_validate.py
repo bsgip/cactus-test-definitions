@@ -1,8 +1,9 @@
 import pytest
-from cactus_test_definitions.server.actions import ACTION_PARAMETER_SCHEMA
+from cactus_test_definitions.server.actions import ACTION_PARAMETER_SCHEMA, Action
 from cactus_test_definitions.server.test_procedures import (
     TestProcedureId,
     get_test_procedure,
+    Step,
 )
 from cactus_test_definitions.server.validate import validate_test_procedure
 
@@ -72,3 +73,21 @@ def test_each_alias_defined(tp_id: str):
             if mup_id:
                 # This will match
                 assert mup_id and (mup_id in mup_aliases_found), "mup_id hasn't been defined yet."
+
+
+@pytest.mark.parametrize("tp_id", TestProcedureId)
+def test_no_reserved_step_names(tp_id: TestProcedureId):
+    tp = get_test_procedure(tp_id)
+
+    names = [s.id for s in tp.steps if s.id in Step.RESERVED_NAMES]
+
+    assert not names, f"Step IDs {names} are reserved"
+
+
+@pytest.mark.parametrize("tp_id", TestProcedureId)
+def test_no_reserved_action_names(tp_id: TestProcedureId):
+    tp = get_test_procedure(tp_id)
+
+    names = [s.action.type for s in tp.steps if s.action.type in Action.RESERVED_NAMES]
+
+    assert not names, f"Action names {names} are reserved"

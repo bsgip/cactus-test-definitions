@@ -8,6 +8,7 @@ from cactus_test_definitions.server.test_procedures import (
     TestProcedureId,
     get_all_test_procedures,
     parse_test_procedure,
+    Step,
 )
 from dataclass_wizard.errors import UnknownKeysError
 
@@ -58,3 +59,21 @@ def test_error_on_extra_key():
 
     with pytest.raises(UnknownKeysError):
         parse_test_procedure(yaml_contents)
+
+
+def test_step_admin_setup():
+    """Ensures Step.admin_setup() method works"""
+    result = Step.admin_setup()
+    assert isinstance(result, Step)
+
+    # id should be listed as one of the reserved names
+    assert result.id in Step.RESERVED_NAMES
+
+
+def test_step_admin_teardown():
+    """Ensures Step.admin_teardown() method works"""
+    result = Step.admin_teardown()
+    assert isinstance(result, Step)
+
+    # id should be listed as one of the reserved names
+    assert result.id in Step.RESERVED_NAMES

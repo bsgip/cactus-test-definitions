@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from enum import StrEnum
 from importlib import resources
+from typing import ClassVar
 
 import yaml
 from cactus_test_definitions.csipaus import CSIPAusVersion
@@ -115,6 +116,39 @@ class Step:
     admin_instructions: list[AdminInstruction] | None = None  # Machine-readable server setup instructions
 
     repeat_until_pass: bool = False  # If True - failing checks will cause this step to re-execute until successful
+
+    RESERVED_NAMES: ClassVar[tuple[str, ...]] = (
+        "ADMIN-SETUP",
+        "ADMIN-TEARDOWN",
+    )  # Specific names that no step should redefine e.g. associated with plugin hooks
+
+    @staticmethod
+    def admin_setup() -> "Step":
+        """Generates common setup step for all tests."""
+        admin_action = Action.admin_setup()
+        return Step(
+            id="ADMIN-SETUP",
+            action=admin_action,
+            client=admin_action.client,
+            use_client_context=None,
+            checks=None,
+            instructions=None,
+            repeat_until_pass=False,
+        )
+
+    @staticmethod
+    def admin_teardown() -> "Step":
+        """Generates common teardown step for all tests."""
+        admin_action = Action.admin_teardown()
+        return Step(
+            id="ADMIN-TEARDOWN",
+            action=admin_action,
+            client=admin_action.client,
+            use_client_context=None,
+            checks=None,
+            instructions=None,
+            repeat_until_pass=False,
+        )
 
 
 @dataclass

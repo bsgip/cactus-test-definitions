@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, ClassVar
 
 from cactus_test_definitions.errors import TestProcedureDefinitionError
 from cactus_test_definitions.parameters import (
@@ -15,9 +15,15 @@ from cactus_test_definitions.variable_expressions import (
 
 @dataclass
 class Action:
+
     type: str
     client: str | None = None  # use the client with this id to execute this action. If None, use the 0th client
     parameters: dict[str, Any] = None  # type: ignore # This will be forced in __post_init__
+
+    RESERVED_NAMES: ClassVar[tuple[str, ...]] = (
+        "admin-setup",
+        "admin-teardown",
+    )  # type names that test definitions shouldn't be able to redefine
 
     def __post_init__(self):
         """Some parameter values might contain variable expressions (eg: a string "$now") that needs to be replaced
@@ -30,9 +36,20 @@ class Action:
             if variable_expr:
                 self.parameters[k] = parse_variable_expression_body(variable_expr, k)
 
+    @staticmethod
+    def admin_setup() -> "Action":
+        """Creates common setup action not defineable from test procedure."""
+        return Action(type="admin-setup", client="NOT_APPLICABLE")
+
+    @staticmethod
+    def admin_teardown() -> "Action":
+        """Creates common teardown action not defineable from test procedure."""
+        return Action(type="admin-teardown", client="NOT_APPLICABLE")
+
 
 # The parameter schema for each action, keyed by the action name
 ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
+    "admin-device-register": {},  # Admin api plugin specific to out of band register
     "discovery": {
         "resources": ParameterSchema(True, ParameterType.ListCSIPAusResource),  # What resources to try and resolve?
         "next_polling_window": ParameterSchema(
@@ -130,7 +147,35 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "total_simulations": ParameterSchema(True, ParameterType.Integer),
     },  # Client will perform discovery, reading and response handling at the specified rate for total_simulations
 }
-VALID_ACTION_NAMES: set[str] = set(ACTION_PARAMETER_SCHEMA.keys())
+
+
+def valid_action_names_factory() -> set[str]:
+    """Produces the collection of valid action names.
+
+    Just really ensures anyone adding to the above doesn't overwrite those used
+    in plugins for example.
+
+    Returns:
+        Valid action.type strings
+
+    Raises:
+        ValueError: if 'type' name is reserved
+    """
+    valid_names = set()
+    reserved_used = set()
+    for name in ACTION_PARAMETER_SCHEMA.keys():
+        if name in Action.RESERVED_NAMES:
+            reserved_used.add(name)
+        else:
+            valid_names.add(name)
+
+    if len(reserved_used) > 0:
+        raise ValueError(f"Action names {reserved_used} are reserved. All reserved: {Action.RESERVED_NAMES}")
+
+    return valid_names
+
+
+VALID_ACTION_NAMES: set[str] = valid_action_names_factory()
 
 
 def validate_action_parameters(procedure_name: str, step_name: str, action: Action) -> None:
