@@ -9,6 +9,7 @@ TargetVersions:
 Preconditions:
   required_clients:
     - id: client
+      client_type: aggregator
   
 Steps:
   - id: PRECONDITION 1 - CREATE END DEVICE
