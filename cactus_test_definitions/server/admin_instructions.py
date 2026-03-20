@@ -76,6 +76,7 @@ ADMIN_INSTRUCTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "opModEnergize": ParameterSchema(False, ParameterType.Boolean),
         "opModFixedW": ParameterSchema(False, ParameterType.Float),
         "rampTms": ParameterSchema(False, ParameterType.Integer),
+        "randomizeStart_seconds": ParameterSchema(False, ParameterType.Integer),
         "duration_seconds": ParameterSchema(False, ParameterType.Integer),
         "primacy": ParameterSchema(False, ParameterType.Integer),
         "start_offset_seconds": ParameterSchema(False, ParameterType.Integer),

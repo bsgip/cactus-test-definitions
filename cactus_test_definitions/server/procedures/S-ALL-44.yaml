@@ -17,6 +17,9 @@ Steps:
     instructions:
       - The utility server is configured to generate a schedule of 24 sequential, non-overlapping controls with a range of export and/or import limits, each with 1min duration.
     admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
       - type: create-der-control
         parameters:
           status: scheduled
