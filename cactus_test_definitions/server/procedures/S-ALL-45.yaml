@@ -9,7 +9,7 @@ TargetVersions:
 Preconditions:
   required_clients:
     - id: client
-  
+
 Steps:
   - id: (A) PRECONDITION
     repeat_until_pass: true
@@ -17,31 +17,39 @@ Steps:
     instructions:
       - The utility server is configured with five sequential, non-overlapping active controls, each with - Duration = 120s, randomizeStart = 60s, opModExpLimW = 200% of the DER's rated active power.
     admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
       - type: create-der-control
         parameters:
           status: scheduled
           opModExpLimW: $(setMaxW * 2)
           duration_seconds: 120
+          randomizeStart_seconds: 60
       - type: create-der-control
         parameters:
           status: scheduled
           opModExpLimW: $(setMaxW * 2)
           duration_seconds: 120
+          randomizeStart_seconds: 60
       - type: create-der-control
         parameters:
           status: scheduled
           opModExpLimW: $(setMaxW * 2)
           duration_seconds: 120
+          randomizeStart_seconds: 60
       - type: create-der-control
         parameters:
           status: scheduled
           opModExpLimW: $(setMaxW * 2)
           duration_seconds: 120
+          randomizeStart_seconds: 60
       - type: create-der-control
         parameters:
           status: scheduled
           opModExpLimW: $(setMaxW * 2)
           duration_seconds: 120
+          randomizeStart_seconds: 60
     action:
       type: discovery
       parameters:
@@ -57,4 +65,3 @@ Steps:
           randomizeStart: 60
           event_status: 0 # Scheduled (non-overlapping)
           duration: 120
-  
