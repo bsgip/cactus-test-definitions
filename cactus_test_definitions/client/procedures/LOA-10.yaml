@@ -176,14 +176,6 @@ Steps:
       parameters:
         endpoint: /edev/1/derp/6/derc
     actions:
-      - type: create-der-control
-        parameters:
-          start: $(now)
-          duration_seconds: 600
-          opModImpLimW: $(setMaxW * 2)
-          fsa_id: 2
-          primacy: 2
-          tag: DERC1
       - type: enable-steps
         parameters:
           steps:
@@ -226,18 +218,18 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-2
+            - GET-DERP-2
       - type: remove-steps
         parameters:
           steps:
             - WAIT-DERC-2
 
   # (e) After the short period - configure a DERControl on DERP 1 - set to 0%
-  GET-DERC-2:
+  GET-DERP-2:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/1/derc
+        endpoint: /edev/1/fsa/1/derp
     actions:
       - type: create-der-control
         parameters:
@@ -247,6 +239,22 @@ Steps:
           fsa_id: 1
           primacy: 1
           tag: DERC2
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-2
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-2
+
+  # (e) Retrieve control from DERP1
+  GET-DERC-2:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
       - type: enable-steps
         parameters:
           steps:
@@ -317,18 +325,18 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-3
+            - GET-DERP-3
       - type: remove-steps
         parameters:
           steps:
             - POST-DERC-2-RESPONSE-COMPLETED
 
   # (i) Create a new DERControl on DERP6 - set to 200%
-  GET-DERC-3:
+  GET-DERP-3:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/6/derc
+        endpoint: /edev/1/fsa/2/derp
     actions:
       - type: create-der-control
         parameters:
@@ -338,6 +346,22 @@ Steps:
           fsa_id: 2
           primacy: 2
           tag: DERC3
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-3
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-3
+
+  # (i) Retrieve control from DERP6
+  GET-DERC-3:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/6/derc
+    actions:
       - type: enable-steps
         parameters:
           steps:
@@ -405,19 +429,19 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-4
-            - GET-DERC-5
+            - GET-DERP-4
+            - GET-DERP-5
       - type: remove-steps
         parameters:
           steps:
             - WAIT-OBSERVE-DEFAULT-AFTER-DERC-3
 
   # (m, n) (i) Configure the first DERControl on DERP1
-  GET-DERC-4:
+  GET-DERP-4:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/1/derc
+        endpoint: /edev/1/fsa/1/derp
     actions:
       - type: create-der-control
         parameters:
@@ -431,6 +455,22 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
+            - GET-DERC-4
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-4
+
+  # (m, n) (i) Retrieve control on DERP1
+  GET-DERC-4:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
             - POST-DERC-4-RESPONSE-STARTED
       - type: remove-steps
         parameters:
@@ -439,11 +479,11 @@ Steps:
 
   # (m) (ii) Configure the second DERControl on DERP6
   # (n)
-  GET-DERC-5:
+  GET-DERP-5:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/6/derc
+        endpoint: /edev/1/fsa/2/derp
     actions:
       - type: create-der-control
         parameters:
@@ -453,6 +493,23 @@ Steps:
           fsa_id: 2
           primacy: 2
           tag: DERC5
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-5
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-5
+
+  # (m) (ii) Retrieve control on DERP6 
+  # (n)
+  GET-DERC-5:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/6/derc
+    actions:
       - type: enable-steps
         parameters:
           steps:
@@ -540,18 +597,18 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-6
+            - GET-DERP-6
       - type: remove-steps
         parameters:
           steps:
             - WAIT-OBSERVE-DERC-5
 
   # (s) Create a DERControl on DERP6 at 50%
-  GET-DERC-6:
+  GET-DERP-6:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/6/derc
+        endpoint: /edev/1/fsa/2/derp
     actions:
       - type: create-der-control
         parameters:
@@ -561,6 +618,22 @@ Steps:
           fsa_id: 2
           primacy: 2
           tag: DERC6
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-6
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-6
+
+  # (s) Create a DERControl on DERP6 at 50%
+  GET-DERC-6:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/6/derc
+    actions:
       - type: enable-steps
         parameters:
           steps:
@@ -625,19 +698,19 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-7
-            - GET-DERC-8
+            - GET-DERP-7
+            - GET-DERP-8
       - type: remove-steps
         parameters:
           steps:
             - WAIT-OBSERVE-DERC-6
 
   # (v) (i) Create a DERControl on DERP1 at 0%
-  GET-DERC-7:
+  GET-DERP-7:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/1/derc
+        endpoint: /edev/1/fsa/1/derp
     actions:
       - type: create-der-control
         parameters:
@@ -650,6 +723,22 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
+            - GET-DERC-7
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-7
+
+  # (v) (i) Retrieve control on DERP1
+  GET-DERC-7:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
             - POST-DERC-7-RESPONSE-STARTED
       - type: remove-steps
         parameters:
@@ -657,11 +746,11 @@ Steps:
             - GET-DERC-7
 
   # (v) (ii) Create a DERControl on DERP6 at 50% / 30%
-  GET-DERC-8:
+  GET-DERP-8:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/6/derc
+        endpoint: /edev/1/fsa/2/derp
     actions:
       - type: create-der-control
         parameters:
@@ -672,6 +761,22 @@ Steps:
           fsa_id: 2
           primacy: 2
           tag: DERC8
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-8
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-8
+
+  # (v) (ii) Retrieve control on DERP6
+  GET-DERC-8:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/6/derc
+    actions:
       - type: enable-steps
         parameters:
           steps:
@@ -741,19 +846,19 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-9
-            - GET-DERC-10
+            - GET-DERP-9
+            - GET-DERP-10
       - type: remove-steps
         parameters:
           steps:
             - POST-DERC-7-RESPONSE-COMPLETED
 
   # (y) (i) Configure DERControl on DERP1
-  GET-DERC-9:
+  GET-DERP-9:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/1/derc
+        endpoint: /edev/1/fsa/1/derp
     actions:
       - type: create-der-control
         parameters:
@@ -766,6 +871,22 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
+            - GET-DERC-9
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-9
+
+  # (y) (i) Retrieve control on DERP1
+  GET-DERC-9:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
             - POST-DERC-9-RESPONSE-STARTED
       - type: remove-steps
         parameters:
@@ -773,11 +894,11 @@ Steps:
             - GET-DERC-9
 
   # (y) (ii) Configure DERControl on DERP6
-  GET-DERC-10:
+  GET-DERP-10:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/6/derc
+        endpoint: /edev/1/fsa/2/derp
     actions:
       - type: create-der-control
         parameters:
@@ -787,6 +908,22 @@ Steps:
           fsa_id: 2
           primacy: 2
           tag: DERC10
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-10
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-10
+
+  # (y) (ii) Retrieve control on DERP6
+  GET-DERC-10:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/6/derc
+    actions:
       - type: enable-steps
         parameters:
           steps:
