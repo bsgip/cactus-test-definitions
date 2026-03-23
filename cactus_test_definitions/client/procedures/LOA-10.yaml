@@ -139,7 +139,7 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-1
+            - GET-DERP-1
       - type: remove-steps
         parameters:
           steps:
