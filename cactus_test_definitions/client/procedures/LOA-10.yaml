@@ -146,6 +146,30 @@ Steps:
             - WAIT-OBSERVE-DEFAULT-DERC
 
   # (c, d) - Create a DERControl at DERP 6 - set to 200% of max
+  GET-DERP-1:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/2/derp
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 600
+          opModImpLimW: $(setMaxW * 2)
+          fsa_id: 2
+          primacy: 2
+          tag: DERC1
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-1
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-1
+
+  # (c, d) - Create a DERControl at DERP 6 - set to 200% of max
   GET-DERC-1:
     event:
       type: GET-request-received
