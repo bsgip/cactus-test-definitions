@@ -52,18 +52,18 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-LIST-1
+            - GET-DERP-LIST-1
       - type: remove-steps
         parameters:
           steps:
             - GET-DEFAULT-DERC-100
 
   # (a, b)
-  GET-DERC-LIST-1:
+  GET-DERP-LIST-1:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/1/derc
+        endpoint: /edev/1/fsa/1/derp
     actions:
       - type: create-der-control
         parameters:
@@ -79,7 +79,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - GET-DERC-LIST-1
+            - GET-DERP-LIST-1
 
   # (b)
   WAIT-CONTROL-1-FINISH:
@@ -91,7 +91,7 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-LIST-2
+            - GET-DERP-LIST-2
       - type: remove-steps
         parameters:
           steps:
@@ -100,11 +100,11 @@ Steps:
       - DER should ramp to 30% of the DER's active power over a 60s period
 
   # (c, d)
-  GET-DERC-LIST-2:
+  GET-DERP-LIST-2:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/1/derc
+        endpoint: /edev/1/fsa/1/derp
     actions:
       - type: create-der-control
         parameters:
@@ -119,7 +119,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - GET-DERC-LIST-2
+            - GET-DERP-LIST-2
   
   # (d)
   WAIT-CONTROL-2-FINISH:
