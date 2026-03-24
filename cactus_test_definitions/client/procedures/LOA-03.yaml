@@ -84,7 +84,7 @@ Steps:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/fsa/1/derp
+        endpoint: /edev/1/derp/1/derc
         serve_request_first: true # Run this AFTER server receives the request
     actions:
       - type: create-der-control
@@ -126,7 +126,7 @@ Steps:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/fsa/1/derp
+        endpoint: /edev/1/derp/1/derc
     actions:
       - type: create-der-control
         parameters:
