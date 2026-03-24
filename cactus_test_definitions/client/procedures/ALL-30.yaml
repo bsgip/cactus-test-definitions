@@ -130,10 +130,11 @@ Steps:
   WAIT-POWER-ON:
     instructions:
       - Re-establish communications between the client and utility server (e.g. by plugging the network cable back in).
+      - WAIT until you can see correct behaviour of the DER using the default DERControl of 30% of rated active power. 
+      - THEN proceed to the next step by clicking the button below.
     event:
-      type: wait
-      parameters:
-        duration_seconds: 480 
+      type: proceed
+      parameters: {}
     actions:
       - type: communications-status
         parameters:
