@@ -122,7 +122,7 @@ Steps:
       checks:
         - type: all-polls-at-correct-time
           parameters:
-            endpoint: /mup
+            endpoint: /mup/*
             poll_interval_seconds: 60
             request_type_str: POST
     actions:
