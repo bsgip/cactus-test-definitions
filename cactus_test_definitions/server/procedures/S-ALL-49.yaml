@@ -62,13 +62,13 @@ Steps:
           minimum_count: 1
           maximum_count: 1
           primacy: 1
-          fsa_index: 1
+          fsa_index: 0
       - type: der-program # DERP 2
         parameters:
           minimum_count: 1
           maximum_count: 1
           primacy: 2
-          fsa_index: 2
+          fsa_index: 1
       - type: default-der-control
         parameters:
           minimum_count: 1
