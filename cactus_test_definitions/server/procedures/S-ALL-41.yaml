@@ -330,7 +330,7 @@ Steps:
       - type: create-der-control
         parameters:
           status: scheduled
-          start_offset_seconds: 300
+          start_offset_seconds: 600  # must overlap with step 8's window (also 600s); both fire within seconds of each other
           opModExpLimW: $(setMaxW * 2)
     action:
       type: discovery
