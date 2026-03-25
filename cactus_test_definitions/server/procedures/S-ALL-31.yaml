@@ -76,7 +76,7 @@ Steps:
     admin_instructions:
       - type: create-der-control
         parameters:
-          status: scheduled
+          status: active
           opModEnergize: false
     action:
       type: notifications
