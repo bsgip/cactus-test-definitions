@@ -113,6 +113,7 @@ Steps:
         parameters:
           status: scheduled
           start_offset_seconds: 300
+          duration_seconds: 600
           opModExpLimW: $(setMaxW * 2)
     action:
       type: discovery
