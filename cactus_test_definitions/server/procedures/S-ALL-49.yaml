@@ -50,6 +50,7 @@ Steps:
         resources:
           - EndDevice
           - DefaultDERControl
+          - DERControl
           - FunctionSetAssignments
     checks:
       - type: function-set-assignment
