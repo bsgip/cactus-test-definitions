@@ -22,9 +22,11 @@ Steps:
       - type: ensure-fsa
         parameters:
           annotation: fsa1
+          primacy: 1
       - type: ensure-fsa
         parameters:
           annotation: fsa2
+          primacy: 2
       - type: ensure-der-program
         parameters:
           fsa_annotation: fsa1
