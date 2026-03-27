@@ -97,14 +97,14 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - WAIT-POWER-OFF
+            - CLIENT-POWER-CYCLE
       - type: remove-steps
         parameters:
           steps:
             - GET-DEFAULT-DERC
 
   # (a, b, c)
-  WAIT-POWER-OFF:
+  CLIENT-POWER-CYCLE:
     instructions:
       - Power cycle (turn off then back on again) the communications client, and while it is offline, disable the communications interface between the client and utility server (e.g. by unplugging an appropriate network cable).
     event:
@@ -121,14 +121,14 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - WAIT-POWER-ON
+            - REESTABLISH-COMMUNICATION
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-POWER-OFF
+            - CLIENT-POWER-CYCLE
   
   # (d)
-  WAIT-POWER-ON:
+  REESTABLISH-COMMUNICATION:
     instructions:
       - Re-establish communications between the client and utility server (e.g. by plugging the network cable back in).
       - Click this button once the DER has turned back on, and is following the default DERControl of 30% of rated active power. 
@@ -147,7 +147,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-POWER-ON
+            - REESTABLISH-COMMUNICATION
 
 
   # (e)
