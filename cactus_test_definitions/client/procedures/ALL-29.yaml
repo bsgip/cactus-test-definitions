@@ -12,11 +12,11 @@ Criteria:
     - type: all-steps-complete
       parameters: {}
 
-    # Test is ~11 minutes of waiting which should leave enough time for at least 9 reading posts
+    # Test is ~10 minutes of waiting which should leave enough time for at least 8 reading posts
     - type: readings-site-active-power
-      parameters: {"minimum_count": 9} 
+      parameters: {"minimum_count": 8} 
     - type: readings-der-active-power
-      parameters: {"minimum_count": 9}
+      parameters: {"minimum_count": 8}
 
 Preconditions:
   init_actions:
@@ -70,32 +70,15 @@ Preconditions:
     - Set the load to consume 10% of the DER's rated active power.
 
 Steps:
-  
   WAIT-TEST-END:
     event:
       type: wait
       parameters:
-        duration_seconds: 480 # Wait 8 mins to ensure 5th control has started
+        duration_seconds: 600 # Wait 10 mins to ensure 5th control has at least 2 mins active
     actions:
       - type: remove-steps
         parameters:
           steps:
             - WAIT-TEST-END
-      - type: enable-steps
-        parameters:
-          steps:
-            - FINISH-TEST
-  
-  FINISH-TEST:
-    instructions:
-      - Ensure that the device has adhered to all 5 der controls (approx 8-10 mins) before proceeding.
-    event:
-      type: proceed
-      parameters: {}
-    actions:
-      - type: remove-steps
-        parameters:
-          steps:
-            - FINISH-TEST
       - type: finish-test
         parameters: {}
