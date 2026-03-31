@@ -73,6 +73,9 @@ Steps:
       type: proceed
       parameters: {}
     actions:
+      # The 200% DERControl is ONLY relevant for the precondition. We want it gone for the main body of the test
+      - type: cancel-active-der-controls  
+        parameters: {}
       - type: enable-steps
         parameters:
           steps:
