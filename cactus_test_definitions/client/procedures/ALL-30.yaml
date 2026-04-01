@@ -68,11 +68,15 @@ Steps:
   # (precondition)
   PRECONDITION-STARTUP-WAIT:
     instructions:
-      - Click proceed ONLY AFTER the DER is importing/exporting at least 50% of its rated power.
+      - This step is to give time for the DER to start importing/exporting at least 50% of its rated power.
     event:
-      type: proceed
-      parameters: {}
+      type: wait
+      parameters:
+        duration_seconds: 120
     actions:
+      # The 200% DERControl is ONLY relevant for the precondition. We want it gone for the main body of the test
+      - type: cancel-active-der-controls  
+        parameters: {}
       - type: enable-steps
         parameters:
           steps:
@@ -96,20 +100,20 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - WAIT-POWER-OFF
+            - CLIENT-POWER-CYCLE
       - type: remove-steps
         parameters:
           steps:
             - GET-DEFAULT-DERC
 
   # (a, b, c)
-  WAIT-POWER-OFF:
+  CLIENT-POWER-CYCLE:
     instructions:
       - Power cycle (turn off then back on again) the communications client, and while it is offline, disable the communications interface between the client and utility server (e.g. by unplugging an appropriate network cable).
-      - AFTER completing the above instructions, proceed to the next step by clicking the button below.
     event:
-      type: proceed
-      parameters: {}
+      type: wait
+      parameters:
+        duration_seconds: 240 # Give the user time to power off the device (needs to happen before DER control sends)
     actions:
       - type: create-der-control
         parameters:
@@ -120,18 +124,17 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - WAIT-POWER-ON
+            - REESTABLISH-COMMUNICATION
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-POWER-OFF
+            - CLIENT-POWER-CYCLE
   
   # (d)
-  WAIT-POWER-ON:
+  REESTABLISH-COMMUNICATION:
     instructions:
       - Re-establish communications between the client and utility server (e.g. by plugging the network cable back in).
-      - WAIT until you can see correct behaviour of the DER using the default DERControl of 30% of rated active power. 
-      - THEN proceed to the next step by clicking the button below.
+      - Click this button once the DER has turned back on, and is following the default DERControl of 30% of rated active power. 
     event:
       type: proceed
       parameters: {}
@@ -147,7 +150,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-POWER-ON
+            - REESTABLISH-COMMUNICATION
 
 
   # (e)

@@ -22,6 +22,7 @@ Steps:
         parameters:
           status: active
           opModExpLimW: $(setMaxW * 2)
+          duration_seconds: 60
       - type: create-default-der-control
         parameters:
           opModExpLimW: $(setMaxW * 0.3)
@@ -72,7 +73,7 @@ Steps:
     action:
       type: wait
       parameters:
-        duration_seconds: 60
+        duration_seconds: 30
 
   - id: (2) CHECK to see that cancelled responses are not immediately removed
     client: client
