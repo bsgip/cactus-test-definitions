@@ -113,6 +113,7 @@ Steps:
         parameters:
           status: scheduled
           start_offset_seconds: 300
+          duration_seconds: 600
           opModExpLimW: $(setMaxW * 2)
     action:
       type: discovery
@@ -225,7 +226,12 @@ Steps:
     checks:
       - type: der-control
         parameters:
-          maximum_count: 0  # Empty list of controls
+          event_status: 0  # No scheduled controls remain
+          maximum_count: 0
+      - type: der-control
+        parameters:
+          event_status: 1  # No active controls remain
+          maximum_count: 0
 
 
 ################################## TEST SECTION 3 - SUPERSEEDED ##################################
@@ -279,10 +285,9 @@ Steps:
       - type: der-control
         parameters:
           minimum_count: 1
-          maximum_count: 1
           opModExpLimW: $(setMaxW * 2)
           responseRequired: 3
-          event_status: 2 # Cancelled
+          event_status: 2 # Cancelled; no maximum_count — step 4's cancelled control (600s duration) may still be in the list
 
   - id: (7b) Respond to cancelled DERControl 3
     client: client
@@ -325,7 +330,7 @@ Steps:
       - type: create-der-control
         parameters:
           status: scheduled
-          start_offset_seconds: 300
+          start_offset_seconds: 600  # must overlap with step 8's window (also 600s); both fire within seconds of each other
           opModExpLimW: $(setMaxW * 2)
     action:
       type: discovery
