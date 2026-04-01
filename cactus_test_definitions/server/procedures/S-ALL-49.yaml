@@ -22,9 +22,11 @@ Steps:
       - type: ensure-fsa
         parameters:
           annotation: fsa1
+          primacy: 1
       - type: ensure-fsa
         parameters:
           annotation: fsa2
+          primacy: 2
       - type: ensure-der-program
         parameters:
           fsa_annotation: fsa1
@@ -48,6 +50,7 @@ Steps:
         resources:
           - EndDevice
           - DefaultDERControl
+          - DERControl
           - FunctionSetAssignments
     checks:
       - type: function-set-assignment
@@ -60,13 +63,13 @@ Steps:
           minimum_count: 1
           maximum_count: 1
           primacy: 1
-          fsa_index: 1
+          fsa_index: 0
       - type: der-program # DERP 2
         parameters:
           minimum_count: 1
           maximum_count: 1
           primacy: 2
-          fsa_index: 2
+          fsa_index: 1
       - type: default-der-control
         parameters:
           minimum_count: 1
