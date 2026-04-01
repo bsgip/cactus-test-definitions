@@ -93,14 +93,14 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - PUT-DERSTATUS-DISCONNECT
+            - PUT-DERSTATUS-DEENERGIZE
       - type: remove-steps
         parameters:
           steps:
             - GET-DERC
 
   # (c, d)
-  PUT-DERSTATUS-DISCONNECT:
+  PUT-DERSTATUS-DEENERGIZE:
     event:
       type: PUT-request-received
       parameters:
@@ -115,7 +115,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - PUT-DERSTATUS-DISCONNECT
+            - PUT-DERSTATUS-DEENERGIZE
       - type: create-der-control
         parameters:
           start: $(now)
@@ -124,10 +124,10 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - PUT-DERSTATUS-CONNECT
+            - PUT-DERSTATUS-REENERGIZE
 
   # (e)
-  PUT-DERSTATUS-CONNECT:
+  PUT-DERSTATUS-REENERGIZE:
     event:
       type: PUT-request-received
       parameters:
@@ -142,6 +142,6 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - PUT-DERSTATUS-CONNECT
+            - PUT-DERSTATUS-REENERGIZE
 
   
