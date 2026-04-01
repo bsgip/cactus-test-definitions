@@ -164,6 +164,7 @@ Steps:
         parameters:
           steps:
             - GET-DERC-1
+            - POST-DERC-1-RESPONSE-STARTED
       - type: remove-steps
         parameters:
           steps:
@@ -176,10 +177,6 @@ Steps:
       parameters:
         endpoint: /edev/1/derp/6/derc
     actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-DERC-1-RESPONSE-STARTED
       - type: remove-steps
         parameters:
           steps:
@@ -243,6 +240,8 @@ Steps:
         parameters:
           steps:
             - GET-DERC-2
+            - POST-DERC-2-RESPONSE-STARTED
+            - POST-DERC-1-RESPONSE-SUPERSEDED
       - type: remove-steps
         parameters:
           steps:
@@ -255,11 +254,6 @@ Steps:
       parameters:
         endpoint: /edev/1/derp/1/derc
     actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-DERC-2-RESPONSE-STARTED
-            - POST-DERC-1-RESPONSE-SUPERSEDED
       - type: remove-steps
         parameters:
           steps:
@@ -350,6 +344,7 @@ Steps:
         parameters:
           steps:
             - GET-DERC-3
+            - POST-DERC-3-RESPONSE-STARTED
       - type: remove-steps
         parameters:
           steps:
@@ -362,10 +357,6 @@ Steps:
       parameters:
         endpoint: /edev/1/derp/6/derc
     actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-DERC-3-RESPONSE-STARTED
       - type: remove-steps
         parameters:
           steps:
@@ -456,6 +447,7 @@ Steps:
         parameters:
           steps:
             - GET-DERC-4
+            - POST-DERC-4-RESPONSE-STARTED
       - type: remove-steps
         parameters:
           steps:
@@ -468,10 +460,6 @@ Steps:
       parameters:
         endpoint: /edev/1/derp/1/derc
     actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-DERC-4-RESPONSE-STARTED
       - type: remove-steps
         parameters:
           steps:
@@ -497,6 +485,7 @@ Steps:
         parameters:
           steps:
             - GET-DERC-5
+            - POST-DERC-5-RESPONSE-STARTED
       - type: remove-steps
         parameters:
           steps:
@@ -510,10 +499,6 @@ Steps:
       parameters:
         endpoint: /edev/1/derp/6/derc
     actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-DERC-5-RESPONSE-STARTED
       - type: remove-steps
         parameters:
           steps:
@@ -622,6 +607,8 @@ Steps:
         parameters:
           steps:
             - GET-DERC-6
+            - POST-DERC-5-RESPONSE-SUPERSEDED
+            - POST-DERC-6-RESPONSE-STARTED
       - type: remove-steps
         parameters:
           steps:
@@ -634,11 +621,6 @@ Steps:
       parameters:
         endpoint: /edev/1/derp/6/derc
     actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-DERC-5-RESPONSE-SUPERSEDED
-            - POST-DERC-6-RESPONSE-STARTED
       - type: remove-steps
         parameters:
           steps:
@@ -724,6 +706,7 @@ Steps:
         parameters:
           steps:
             - GET-DERC-7
+            - POST-DERC-7-RESPONSE-STARTED
       - type: remove-steps
         parameters:
           steps:
@@ -736,10 +719,6 @@ Steps:
       parameters:
         endpoint: /edev/1/derp/1/derc
     actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-DERC-7-RESPONSE-STARTED
       - type: remove-steps
         parameters:
           steps:
@@ -765,6 +744,7 @@ Steps:
         parameters:
           steps:
             - GET-DERC-8
+            - POST-DERC-8-RESPONSE-STARTED
       - type: remove-steps
         parameters:
           steps:
@@ -777,10 +757,6 @@ Steps:
       parameters:
         endpoint: /edev/1/derp/6/derc
     actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-DERC-8-RESPONSE-STARTED
       - type: remove-steps
         parameters:
           steps:
@@ -872,6 +848,7 @@ Steps:
         parameters:
           steps:
             - GET-DERC-9
+            - POST-DERC-9-RESPONSE-STARTED
       - type: remove-steps
         parameters:
           steps:
@@ -884,10 +861,6 @@ Steps:
       parameters:
         endpoint: /edev/1/derp/1/derc
     actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-DERC-9-RESPONSE-STARTED
       - type: remove-steps
         parameters:
           steps:
@@ -912,6 +885,7 @@ Steps:
         parameters:
           steps:
             - GET-DERC-10
+            - POST-DERC-10-RESPONSE-STARTED
       - type: remove-steps
         parameters:
           steps:
@@ -924,10 +898,6 @@ Steps:
       parameters:
         endpoint: /edev/1/derp/6/derc
     actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-DERC-10-RESPONSE-STARTED
       - type: remove-steps
         parameters:
           steps:
