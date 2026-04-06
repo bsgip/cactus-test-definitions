@@ -330,7 +330,7 @@ Steps:
       - type: create-der-control
         parameters:
           status: active
-          duration: 700  # must overlap with step 8's window (also 600s); both fire within seconds of each other
+          duration_seconds: 700  # must overlap with step 8's window (also 600s); both fire within seconds of each other
           opModExpLimW: 0
     action:
       type: discovery
