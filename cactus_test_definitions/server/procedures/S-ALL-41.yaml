@@ -325,13 +325,13 @@ Steps:
     repeat_until_pass: true
     client: client
     instructions:
-      - The utility server configures a scheduled control with the same primacy and an overlapping control window.
+      - The utility server configures an active control with the same primacy and an overlapping control window.
     admin_instructions:
       - type: create-der-control
         parameters:
-          status: scheduled
-          start_offset_seconds: 600  # must overlap with step 8's window (also 600s); both fire within seconds of each other
-          opModExpLimW: $(setMaxW * 2)
+          status: active
+          duration_seconds: 700  # must overlap with step 8's window (also 600s); both fire within seconds of each other
+          opModExpLimW: 0
     action:
       type: discovery
       parameters:
@@ -342,26 +342,16 @@ Steps:
         parameters:
           minimum_count: 1 # The control above should now be set to superseeded not scheduled, so still only one expected.
           maximum_count: 1
-          opModExpLimW: $(setMaxW * 2)
-          event_status: 0 # Scheduled
-
-  - id: (9b) Respond to scheduled DERControls 4 and 5
-    client: client
-    action: 
-      type: respond-der-controls # Send both: control 4 (7 superseeded), and control 5 (1 scheduled).
-
-  - id: (9c) Check DERControl 4 is superseeded
-    repeat_until_pass: true
-    client: client
-    action: 
-      type: discovery
-      parameters:
-        resources:
-          - DERControl
-    checks:
+          opModExpLimW: 0
+          event_status: 1 # Active
       - type: der-control
         parameters:
           opModExpLimW: $(setMaxW * 2)
           event_status: 4 # Superseeded
           minimum_count: 1
           maximum_count: 1
+
+  - id: (9b) Respond to both updated controls
+    client: client
+    action: 
+      type: respond-der-controls
