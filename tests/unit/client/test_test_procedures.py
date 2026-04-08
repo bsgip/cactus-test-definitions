@@ -68,6 +68,37 @@ def test_error_on_extra_key():
         parse_test_procedure(yaml_contents)
 
 
+def _collect_derc_tags(tp: TestProcedure) -> list[str]:
+    """Collects all DERC tags from create-der-control actions across all steps and preconditions."""
+    tags: list[str] = []
+    action_lists = []
+    if tp.preconditions:
+        if tp.preconditions.init_actions:
+            action_lists.append(tp.preconditions.init_actions)
+        if tp.preconditions.actions:
+            action_lists.append(tp.preconditions.actions)
+    for step in tp.steps.values():
+        action_lists.append(step.actions)
+    for actions in action_lists:
+        for action in actions:
+            if action.type == "create-der-control" and "tag" in action.parameters:
+                tags.append(action.parameters["tag"])
+    return tags
+
+
+@pytest.mark.parametrize("tp_id", list(TestProcedureId))
+def test_derc_tags_unique(tp_id: TestProcedureId):
+    """Ensures that all DERC tags within a single test procedure are distinct."""
+    from cactus_test_definitions.client.test_procedures import get_test_procedure
+
+    tp = get_test_procedure(tp_id)
+    tags = _collect_derc_tags(tp)
+    seen: set[str] = set()
+    for tag in tags:
+        assert tag not in seen, f"{tp_id}: duplicate DERC tag {tag!r}"
+        seen.add(tag)
+
+
 def test_TestProcedures_action_parameter_types():
     """Tests that lists/dicts/constants/datetimes can all be encoded/decoded via the yaml action definition"""
 

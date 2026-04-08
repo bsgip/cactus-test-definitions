@@ -497,14 +497,6 @@ Steps:
       parameters:
         endpoint: /edev/1/derp/6/derc
     actions:
-      - type: create-der-control
-        parameters:
-          start: $(now)
-          duration_seconds: 1200 # 20 minutes
-          opModExpLimW: $(setMaxW * 2)
-          fsa_id: 2
-          primacy: 2
-          tag: DERC5
       - type: remove-steps
         parameters:
           steps:
