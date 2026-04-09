@@ -497,14 +497,6 @@ Steps:
       parameters:
         endpoint: /edev/1/derp/6/derc
     actions:
-      - type: create-der-control
-        parameters:
-          start: $(now)
-          duration_seconds: 1200 # 20 minutes
-          opModExpLimW: $(setMaxW * 2)
-          fsa_id: 2
-          primacy: 2
-          tag: DERC5
       - type: remove-steps
         parameters:
           steps:
@@ -1007,16 +999,16 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - WAIT-OBSERVE-DERP-5-6-DEFAULTS
+            - WAIT-OBSERVE-DERP-1-6-DEFAULTS
       - type: remove-steps
         parameters:
           steps:
             - GET-UPDATED-DEFAULT-DERP-6
 
   # (ee) Wait for DER to increase to 50%
-  WAIT-OBSERVE-DERP-5-6-DEFAULTS:
+  WAIT-OBSERVE-DERP-1-6-DEFAULTS:
     instructions:
-      - The device should ramp to DERP 5 DefaultDERControl opModExpLimW = 50% (as per TS 5573 [ee])
+      - The device should ramp to DERP 1 DefaultDERControl opModExpLimW = 50% (as per TS 5573 [ee])
       - Click Proceed AFTER the DER is exporting at the correct limit. 
     event:
       type: proceed
@@ -1025,6 +1017,6 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-OBSERVE-DERP-5-6-DEFAULTS
+            - WAIT-OBSERVE-DERP-1-6-DEFAULTS
       - type: finish-test
         parameters: {}
