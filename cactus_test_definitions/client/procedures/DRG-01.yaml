@@ -117,7 +117,7 @@ Steps:
       - type: create-der-control
         parameters:
           start: $(now + '60 seconds')
-          duration_seconds: 60
+          duration_seconds: 180
           opModFixedW: 50
       - type: enable-steps
         parameters:
