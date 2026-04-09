@@ -97,6 +97,7 @@ Preconditions:
       parameters:
         derp_id: 1
         opModExpLimW: 0
+        setGradW: 167 # hundredths of a percent - this is 1.67% / second
     # These default controls are not explicitly in the standards (SA TS5573), but we are adding here to let the 
     # client know to keep polling at, e.g., /edev/1/derp/6/dderc, which allows step-bb-ii to work without using notifications.
     # Previously, polling at /edev/1/derp/6/dderc was expected without any defaults being set.
@@ -104,6 +105,7 @@ Preconditions:
       parameters:
         derp_id: 6
         opModExpLimW: 0 # Set to export to not interefere with import observations in witness test
+        setGradW: 167 # hundredths of a percent - this is 1.67% / second
 
 Steps:
   
