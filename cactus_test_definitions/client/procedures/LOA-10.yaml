@@ -481,6 +481,7 @@ Steps:
           fsa_id: 2
           primacy: 2
           tag: DERC5
+          ramp_time_seconds: 30
       - type: enable-steps
         parameters:
           steps:
