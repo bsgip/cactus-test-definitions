@@ -112,11 +112,19 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "status": ParameterSchema(False, ParameterType.Integer),
         "all": ParameterSchema(False, ParameterType.Boolean),
         "subject_tag": ParameterSchema(False, ParameterType.String),
+        "time_tariff_interval": ParameterSchema(
+            False, ParameterType.Boolean
+        ),  # If True, check TimeTariffInterval Responses. If False/Missing check DERControl Responses
     },
     "all-polls-at-correct-time": {
         "endpoint": ParameterSchema(True, ParameterType.String),  # e.g. /dcap
         "poll_interval_seconds": ParameterSchema(True, ParameterType.Integer),
         "request_type_str": ParameterSchema(True, ParameterType.String),  # e.g. GET, POST
+    },
+    "resource-requests": {
+        "resources": ParameterSchema(True, ParameterType.ListCSIPAusResource),  # What resource(s) to count
+        "minimum_count": ParameterSchema(False, ParameterType.Integer),  # Has at least this many requests
+        "maximum_count": ParameterSchema(False, ParameterType.Integer),  # Has at most this many requests
     },
 }
 VALID_CHECK_NAMES: set[str] = set(CHECK_PARAMETER_SCHEMA.keys())

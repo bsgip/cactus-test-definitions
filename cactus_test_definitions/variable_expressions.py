@@ -1,5 +1,5 @@
-import tokenize
 import abc
+import tokenize
 from dataclasses import dataclass
 from datetime import timedelta
 from enum import IntEnum, auto
@@ -50,6 +50,14 @@ class NamedVariableType(IntEnum):
     # MUST resolve to a tz aware representation of the current datetime
     # Referenced in a test definition as $(now)
     NOW = auto()
+
+    # MUST resolve to a tz aware representation of the current datetime (in AEST) with hours/minutes/seconds being zero
+    # Referenced in a test definition as $(now_day)
+    NOW_DAY = auto()
+
+    # MUST resolve to a tz aware representation of the current datetime (in AEST) with minutes/seconds being zero
+    # Referenced in a test definition as $(now_hour)
+    NOW_HOUR = auto()
 
     # MUST resolve to the "DERSetting.setMaxW" of the current EndDevice under test. Value in Watts
     # Referenced in a test definition as $(setMaxW)

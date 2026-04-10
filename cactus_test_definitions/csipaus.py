@@ -6,6 +6,7 @@ class CSIPAusVersion(StrEnum):
     released versions CSIP-Aus."""
 
     RELEASE_1_2 = "v1.2"
+    RELEASE_1_3 = "v1.3"
     BETA_1_3_STORAGE = "v1.3-beta/storage"
 
 
@@ -46,6 +47,16 @@ class CSIPAusResource(StrEnum):
     Subscription = "Subscription"
 
     Notification = "Notification"  # A Notification isn't normally discoverable - it's received via pub/sub webhook
+
+    TariffProfileList = "TariffProfileList"
+    TariffProfile = "TariffProfile"
+    RateComponentList = "RateComponentList"
+    RateComponent = "RateComponent"
+    CombinedTimeTariffIntervalList = "CombinedTimeTariffIntervalList"
+    TimeTariffIntervalList = "TimeTariffIntervalList"
+    TimeTariffInterval = "TimeTariffInterval"
+    ConsumptionTariffIntervalList = "ConsumptionTariffIntervalList"
+    ConsumptionTariffInterval = "ConsumptionTariffInterval"
 
 
 class CSIPAusReadingLocation(StrEnum):

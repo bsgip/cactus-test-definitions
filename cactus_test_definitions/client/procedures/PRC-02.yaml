@@ -1,0 +1,177 @@
+Description: Validate Client Interpretation of Pricing
+Category: Pricing
+Classes:
+  - PRC
+
+TargetVersions:
+  - v1.3
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+    
+
+Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+        tp_list_poll_seconds: 60
+        tti_list_poll_seconds: 60
+        
+  checks:
+    - type: end-device-contents
+      parameters: {}
+
+  actions:
+    - type: create-tariff-profile
+      parameters:
+        primacy: 0
+        fsa_id: 1
+        price_pow_10_multiplier: -6
+    - type: create-rate-component
+      parameters:
+        flow_direction: 1 # FlowDirectionType.FORWARD
+        power_of_ten_multiplier: 3
+        uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
+        tag: RC1
+    - type: create-rate-component
+      parameters:
+        flow_direction: 19 # FlowDirectionType.REVERSE
+        power_of_ten_multiplier: 3
+        uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
+        tag: RC2
+
+    - type: create-rate-component
+      parameters:
+        flow_direction: 1 # FlowDirectionType.FORWARD
+        power_of_ten_multiplier: 3
+        uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
+        tag: RC3
+    
+    - type: create-rate-component
+      parameters:
+        power_of_ten_multiplier: 0
+        uom: 195 # UomType.TIME_DAY
+        tag: RC4
+    
+    - type: create-tariff-generated-rate
+      parameters:
+        rate_component_tag: RC1
+        start: $(now_hour + '120 minutes')
+        duration_seconds: 300
+        price_pow10_encoded_block0: 1
+        price_pow10_encoded_block1: 2
+        price_start_pow10_block1: 100
+        tag: TTI1
+
+    - type: create-tariff-generated-rate
+      parameters:
+        rate_component_tag: RC1
+        start: $(now_hour + '125 minutes')
+        duration_seconds: 300
+        price_pow10_encoded_block0: -1000001
+        tag: TTI2
+
+    - type: create-tariff-generated-rate
+      parameters:
+        rate_component_tag: RC2
+        start: $(now_hour + '120 minutes')
+        duration_seconds: 300
+        price_pow10_encoded_block0: 1
+        price_pow10_encoded_block1: 2
+        price_start_pow10_block1: 100
+        tag: TTI3
+
+    - type: create-tariff-generated-rate
+      parameters:
+        rate_component_tag: RC2
+        start: $(now_hour + '125 minutes')
+        duration_seconds: 300
+        price_pow10_encoded_block0: -1000001
+        tag: TTI4
+
+    - type: create-tariff-generated-rate
+      parameters:
+        rate_component_tag: RC3
+        start: $(now_day)
+        duration_seconds: 172800
+        price_pow10_encoded_block0: 3
+        tag: TTI5
+
+    - type: create-tariff-generated-rate
+      parameters:
+        rate_component_tag: RC4
+        start: $(now_hour + '120 minutes')
+        duration_seconds: 300
+        price_pow10_encoded_block0: 4
+        tag: TTI5
+    
+
+Steps:
+  
+  # (a)
+  GET-CTTI:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/tp/1/ctti
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - PROCEED-TEST-END
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-CTTI
+
+  PROCEED-TEST-END:
+    instructions:
+      - "Confirm client has the following pricing interpretation:"
+      - "IMPORT Interval 1: $0.000003 / kWh for the first 100 kWh of consumption and $0.000005 / kWh for any further consumption"
+      - "EXPORT Interval 1: $0.000001 / kWh
+      - ""
+      - "IMPORT Interval 2: -$1.000004 / kWh"
+      - "EXPORT Interval 2: -$1.000001 / kWh"
+      - ""
+      - "IMPORT [outside intervals]: $0.000003 / kWh"
+      - ""
+      - "FIXED: charge of $0.000003 / day for today/tomorrow"
+    event:
+      type: proceed
+      parameters: {}
+    actions:
+      - type: cancel-active-time-tariff-intervals
+        parameters: {}
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-CANCEL-TTI
+      - type: remove-steps
+        parameters:
+          steps:
+            - PROCEED-TEST-END
+
+  # Not described in the test - but given the long lead time on these prices, we'll be cancelling them and ensuring
+  # the client detects the cancellation BEFORE shutting down
+  GET-CANCEL-TTI:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/tp/1/ctti
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-CANCEL-TTI
+      - type: finish-test
+        parameters: {}
+
+  
