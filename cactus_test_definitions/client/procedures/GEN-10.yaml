@@ -97,7 +97,6 @@ Preconditions:
       parameters:
         derp_id: 1
         opModImpLimW: 0
-        setGradW: 167 # hundredths of a percent - this is 1.67% / second
     # These default controls are not explicitly in the standards (SA TS5573), but we are adding here to let the 
     # client know to keep polling at, e.g., /edev/1/derp/6/dderc, which allows step-bb-ii to work without using notifications.
     # Previously, polling at /edev/1/derp/6/dderc was expected without any defaults being set.
@@ -105,7 +104,6 @@ Preconditions:
       parameters:
         derp_id: 6
         opModImpLimW: 0 # Set to import to not interefere with export observations in witness test
-        setGradW: 167 # hundredths of a percent - this is 1.67% / second
 
 Steps:
 
@@ -573,11 +571,11 @@ Steps:
   # (q) Wait to observe the return to DERC 5
   WAIT-OBSERVE-DERC-5:
     instructions:
-      - The device should ramp to DERC5 opModExpLimW = 200% (as per TS 5573 [q])
+      - The device should wait 60s on reconnection, then ramp to DERC5 opModExpLimW = 200% (as per TS 5573 [q]), at NZS4777.2 wGra (16%/min)
     event:
       type: wait
       parameters:
-        duration_seconds: 120
+        duration_seconds: 450
     actions:
       - type: enable-steps
         parameters:
