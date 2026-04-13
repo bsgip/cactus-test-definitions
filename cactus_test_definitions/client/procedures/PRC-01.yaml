@@ -88,9 +88,6 @@ Steps:
       parameters:
         endpoint: /edev/1/fsa/1/tp
     actions:
-      - type: set-comms-rate
-        parameters:
-          mup_post_seconds: 300
       - type: enable-steps
         parameters:
           steps:

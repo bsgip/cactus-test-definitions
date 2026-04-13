@@ -40,78 +40,78 @@ Preconditions:
         flow_direction: 1 # FlowDirectionType.FORWARD
         power_of_ten_multiplier: 3
         uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
-        tag: RC1
+        tag: RC-1
     - type: create-rate-component
       parameters:
         flow_direction: 19 # FlowDirectionType.REVERSE
         power_of_ten_multiplier: 3
         uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
-        tag: RC2
+        tag: RC-2
 
     - type: create-rate-component
       parameters:
         flow_direction: 1 # FlowDirectionType.FORWARD
         power_of_ten_multiplier: 3
         uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
-        tag: RC3
+        tag: RC-3
     
     - type: create-rate-component
       parameters:
         power_of_ten_multiplier: 0
         uom: 195 # UomType.TIME_DAY
-        tag: RC4
+        tag: RC-4
     
     - type: create-tariff-generated-rate
       parameters:
-        rate_component_tag: RC1
+        rate_component_tag: RC-1
         start: $(now_hour + '120 minutes')
         duration_seconds: 300
         price_pow10_encoded_block0: 1
         price_pow10_encoded_block1: 2
         price_start_pow10_block1: 100
-        tag: TTI1
+        tag: TTI-1
 
     - type: create-tariff-generated-rate
       parameters:
-        rate_component_tag: RC1
+        rate_component_tag: RC-1
         start: $(now_hour + '125 minutes')
         duration_seconds: 300
         price_pow10_encoded_block0: -1000001
-        tag: TTI2
+        tag: TTI-2
 
     - type: create-tariff-generated-rate
       parameters:
-        rate_component_tag: RC2
+        rate_component_tag: RC-2
         start: $(now_hour + '120 minutes')
         duration_seconds: 300
         price_pow10_encoded_block0: 1
         price_pow10_encoded_block1: 2
         price_start_pow10_block1: 100
-        tag: TTI3
+        tag: TTI-3
 
     - type: create-tariff-generated-rate
       parameters:
-        rate_component_tag: RC2
+        rate_component_tag: RC-2
         start: $(now_hour + '125 minutes')
         duration_seconds: 300
         price_pow10_encoded_block0: -1000001
-        tag: TTI4
+        tag: TTI-4
 
     - type: create-tariff-generated-rate
       parameters:
-        rate_component_tag: RC3
+        rate_component_tag: RC-3
         start: $(now_day)
         duration_seconds: 172800
         price_pow10_encoded_block0: 3
-        tag: TTI5
+        tag: TTI-5
 
     - type: create-tariff-generated-rate
       parameters:
-        rate_component_tag: RC4
+        rate_component_tag: RC-4
         start: $(now_hour + '120 minutes')
-        duration_seconds: 300
-        price_pow10_encoded_block0: 4
-        tag: TTI5
+        duration_seconds: 172800
+        price_pow10_encoded_block0: 10
+        tag: TTI-6
     
 
 Steps:
@@ -135,15 +135,17 @@ Steps:
   PROCEED-TEST-END:
     instructions:
       - "Confirm client has the following pricing interpretation:"
-      - "IMPORT Interval 1: $0.000003 / kWh for the first 100 kWh of consumption and $0.000005 / kWh for any further consumption"
-      - "EXPORT Interval 1: $0.000001 / kWh
-      - ""
-      - "IMPORT Interval 2: -$1.000004 / kWh"
-      - "EXPORT Interval 2: -$1.000001 / kWh"
-      - ""
-      - "IMPORT [outside intervals]: $0.000003 / kWh"
-      - ""
-      - "FIXED: charge of $0.000003 / day for today/tomorrow"
+      - "For the duration of TTI-1 / TTI-3:"
+      - "- Import price will be a cost of $0.000004 for the first 100 kWh of import (consumption) and $0.000005 for any subsequent import"
+      - "- Export price will be a cost of $0.000001 for the first 100 kWh of export (generation) and $0.000002 for any subsequent export"
+      - "For the duration of TTI-2 / TTI-4:"
+      - "- Import price will be a credit of $0.999998 for each kWh of import"
+      - "- Export price will be a credit of $1.000001 for each kWh of export"
+      - "For the duration of TTI-5 (that doesn't overlap with the above intervals):"
+      - "- Import price will be a cost of $0.000003 for each kWh of import"
+      - "- Export has no explicit price"
+      - "For the day(s) overlapped by TTI-6 (today/tomorrow in AEST):"
+      - "- There will be a fixed cost of $0.000010 per day that is independent of any usage"
     event:
       type: proceed
       parameters: {}
@@ -171,7 +173,5 @@ Steps:
         parameters:
           steps:
             - GET-CANCEL-TTI
-      - type: finish-test
-        parameters: {}
 
   

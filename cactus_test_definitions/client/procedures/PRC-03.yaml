@@ -1,0 +1,112 @@
+Description: Poll Rate Compliance
+Category: Pricing
+Classes:
+  - PRC
+
+TargetVersions:
+  - v1.3
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+
+    # Subject to the 120 second pollRate on TariffProfileList
+    - type: resource-requests
+      parameters:
+        resources:
+          - TariffProfileList
+          - TariffProfile
+        minimum_count: 6
+        maximum_count: 7
+
+    # Subject to the 120 second pollRate on TariffProfileList
+    - type: resource-requests
+      parameters:
+        resources:
+          - RateComponentList
+          - RateComponent
+        minimum_count: 6
+        maximum_count: 7
+
+    # Subject to the 240 second pollRate on CombinedTimeTariffIntervalList / TimeTariffIntervalList
+    - type: resource-requests
+      parameters:
+        resources:
+          - TimeTariffIntervalList
+          - CombinedTimeTariffIntervalList
+          - TimeTariffInterval
+        minimum_count: 3
+        maximum_count: 4
+
+Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+        tp_list_poll_seconds: 120
+        tti_list_poll_seconds: 240
+        
+  checks:
+    - type: end-device-contents
+      parameters: {}
+
+  actions:
+    - type: create-tariff-profile
+      parameters:
+        primacy: 0
+        fsa_id: 1
+        price_pow_10_multiplier: 0
+    - type: create-rate-component
+      parameters:
+        flow_direction: 1 # FlowDirectionType.FORWARD
+        power_of_ten_multiplier: 0
+        uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
+        tag: RC-1
+    - type: create-tariff-generated-rate
+      parameters:
+        rate_component_tag: RC-1
+        start: $(now)
+        duration_seconds: 840 # Ten minutes plus poll duration
+        price_pow10_encoded_block0: 1
+        tag: TTI-1
+
+Steps:
+  
+
+  # (a)
+  GET-TP:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/1/tp
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-TEST-END
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-TP
+
+  # (b)
+  WAIT-TEST-END:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 600
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-TEST-END
+      - type: finish-test
+        parameters: {}
+
+  

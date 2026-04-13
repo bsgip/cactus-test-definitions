@@ -92,6 +92,12 @@ class TestProcedureId(StrEnum):
     STO_05 = "STO-05"
     STO_06 = "STO-06"
 
+    # Pricing extension
+    PRC_01 = "PRC-01"
+    PRC_02 = "PRC-02"
+    PRC_03 = "PRC-03"
+    PRC_04 = "PRC-04"
+
 
 @dataclass
 class Step:

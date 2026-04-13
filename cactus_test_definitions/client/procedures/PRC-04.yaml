@@ -1,0 +1,166 @@
+Description: TimeTariffInterval Cancellation
+Category: Pricing
+Classes:
+  - PRC
+
+TargetVersions:
+  - v1.3
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+
+    - type: response-contents
+      parameters:
+        time_tariff_interval: true
+        all: true
+        status: 1 # Received
+
+    - type: response-contents
+      parameters:
+        time_tariff_interval: true
+        subject_tag: TTI-1
+        status: 6 # Cancelled
+
+    - type: response-contents
+      parameters:
+        time_tariff_interval: true
+        subject_tag: TTI-2
+        status: 6 # Cancelled
+
+    - type: response-contents
+      parameters:
+        time_tariff_interval: true
+        subject_tag: TTI-3
+        status: 6 # Cancelled
+
+    - type: response-contents
+      parameters:
+        time_tariff_interval: true
+        subject_tag: TTI-4
+        status: 6 # Cancelled
+
+    # TTI-5 will never be cancelled
+    - type: response-contents
+      parameters:
+        time_tariff_interval: true
+        subject_tag: TTI-5
+        exists: false
+        status: 6 # Cancelled
+
+Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+        tp_list_poll_seconds: 60
+        tti_list_poll_seconds: 60
+        
+  checks:
+    - type: end-device-contents
+      parameters: {}
+
+  actions:
+    - type: create-tariff-profile
+      parameters:
+        primacy: 0
+        fsa_id: 1
+        price_pow_10_multiplier: 0
+    - type: create-rate-component
+      parameters:
+        flow_direction: 1 # FlowDirectionType.FORWARD
+        power_of_ten_multiplier: 0
+        uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
+        tag: RC-1
+    - type: create-rate-component
+      parameters:
+        power_of_ten_multiplier: 0
+        uom: 195 # UomType.TIME_DAY
+        tag: RC-2
+    - type: create-tariff-generated-rate
+      parameters:
+        rate_component_tag: RC-1
+        start: $(now + '1 hour')
+        duration_seconds: 3600
+        price_pow10_encoded_block0: 1
+        tag: TTI-1
+    - type: create-tariff-generated-rate
+      parameters:
+        rate_component_tag: RC-1
+        start: $(now)
+        duration_seconds: 3600
+        price_pow10_encoded_block0: 2
+        tag: TTI-2
+    - type: create-tariff-generated-rate
+      parameters:
+        rate_component_tag: RC-2
+        start: $(now_midnight)
+        duration_seconds: 86400
+        price_pow10_encoded_block0: 3
+        tag: TTI-3
+    - type: create-tariff-generated-rate
+      parameters:
+        rate_component_tag: RC-2
+        start: $(now_midnight + '24 hours')
+        duration_seconds: 86400
+        price_pow10_encoded_block0: 4
+        tag: TTI-4
+    - type: create-tariff-generated-rate
+      parameters:
+        rate_component_tag: RC-1
+        start: $(now)
+        duration_seconds: 120
+        price_pow10_encoded_block0: 2
+        tag: TTI-5
+
+Steps:
+  
+
+  # (a)
+  GET-TP:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/1/tp
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-TEST-END
+      - type: cancel-active-time-tariff-intervals
+        parameters:
+          tag: TTI-1
+      - type: cancel-active-time-tariff-intervals
+        parameters:
+          tag: TTI-2
+      - type: cancel-active-time-tariff-intervals
+        parameters:
+          tag: TTI-3
+      - type: cancel-active-time-tariff-intervals
+        parameters:
+          tag: TTI-4
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-TP
+
+  # (b)
+  WAIT-TEST-END:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 180 # This should run past the completion of TTI-5 plus a poll
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-TEST-END
+
+
+  

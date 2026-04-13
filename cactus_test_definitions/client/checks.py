@@ -115,6 +115,9 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "time_tariff_interval": ParameterSchema(
             False, ParameterType.Boolean
         ),  # If True, check TimeTariffInterval Responses. If False/Missing check DERControl Responses
+        "exists": ParameterSchema(
+            False, ParameterType.Boolean
+        ),  # Default is True - If True, assert the response exists. Otherwise assert it does NOT exist
     },
     "all-polls-at-correct-time": {
         "endpoint": ParameterSchema(True, ParameterType.String),  # e.g. /dcap

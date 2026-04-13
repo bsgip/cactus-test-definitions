@@ -1,0 +1,267 @@
+Description: Dynamic RateComponentList
+Category: Pricing
+Classes:
+  - PRC
+
+TargetVersions:
+  - v1.3
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters:
+        ignored_steps:
+          - FAIL-GET-TP
+
+    # RateComponents should not be EXCESSIVELY resolved
+    - type: resource-requests
+      parameters:
+        resources:
+          - RateComponent
+        minimum_count: 0
+        maximum_count: 4
+    - type: resource-requests
+      parameters:
+        resources:
+          - RateComponentList
+        minimum_count: 1
+        maximum_count: 4
+
+Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+        tp_list_poll_seconds: 60 # This will be revised up at the first poll
+        tti_list_poll_seconds: 60
+        
+  checks:
+    - type: end-device-contents
+      parameters: {}
+
+
+Steps:
+  
+  # (a, b)
+  GET-TP:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/1/tp
+    actions:
+      - type: set-comms-rate
+        parameters:
+          tp_list_poll_seconds: 3600
+
+      - type: create-tariff-profile
+        parameters:
+          primacy: 0
+          fsa_id: 1
+          price_pow_10_multiplier: 0
+      - type: create-rate-component
+        parameters:
+          flow_direction: 1 # FlowDirectionType.FORWARD
+          power_of_ten_multiplier: 0
+          uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
+          tag: RC-1
+      - type: create-tariff-generated-rate
+        parameters:
+          rate_component_tag: RC-1
+          start: $(now)
+          duration_seconds: 120
+          price_pow10_encoded_block0: 1
+          tag: TTI-1
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-TEST-FINISH
+            - WAIT-TTI-1-FINISH
+            - POST-TTI-2-RESPONSE-RECEIVED
+            - FAIL-GET-TP
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-TP
+
+  # (c) Wait for "Received" response from TTI-1
+  POST-TTI-1-RESPONSE-RECEIVED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/tariff_generated_rates/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            time_tariff_interval: true
+            latest: true
+            status: 1 # Received
+            subject_tag: TTI-1
+    actions:
+      - type: create-rate-component
+        parameters:
+          flow_direction: 19 # FlowDirectionType.REVERSE
+          power_of_ten_multiplier: 0
+          uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
+          tag: RC-2
+      - type: create-tariff-generated-rate
+        parameters:
+          rate_component_tag: RC-2
+          start: $(now)
+          duration_seconds: 120
+          price_pow10_encoded_block0: 2
+          tag: TTI-2
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-TTI-2-RESPONSE-RECEIVED
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-TTI-1-RESPONSE-RECEIVED
+
+  # (d)
+  POST-TTI-2-RESPONSE-RECEIVED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/tariff_generated_rates/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            time_tariff_interval: true
+            latest: true
+            status: 1 # Received
+            subject_tag: TTI-2
+    actions:
+      - type: create-rate-component
+        parameters:
+          flow_direction: 19 # FlowDirectionType.REVERSE
+          power_of_ten_multiplier: 0
+          uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
+          tag: RC-2
+      - type: create-tariff-generated-rate
+        parameters:
+          rate_component_tag: RC-2
+          start: $(now)
+          duration_seconds: 120
+          price_pow10_encoded_block0: 2
+          tag: TTI-2
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-DERC-2
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC-1-RESPONSE-STARTED
+  
+  # (e)
+  WAIT-TTI-1-FINISH:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 180
+    actions:
+      - type: delete-rate-component
+        parameters:
+          tag: RC-1
+      - type: create-rate-component
+        parameters:
+          power_of_ten_multiplier: 0
+          uom: 195 # UomType.TIME_DAY
+          tag: RC-3
+      - type: create-tariff-generated-rate
+        parameters:
+          rate_component_tag: RC-2
+          start: $(now)
+          duration_seconds: 300
+          price_pow10_encoded_block0: 3
+          tag: TTI-3
+      - type: create-tariff-generated-rate
+        parameters:
+          rate_component_tag: RC-3
+          start: $(now)
+          duration_seconds: 300
+          price_pow10_encoded_block0: 4
+          tag: TTI-4
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-TTI-3-RESPONSE-RECEIVED
+            - POST-TTI-4-RESPONSE-RECEIVED
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-TTI-1-FINISH
+
+  # (f)
+  POST-TTI-3-RESPONSE-RECEIVED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/tariff_generated_rates/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            time_tariff_interval: true
+            latest: true
+            status: 1 # Received
+            subject_tag: TTI-3
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-TTI-3-RESPONSE-RECEIVED
+
+  # (f)
+  POST-TTI-4-RESPONSE-RECEIVED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/tariff_generated_rates/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            time_tariff_interval: true
+            latest: true
+            status: 1 # Received
+            subject_tag: TTI-4
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-TTI-4-RESPONSE-RECEIVED
+
+  # (e)
+  WAIT-TEST-FINISH:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 450
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-TEST-FINISH
+      - type: finish-test
+        parameters: {}
+
+
+  FAIL-GET-TP:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/1/tp
+    actions:
+      - type: finish-test
+        parameters:
+          fail_message: "The TariffProfileList should NOT have been resolved again after pollRate was increased"
