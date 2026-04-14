@@ -208,7 +208,7 @@ Steps:
             - POST-DERC-1-RESPONSE-STARTED
 
   # (e) Wait for a short period
-  WAIT-DERC-2:
+  WAIT-DERC-1:
     event:
       type: wait
       parameters:
