@@ -18,7 +18,7 @@ from cactus_test_definitions.variable_expressions import (
     try_extract_variable_expression,
 )
 
-__version__ = "1.10.5"
+__version__ = "1.10.6"
 
 __all__ = [
     "TestProcedureDefinitionError",
