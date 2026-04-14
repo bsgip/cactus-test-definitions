@@ -201,7 +201,7 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - WAIT-DERC-2
+            - WAIT-DERC-1
       - type: remove-steps
         parameters:
           steps:
@@ -221,7 +221,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-DERC-2
+            - WAIT-DERC-1
 
   # (e) After the short period - configure a DERControl on DERP 1 - set to 0%
   GET-DERP-2:
