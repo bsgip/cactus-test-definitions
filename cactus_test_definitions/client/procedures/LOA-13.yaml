@@ -34,11 +34,13 @@ Preconditions:
         start: $(now)
         duration_seconds: 60
         opModImpLimW: $(setMaxW * 2)
+        tag: DERC1
     - type: create-der-control
       parameters:
         start: $(now + '1 minute')
         duration_seconds: 420
         opModImpLimW: $(setMaxW * 0.2)
+        tag: DERC2
   instructions:
     - Connect a test load electrically in parallel with the DER.
     - Set the load to consume 0W.

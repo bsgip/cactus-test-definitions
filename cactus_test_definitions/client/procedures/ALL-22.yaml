@@ -35,32 +35,36 @@ Preconditions:
         duration_seconds: 120
         randomizeStart_seconds: 60
         opModExpLimW: $(setMaxW * 2)
+        tag: DERC1
     - type: create-der-control
       parameters:
         start: $(now + '120 seconds')
         duration_seconds: 120
         randomizeStart_seconds: 60
         opModExpLimW: $(setMaxW * 2)
+        tag: DERC2
     - type: create-der-control
       parameters:
         start: $(now + '240 seconds')
         duration_seconds: 120
         randomizeStart_seconds: 60
         opModExpLimW: $(setMaxW * 2)
+        tag: DERC3
     - type: create-der-control
       parameters:
         start: $(now + '360 seconds')
         duration_seconds: 120
         randomizeStart_seconds: 60
         opModExpLimW: $(setMaxW * 2)
+        tag: DERC4
     - type: create-der-control
       parameters:
         start: $(now + '480 seconds')
         duration_seconds: 120
         randomizeStart_seconds: 60
         opModExpLimW: $(setMaxW * 2)
-    
-    
+        tag: DERC5
+
 Steps:
 
   # We don't have a "is random enough" check - it is expected that will be evaluated by a human administering the test
