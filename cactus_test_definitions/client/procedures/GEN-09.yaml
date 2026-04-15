@@ -53,6 +53,7 @@ Steps:
           duration_seconds: 300
           opModExpLimW: $(setMaxW * 2)
           opModImpLimW: $(setMaxW * 2)
+          tag: PRECONDITION
       - type: enable-steps
         parameters:
           steps:
