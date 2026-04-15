@@ -1015,6 +1015,7 @@ Steps:
     event:
       type: proceed
       parameters: {}
+      timeout_seconds: 300 # End test after 5 mins if proceed not pressed
     actions:
       - type: remove-steps
         parameters:
