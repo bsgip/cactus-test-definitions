@@ -77,8 +77,8 @@ Steps:
       - AFTER the last DERControl is correctly adhered to, click proceed to end the test.
     event:
         type: proceed
-        parameters: {}
-        timeout_seconds: 180 # End test after 3 mins if proceed not pressed
+        parameters:
+          timeout_seconds: 180 # End test after 3 mins if proceed not pressed
     actions:
       - type: remove-steps
         parameters:

@@ -1014,8 +1014,8 @@ Steps:
       - Click Proceed AFTER the DER is importing at the correct limit. 
     event:
       type: proceed
-      parameters: {}
-      timeout_seconds: 300 # End test after 5 mins if proceed not pressed
+      parameters:
+        timeout_seconds: 300 # End test after 5 mins if proceed not pressed
     actions:
       - type: remove-steps
         parameters:
