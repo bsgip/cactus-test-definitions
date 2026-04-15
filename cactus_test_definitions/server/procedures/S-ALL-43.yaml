@@ -15,6 +15,9 @@ Steps:
     repeat_until_pass: true
     client: client
     admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
       - type: set-poll-rate
         parameters:
           resource: DeviceCapability
