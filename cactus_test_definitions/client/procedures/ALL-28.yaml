@@ -54,6 +54,7 @@ Steps:
           duration_seconds: 240
           opModExpLimW: $(setMaxW * 2)
           opModImpLimW: $(setMaxW * 2)
+          tag: PRECONDITION
       - type: enable-steps
         parameters:
           steps:
@@ -94,6 +95,7 @@ Steps:
           duration_seconds: 900
           opModExpLimW: $(setMaxW * 0.3)
           opModImpLimW: $(setMaxW * 0.3)
+          tag: DERC1
       - type: enable-steps
         parameters:
           steps:
@@ -133,6 +135,7 @@ Steps:
           duration_seconds: 300
           opModExpLimW: $(setMaxW * 0.1)
           opModImpLimW: $(setMaxW * 0.1)
+          tag: DERC2
       - type: enable-steps
         parameters:
           steps:
@@ -173,6 +176,7 @@ Steps:
           opModExpLimW: $(setMaxW * 0.5)
           opModImpLimW: $(setMaxW * 0.5)
           ramp_time_seconds: 60
+          tag: DERC3
       - type: enable-steps
         parameters:
           steps:
@@ -256,6 +260,7 @@ Steps:
           parameters: 
             latest: true
             status: 6
+            subject_tag: DERC3
     actions:
       - type: enable-steps
         parameters:
