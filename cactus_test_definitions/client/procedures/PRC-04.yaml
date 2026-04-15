@@ -83,35 +83,35 @@ Preconditions:
         power_of_ten_multiplier: 0
         uom: 195 # UomType.TIME_DAY
         tag: RC-2
-    - type: create-tariff-generated-rate
+    - type: create-time-tariff-interval
       parameters:
         rate_component_tag: RC-1
         start: $(now + '1 hour')
         duration_seconds: 3600
         price_pow10_encoded_block0: 1
         tag: TTI-1
-    - type: create-tariff-generated-rate
+    - type: create-time-tariff-interval
       parameters:
         rate_component_tag: RC-1
         start: $(now)
         duration_seconds: 3600
         price_pow10_encoded_block0: 2
         tag: TTI-2
-    - type: create-tariff-generated-rate
+    - type: create-time-tariff-interval
       parameters:
         rate_component_tag: RC-2
         start: $(now_midnight)
         duration_seconds: 86400
         price_pow10_encoded_block0: 3
         tag: TTI-3
-    - type: create-tariff-generated-rate
+    - type: create-time-tariff-interval
       parameters:
         rate_component_tag: RC-2
         start: $(now_midnight + '24 hours')
         duration_seconds: 86400
         price_pow10_encoded_block0: 4
         tag: TTI-4
-    - type: create-tariff-generated-rate
+    - type: create-time-tariff-interval
       parameters:
         rate_component_tag: RC-1
         start: $(now)
@@ -133,16 +133,16 @@ Steps:
         parameters:
           steps:
             - WAIT-TEST-END
-      - type: cancel-active-time-tariff-intervals
+      - type: cancel-time-tariff-intervals
         parameters:
           tag: TTI-1
-      - type: cancel-active-time-tariff-intervals
+      - type: cancel-time-tariff-intervals
         parameters:
           tag: TTI-2
-      - type: cancel-active-time-tariff-intervals
+      - type: cancel-time-tariff-intervals
         parameters:
           tag: TTI-3
-      - type: cancel-active-time-tariff-intervals
+      - type: cancel-time-tariff-intervals
         parameters:
           tag: TTI-4
       - type: remove-steps

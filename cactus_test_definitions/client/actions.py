@@ -104,16 +104,16 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "uom": ParameterSchema(False, ParameterType.Integer),
         "tag": ParameterSchema(False, ParameterType.String),
     },
-    "create-tariff-generated-rate": {
-        "rate_component_tag": ParameterSchema(False, ParameterType.String),  # Parent RateComponent to nest under
+    "create-time-tariff-interval": {
         "start": ParameterSchema(True, ParameterType.DateTime),
         "duration_seconds": ParameterSchema(True, ParameterType.Integer),
+        "rate_component_tag": ParameterSchema(False, ParameterType.String),  # Parent RateComponent to nest under
         "price_pow10_encoded_block0": ParameterSchema(True, ParameterType.Integer),  # pow10 encoded price
         "price_pow10_encoded_block1": ParameterSchema(False, ParameterType.Integer),  # pow10 encoded price
         "price_start_pow10_block1": ParameterSchema(False, ParameterType.Integer),  # startValue for block1
         "tag": ParameterSchema(False, ParameterType.String),
     },
-    "cancel-active-time-tariff-intervals": {
+    "cancel-time-tariff-intervals": {
         "tag": ParameterSchema(False, ParameterType.String),  # If set - ONLY cancel the TTI with the specified tag
     },
     "delete-rate-component": {

@@ -69,7 +69,7 @@ Steps:
           power_of_ten_multiplier: 0
           uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
           tag: RC-1
-      - type: create-tariff-generated-rate
+      - type: create-time-tariff-interval
         parameters:
           rate_component_tag: RC-1
           start: $(now)
@@ -109,7 +109,7 @@ Steps:
           power_of_ten_multiplier: 0
           uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
           tag: RC-2
-      - type: create-tariff-generated-rate
+      - type: create-time-tariff-interval
         parameters:
           rate_component_tag: RC-2
           start: $(now)
@@ -146,7 +146,7 @@ Steps:
           power_of_ten_multiplier: 0
           uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
           tag: RC-2
-      - type: create-tariff-generated-rate
+      - type: create-time-tariff-interval
         parameters:
           rate_component_tag: RC-2
           start: $(now)
@@ -177,14 +177,14 @@ Steps:
           power_of_ten_multiplier: 0
           uom: 195 # UomType.TIME_DAY
           tag: RC-3
-      - type: create-tariff-generated-rate
+      - type: create-time-tariff-interval
         parameters:
           rate_component_tag: RC-2
           start: $(now)
           duration_seconds: 300
           price_pow10_encoded_block0: 3
           tag: TTI-3
-      - type: create-tariff-generated-rate
+      - type: create-time-tariff-interval
         parameters:
           rate_component_tag: RC-3
           start: $(now)

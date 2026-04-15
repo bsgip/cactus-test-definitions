@@ -58,19 +58,19 @@ Preconditions:
         power_of_ten_multiplier: 0
         uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
         tag: RC2
-    - type: create-tariff-generated-rate
+    - type: create-time-tariff-interval
       parameters:
         rate_component_tag: RC1
         start: $(now)
         duration_seconds: 300
         price_pow10_encoded_block0: 1
-    - type: create-tariff-generated-rate
+    - type: create-time-tariff-interval
       parameters:
         rate_component_tag: RC1
         start: $(now + '300 seconds')
         duration_seconds: 300
         price_pow10_encoded_block0: 2
-    - type: create-tariff-generated-rate
+    - type: create-time-tariff-interval
       parameters:
         rate_component_tag: RC2
         start: $(now)

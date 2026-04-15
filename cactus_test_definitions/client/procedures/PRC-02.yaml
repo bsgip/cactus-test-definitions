@@ -61,7 +61,7 @@ Preconditions:
         uom: 195 # UomType.TIME_DAY
         tag: RC-4
     
-    - type: create-tariff-generated-rate
+    - type: create-time-tariff-interval
       parameters:
         rate_component_tag: RC-1
         start: $(now_hour + '120 minutes')
@@ -71,7 +71,7 @@ Preconditions:
         price_start_pow10_block1: 100
         tag: TTI-1
 
-    - type: create-tariff-generated-rate
+    - type: create-time-tariff-interval
       parameters:
         rate_component_tag: RC-1
         start: $(now_hour + '125 minutes')
@@ -79,7 +79,7 @@ Preconditions:
         price_pow10_encoded_block0: -1000001
         tag: TTI-2
 
-    - type: create-tariff-generated-rate
+    - type: create-time-tariff-interval
       parameters:
         rate_component_tag: RC-2
         start: $(now_hour + '120 minutes')
@@ -89,7 +89,7 @@ Preconditions:
         price_start_pow10_block1: 100
         tag: TTI-3
 
-    - type: create-tariff-generated-rate
+    - type: create-time-tariff-interval
       parameters:
         rate_component_tag: RC-2
         start: $(now_hour + '125 minutes')
@@ -97,7 +97,7 @@ Preconditions:
         price_pow10_encoded_block0: -1000001
         tag: TTI-4
 
-    - type: create-tariff-generated-rate
+    - type: create-time-tariff-interval
       parameters:
         rate_component_tag: RC-3
         start: $(now_day)
@@ -105,7 +105,7 @@ Preconditions:
         price_pow10_encoded_block0: 3
         tag: TTI-5
 
-    - type: create-tariff-generated-rate
+    - type: create-time-tariff-interval
       parameters:
         rate_component_tag: RC-4
         start: $(now_hour + '120 minutes')
@@ -150,7 +150,7 @@ Steps:
       type: proceed
       parameters: {}
     actions:
-      - type: cancel-active-time-tariff-intervals
+      - type: cancel-time-tariff-intervals
         parameters: {}
       - type: enable-steps
         parameters:
