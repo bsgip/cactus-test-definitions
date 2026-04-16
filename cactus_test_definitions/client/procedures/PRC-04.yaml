@@ -11,40 +11,34 @@ Criteria:
     - type: all-steps-complete
       parameters: {}
 
-    - type: response-contents
+    - type: price-response-contents
       parameters:
-        time_tariff_interval: true
         all: true
         status: 1 # Received
 
-    - type: response-contents
+    - type: price-response-contents
       parameters:
-        time_tariff_interval: true
         subject_tag: TTI-1
         status: 6 # Cancelled
 
-    - type: response-contents
+    - type: price-response-contents
       parameters:
-        time_tariff_interval: true
         subject_tag: TTI-2
         status: 6 # Cancelled
 
-    - type: response-contents
+    - type: price-response-contents
       parameters:
-        time_tariff_interval: true
         subject_tag: TTI-3
         status: 6 # Cancelled
 
-    - type: response-contents
+    - type: price-response-contents
       parameters:
-        time_tariff_interval: true
         subject_tag: TTI-4
         status: 6 # Cancelled
 
     # TTI-5 will never be cancelled
-    - type: response-contents
+    - type: price-response-contents
       parameters:
-        time_tariff_interval: true
         subject_tag: TTI-5
         exists: false
         status: 6 # Cancelled

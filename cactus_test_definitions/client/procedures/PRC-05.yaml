@@ -96,9 +96,8 @@ Steps:
         endpoint: /edev/1/rsps/tariff_generated_rates/rsp
         serve_request_first: true
       checks:
-        - type: response-contents
+        - type: price-response-contents
           parameters: 
-            time_tariff_interval: true
             latest: true
             status: 1 # Received
             subject_tag: TTI-1
@@ -133,9 +132,8 @@ Steps:
         endpoint: /edev/1/rsps/tariff_generated_rates/rsp
         serve_request_first: true
       checks:
-        - type: response-contents
+        - type: price-response-contents
           parameters: 
-            time_tariff_interval: true
             latest: true
             status: 1 # Received
             subject_tag: TTI-2
@@ -209,9 +207,8 @@ Steps:
         endpoint: /edev/1/rsps/tariff_generated_rates/rsp
         serve_request_first: true
       checks:
-        - type: response-contents
+        - type: price-response-contents
           parameters: 
-            time_tariff_interval: true
             latest: true
             status: 1 # Received
             subject_tag: TTI-3
@@ -229,9 +226,8 @@ Steps:
         endpoint: /edev/1/rsps/tariff_generated_rates/rsp
         serve_request_first: true
       checks:
-        - type: response-contents
+        - type: price-response-contents
           parameters: 
-            time_tariff_interval: true
             latest: true
             status: 1 # Received
             subject_tag: TTI-4
