@@ -94,7 +94,7 @@ def test_TestProcedure_individually_valid(tp_id: TestProcedureId):
 
 
 @pytest.mark.parametrize("tp_id", TestProcedureId)
-def test_each_step_accessible(tp_id: TestProcedureId):
+def test_each_step_accessible(tp_id: TestProcedureId):  # noqa: C901
     """Ensures that each test procedure's steps are enabled/removed once. Failures here indicate a bad reference to
     enable/remove steps"""
 
