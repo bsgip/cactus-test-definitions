@@ -43,6 +43,7 @@ Steps:
           start: $(now)
           duration_seconds: 60
           opModConnect: false
+          tag: DERC1
       - type: enable-steps
         parameters:
           steps:
@@ -86,11 +87,13 @@ Steps:
           start: $(now)
           duration_seconds: 60
           opModConnect: true
+          tag: RECONNECT
       - type: create-der-control
         parameters:
           start: $(now + '120 seconds')
           duration_seconds: 60
           opModFixedW: -75
+          tag: DERC2
       - type: enable-steps
         parameters:
           steps:
@@ -165,6 +168,7 @@ Steps:
           start: $(now + '60 seconds')
           duration_seconds: 60
           opModFixedW: -50
+          tag: DERC3
       - type: enable-steps
         parameters:
           steps:
@@ -240,6 +244,7 @@ Steps:
           start: $(now + '60 seconds')
           duration_seconds: 60
           opModFixedW: -0.01
+          tag: DERC4
       - type: enable-steps
         parameters:
           steps:
@@ -316,6 +321,7 @@ Steps:
           start: $(now + '60 seconds')
           duration_seconds: 60
           opModFixedW: -100
+          tag: DERC5
       - type: enable-steps
         parameters:
           steps:
@@ -390,6 +396,7 @@ Steps:
           start: $(now + '60 seconds')
           duration_seconds: 60
           opModFixedW: 75
+          tag: DERC6
       - type: enable-steps
         parameters:
           steps:
@@ -464,6 +471,7 @@ Steps:
           start: $(now + '60 seconds')
           duration_seconds: 60
           opModFixedW: 50
+          tag: DERC7
       - type: enable-steps
         parameters:
           steps:
@@ -538,6 +546,7 @@ Steps:
           start: $(now + '60 seconds')
           duration_seconds: 60
           opModFixedW: 0
+          tag: DERC8
       - type: enable-steps
         parameters:
           steps:
@@ -612,6 +621,7 @@ Steps:
           start: $(now + '60 seconds')
           duration_seconds: 60
           opModFixedW: 100
+          tag: DERC9
       - type: enable-steps
         parameters:
           steps:

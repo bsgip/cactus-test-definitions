@@ -103,6 +103,7 @@ Steps:
           duration_seconds: 300
           opModImpLimW: 0
           opModExpLimW: 0
+          tag: DERC1
       - type: enable-steps
         parameters:
           steps:

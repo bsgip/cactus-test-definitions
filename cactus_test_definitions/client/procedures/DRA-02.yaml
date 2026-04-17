@@ -41,6 +41,7 @@ Steps:
           start: $(now)
           duration_seconds: 60
           opModConnect: false
+          tag: DERC1
       - type: enable-steps
         parameters:
           steps:

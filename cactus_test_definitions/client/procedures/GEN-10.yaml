@@ -98,6 +98,7 @@ Preconditions:
       parameters:
         derp_id: 1
         opModImpLimW: 0
+        setGradW: 167 # hundredths of a percent - this is 1.67% / second
     # These default controls are not explicitly in the standards (SA TS5573), but we are adding here to let the 
     # client know to keep polling at, e.g., /edev/1/derp/6/dderc, which allows step-bb-ii to work without using notifications.
     # Previously, polling at /edev/1/derp/6/dderc was expected without any defaults being set.
@@ -105,6 +106,7 @@ Preconditions:
       parameters:
         derp_id: 6
         opModImpLimW: 0 # Set to import to not interefere with export observations in witness test
+        setGradW: 167 # hundredths of a percent - this is 1.67% / second
 
 Steps:
 
@@ -200,14 +202,14 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - WAIT-DERC-2
+            - WAIT-DERC-1
       - type: remove-steps
         parameters:
           steps:
             - POST-DERC-1-RESPONSE-STARTED
 
   # (e) Wait for a short period
-  WAIT-DERC-2:
+  WAIT-DERC-1:
     event:
       type: wait
       parameters:
@@ -220,7 +222,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-DERC-2
+            - WAIT-DERC-1
 
   # (e) After the short period - configure a DERControl on DERP 1 - set to 0%
   GET-DERP-2:

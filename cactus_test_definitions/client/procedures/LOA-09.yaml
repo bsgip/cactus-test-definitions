@@ -54,6 +54,7 @@ Steps:
           duration_seconds: 300
           opModExpLimW: $(setMaxW * 2)
           opModImpLimW: $(setMaxW * 2)
+          tag: DERC1
       - type: enable-steps
         parameters:
           steps:

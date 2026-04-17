@@ -49,144 +49,168 @@ Preconditions:
         duration_seconds: 60
         opModExpLimW: $(setMaxW * 0.3)
         opModImpLimW: $(setMaxW * 0.3)
+        tag: DERC1
     - type: create-der-control
       parameters:
         start: $(now + '1 minute')
         duration_seconds: 60
         opModExpLimW: $(setMaxW * 0.6)
         opModImpLimW: $(setMaxW * 0.6)
+        tag: DERC2
     - type: create-der-control
       parameters:
         start: $(now + '2 minutes')
         duration_seconds: 60
         opModExpLimW: $(setMaxW * 0.4)
         opModImpLimW: $(setMaxW * 0.4)
+        tag: DERC3
     - type: create-der-control
       parameters:
         start: $(now + '3 minutes')
         duration_seconds: 60
         opModExpLimW: $(setMaxW * 0.5)
         opModImpLimW: $(setMaxW * 0.5)
+        tag: DERC4
     - type: create-der-control
       parameters:
         start: $(now + '4 minutes')
         duration_seconds: 60
         opModExpLimW: $(setMaxW * 0.2)
         opModImpLimW: $(setMaxW * 0.2)
+        tag: DERC5
     - type: create-der-control
       parameters:
         start: $(now + '5 minutes')
         duration_seconds: 60
         opModExpLimW: $(setMaxW * 0.1)
         opModImpLimW: $(setMaxW * 0.1)
+        tag: DERC6
     - type: create-der-control
       parameters:
         start: $(now + '6 minutes')
         duration_seconds: 60
         opModExpLimW: $(setMaxW * 0.7)
         opModImpLimW: $(setMaxW * 0.7)
+        tag: DERC7
     - type: create-der-control
       parameters:
         start: $(now + '7 minutes')
         duration_seconds: 60
         opModExpLimW: $(setMaxW * 0.2)
         opModImpLimW: $(setMaxW * 0.2)
+        tag: DERC8
     - type: create-der-control
       parameters:
         start: $(now + '8 minutes')
         duration_seconds: 60
         opModExpLimW: $(setMaxW * 0.3)
         opModImpLimW: $(setMaxW * 0.3)
+        tag: DERC9
     - type: create-der-control
       parameters:
         start: $(now + '9 minutes')
         duration_seconds: 60
         opModExpLimW: $(setMaxW * 0.3)
         opModImpLimW: $(setMaxW * 0.3)
+        tag: DERC10
     - type: create-der-control
       parameters:
         start: $(now + '10 minutes')
         duration_seconds: 60
         opModExpLimW: $(setMaxW * 0.5)
         opModImpLimW: $(setMaxW * 0.5)
+        tag: DERC11
     - type: create-der-control
       parameters:
         start: $(now + '11 minutes')
         duration_seconds: 60
         opModExpLimW: $(setMaxW * 0.9)
         opModImpLimW: $(setMaxW * 0.9)
+        tag: DERC12
     - type: create-der-control
       parameters:
         start: $(now + '12 minutes')
         duration_seconds: 60
         opModExpLimW: $(setMaxW * 0.1)
         opModImpLimW: $(setMaxW * 0.1)
+        tag: DERC13
     - type: create-der-control
       parameters:
         start: $(now + '13 minutes')
         duration_seconds: 60
         opModExpLimW: $(setMaxW * 0.1)
         opModImpLimW: $(setMaxW * 0.1)
+        tag: DERC14
     - type: create-der-control
       parameters:
         start: $(now + '14 minutes')
         duration_seconds: 60
         opModExpLimW: $(setMaxW * 0.5)
         opModImpLimW: $(setMaxW * 0.5)
+        tag: DERC15
     - type: create-der-control
       parameters:
         start: $(now + '15 minutes')
         duration_seconds: 60
         opModExpLimW: $(setMaxW * 0.4)
         opModImpLimW: $(setMaxW * 0.4)
+        tag: DERC16
     - type: create-der-control
       parameters:
         start: $(now + '16 minutes')
         duration_seconds: 60
         opModExpLimW: $(setMaxW * 0.1)
         opModImpLimW: $(setMaxW * 0.1)
+        tag: DERC17
     - type: create-der-control
       parameters:
         start: $(now + '17 minutes')
         duration_seconds: 60
         opModExpLimW: $(setMaxW * 0.7)
         opModImpLimW: $(setMaxW * 0.7)
+        tag: DERC18
     - type: create-der-control
       parameters:
         start: $(now + '18 minutes')
         duration_seconds: 60
         opModExpLimW: $(setMaxW * 0.9)
         opModImpLimW: $(setMaxW * 0.9)
+        tag: DERC19
     - type: create-der-control
       parameters:
         start: $(now + '19 minutes')
         duration_seconds: 60
         opModExpLimW: $(setMaxW * 0.1)
         opModImpLimW: $(setMaxW * 0.1)
+        tag: DERC20
     - type: create-der-control
       parameters:
         start: $(now + '20 minutes')
         duration_seconds: 60
         opModExpLimW: $(setMaxW * 0.4)
         opModImpLimW: $(setMaxW * 0.4)
+        tag: DERC21
     - type: create-der-control
       parameters:
         start: $(now + '21 minutes')
         duration_seconds: 60
         opModExpLimW: $(setMaxW * 0.3)
         opModImpLimW: $(setMaxW * 0.3)
+        tag: DERC22
     - type: create-der-control
       parameters:
         start: $(now + '22 minutes')
         duration_seconds: 60
         opModExpLimW: $(setMaxW * 0.7)
         opModImpLimW: $(setMaxW * 0.7)
+        tag: DERC23
     - type: create-der-control
       parameters:
         start: $(now + '23 minutes')
         duration_seconds: 60
         opModExpLimW: $(setMaxW)
         opModImpLimW: $(setMaxW)
+        tag: DERC24
 
 Steps:
   WAIT-TEST-END:

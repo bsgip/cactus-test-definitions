@@ -45,6 +45,7 @@ Steps:
           start: $(now + '60 seconds')
           duration_seconds: 60
           opModFixedW: -75
+          tag: DERC1
       - type: enable-steps
         parameters:
           steps:
@@ -120,6 +121,7 @@ Steps:
           start: $(now + '60 seconds')
           duration_seconds: 60
           opModFixedW: -50
+          tag: DERC2
       - type: enable-steps
         parameters:
           steps:
@@ -196,6 +198,7 @@ Steps:
           start: $(now + '60 seconds')
           duration_seconds: 60
           opModFixedW: -0.01
+          tag: DERC3
       - type: enable-steps
         parameters:
           steps:
@@ -270,6 +273,7 @@ Steps:
           start: $(now + '60 seconds')
           duration_seconds: 60
           opModFixedW: -100
+          tag: DERC4
       - type: enable-steps
         parameters:
           steps:
