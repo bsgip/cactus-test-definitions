@@ -31,7 +31,9 @@ class Action:
 ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
     "enable-steps": {"steps": ParameterSchema(True, ParameterType.ListString)},
     "remove-steps": {"steps": ParameterSchema(True, ParameterType.ListString)},
-    "finish-test": {},
+    "finish-test": {
+        "fail_message": ParameterSchema(False, ParameterType.String),  # If set - this test is a failed finish
+    },
     "set-default-der-control": {
         "derp_id": ParameterSchema(False, ParameterType.Integer),
         "opModImpLimW": ParameterSchema(False, ParameterType.Float),
@@ -73,6 +75,8 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "derp_list_poll_seconds": ParameterSchema(False, ParameterType.Integer),
         "der_list_poll_seconds": ParameterSchema(False, ParameterType.Integer),
         "mup_post_seconds": ParameterSchema(False, ParameterType.Integer),
+        "tp_list_poll_seconds": ParameterSchema(False, ParameterType.Integer),  # TariffProfileList poll rate
+        "tti_list_poll_seconds": ParameterSchema(False, ParameterType.Integer),  # TimeTariffIntervalList poll rate
     },
     "communications-status": {"enabled": ParameterSchema(True, ParameterType.Boolean)},
     "edev-registration-links": {"enabled": ParameterSchema(True, ParameterType.Boolean)},
@@ -81,6 +85,39 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "registration_pin": ParameterSchema(False, ParameterType.Integer),
         "aggregator_lfdi": ParameterSchema(False, ParameterType.HexBinary),
         "aggregator_sfdi": ParameterSchema(False, ParameterType.Integer),
+    },
+    "create-tariff-profile": {
+        "primacy": ParameterSchema(True, ParameterType.Integer),
+        "fsa_id": ParameterSchema(False, ParameterType.Integer),
+        "price_pow_10_multiplier": ParameterSchema(False, ParameterType.Integer),
+        "tag": ParameterSchema(False, ParameterType.String),
+    },
+    "create-rate-component": {
+        "tariff_profile_tag": ParameterSchema(False, ParameterType.String),  # Parent TariffProfile to nest under
+        "role_flags": ParameterSchema(False, ParameterType.Integer),
+        "commodity": ParameterSchema(False, ParameterType.Integer),
+        "data_qualifier": ParameterSchema(False, ParameterType.Integer),
+        "flow_direction": ParameterSchema(False, ParameterType.Integer),
+        "kind": ParameterSchema(False, ParameterType.Integer),
+        "phase": ParameterSchema(False, ParameterType.Integer),
+        "power_of_ten_multiplier": ParameterSchema(False, ParameterType.Integer),
+        "uom": ParameterSchema(False, ParameterType.Integer),
+        "tag": ParameterSchema(False, ParameterType.String),
+    },
+    "create-time-tariff-interval": {
+        "start": ParameterSchema(True, ParameterType.DateTime),
+        "duration_seconds": ParameterSchema(True, ParameterType.Integer),
+        "rate_component_tag": ParameterSchema(False, ParameterType.String),  # Parent RateComponent to nest under
+        "price_pow10_encoded_block0": ParameterSchema(True, ParameterType.Integer),  # pow10 encoded price
+        "price_pow10_encoded_block1": ParameterSchema(False, ParameterType.Integer),  # pow10 encoded price
+        "price_start_pow10_block1": ParameterSchema(False, ParameterType.Integer),  # startValue for block1
+        "tag": ParameterSchema(False, ParameterType.String),
+    },
+    "cancel-time-tariff-intervals": {
+        "tag": ParameterSchema(False, ParameterType.String),  # If set - ONLY cancel the TTI with the specified tag
+    },
+    "delete-rate-component": {
+        "tag": ParameterSchema(True, ParameterType.String),
     },
 }
 VALID_ACTION_NAMES: set[str] = set(ACTION_PARAMETER_SCHEMA.keys())

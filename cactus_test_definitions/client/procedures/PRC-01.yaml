@@ -1,0 +1,129 @@
+Description: Pricing Streamlined Flow
+Category: Pricing
+Classes:
+  - PRC
+
+TargetVersions:
+  - v1.3
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+    
+
+Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+        tp_list_poll_seconds: 300
+        tti_list_poll_seconds: 60
+        
+  checks:
+    - type: end-device-contents
+      parameters: {}
+
+    # Client should be resolving each RateComponent - worst case by fetching the list and then fetching each 
+    # RateComponent once. Given the test runtime - a non caching client will fall afoul of this check
+    - type: resource-requests
+      parameters:
+        minimum_count: 1
+        maximum_count: 3
+        resources:
+          - RateComponentList
+          - RateComponent
+  actions:
+    - type: create-tariff-profile
+      parameters:
+        primacy: 0
+        fsa_id: 1
+        price_pow_10_multiplier: 0
+    - type: create-rate-component
+      parameters:
+        commodity: 2 # CommodityType.ELECTRICITY_PRIMARY_METERED_VALUE
+        flow_direction: 1 # FlowDirectionType.FORWARD
+        power_of_ten_multiplier: 0
+        uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
+        tag: RC1
+    - type: create-rate-component
+      parameters:
+        commodity: 2 # CommodityType.ELECTRICITY_PRIMARY_METERED_VALUE
+        flow_direction: 19 # FlowDirectionType.REVERSE
+        power_of_ten_multiplier: 0
+        uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
+        tag: RC2
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC1
+        start: $(now)
+        duration_seconds: 300
+        price_pow10_encoded_block0: 1
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC1
+        start: $(now + '300 seconds')
+        duration_seconds: 300
+        price_pow10_encoded_block0: 2
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC2
+        start: $(now)
+        duration_seconds: 600
+        price_pow10_encoded_block0: -3
+
+    
+
+Steps:
+  
+  # (a, b)
+  GET-TP:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/1/tp
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-CTTI
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-TP
+  # (c)
+  GET-CTTI:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/tp/1/ctti
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-TEST-END
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-CTTI
+
+  # (d)
+  WAIT-TEST-END:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 180
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-TEST-END
+      - type: finish-test
+        parameters: {}
+
+  
