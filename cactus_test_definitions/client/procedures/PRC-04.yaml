@@ -94,14 +94,14 @@ Preconditions:
     - type: create-time-tariff-interval
       parameters:
         rate_component_tag: RC-2
-        start: $(now_midnight)
+        start: $(now_day)
         duration_seconds: 86400
         price_pow10_encoded_block0: 3
         tag: TTI-3
     - type: create-time-tariff-interval
       parameters:
         rate_component_tag: RC-2
-        start: $(now_midnight + '24 hours')
+        start: $(now_day + '24 hours')
         duration_seconds: 86400
         price_pow10_encoded_block0: 4
         tag: TTI-4

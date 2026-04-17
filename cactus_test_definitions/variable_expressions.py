@@ -254,6 +254,10 @@ def parse_unary_expression(token: Token) -> Constant | NamedVariable:
         match token.string:
             case "now":
                 return NamedVariable(NamedVariableType.NOW)
+            case "now_hour":
+                return NamedVariable(NamedVariableType.NOW_HOUR)
+            case "now_day":
+                return NamedVariable(NamedVariableType.NOW_DAY)
             case "this":
                 if token.param_key == "this" or token.param_key is None:
                     raise UnparseableVariableExpressionError(f"$this cannot resolve to parameter {token.param_key}")

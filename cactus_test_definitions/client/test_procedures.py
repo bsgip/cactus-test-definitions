@@ -97,6 +97,7 @@ class TestProcedureId(StrEnum):
     PRC_02 = "PRC-02"
     PRC_03 = "PRC-03"
     PRC_04 = "PRC-04"
+    PRC_05 = "PRC-05"
 
 
 @dataclass
