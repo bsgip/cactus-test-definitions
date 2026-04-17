@@ -1015,7 +1015,8 @@ Steps:
       - Click Proceed AFTER the DER is exporting at the correct limit. 
     event:
       type: proceed
-      parameters: {}
+      parameters:
+        timeout_seconds: 300 # End test after 5 mins if proceed not pressed
     actions:
       - type: remove-steps
         parameters:
