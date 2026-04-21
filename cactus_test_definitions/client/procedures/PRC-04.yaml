@@ -155,6 +155,7 @@ Steps:
         parameters:
           steps:
             - WAIT-TEST-END
-
+      - type: finish-test
+        parameters: {}
 
   

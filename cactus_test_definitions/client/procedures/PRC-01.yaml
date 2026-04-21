@@ -10,7 +10,15 @@ Criteria:
   checks:
     - type: all-steps-complete
       parameters: {}
-    
+    # Client should be resolving each RateComponent - worst case by fetching the list and then fetching each 
+    # RateComponent once. Given the test runtime - a non caching client will fall afoul of this check
+    - type: resource-requests
+      parameters:
+        minimum_count: 1
+        maximum_count: 3
+        resources:
+          - RateComponentList
+          - RateComponent
 
 Preconditions:
   init_actions:
@@ -29,15 +37,6 @@ Preconditions:
     - type: end-device-contents
       parameters: {}
 
-    # Client should be resolving each RateComponent - worst case by fetching the list and then fetching each 
-    # RateComponent once. Given the test runtime - a non caching client will fall afoul of this check
-    - type: resource-requests
-      parameters:
-        minimum_count: 1
-        maximum_count: 3
-        resources:
-          - RateComponentList
-          - RateComponent
   actions:
     - type: create-tariff-profile
       parameters:
