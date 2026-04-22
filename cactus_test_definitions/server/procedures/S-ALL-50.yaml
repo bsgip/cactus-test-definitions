@@ -5,6 +5,7 @@ Classes:
 
 TargetVersions:
  - v1.2
+ - v1.3
 
 Preconditions:
   required_clients:
@@ -13,8 +14,10 @@ Preconditions:
 Steps:
   - id: PRECONDITION 1 - EndDevice Registration
     repeat_until_pass: true
-    instructions:
-      - Create an EndDevice registration for client.
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
     action:
       type: discovery
       parameters:

@@ -6,6 +6,7 @@ Classes:
 TargetVersions:
   - v1.2
   - v1.3-beta/storage
+  - v1.3
 
 Criteria:
   checks:
@@ -97,6 +98,7 @@ Preconditions:
       parameters:
         derp_id: 1
         opModExpLimW: 0
+        setGradW: 167 # hundredths of a percent - this is 1.67% / second
     # These default controls are not explicitly in the standards (SA TS5573), but we are adding here to let the 
     # client know to keep polling at, e.g., /edev/1/derp/6/dderc, which allows step-bb-ii to work without using notifications.
     # Previously, polling at /edev/1/derp/6/dderc was expected without any defaults being set.
@@ -104,6 +106,7 @@ Preconditions:
       parameters:
         derp_id: 6
         opModExpLimW: 0 # Set to export to not interefere with import observations in witness test
+        setGradW: 167 # hundredths of a percent - this is 1.67% / second
 
 Steps:
   
@@ -139,18 +142,18 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-1
+            - GET-DERP-1
       - type: remove-steps
         parameters:
           steps:
             - WAIT-OBSERVE-DEFAULT-DERC
 
   # (c, d) - Create a DERControl at DERP 6 - set to 200% of max
-  GET-DERC-1:
+  GET-DERP-1:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/6/derc
+        endpoint: /edev/1/fsa/2/derp
     actions:
       - type: create-der-control
         parameters:
@@ -163,7 +166,20 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
+            - GET-DERC-1
             - POST-DERC-1-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-1
+
+  # (c, d) - Create a DERControl at DERP 6 - set to 200% of max
+  GET-DERC-1:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/6/derc
+    actions:
       - type: remove-steps
         parameters:
           steps:
@@ -186,14 +202,14 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - WAIT-DERC-2
+            - WAIT-DERC-1
       - type: remove-steps
         parameters:
           steps:
             - POST-DERC-1-RESPONSE-STARTED
 
   # (e) Wait for a short period
-  WAIT-DERC-2:
+  WAIT-DERC-1:
     event:
       type: wait
       parameters:
@@ -202,18 +218,18 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-2
+            - GET-DERP-2
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-DERC-2
+            - WAIT-DERC-1
 
   # (e) After the short period - configure a DERControl on DERP 1 - set to 0%
-  GET-DERC-2:
+  GET-DERP-2:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/1/derc
+        endpoint: /edev/1/fsa/1/derp
     actions:
       - type: create-der-control
         parameters:
@@ -226,8 +242,21 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
+            - GET-DERC-2
             - POST-DERC-2-RESPONSE-STARTED
             - POST-DERC-1-RESPONSE-SUPERSEDED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-2
+
+  # (e) Retrieve control from DERP1
+  GET-DERC-2:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
       - type: remove-steps
         parameters:
           steps:
@@ -293,18 +322,18 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-3
+            - GET-DERP-3
       - type: remove-steps
         parameters:
           steps:
             - POST-DERC-2-RESPONSE-COMPLETED
 
   # (i) Create a new DERControl on DERP6 - set to 200%
-  GET-DERC-3:
+  GET-DERP-3:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/6/derc
+        endpoint: /edev/1/fsa/2/derp
     actions:
       - type: create-der-control
         parameters:
@@ -317,7 +346,20 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
+            - GET-DERC-3
             - POST-DERC-3-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-3
+
+  # (i) Retrieve control from DERP6
+  GET-DERC-3:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/6/derc
+    actions:
       - type: remove-steps
         parameters:
           steps:
@@ -381,19 +423,19 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-4
-            - GET-DERC-5
+            - GET-DERP-4
+            - GET-DERP-5
       - type: remove-steps
         parameters:
           steps:
             - WAIT-OBSERVE-DEFAULT-AFTER-DERC-3
 
   # (m, n) (i) Configure the first DERControl on DERP1
-  GET-DERC-4:
+  GET-DERP-4:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/1/derc
+        endpoint: /edev/1/fsa/1/derp
     actions:
       - type: create-der-control
         parameters:
@@ -407,7 +449,20 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
+            - GET-DERC-4
             - POST-DERC-4-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-4
+
+  # (m, n) (i) Retrieve control on DERP1
+  GET-DERC-4:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
       - type: remove-steps
         parameters:
           steps:
@@ -415,11 +470,11 @@ Steps:
 
   # (m) (ii) Configure the second DERControl on DERP6
   # (n)
-  GET-DERC-5:
+  GET-DERP-5:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/6/derc
+        endpoint: /edev/1/fsa/2/derp
     actions:
       - type: create-der-control
         parameters:
@@ -432,7 +487,21 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
+            - GET-DERC-5
             - POST-DERC-5-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-5
+
+  # (m) (ii) Retrieve control on DERP6 
+  # (n)
+  GET-DERC-5:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/6/derc
+    actions:
       - type: remove-steps
         parameters:
           steps:
@@ -516,18 +585,18 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-6
+            - GET-DERP-6
       - type: remove-steps
         parameters:
           steps:
             - WAIT-OBSERVE-DERC-5
 
   # (s) Create a DERControl on DERP6 at 50%
-  GET-DERC-6:
+  GET-DERP-6:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/6/derc
+        endpoint: /edev/1/fsa/2/derp
     actions:
       - type: create-der-control
         parameters:
@@ -540,8 +609,21 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
+            - GET-DERC-6
             - POST-DERC-5-RESPONSE-SUPERSEDED
             - POST-DERC-6-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-6
+
+  # (s) Create a DERControl on DERP6 at 50%
+  GET-DERC-6:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/6/derc
+    actions:
       - type: remove-steps
         parameters:
           steps:
@@ -601,19 +683,19 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-7
-            - GET-DERC-8
+            - GET-DERP-7
+            - GET-DERP-8
       - type: remove-steps
         parameters:
           steps:
             - WAIT-OBSERVE-DERC-6
 
   # (v) (i) Create a DERControl on DERP1 at 0%
-  GET-DERC-7:
+  GET-DERP-7:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/1/derc
+        endpoint: /edev/1/fsa/1/derp
     actions:
       - type: create-der-control
         parameters:
@@ -626,18 +708,31 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
+            - GET-DERC-7
             - POST-DERC-7-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-7
+
+  # (v) (i) Retrieve control on DERP1
+  GET-DERC-7:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
       - type: remove-steps
         parameters:
           steps:
             - GET-DERC-7
 
   # (v) (ii) Create a DERControl on DERP6 at 50% / 30%
-  GET-DERC-8:
+  GET-DERP-8:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/6/derc
+        endpoint: /edev/1/fsa/2/derp
     actions:
       - type: create-der-control
         parameters:
@@ -651,7 +746,20 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
+            - GET-DERC-8
             - POST-DERC-8-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-8
+
+  # (v) (ii) Retrieve control on DERP6
+  GET-DERC-8:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/6/derc
+    actions:
       - type: remove-steps
         parameters:
           steps:
@@ -717,19 +825,19 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-9
-            - GET-DERC-10
+            - GET-DERP-9
+            - GET-DERP-10
       - type: remove-steps
         parameters:
           steps:
             - POST-DERC-7-RESPONSE-COMPLETED
 
   # (y) (i) Configure DERControl on DERP1
-  GET-DERC-9:
+  GET-DERP-9:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/1/derc
+        endpoint: /edev/1/fsa/1/derp
     actions:
       - type: create-der-control
         parameters:
@@ -742,18 +850,31 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
+            - GET-DERC-9
             - POST-DERC-9-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-9
+
+  # (y) (i) Retrieve control on DERP1
+  GET-DERC-9:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
       - type: remove-steps
         parameters:
           steps:
             - GET-DERC-9
 
   # (y) (ii) Configure DERControl on DERP6
-  GET-DERC-10:
+  GET-DERP-10:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/6/derc
+        endpoint: /edev/1/fsa/2/derp
     actions:
       - type: create-der-control
         parameters:
@@ -766,7 +887,20 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
+            - GET-DERC-10
             - POST-DERC-10-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-10
+
+  # (y) (ii) Retrieve control on DERP6
+  GET-DERC-10:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/6/derc
+    actions:
       - type: remove-steps
         parameters:
           steps:
@@ -868,25 +1002,26 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - WAIT-OBSERVE-DERP-5-6-DEFAULTS
+            - WAIT-OBSERVE-DERP-1-6-DEFAULTS
       - type: remove-steps
         parameters:
           steps:
             - GET-UPDATED-DEFAULT-DERP-6
 
   # (ee) Wait for DER to increase to 50%
-  WAIT-OBSERVE-DERP-5-6-DEFAULTS:
+  WAIT-OBSERVE-DERP-1-6-DEFAULTS:
     instructions:
-      - The device should ramp to DERP 5 DefaultDERControl opModImpLimW = 50% (as per TS 5573 [ee])
+      - The device should ramp to DERP 1 DefaultDERControl opModImpLimW = 50% (as per TS 5573 [ee])
       - Click Proceed AFTER the DER is importing at the correct limit. 
     event:
       type: proceed
-      parameters: {}
+      parameters:
+        timeout_seconds: 300 # End test after 5 mins if proceed not pressed
     actions:
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-OBSERVE-DERP-5-6-DEFAULTS
+            - WAIT-OBSERVE-DERP-1-6-DEFAULTS
       - type: finish-test
         parameters: {}
 

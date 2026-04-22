@@ -5,6 +5,7 @@ Classes:
 
 TargetVersions:
  - v1.2
+ - v1.3
 
 Preconditions:
   required_clients:
@@ -14,10 +15,17 @@ Steps:
   - id: (A) PRECONDITION
     repeat_until_pass: true
     client: client
-    instructions:
-      - Create an EndDevice registration.
-      - Configure a default control with - opModExpLimW = 50% of the DER active power rating, opModGenLimW = 0W, opModImpLimW = 50% of the DER active power rating, opModLoadLimW = 0W
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+      - type: create-default-der-control
+        parameters:
+          opModExpLimW: $(setMaxW * 0.5)
+          opModGenLimW: 0
+          opModImpLimW: $(setMaxW * 0.5)
+          opModLoadLimW: 0
+    action:
       type: discovery
       parameters:
         resources:

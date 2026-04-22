@@ -5,6 +5,7 @@ Classes:
 
 TargetVersions:
  - v1.2
+ - v1.3
 
 Preconditions:
   required_clients:
@@ -17,10 +18,14 @@ Steps:
   - id: (A) PRECONDITION REGISTRATION
     repeat_until_pass: true
     client: CLIENT-A
-    instructions:
-      - Create an EndDevice registration for CLIENT-A (or rerun S-ALL-02 / S-ALL-03).
-      - Ensure there is an accessible DERControlList
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        client: CLIENT-A
+        parameters:
+          registered: true
+      - type: ensure-der-control-list
+        client: CLIENT-A
+    action:
       type: discovery
       parameters:
         resources:
@@ -40,10 +45,14 @@ Steps:
   - id: (B) PRECONDITION REGISTRATION
     repeat_until_pass: true
     client: CLIENT-B
-    instructions:
-      - Create an EndDevice registration for CLIENT-B (or rerun S-ALL-02 / S-ALL-03).
-      - Ensure there is an accessible DERControlList
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        client: CLIENT-B
+        parameters:
+          registered: true
+      - type: ensure-der-control-list
+        client: CLIENT-B
+    action:
       type: discovery
       parameters:
         resources:
@@ -153,10 +162,13 @@ Steps:
 
   - id: 5 - DISALLOW ACCESS
     repeat_until_pass: true
-    instructions:
-      - Remove EndDevice entry for ClientA (or disallow access).
+    admin_instructions:
+      - type: set-client-access
+        client: CLIENT-A
+        parameters:
+          granted: false
     client: CLIENT-A
-    action: 
+    action:
       type: refresh-resource
       parameters:
         resource: EndDeviceList

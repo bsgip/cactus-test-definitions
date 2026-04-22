@@ -6,6 +6,7 @@ Classes:
 TargetVersions:
   - v1.2
   - v1.3-beta/storage
+  - v1.3
 
 Preconditions:
   init_actions:
@@ -37,13 +38,14 @@ Steps:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/1/derc
+        endpoint: /edev/1/fsa/1/derp
     actions:
       - type: create-der-control
         parameters:
           start: $(now + '60 seconds')
           duration_seconds: 60
           opModFixedW: 75
+          tag: DERC1
       - type: enable-steps
         parameters:
           steps:
@@ -112,13 +114,14 @@ Steps:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/1/derc
+        endpoint: /edev/1/fsa/1/derp
     actions:
       - type: create-der-control
         parameters:
           start: $(now + '60 seconds')
-          duration_seconds: 60
+          duration_seconds: 180
           opModFixedW: 50
+          tag: DERC2
       - type: enable-steps
         parameters:
           steps:

@@ -5,6 +5,7 @@ Classes:
 
 TargetVersions:
  - v1.2
+ - v1.3
 
 Preconditions:
   required_clients:
@@ -13,9 +14,15 @@ Preconditions:
 Steps:
   - id: 1 - 100K DERCONTROL
     repeat_until_pass: true
-    instructions:
-      - The utility server is configured with a DERControl with opModExpLimW = 100,000 Watts.
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+      - type: create-der-control
+        parameters:
+          status: active
+          opModExpLimW: 100000
+    action:
       type: discovery
       parameters:
         resources:

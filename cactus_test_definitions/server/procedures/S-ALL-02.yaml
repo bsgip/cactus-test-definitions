@@ -5,6 +5,7 @@ Classes:
 
 TargetVersions:
  - v1.2
+ - v1.3
 
 Preconditions:
   required_clients:
@@ -14,9 +15,11 @@ Preconditions:
 Steps:
   - id: PRECONDITION
     repeat_until_pass: true
-    instructions:
-      - Remove any existing EndDevice registrations for client.
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: false
+    action:
       type: discovery
       parameters:
         resources:
@@ -48,9 +51,12 @@ Steps:
 
   - id: FETCHING DER INFO
     repeat_until_pass: true
-    instructions:
-      - Populate DERList with an entry that has a DERCapabilityLink, DERSettingsLink and DERStatusLink.
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+          has_der_list: true
+    action:
       type: discovery
       parameters:
         resources:

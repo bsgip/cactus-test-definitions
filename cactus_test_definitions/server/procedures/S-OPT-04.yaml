@@ -5,6 +5,7 @@ Classes:
 
 TargetVersions:
  - v1.2
+ - v1.3
 
 Preconditions:
   required_clients:
@@ -13,9 +14,12 @@ Preconditions:
 Steps:
   - id: MATCH PIN
     repeat_until_pass: true
-    instructions:
-      - Create an EndDevice (with RegistrationLink) registration for client (or rerun S-ALL-02 / S-ALL-03).
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+          has_registration_link: true
+    action:
       type: discovery
       parameters:
         resources:

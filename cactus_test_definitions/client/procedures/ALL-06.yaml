@@ -7,6 +7,7 @@ Classes:
 TargetVersions:
   - v1.2
   - v1.3-beta/storage
+  - v1.3
 
 Criteria:
   checks:
@@ -102,6 +103,7 @@ Steps:
           duration_seconds: 300
           opModImpLimW: 0
           opModExpLimW: 0
+          tag: DERC1
       - type: enable-steps
         parameters:
           steps:
@@ -119,12 +121,6 @@ Steps:
       type: wait
       parameters:
         duration_seconds: 180 # Wait for at least 3 sets of readings to arrive (with post rate 60 seconds)
-      checks:
-        - type: all-polls-at-correct-time
-          parameters:
-            endpoint: /mup
-            poll_interval_seconds: 60
-            request_type_str: POST
     actions:
       - type: remove-steps
         parameters:

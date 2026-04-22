@@ -5,6 +5,7 @@ Classes:
 
 TargetVersions:
  - v1.2
+ - v1.3
 
 Preconditions:
   required_clients:
@@ -14,10 +15,17 @@ Steps:
   - id: (A) PRECONDITION
     repeat_until_pass: true
     client: client
-    instructions:
-      - Create an EndDevice registration.
-      - Configure an active control with opModExpLimW = 0, opModImpLimW = 0, rampTms=30 seconds.
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+      - type: create-der-control
+        parameters:
+          status: active
+          opModExpLimW: 0
+          opModImpLimW: 0
+          rampTms: 3000
+    action:
       type: discovery
       parameters:
         resources:

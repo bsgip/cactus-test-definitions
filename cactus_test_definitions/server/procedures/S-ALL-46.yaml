@@ -5,17 +5,25 @@ Classes:
 
 TargetVersions:
  - v1.2
+ - v1.3
 
 Preconditions:
   required_clients:
     - id: client
-  
+      client_type: aggregator
+
 Steps:
   - id: PRECONDITION 1 - NO DERCONTROLS
     repeat_until_pass: true
-    instructions:
-      - Create an EndDevice registration for client and ensure the DERControlList is empty. 
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+      - type: ensure-der-control-list
+      - type: clear-der-controls
+        parameters:
+          all: true
+    action:
       type: discovery
       parameters:
         resources:
@@ -53,7 +61,13 @@ Steps:
     repeat_until_pass: true
     instructions:
       - Schedule a DERControl to start in 1 hour with opModExpLimW=0
-    action: 
+    admin_instructions:
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          start_offset_seconds: 3600
+          opModExpLimW: 0
+    action:
       type: discovery
       parameters:
         resources:
@@ -90,8 +104,6 @@ Steps:
 
   - id: 2B - AWAIT DERCONTROL NOTIFICATION
     repeat_until_pass: true
-    instructions: 
-      - The notification from the DERControl.
     action: 
       type: notifications
       parameters:

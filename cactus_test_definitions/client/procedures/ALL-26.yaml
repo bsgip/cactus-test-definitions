@@ -6,6 +6,7 @@ Classes:
 TargetVersions:
   - v1.2
   - v1.3-beta/storage
+  - v1.3
 
 Criteria:
   checks:
@@ -43,7 +44,7 @@ Steps:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/1/derc
+        endpoint: /edev/1/fsa/1/derp
     actions:
       - type: create-der-control
         parameters:
@@ -51,6 +52,7 @@ Steps:
           duration_seconds: 240
           opModExpLimW: $(setMaxW * 2)
           opModImpLimW: $(setMaxW * 2)
+          tag: PRECONDITION
       - type: enable-steps
         parameters:
           steps:
@@ -72,35 +74,36 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC
+            - GET-DERC-DEENERGIZE
       - type: remove-steps
         parameters:
           steps:
             - PRECONDITION-STARTUP-WAIT
 
   # (a, b)
-  GET-DERC:
+  GET-DERC-DEENERGIZE:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/1/derc
+        endpoint: /edev/1/fsa/1/derp
     actions:
       - type: create-der-control
         parameters:
           start: $(now)
           duration_seconds: 300
           opModEnergize: false
+          tag: DEENERGIZE
       - type: enable-steps
         parameters:
           steps:
-            - PUT-DERSTATUS-DISCONNECT
+            - PUT-DERSTATUS-DEENERGIZE
       - type: remove-steps
         parameters:
           steps:
-            - GET-DERC
+            - GET-DERC-DEENERGIZE
 
   # (c, d)
-  PUT-DERSTATUS-DISCONNECT:
+  PUT-DERSTATUS-DEENERGIZE:
     event:
       type: PUT-request-received
       parameters:
@@ -115,19 +118,20 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - PUT-DERSTATUS-DISCONNECT
+            - PUT-DERSTATUS-DEENERGIZE
       - type: create-der-control
         parameters:
           start: $(now)
           duration_seconds: 300
           opModEnergize: true
+          tag: ENERGIZE
       - type: enable-steps
         parameters:
           steps:
-            - PUT-DERSTATUS-CONNECT
+            - PUT-DERSTATUS-REENERGIZE
 
   # (e)
-  PUT-DERSTATUS-CONNECT:
+  PUT-DERSTATUS-REENERGIZE:
     event:
       type: PUT-request-received
       parameters:
@@ -142,6 +146,6 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - PUT-DERSTATUS-CONNECT
+            - PUT-DERSTATUS-REENERGIZE
 
   

@@ -5,17 +5,32 @@ Classes:
 
 TargetVersions:
  - v1.2
+ - v1.3
 
 Preconditions:
   required_clients:
     - id: client
+      client_type: aggregator
   
 Steps:
   - id: PRECONDITION
     repeat_until_pass: true
     instructions:
-      - Create an EndDevice registration for client and the subscription process as defined in test S-ALL-25.
-    action: 
+      - Create an EndDevice registration, and follow the subscription process as defined in test S-ALL-25.
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+      - type: ensure-fsa
+        parameters:
+          annotation: fsa1
+      - type: ensure-der-program
+        parameters:
+          fsa_annotation: fsa1
+      - type: ensure-der-control-list
+        parameters:
+          subscribable: true
+    action:
       type: discovery
       parameters:
         resources:
@@ -39,9 +54,12 @@ Steps:
 
   - id: STEP 1 - CREATE DERC
     repeat_until_pass: true
-    instructions: 
-      - Configure an active control with opModImpLimW = 0W and null rampTms. 
-    action: 
+    admin_instructions:
+      - type: create-der-control
+        parameters:
+          status: active
+          opModImpLimW: 0
+    action:
       type: notifications
       parameters:
         sub_id: derc_list_sub

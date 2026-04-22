@@ -5,6 +5,7 @@ Classes:
 
 TargetVersions:
   - v1.3-beta/storage
+  - v1.3
 
 Criteria:
   checks:
@@ -24,10 +25,6 @@ Preconditions:
     - type: create-der-program
       parameters:
         primacy: 0
-  actions:
-    - type: set-default-der-control
-      parameters:
-        opModExpLimW: 1500
   checks:
     - type: end-device-contents
       parameters: {}
@@ -50,6 +47,10 @@ Preconditions:
       parameters: {
         "minimum_count": 1
       }
+  actions:
+    - type: set-default-der-control
+      parameters:
+        opModExpLimW: 1500
 
 Steps:
   # Client discovers control for opModStorageTargetW and opModExpLimW
@@ -57,7 +58,7 @@ Steps:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/1/derc
+        endpoint: /edev/1/fsa/1/derp
     actions:
       - type: create-der-control
         parameters:
@@ -95,7 +96,7 @@ Steps:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/1/derc
+        endpoint: /edev/1/fsa/1/derp
     actions:
       - type: create-der-control
         parameters:
@@ -133,7 +134,7 @@ Steps:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/1/derc
+        endpoint: /edev/1/fsa/1/derp
     actions:
       - type: create-der-control
         parameters:
@@ -171,7 +172,7 @@ Steps:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/1/derc
+        endpoint: /edev/1/fsa/1/derp
     actions:
       - type: create-der-control
         parameters:
@@ -209,7 +210,7 @@ Steps:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/1/derc
+        endpoint: /edev/1/fsa/1/derp
     actions:
       - type: create-der-control
         parameters:

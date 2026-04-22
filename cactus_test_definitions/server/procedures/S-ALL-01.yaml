@@ -5,6 +5,7 @@ Classes:
 
 TargetVersions:
  - v1.2
+ - v1.3
 
 Preconditions:
   required_clients:
@@ -13,9 +14,12 @@ Preconditions:
 Steps:
   - id: DISCOVERY
     repeat_until_pass: true
-    instructions:
-      - Create an EndDevice record with an lfdi/sfdi that matches your client. Ensure it has a single DER record.
-    action: 
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+          has_der_list: true
+    action:
       type: discovery
       parameters:
         resources:

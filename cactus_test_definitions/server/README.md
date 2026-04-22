@@ -130,6 +130,7 @@ A `Check` is a boolean test of what the client has in its current context. They 
 | `mirror-usage-point` | `matches: bool` `check_mup_mrid: str/None` | `location: CSIPAusReadingLocation/None` `reading_types: list[CSIPAusReadingType]/None` `mmr_mrids: list[str]/None` `post_rate_seconds: int/None` | Does a MirrorUsagePoint exist with the specified values (or not exist if `matches` is false). Only asserts specified values. |
 | `subscription` | `matches: bool` `resource: CSIPAusResource`| Does a Subscription exist for the specified resource (or not exist if `matches` is false). |
 | `poll-rate` | `resource: CSIPAusResource` `poll_rate_seconds: int` | Does the nominated resource have the specified poll rate. |
+| `der-control-responses` | `minimum_count: int/None` `maximum_count: int/None` `sent_response_type: int/None` | Counts current DERControl(s) that have transmitted the specified ResponseType via a Response. |
 
 
 ### Parameter Variable Resolution

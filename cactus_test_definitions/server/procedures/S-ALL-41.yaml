@@ -5,6 +5,7 @@ Classes:
 
 TargetVersions:
  - v1.2
+ - v1.3
 
 Preconditions:
   required_clients:
@@ -14,9 +15,14 @@ Steps:
   - id: (A) PRECONDITION
     repeat_until_pass: true
     client: client
-    instructions:
-      - Create an EndDevice registration.
-      - Configure a scheduled control with opModExpLimW = 200% of the DERs rated active power, responseRequired = 03, and replyTo set to the response endpoint on the test utility server.
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          opModExpLimW: $(setMaxW * 2)
     action:
       type: discovery
       parameters:
@@ -60,42 +66,32 @@ Steps:
           opModExpLimW: $(setMaxW * 2)
           event_status: 1 # Active
   
-  - id: (2b) DERControl 1 - Started
+  - id: (2,3) DERControl 1 - Wait for started, completed
+    repeat_until_pass: true # Wait until we have submitted started and completed Responses
     client: client
     action: 
-      type: respond-der-controls # send response status = 2 (started)
-    
-  - id: (3) DERControl 1 - Completed
-    repeat_until_pass: true # Wait until event status has been updated
-    client: client
-    action: 
-      type: discovery
-      parameters:
-        resources:
-          - DERControl
+      type: respond-der-controls # keep checking for Responses - continue until we've sent 2 (started) and 3 (completed)
     checks:
-      - type: der-control # Check event status has been updated
+      - type: der-control-responses
         parameters:
           minimum_count: 1
           maximum_count: 1
-          opModExpLimW: $(setMaxW * 2)
-          event_status: 2 # Completed
+          sent_response_type: 2 # EVENT_STARTED
+      - type: der-control-responses
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          sent_response_type: 3 # EVENT_COMPLETED
 
-  - id: (3b) DERControl 1 - Completed
-    client: client
-    action:
-      type: respond-der-controls # send response status = 3 (Completed)
-
-  - id: WAIT for completed DERControl to be removed from server (20 seconds buffer from completion time)
+  - id: WAIT for completed DERControl to be removed from server
     client: client
     action:
       type: wait
       parameters:
         duration_seconds: 20
 
-  - id: CLEAR OUT DERControls
+  - id: Check for Empty DERControls
     client: client
-    instructions: The server should clear out the completed control ready to begin the next controls.
     action: 
       type: discovery
       parameters:
@@ -113,9 +109,14 @@ Steps:
   - id: (4) DERControl 2
     repeat_until_pass: true
     client: client
-    instructions:
-      - The utility server is configured with a scheduled control with opModExpLimW = 200% of the DERs rated active power, responseRequired = 03 and replyTo set to the response endpoint on the test utility server, to begin in 5 minutes.
-    action: 
+    admin_instructions:
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          start_offset_seconds: 300
+          duration_seconds: 600
+          opModExpLimW: $(setMaxW * 2)
+    action:
       type: discovery
       parameters:
         resources:
@@ -166,9 +167,11 @@ Steps:
   - id: (5) DERControl 2 - Cancelled.
     repeat_until_pass: true
     client: client
-    instructions:
-      - The utility server is configured to cancel the active control while it is still active.
-    action: 
+    admin_instructions:
+      - type: clear-der-controls
+        parameters:
+          all: true
+    action:
       type: discovery
       parameters:
         resources:
@@ -212,8 +215,11 @@ Steps:
   - id: CLEAR OUT DERControls for next section of the test
     repeat_until_pass: true
     client: client
-    instructions: The server should clear out the cancelled control ready to begin the next controls (not written but makes next section easier to test).
-    action: 
+    admin_instructions:
+      - type: clear-der-controls # not written but makes next section easier to test
+        parameters:
+          all: true
+    action:
       type: discovery
       parameters:
         resources:
@@ -221,7 +227,12 @@ Steps:
     checks:
       - type: der-control
         parameters:
-          maximum_count: 0  # Empty list of controls
+          event_status: 0  # No scheduled controls remain
+          maximum_count: 0
+      - type: der-control
+        parameters:
+          event_status: 1  # No active controls remain
+          maximum_count: 0
 
 
 ################################## TEST SECTION 3 - SUPERSEEDED ##################################
@@ -232,7 +243,13 @@ Steps:
     client: client
     instructions:
       - The utility server is configured with a scheduled control with opModExpLimW = 200% of the DERs rated active power, responseRequired = 03 and replyTo set to the response endpoint on the test utility server, to begin in 10 minutes.
-    action: 
+    admin_instructions:
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          start_offset_seconds: 600
+          opModExpLimW: $(setMaxW * 2)
+    action:
       type: discovery
       parameters:
         resources:
@@ -256,9 +273,11 @@ Steps:
   - id: (7) DERControl 3 - Cancel
     repeat_until_pass: true
     client: client
-    instructions:
-      - The utility server is configured to cancel the scheduled control before it is active.
-    action: 
+    admin_instructions:
+      - type: clear-der-controls
+        parameters:
+          all: true
+    action:
       type: discovery
       parameters:
         resources:
@@ -267,10 +286,9 @@ Steps:
       - type: der-control
         parameters:
           minimum_count: 1
-          maximum_count: 1
           opModExpLimW: $(setMaxW * 2)
           responseRequired: 3
-          event_status: 2 # Cancelled
+          event_status: 2 # Cancelled; no maximum_count — step 4's cancelled control (600s duration) may still be in the list
 
   - id: (7b) Respond to cancelled DERControl 3
     client: client
@@ -280,9 +298,13 @@ Steps:
   - id: (8) DERControl 4
     repeat_until_pass: true
     client: client
-    instructions:
-      - The utility server configures a scheduled control with opModExpLimW = 200% of the DERs rated active power to begin in 10 minutes.
-    action: 
+    admin_instructions:
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          start_offset_seconds: 600
+          opModExpLimW: $(setMaxW * 2)
+    action:
       type: discovery
       parameters:
         resources:
@@ -304,8 +326,14 @@ Steps:
     repeat_until_pass: true
     client: client
     instructions:
-      - The utility server configures a scheduled control with the same primacy and an overlapping control window.
-    action: 
+      - The utility server configures an active control with the same primacy and an overlapping control window.
+    admin_instructions:
+      - type: create-der-control
+        parameters:
+          status: active
+          duration_seconds: 700  # must overlap with step 8's window (also 600s); both fire within seconds of each other
+          opModExpLimW: 0
+    action:
       type: discovery
       parameters:
         resources:
@@ -315,26 +343,16 @@ Steps:
         parameters:
           minimum_count: 1 # The control above should now be set to superseeded not scheduled, so still only one expected.
           maximum_count: 1
-          opModExpLimW: $(setMaxW * 2)
-          event_status: 0 # Scheduled
-
-  - id: (9b) Respond to scheduled DERControls 4 and 5
-    client: client
-    action: 
-      type: respond-der-controls # Send both: control 4 (7 superseeded), and control 5 (1 scheduled).
-
-  - id: (9c) Check DERControl 4 is superseeded
-    repeat_until_pass: true
-    client: client
-    action: 
-      type: discovery
-      parameters:
-        resources:
-          - DERControl
-    checks:
+          opModExpLimW: 0
+          event_status: 1 # Active
       - type: der-control
         parameters:
           opModExpLimW: $(setMaxW * 2)
           event_status: 4 # Superseeded
           minimum_count: 1
           maximum_count: 1
+
+  - id: (9b) Respond to both updated controls
+    client: client
+    action: 
+      type: respond-der-controls

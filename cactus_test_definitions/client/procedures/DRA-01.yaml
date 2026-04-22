@@ -6,6 +6,7 @@ Classes:
 TargetVersions:
   - v1.2
   - v1.3-beta/storage
+  - v1.3
 
 
 Criteria:
@@ -14,7 +15,7 @@ Criteria:
       parameters: {}
     - type: end-device-contents
       parameters:
-        deviceCategory_anyset: '20098' # any of bits 3, 4, 7 and 17 being set (for the device type)
+        deviceCategory_anyset: '03FFFFFF' # any of the DeviceCategory bits
     - type: der-capability-contents
       parameters: 
         modesSupported_set: '80' # bit 7 is set - opModFixedW. 

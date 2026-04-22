@@ -7,6 +7,7 @@ Classes:
 TargetVersions:
   - v1.2
   - v1.3-beta/storage
+  - v1.3
 
 Criteria:
   checks:
@@ -61,7 +62,7 @@ Steps:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/1/derc
+        endpoint: /edev/1/fsa/1/derp
     actions:
       - type: create-der-control
         parameters:
@@ -69,24 +70,28 @@ Steps:
           duration_seconds: 21600 # 6 hours
           opModExpLimW: $(setMaxW * 0.3)
           opModImpLimW: $(setMaxW * 0.3)
+          tag: DERC1
       - type: create-der-control
         parameters:
           start: $(now + '6 hours')
           duration_seconds: 21600 # 6 hours
           opModExpLimW: $(setMaxW * 1.2)
           opModImpLimW: $(setMaxW * 1.2)
+          tag: DERC2
       - type: create-der-control
         parameters:
           start: $(now + '12 hours')
           duration_seconds: 21600 # 6 hours
           opModExpLimW: $(setMaxW * 0.8)
           opModImpLimW: $(setMaxW * 0.8)
+          tag: DERC3
       - type: create-der-control
         parameters:
           start: $(now + '18 hours')
           duration_seconds: 21600 # 6 hours
           opModExpLimW: $(setMaxW * 0.1)
           opModImpLimW: $(setMaxW * 0.1)
+          tag: DERC4
       - type: enable-steps
         parameters:
           steps:
@@ -112,24 +117,28 @@ Steps:
           duration_seconds: 21600 # 6 hours
           opModExpLimW: $(setMaxW * 0.4)
           opModImpLimW: $(setMaxW * 0.4)
+          tag: DERC5
       - type: create-der-control
         parameters:
           start: $(now + '6 hours')
           duration_seconds: 21600 # 6 hours
           opModExpLimW: $(setMaxW * 1.5)
           opModImpLimW: $(setMaxW * 1.5)
+          tag: DERC6
       - type: create-der-control
         parameters:
           start: $(now + '12 hours')
           duration_seconds: 21600 # 6 hours
           opModExpLimW: $(setMaxW * 0.6)
           opModImpLimW: $(setMaxW * 0.6)
+          tag: DERC7
       - type: create-der-control
         parameters:
           start: $(now + '18 hours')
           duration_seconds: 21600 # 6 hours
           opModExpLimW: $(setMaxW * 0.2)
           opModImpLimW: $(setMaxW * 0.2)
+          tag: DERC8
       - type: enable-steps
         parameters:
           steps:
@@ -155,24 +164,28 @@ Steps:
           duration_seconds: 21600 # 6 hours
           opModExpLimW: $(setMaxW * 0.5)
           opModImpLimW: $(setMaxW * 0.5)
+          tag: DERC9
       - type: create-der-control
         parameters:
           start: $(now + '6 hours')
           duration_seconds: 21600 # 6 hours
           opModExpLimW: $(setMaxW * 1)
           opModImpLimW: $(setMaxW * 1)
+          tag: DERC10
       - type: create-der-control
         parameters:
           start: $(now + '12 hours')
           duration_seconds: 21600 # 6 hours
           opModExpLimW: $(setMaxW * 0.3)
           opModImpLimW: $(setMaxW * 0.3)
+          tag: DERC11
       - type: create-der-control
         parameters:
           start: $(now + '18 hours')
           duration_seconds: 21600 # 6 hours
           opModExpLimW: $(setMaxW * 0.8)
           opModImpLimW: $(setMaxW * 0.8)
+          tag: DERC12
       - type: enable-steps
         parameters:
           steps:

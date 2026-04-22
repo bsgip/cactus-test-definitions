@@ -6,6 +6,7 @@ Classes:
 TargetVersions:
   - v1.2
   - v1.3-beta/storage
+  - v1.3
 
 Criteria:
   checks:
@@ -39,7 +40,7 @@ Steps:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp/1/derc
+        endpoint: /edev/1/fsa/1/derp
     actions:
       - type: create-der-control
         parameters:
@@ -121,6 +122,3 @@ Steps:
         parameters:
           steps:
             - PUT-DERSTATUS-RECONNECT
-  
-
-
