@@ -5,6 +5,7 @@ Classes:
 
 TargetVersions:
   - v1.2
+  - v1.3
   - v1.3-beta/storage
 
 Preconditions:

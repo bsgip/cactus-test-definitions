@@ -5,6 +5,7 @@ Classes:
 
 TargetVersions:
   - v1.2
+  - v1.3
   - v1.3-beta/storage
 
 Preconditions:
@@ -164,7 +165,7 @@ Steps:
       checks:
         - type: finish-test
           parameters: 
-            failed_message: No responses should be returned as EndDevice FunctionSetAssignments no longer reference this DERProgram
+            fail_message: No responses should be returned as EndDevice FunctionSetAssignments no longer reference this DERProgram
     actions:
       - type: remove-steps
         parameters:
