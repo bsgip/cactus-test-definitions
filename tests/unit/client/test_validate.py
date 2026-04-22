@@ -200,8 +200,11 @@ def test_procedures_have_required_preconditions(tp_id: TestProcedureId):
         assert tp.preconditions is not None, "Expected precondition check 'end-device-contents'"
         assert tp.preconditions.checks is not None, "Expected precondition check 'end-device-contents'"
         assert any(
-            [check.type == "end-device-contents" for check in tp.preconditions.checks]
-        ), "Expected precondition check 'end-device-contents'"
+            [
+                check.type == "end-device-contents" or check.type == "end-device-count"
+                for check in tp.preconditions.checks
+            ]
+        ), "Expected precondition check 'end-device-contents' or 'end-device-count'"
 
     # Check 'der-settings-contents' present if any precondition action parameter references setMaxW
     if tp.preconditions is not None and tp.preconditions.actions is not None:

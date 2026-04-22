@@ -58,13 +58,14 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - POST-DERC-1-RESPONSE-RECEIVED
-            - POST-DERC-1-RESPONSE-STARTED
-            - POST-DERC-1-RESPONSE-COMPLETED
+            - POST-DERC1-RESPONSE-RECEIVED
+            - POST-DERC1-RESPONSE-STARTED
+            - POST-DERC1-RESPONSE-COMPLETED
       - type: remove-steps
         parameters:
           steps:
             - GET-DERC-1
+
   POST-DERC1-RESPONSE-RECEIVED:
     event:
       type: POST-request-received
@@ -81,9 +82,9 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-RESPONSE-RECEIVED
+            - POST-DERC1-RESPONSE-RECEIVED
 
-  POST-RESPONSE-STARTED:
+  POST-DERC1-RESPONSE-STARTED:
     event:
       type: POST-request-received
       parameters:
@@ -99,9 +100,9 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-RESPONSE-STARTED
+            - POST-DERC1-RESPONSE-STARTED
 
-  POST-RESPONSE-COMPLETED:
+  POST-DERC1-RESPONSE-COMPLETED:
     event:
       type: POST-request-received
       parameters:
@@ -126,7 +127,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-RESPONSE-COMPLETED
+            - POST-DERC1-RESPONSE-COMPLETED
 
   # Wait for the client to pickup the changed function set assignments before we create any new DERControls on the "old"
   # DERProgram
@@ -138,9 +139,9 @@ Steps:
     actions:
       - type: enable-steps
         parameters:
-        steps:
-          - FAIL-RESPONSE
-          - WAIT-FINISH
+          steps:
+            - FAIL-RESPONSE
+            - WAIT-FINISH
       # This should be "invisible" to the EndDevice as its FunctionSetAssignments have been updated
       - type: create-der-control
         parameters:
@@ -162,15 +163,10 @@ Steps:
       type: POST-request-received
       parameters:
         endpoint: /edev/1/rsps/site_control/rsp
-      checks:
-        - type: finish-test
-          parameters: 
-            fail_message: No responses should be returned as EndDevice FunctionSetAssignments no longer reference this DERProgram
     actions:
-      - type: remove-steps
-        parameters:
-          steps:
-            - FAIL-RESPONSE
+      - type: finish-test
+        parameters: 
+          fail_message: No responses should be returned as EndDevice FunctionSetAssignments no longer reference this DERProgram
 
   WAIT-FINISH:
     event:

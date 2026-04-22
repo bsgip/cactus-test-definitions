@@ -125,6 +125,9 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
     "delete-rate-component": {
         "tag": ParameterSchema(True, ParameterType.String),
     },
+    "remove-function-set-assignment": {
+        "fsa_id": ParameterSchema(True, ParameterType.Integer),
+    },  # Removes / Hides a FunctionSetAssignment
 }
 VALID_ACTION_NAMES: set[str] = set(ACTION_PARAMETER_SCHEMA.keys())
 

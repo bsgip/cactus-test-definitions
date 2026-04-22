@@ -22,8 +22,8 @@ Preconditions:
   checks:
     - type: end-device-count # Can't start until 2 EndDevice's are registered
       parameters:
-        min_count: 2
-        max_count: 2
+        minimum_count: 2
+        maximum_count: 2
   
   actions:
     - type: create-der-program
