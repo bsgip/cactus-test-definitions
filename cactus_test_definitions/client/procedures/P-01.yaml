@@ -48,7 +48,6 @@ Preconditions:
         fsa_id: 1
         opModExpLimW: 0
         opModImpLimW: 0
-        tag: DERC1
         end_device_indexes: # This is the trigger for the server implementation to ensure the mrids are "shared"
           - 0
           - 1
@@ -80,7 +79,6 @@ Steps:
           parameters: 
             latest: true
             status: 1
-            subject_tag: DERC1
     actions:
       - type: remove-steps
         parameters:
@@ -98,7 +96,6 @@ Steps:
           parameters: 
             latest: true
             status: 2
-            subject_tag: DERC1
     actions:
       - type: remove-steps
         parameters:
@@ -116,7 +113,6 @@ Steps:
           parameters: 
             latest: true
             status: 3
-            subject_tag: DERC1
     actions:
       - type: remove-steps
         parameters:
@@ -134,7 +130,6 @@ Steps:
           parameters: 
             latest: true
             status: 1
-            subject_tag: DERC1
     actions:
       - type: remove-steps
         parameters:
@@ -152,7 +147,6 @@ Steps:
           parameters: 
             latest: true
             status: 2
-            subject_tag: DERC1
     actions:
       - type: remove-steps
         parameters:
@@ -170,7 +164,6 @@ Steps:
           parameters: 
             latest: true
             status: 3
-            subject_tag: DERC1
     actions:
       - type: remove-steps
         parameters:
