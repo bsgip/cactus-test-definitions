@@ -1,7 +1,7 @@
 Description: Individual readings - storage
 Category: Monitoring
 Classes:
-  - DER-STOR
+  - DER-STO
 
 TargetVersions:
   - v1.3-beta/storage

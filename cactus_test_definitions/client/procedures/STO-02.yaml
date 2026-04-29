@@ -1,7 +1,7 @@
 Description: Capabilities and settings - storage
 Category: Monitoring
 Classes:
-  - STOR
+  - STO
 
 TargetVersions:
   - v1.3-beta/storage
