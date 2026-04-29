@@ -84,6 +84,10 @@ class TestProcedureId(StrEnum):
     MUL_02 = "MUL-02"
     MUL_03 = "MUL-03"
 
+    # Provisional tests
+    P_01 = "P-01"
+    P_02 = "P-02"
+
     # Storage extension
     STO_01 = "STO-01"
     STO_02 = "STO-02"

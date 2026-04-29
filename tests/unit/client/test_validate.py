@@ -18,11 +18,10 @@ from cactus_test_definitions.variable_expressions import (
 )
 
 
-def collect_action_param_values(tp: TestProcedure, action_type: str, param_name: str) -> list[Any | None]:
-    """Collects all values of an action's parameter across all steps and preconditions."""
+def collect_action_params(tp: TestProcedure, action_type: str) -> list[dict[str, Any]]:
+    """Collects all instances of action's parameter object across all steps and preconditions."""
 
     assert action_type in ACTION_PARAMETER_SCHEMA, "Sanity check to catch typos / changes in definitions"
-    assert param_name in ACTION_PARAMETER_SCHEMA[action_type], "Sanity check to catch typos / changes in definitions"
 
     all_actions: list[Action] = []
     if tp.preconditions:
@@ -33,19 +32,23 @@ def collect_action_param_values(tp: TestProcedure, action_type: str, param_name:
     for step in tp.steps.values():
         all_actions.extend(step.actions)
 
-    # Extract
-    extracted_values: list[Any] = []
-    for action in all_actions:
-        if action.type == action_type and param_name in action.parameters:
-            extracted_values.append(action.parameters.get(param_name, None))
-    return extracted_values
+    return [a.parameters or {} for a in all_actions if a.type == action_type]
 
 
-def collect_check_param_values(tp: TestProcedure, check_type: str, param_name: str) -> list[Any | None]:
-    """Collects all values of a check's parameter across all steps and preconditions."""
+def collect_action_param_values(tp: TestProcedure, action_type: str, param_name: str) -> list[Any | None]:
+    """Collects all values of an action's parameter across all steps and preconditions. (will not include instances
+    that are optional and undefined)"""
+
+    assert action_type in ACTION_PARAMETER_SCHEMA, "Sanity check to catch typos / changes in definitions"
+    assert param_name in ACTION_PARAMETER_SCHEMA[action_type], "Sanity check to catch typos / changes in definitions"
+
+    return [ps.get(param_name) for ps in collect_action_params(tp, action_type) if param_name in ps]
+
+
+def collect_check_params(tp: TestProcedure, check_type: str) -> list[dict[str, Any]]:
+    """Collects all parameters for a specific check across all steps and preconditions."""
 
     assert check_type in CHECK_PARAMETER_SCHEMA, "Sanity check to catch typos / changes in definitions"
-    assert param_name in CHECK_PARAMETER_SCHEMA[check_type], "Sanity check to catch typos / changes in definitions"
 
     all_checks: list[Check] = []
     if tp.preconditions:
@@ -60,12 +63,17 @@ def collect_check_param_values(tp: TestProcedure, check_type: str, param_name: s
         if step.event.checks:
             all_checks.extend(step.event.checks)
 
-    # Extract
-    extracted_values: list[Any] = []
-    for check in all_checks:
-        if check.type == check_type and param_name in check.parameters:
-            extracted_values.append(check.parameters.get(param_name, None))
-    return extracted_values
+    return [c.parameters or {} for c in all_checks if c.type == check_type]
+
+
+def collect_check_param_values(tp: TestProcedure, check_type: str, param_name: str) -> list[Any | None]:
+    """Collects all values of a check's parameter across all steps and preconditions. (will not include instances
+    that are optional and undefined)"""
+
+    assert check_type in CHECK_PARAMETER_SCHEMA, "Sanity check to catch typos / changes in definitions"
+    assert param_name in CHECK_PARAMETER_SCHEMA[check_type], "Sanity check to catch typos / changes in definitions"
+
+    return [ps.get(param_name) for ps in collect_check_params(tp, check_type) if param_name in ps]
 
 
 @pytest.mark.parametrize(
@@ -200,8 +208,11 @@ def test_procedures_have_required_preconditions(tp_id: TestProcedureId):
         assert tp.preconditions is not None, "Expected precondition check 'end-device-contents'"
         assert tp.preconditions.checks is not None, "Expected precondition check 'end-device-contents'"
         assert any(
-            [check.type == "end-device-contents" for check in tp.preconditions.checks]
-        ), "Expected precondition check 'end-device-contents'"
+            [
+                check.type == "end-device-contents" or check.type == "end-device-count"
+                for check in tp.preconditions.checks
+            ]
+        ), "Expected precondition check 'end-device-contents' or 'end-device-count'"
 
     # Check 'der-settings-contents' present if any precondition action parameter references setMaxW
     if tp.preconditions is not None and tp.preconditions.actions is not None:
@@ -279,3 +290,37 @@ def test_resource_tags_unique(tp_id: TestProcedureId):
         for tag in tags:
             assert tag not in seen, f"{tp_id}: duplicate {action_name} {param_name} {tag!r}"
             seen.add(tag)
+
+
+@pytest.mark.parametrize("tp_id", list(TestProcedureId))
+def test_invalid_parameter_combinations(tp_id: TestProcedureId):
+    """Ensures that any actions/checks that have invalid combinations of parameters do NOT appear in any test case."""
+
+    tp = get_test_procedure(tp_id)
+
+    # create-der-control - end_device_indexes should have at least 2 entries, otherwise it's NOT doing anything
+    for edev_indexes in collect_action_param_values(tp, "create-der-control", "end_device_indexes"):
+        if edev_indexes is not None:
+            assert len(edev_indexes) > 1, "end_device_indexes has no effect unless there are multiple values specified"
+            assert len(edev_indexes) == len(set(edev_indexes)), "end_device_indexes should not have duplicate items"
+
+    # create-der-control - end_device_indexes is incompatible with tag
+    for ps in collect_action_params(tp, "create-der-control"):
+        PARAM_TAG = "tag"
+        PARAM_EDEV_INDEXES = "end_device_indexes"
+        assert PARAM_TAG in ACTION_PARAMETER_SCHEMA["create-der-control"], "Sanity checking the param name is valid"
+        assert PARAM_EDEV_INDEXES in ACTION_PARAMETER_SCHEMA["create-der-control"], "Sanity checking param is valid"
+
+        tag_value = ps.get(PARAM_TAG, None)
+        edev_indexes_value = ps.get(PARAM_EDEV_INDEXES, None)
+
+        assert not (tag_value and edev_indexes_value), (
+            f"Cannot specify both '{PARAM_TAG}' and '{PARAM_EDEV_INDEXES}' within a single create-der-control action."
+            + " It's nonsensical/problematic from an implementation point of view"
+        )
+
+    # create-der-program - end_device_indexes should have at least 2 entries, otherwise it's NOT doing anything
+    for edev_indexes in collect_action_param_values(tp, "create-der-program", "end_device_indexes"):
+        if edev_indexes is not None:
+            assert len(edev_indexes) > 1, "end_device_indexes has no effect unless there are multiple values specified"
+            assert len(edev_indexes) == len(set(edev_indexes)), "end_device_indexes should not have duplicate items"
