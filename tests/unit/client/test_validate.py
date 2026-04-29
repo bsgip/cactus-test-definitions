@@ -318,3 +318,9 @@ def test_invalid_parameter_combinations(tp_id: TestProcedureId):
             f"Cannot specify both '{PARAM_TAG}' and '{PARAM_EDEV_INDEXES}' within a single create-der-control action."
             + " It's nonsensical/problematic from an implementation point of view"
         )
+
+    # create-der-program - end_device_indexes should have at least 2 entries, otherwise it's NOT doing anything
+    for edev_indexes in collect_action_param_values(tp, "create-der-program", "end_device_indexes"):
+        if edev_indexes is not None:
+            assert len(edev_indexes) > 1, "end_device_indexes has no effect unless there are multiple values specified"
+            assert len(edev_indexes) == len(set(edev_indexes)), "end_device_indexes should not have duplicate items"
