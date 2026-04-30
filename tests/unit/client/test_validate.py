@@ -335,3 +335,8 @@ def test_invalid_parameter_combinations(tp_id: TestProcedureId):
         assert PARAM_DERP_TAG in ACTION_PARAMETER_SCHEMA["create-der-control"], "Sanity checking param is valid"
         assert PARAM_PRIMACY in ACTION_PARAMETER_SCHEMA["create-der-control"], "Sanity checking param is valid"
         assert PARAM_FSA_ID in ACTION_PARAMETER_SCHEMA["create-der-control"], "Sanity checking param is valid"
+
+        derp_tag = ps.get(PARAM_DERP_TAG, None)
+        if derp_tag is not None:
+            assert PARAM_PRIMACY not in ps, f"Cannot specify '{PARAM_PRIMACY}' as '{PARAM_DERP_TAG}' will override it"
+            assert PARAM_FSA_ID not in ps, f"Cannot specify '{PARAM_FSA_ID}' as '{PARAM_DERP_TAG}' will override it"
