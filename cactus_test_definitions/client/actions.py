@@ -48,6 +48,7 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "start": ParameterSchema(True, ParameterType.DateTime),
         "duration_seconds": ParameterSchema(True, ParameterType.Integer),
         "pow_10_multipliers": ParameterSchema(False, ParameterType.Integer),
+        "der_program_tag": ParameterSchema(False, ParameterType.String),  # Parent DERProgram to nest under
         "primacy": ParameterSchema(False, ParameterType.Integer),
         "fsa_id": ParameterSchema(False, ParameterType.Integer),
         "randomizeStart_seconds": ParameterSchema(False, ParameterType.Integer),
@@ -71,6 +72,7 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "end_device_indexes": ParameterSchema(
             False, ParameterType.ListInteger
         ),  # If set - have this DERProgram be "shared" across these specified EndDevice's
+        "tag": ParameterSchema(False, ParameterType.String),
     },
     "cancel-active-der-controls": {},
     "set-comms-rate": {
