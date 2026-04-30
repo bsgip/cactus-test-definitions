@@ -24,12 +24,16 @@ Preconditions:
       parameters:
         primacy: 1
         fsa_id: 1
+        tag: DERP1
     - type: create-der-program
       parameters:
         primacy: 2
         fsa_id: 2
+        tag: DERP2
   checks:
     - type: end-device-contents
+      parameters: {}
+    - type: der-settings-contents
       parameters: {}
         
 Criteria:
@@ -52,9 +56,8 @@ Steps:
           duration_seconds: 120
           opModExpLimW: $(setMaxW * 2)
           opModImpLimW: $(setMaxW * 2)
-          fsa_id: 2
-          primacy: 2
           tag: DERC1
+          der_program_tag: DERP1
       - type: enable-steps
         parameters:
           steps:
@@ -122,7 +125,7 @@ Steps:
 
       - type: remove-function-set-assignment
         parameters:
-          fsa_id: 2 # This will NOT remove the DERProgram but will remove it from the FSA list
+          fsa_id: 2 # This will NOT remove the DERProgram DERP2 but will remove it from the FSA list
 
       - type: remove-steps
         parameters:
@@ -149,9 +152,8 @@ Steps:
           duration_seconds: 120
           opModExpLimW: $(setMaxW * 2)
           opModImpLimW: $(setMaxW * 2)
-          fsa_id: 2
-          primacy: 2
           tag: DERC2
+          der_program_tag: DERP2
       - type: remove-steps
         parameters:
           steps:
