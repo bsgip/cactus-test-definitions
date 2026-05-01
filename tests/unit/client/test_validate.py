@@ -244,6 +244,7 @@ def test_tag_references_exist(tp_id: TestProcedureId):
         ("create-time-tariff-interval", "rate_component_tag", "create-rate-component", "tag"),
         ("cancel-time-tariff-intervals", "tag", "create-time-tariff-interval", "tag"),
         ("delete-rate-component", "tag", "create-rate-component", "tag"),
+        ("create-der-control", "der_program_tag", "create-der-program", "tag"),
     ]
 
     # tuple of [check_name, check_param, parent_action_name, parent_action_tag_param]
@@ -281,6 +282,7 @@ def test_resource_tags_unique(tp_id: TestProcedureId):
         ("create-tariff-profile", "tag"),
         ("create-rate-component", "tag"),
         ("create-time-tariff-interval", "tag"),
+        ("create-der-program", "tag"),
     ]
 
     tp = get_test_procedure(tp_id)
@@ -324,3 +326,17 @@ def test_invalid_parameter_combinations(tp_id: TestProcedureId):
         if edev_indexes is not None:
             assert len(edev_indexes) > 1, "end_device_indexes has no effect unless there are multiple values specified"
             assert len(edev_indexes) == len(set(edev_indexes)), "end_device_indexes should not have duplicate items"
+
+    # create-der-control - fsa_id, primacy cannot be used with der_program_tag
+    for ps in collect_action_params(tp, "create-der-control"):
+        PARAM_DERP_TAG = "der_program_tag"
+        PARAM_PRIMACY = "primacy"
+        PARAM_FSA_ID = "fsa_id"
+        assert PARAM_DERP_TAG in ACTION_PARAMETER_SCHEMA["create-der-control"], "Sanity checking param is valid"
+        assert PARAM_PRIMACY in ACTION_PARAMETER_SCHEMA["create-der-control"], "Sanity checking param is valid"
+        assert PARAM_FSA_ID in ACTION_PARAMETER_SCHEMA["create-der-control"], "Sanity checking param is valid"
+
+        derp_tag = ps.get(PARAM_DERP_TAG, None)
+        if derp_tag is not None:
+            assert PARAM_PRIMACY not in ps, f"Cannot specify '{PARAM_PRIMACY}' as '{PARAM_DERP_TAG}' will override it"
+            assert PARAM_FSA_ID not in ps, f"Cannot specify '{PARAM_FSA_ID}' as '{PARAM_DERP_TAG}' will override it"
