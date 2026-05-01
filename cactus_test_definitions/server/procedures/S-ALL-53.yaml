@@ -35,11 +35,11 @@ Steps:
     action:
       type: upsert-connection-point
       parameters:
-        connectionPointId: "1234567890" # A valid NMI (in the testing range)
+        connectionPointId: $(valid_nmi_1) # A valid NMI (in the testing range)
   
   - id: UPSERT CONNECTION POINT ID
     action: 
       type: upsert-connection-point
-      parameters: 
-        connectionPointId: "2345667890" # Upsert automatically checks server response
+      parameters:
+        connectionPointId: $(valid_nmi_2) # Upsert automatically checks server response
     

@@ -43,8 +43,4 @@ Steps:
     action: 
       type: upsert-connection-point
       parameters: 
-        connectionPointId: "1234567890" # A valid NMI (in the testing range)
-
-    
-
-  
+        connectionPointId: $(valid_nmi_1)
