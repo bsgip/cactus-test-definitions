@@ -576,11 +576,11 @@ Steps:
   # (q) Wait to observe the return to DERC 5
   WAIT-OBSERVE-DERC-5:
     instructions:
-      - The device should ramp to DERC5 opModImpLimW = 200% (as per TS 5573 [q])
+      - The device should wait 60s on reconnection, then ramp to DERC5 opModImpLimW = 200% (as per TS 5573 [q]), at NZS4777.2 wGra (16%/min)
     event:
       type: wait
       parameters:
-        duration_seconds: 120
+        duration_seconds: 450
     actions:
       - type: enable-steps
         parameters:
