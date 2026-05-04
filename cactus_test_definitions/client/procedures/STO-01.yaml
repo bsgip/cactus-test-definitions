@@ -18,6 +18,7 @@ Criteria:
       parameters: { "minimum_count": 4 }
 
 Preconditions:
+  immediate_start: true  # There will be no "init" phase - all interactions will be immediately logged against the test
   init_actions:
     - type: set-comms-rate
       parameters:
