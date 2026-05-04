@@ -6,6 +6,7 @@ Classes:
 TargetVersions:
   - v1.2
   - v1.3-beta/storage
+  - v1.3
 
 Criteria:
   checks:
@@ -56,6 +57,7 @@ Steps:
           duration_seconds: 240
           opModExpLimW: $(setMaxW * 2)
           opModImpLimW: $(setMaxW * 2)
+          tag: PRECONDITION
       - type: enable-steps
         parameters:
           steps:
@@ -121,6 +123,7 @@ Steps:
           duration_seconds: 900
           opModExpLimW: $(setMaxW * 0.5)
           opModImpLimW: $(setMaxW * 0.5)
+          tag: DERC1
       - type: enable-steps
         parameters:
           steps:
@@ -145,7 +148,7 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-UPDATED-DERC
+            - GET-UPDATED-DERC-2
             - POST-RESPONSE-STARTED
       - type: remove-steps
         parameters:
@@ -154,7 +157,7 @@ Steps:
 
 
   # (e)
-  GET-UPDATED-DERC:
+  GET-UPDATED-DERC-2:
     event:
       type: GET-request-received
       parameters:
@@ -166,10 +169,11 @@ Steps:
           duration_seconds: 900
           opModExpLimW: $(setMaxW * 0.5)
           opModImpLimW: $(setMaxW * 0.5)
+          tag: DERC2
       - type: remove-steps
         parameters:
           steps:
-            - GET-UPDATED-DERC
+            - GET-UPDATED-DERC-2
 
   # (e)
   POST-RESPONSE-STARTED:
@@ -183,6 +187,7 @@ Steps:
           parameters: 
             latest: true
             status: 2
+            subject_tag: DERC2
     actions:
       - type: remove-steps
         parameters:

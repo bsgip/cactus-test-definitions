@@ -121,16 +121,21 @@ actions:
 | -------- | ---------- | --------------- |
 | `enable-steps` | `steps: list[str]` | The names of `Step`'s that will be activated |
 | `remove-steps` | `steps: list[str]` | The names of `Step`'s that will be deactivated (if active) |
-| `finish-test` | None | When activated, the current test will be finished (shutdown) and all `Criteria` evaluated as if the client had requested finalization. |
+| `finish-test` | `fail_message: str/None` | When activated, the current test will be finished (shutdown) and all `Criteria` evaluated as if the client had requested finalization. Can be used to force a failed test via `fail_message`|
 | `set-default-der-control` | `derp_id: int/None` `opModImpLimW: float/None` `opModExpLimW: float/None` `opModLoadLimW: float/None` `setGradW: float/None` `cancelled: bool/None` `opModStorageTargetW: float/None` | Updates the DefaultDERControl's parameters with the specified values. If `cancelled` is `true`, all unspecified values will be set to None. If `derp_id` is specified, this will apply to the DERProgram with that value, otherwise it will apply to all DERPrograms |
-| `create-der-control` | `start: datetime` `duration_seconds: int` `pow_10_multipliers: int/None` `primacy: int/None` `fsa_id: int/None` `randomizeStart_seconds: int/None` `ramp_time_seconds: float/None` `opModEnergize: bool/None` `opModConnect: bool/None` `opModImpLimW: float/None` `opModExpLimW: float/None` `opModGenLimW: float/None` `opModLoadLimW: float/None` `opModFixedW: float/None` `opModStorageTargetW: float/None` | Creates a DERControl with the specified start/duration and values. A new DERProgram will be created with primacy (and optionally under FunctionSetAssignment `fsa_id`) if no such DERProgram already exists |
-| `create-der-program` | `primacy: int` `fsa_id: int/None` | Creates a DERProgram with the specified primacy. Will be assigned under FunctionSetAssignment 1 unless `fsa_id` says otherwise. |
+| `create-der-control` | `start: datetime` `duration_seconds: int` `pow_10_multipliers: int/None` `primacy: int/None` `der_program_tag: str/None` `fsa_id: int/None` `randomizeStart_seconds: int/None` `ramp_time_seconds: float/None` `opModEnergize: bool/None` `opModConnect: bool/None` `opModImpLimW: float/None` `opModExpLimW: float/None` `opModGenLimW: float/None` `opModLoadLimW: float/None` `opModFixedW: float/None` `opModStorageTargetW: float/None` `end_device_indexes: int[]` | Creates a DERControl with the specified start/duration and values. The new control will nest under the `DERProgram` with tag `der_program_tag`, otherwise a new `DERProgram` will be created with primacy (and optionally under FunctionSetAssignment `fsa_id`). `end_device_indexes` will ensure that this `DERControl` will be shared (have the same mrid) for the specified `EndDevices`. |
+| `create-der-program` | `primacy: int` `fsa_id: int/None` `end_device_indexes: int[]` | Creates a DERProgram with the specified primacy. Will be assigned under FunctionSetAssignment 1 unless `fsa_id` says otherwise. `end_device_indexes` will ensure that this `DERProgram` will be shared (have the same mrid) for the specified `EndDevices` |
 | `cancel-active-der-controls` | None | Cancels all active DERControls |
-| `set-comms-rate` | `dcap_poll_seconds: int/None` `edev_post_seconds: int/None` `edev_list_poll_seconds: int/None` `fsa_list_poll_seconds: int/None` `derp_list_poll_seconds: int/None` `der_list_poll_seconds: int/None` `mup_post_seconds: int/None` | Updates one or more post/poll rates for various resources. For non list resources, the rate will apply to all resources. Unspecified values will not update existing server values. |
+| `set-comms-rate` | `dcap_poll_seconds: int/None` `edev_post_seconds: int/None` `edev_list_poll_seconds: int/None` `fsa_list_poll_seconds: int/None` `derp_list_poll_seconds: int/None` `der_list_poll_seconds: int/None` `mup_post_seconds: int/None` `tp_list_poll_seconds: int/None` `tti_list_poll_seconds: int/None` | Updates one or more post/poll rates for various resources. For non list resources, the rate will apply to all resources. Unspecified values will not update existing server values. |
 | `communications-status` | `enabled: bool` | If `enabled: false` simulates a full outage for the server (from the perspective of the client). There are many potential outage classes (eg: networking, DNS, software, performance issues) - for consistency the recommended outage simulation is for all requests to be served with a HTTP 500. Defaults to `enabled: true` at test start |
 | `edev-registration-links` | `enabled: bool` | If `enabled: false` `EndDevice` entities will NOT encode `RegistrationLink` elements. Defaults to `enabled: true` at test start |
 | `register-end-device` | `nmi: str/None` `registration_pin: int/None` `aggregator_lfdi: HexBinary/None` `aggregator_sfdi: int/None` | Creates a new `EndDevice`, optionally with the specified details. `aggregator_lfdi` / `aggregator_sfdi` will ONLY apply to an Aggregator certificate test with the `aggregator_lfdi` being rewritten with the client's PEN. |
-
+| `create-tariff-profile` | `primacy: int` `fsa_id: int/None` `price_pow_10_multiplier: int/None` `tag: str/None` | Creates a new `TariffProfile` with the specified parameters (and optionally under FunctionSetAssignment `fsa_id`) |
+| `create-rate-component` | `tariff_profile_tag: str/None` `role_flags: int/None` `commodity: int/None` `data_qualifier: int/None` `flow_direction: int/None` `kind: int/None` `phase: int/None` `power_of_ten_multiplier: int/None` `uom: int/None` `tag: str/None`| Creates a new `RateComponent` under the nominated `TariffProfile` (`tariff_profile_tag` can be omitted if there is a single `TariffProfile`). All other fields describe `ReadingType` associated with the `RateComponent` |
+| `create-tariff-generated-rate` | `start: datetime` `duration_seconds: int` `price_pow10_encoded_block0: int` `rate_component_tag: str/None` `price_pow10_encoded_block1: int/None` `price_start_pow10_block1: int/None` `tag: str/None` | Creates a new `TimeTariffInterval` under the nominated `RateComponent` (`rate_component_tag` can be omitted if there is a single `RateComponent`). `ConsumptionTariffInterval` are described by the various `price_pow10_encoded_blockX` and `price_start_pow10_blockX` params. |
+| `cancel-time-tariff-intervals` | `tag: str/None` | Cancels all `TimeTariffInterval` instances (or selectively a nominated instance via `tag`). |
+| `delete-rate-component` | `tag: str` | Deletes the specified `RateComponent` (via `tag`) from its parent `TariffProfile.RateComponentList`. |
+| `remove-function-set-assignment` | `fsa_id: int` | Removes the specified `FunctionSetAssignment` from the `EndDevice(s)` `FunctionSetAssignmentList`. Underlying resources should remain unchanged. |
 
 ### Checks
 
@@ -160,6 +165,7 @@ checks:
 | `all-steps-complete` | `ignored_steps: list[str]/None` | True if every `Step` in a `TestProcedure` has been deactivated (excepting any ignored steps) |
 | `all-notifications-transmitted` | None | True if every transmitted notification (pub/sub) has been received with a HTTP success code response from the subscription notification URI |
 | `end-device-contents` | `has_connection_point_id: bool/None` `deviceCategory_anyset: hex/none` `check_lfdi: bool/None` | True if an `EndDevice` is registered and optionally has the specified contents. `has_connection_point_id` (if True) will check whether the active `EndDevice` has `ConnectionPoint.id` specified. `check_lfdi` will do a deep inspection on the supplied LFDI - checking PEN and derived SFDI. |
+| `end-device-count` | `minimum_count: int/None` `maximum_count: int/None` | True if the client has registered a number `EndDevice` that matches the bounds defined by `minimum_count` `maximum_count` |
 | `der-settings-contents` | `setGradW: int/None` `doeModesEnabled_set: hex/none` `doeModesEnabled_unset: hex/none` `doeModesEnabled: bool/none` `modesEnabled_set: hex/none` `modesEnabled_unset: hex/none` `setMaxVA: bool/none` `setMaxVar: bool/none` `setMaxW: bool/none` `setMaxChargeRateW: bool/none` `setMaxDischargeRateW: bool/none` `setMaxWh: bool/none` `setMinWh: bool/none` `vppModesEnabled_set: hexbinary/none` `vppModesEnabled_unset: hexbinary/none` `vppModesEnabled: bool/none` `setMaxVarNeg: bool/none` `setMinPFOverExcited: bool/none` `setMinPFUnderExcited: bool/none` | True if a `DERSettings` has been set for the `EndDevice` under test (and if certain elements have been set to certain values) |
 | `der-capability-contents` | `doeModesSupported_set: hex/none` `doeModesSupported_unset: hex/none` `doeModesSupported: bool/none` `modesSupported_set: hex/none` `modesSupported_unset: hex/none` `rtgMaxVA: bool/none` `rtgMaxVar: bool/none` `rtgMaxW: bool/none` `rtgMaxChargeRateW: bool/none` `rtgMaxDischargeRateW: bool/none` `rtgMaxWh: bool/none` `vppModesSupported_set: hexbinary/none` `vppModesSupported_unset: hexbinary/none` `vppModesSupported: bool/none` `rtgMaxVarNeg: bool/none` `rtgMinPFOverExcited: bool/none` `rtgMinPFUnderExcited: bool/none` | True if a `DERCapability` has been set for the `EndDevice` under test (and if certain elements have been set to certain values) |
 | `der-status-contents` | `genConnectStatus: int/None` `operationalModeStatus: int/None` `alarmStatus: int/None` | True if a `DERStatus` has been set for the `EndDevice` under test (and if certain elements have been set to certain values) |
@@ -168,15 +174,12 @@ checks:
 | `readings-voltage` | `minimum_count: int/none` `minimum_level: float/none` `maximum_level: float/none` `window_seconds: uint/none` | True if any MirrorUsagePoint has a MirrorMeterReading for site wide voltage OR DER voltage with `minimum_count` entries (at least one is required) |
 | `readings-der-active-power` | `minimum_count: int/none` `minimum_level: float/none` `maximum_level: float/none` `window_seconds: uint/none` | True if any MirrorUsagePoint has a MirrorMeterReading for DER active power with `minimum_count` entries and/or readings all above and/or below `minimum_level`/`maximum_level` respectively; optionally for `window_seconds` |
 | `readings-der-reactive-power` | `minimum_count: int/none` `minimum_level: float/none` `maximum_level: float/none` `window_seconds: uint/none` | True if any MirrorUsagePoint has a MirrorMeterReading for DER reactive power with `minimum_count` entries and/or readings all above and/or below `minimum_level`/`maximum_level` respectively; optionally for `window_seconds` |
-| `response-contents` | `latest: bool/None` `status: int/None` `all: bool/None` | True if at least one received Response matches the filter. `latest` will only consider the most recent received Response. `all` will look for a nominated status match for every `DERControl` |
+| `response-contents` | `latest: bool/None` `status: int/None` `all: bool/None` `exists: bool/None` | True if at least one received DERControlResponse matches the filter. `latest` will only consider the most recent received Response. `all` will look for a nominated status match for every `DERControl`. `exists` can force the check to assert that the `Response` is missing. |
+| `price-response-contents` | `latest: bool/None` `status: int/None` `all: bool/None`  `exists: bool/None` | True if at least one received PriceResponse matches the filter. `latest` will only consider the most recent received Response. `all` will look for a nominated status match for every `DERControl`. `exists` can force the check to assert that the `Response` is missing. |
 | `subscription-contents` | `subscribed_resource: str` | True if a subscription to `subscribed_resource` has been created | 
-
-The following are csipaus.org/ns/v1.3-beta/storage extension specific checks implemented
-
-| **name** | **params** | **description** |
-| -------- | ---------- | --------------- |
 | `readings-der-stored-energy` | `minimum_count: int/none` `minimum_level: float/none` `maximum_level: float/none` `window_seconds: uint/none` | True if any MirrorUsagePoint has a MirrorMeterReading for DER stored energy with `minimum_count` entries and/or readings all above and/or below `minimum_level`/`maximum_level` respectively; optionally for `window_seconds` |
-<br>
+| `resource-requests` | `resources: list[CSIPAusResource]` `minimum_count: int/None` `maximum_count: int/None` | True if the client has made requests to the nominated `CSIPResource` the requisite number of times. | 
+
 
 #### Hexbinary Parameters for Bitwise Operations
 `doeModesEnabled_set` `modesEnabled_set` `doeModesSupported_set` and `modesSupported_set` all expect a hexbinary string to be supplied, which contains the hi assertion bits to be equal to one e.g. `doeModesEnabled_set: "03"` would test to ensure that at least bits 0 and 1 are set hi (==1) for the given `DERSetting.doeModesEnabled`, ignoring all others
@@ -211,6 +214,8 @@ The following are all the `NamedVariable` types currently implemented
 | **name** | **description** |
 | -------- | --------------- |
 | `$now` | Resolves to the current moment in time (timezone aware). Returns a datetime |
+| `$now_day` | Resolves to the start of the current day (as Australian Eastern Standard Time). Returns a datetime |
+| `$now_hour` | Resolves to the start of the current hour (as Australian Eastern Standard Time). Returns a datetime |
 | `$this` | Self reference to a parameter that is supplied as the key for the parameter check. Must have a corresponding NamedVariable that it can resolve to, derived from the key e.g `setMaxW`
 | `$setMaxW` | Resolves to the last supplied value to `DERSetting.setMaxW` as a number. Can raise exceptions if this value hasn't been set (which will trigger a test evaluation to fail) |
 | `$setMaxVA` | Resolves to the last supplied value to `DERSetting.setMaxVA` as a number. Can raise exceptions if this value hasn't been set (which will trigger a test evaluation to fail) |
@@ -230,11 +235,6 @@ The following are all the `NamedVariable` types currently implemented
 | `$rtgMinPFOverExcited` | Resolves to last supplied `DERCapability.rtgMinPFOverExcited` as a number. Raises exceptions if value hasn't been set, causing test to fail.
 | `$rtgMinPFUnderExcited` | Resolves to last supplied `DERCapability.rtgMinPFUnderExcited` as a number. Raises exceptions if value hasn't been set, causing test to fail.
 | `$rtgMaxWh` | Resolves to last supplied `DERCapability.rtgMaxWh` as a number. Raises exceptions if value hasn't been set, causing test to fail.
-
-The following are csipaus.org/ns/v1.3-beta/storage extension specific `NamedVariable` types implemented
-
-| **name** | **description** |
-| -------- | --------------- |
 | `$setMinWh` | Resolves to the last supplied value to `DERSetting.setMinWh` as a number. Can raise exceptions if this value hasn't been set (which will trigger a test evaluation to fail)
 
 

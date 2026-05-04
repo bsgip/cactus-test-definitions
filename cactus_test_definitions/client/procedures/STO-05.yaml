@@ -1,10 +1,11 @@
 Description: Capabilities and settings - storage
 Category: Monitoring
 Classes:
-  - L
+  - DER-STO
 
 TargetVersions:
   - v1.3-beta/storage
+  - v1.3
 
 Preconditions:
   init_actions:

@@ -84,6 +84,10 @@ class TestProcedureId(StrEnum):
     MUL_02 = "MUL-02"
     MUL_03 = "MUL-03"
 
+    # Provisional tests
+    P_01 = "P-01"
+    P_02 = "P-02"
+
     # Storage extension
     STO_01 = "STO-01"
     STO_02 = "STO-02"
@@ -91,6 +95,13 @@ class TestProcedureId(StrEnum):
     STO_04 = "STO-04"
     STO_05 = "STO-05"
     STO_06 = "STO-06"
+
+    # Pricing extension
+    PRC_01 = "PRC-01"
+    PRC_02 = "PRC-02"
+    PRC_03 = "PRC-03"
+    PRC_04 = "PRC-04"
+    PRC_05 = "PRC-05"
 
 
 @dataclass

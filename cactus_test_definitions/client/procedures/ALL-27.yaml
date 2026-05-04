@@ -6,6 +6,7 @@ Classes:
 TargetVersions:
   - v1.2
   - v1.3-beta/storage
+  - v1.3
 
 Criteria:
   checks:
@@ -48,6 +49,7 @@ Steps:
           duration_seconds: 240
           opModExpLimW: $(setMaxW * 2)
           opModImpLimW: $(setMaxW * 2)
+          tag: DERC1
       - type: enable-steps
         parameters:
           steps:
@@ -69,14 +71,14 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC
+            - GET-DERC-DISCONNECT
       - type: remove-steps
         parameters:
           steps:
             - PRECONDITION-STARTUP-WAIT
 
   # (a, b)
-  GET-DERC:
+  GET-DERC-DISCONNECT:
     event:
       type: GET-request-received
       parameters:
@@ -87,6 +89,7 @@ Steps:
           start: $(now)
           duration_seconds: 300
           opModConnect: false
+          tag: DISCONNECT
       - type: enable-steps
         parameters:
           steps:
@@ -94,7 +97,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - GET-DERC
+            - GET-DERC-DISCONNECT
 
   # (c, d)
   PUT-DERSTATUS-DISCONNECT:
@@ -118,6 +121,7 @@ Steps:
           start: $(now)
           duration_seconds: 300
           opModConnect: true
+          tag: CONNECT
       - type: enable-steps
         parameters:
           steps:

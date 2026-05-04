@@ -6,6 +6,7 @@ Classes:
 TargetVersions:
   - v1.2
   - v1.3-beta/storage
+  - v1.3
 
 Criteria:
   checks:
@@ -51,6 +52,7 @@ Steps:
           duration_seconds: 240
           opModExpLimW: $(setMaxW * 2)
           opModImpLimW: $(setMaxW * 2)
+          tag: PRECONDITION
       - type: enable-steps
         parameters:
           steps:
@@ -72,14 +74,14 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC
+            - GET-DERC-DEENERGIZE
       - type: remove-steps
         parameters:
           steps:
             - PRECONDITION-STARTUP-WAIT
 
   # (a, b)
-  GET-DERC:
+  GET-DERC-DEENERGIZE:
     event:
       type: GET-request-received
       parameters:
@@ -90,6 +92,7 @@ Steps:
           start: $(now)
           duration_seconds: 300
           opModEnergize: false
+          tag: DEENERGIZE
       - type: enable-steps
         parameters:
           steps:
@@ -97,7 +100,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - GET-DERC
+            - GET-DERC-DEENERGIZE
 
   # (c, d)
   PUT-DERSTATUS-DEENERGIZE:
@@ -121,6 +124,7 @@ Steps:
           start: $(now)
           duration_seconds: 300
           opModEnergize: true
+          tag: ENERGIZE
       - type: enable-steps
         parameters:
           steps:

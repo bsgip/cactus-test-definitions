@@ -1,10 +1,11 @@
 Description: Capabilities and settings - storage
 Category: Monitoring
 Classes:
-  - L
+  - STO
 
 TargetVersions:
   - v1.3-beta/storage
+  - v1.3
 
 Preconditions:
   immediate_start: true  # There will be no "init" phase - all interactions will be immediately logged against the test

@@ -6,6 +6,7 @@ Classes:
 TargetVersions:
   - v1.2
   - v1.3-beta/storage
+  - v1.3
 
 Criteria:
   checks:
@@ -40,30 +41,35 @@ Preconditions:
         duration_seconds: 120
         opModExpLimW: $(setMaxW * 2)
         opModImpLimW: $(setMaxW * 2)
+        tag: DERC1
     - type: create-der-control
       parameters:
         start: $(now + '2 minutes')
         duration_seconds: 120
         opModExpLimW: $(setMaxW * 0.3)
         opModImpLimW: $(setMaxW * 0.3)
+        tag: DERC2
     - type: create-der-control
       parameters:
         start: $(now + '4 minutes')
         duration_seconds: 120
         opModExpLimW: $(setMaxW * 0.2)
         opModImpLimW: $(setMaxW * 0.2)
+        tag: DERC3
     - type: create-der-control
       parameters:
         start: $(now + '6 minutes')
         duration_seconds: 120
         opModExpLimW: $(setMaxW * 0.1)
         opModImpLimW: $(setMaxW * 0.1)
+        tag: DERC4
     - type: create-der-control
       parameters:
         start: $(now + '8 minutes')
         duration_seconds: 120
         opModExpLimW: 0
         opModImpLimW: 0
+        tag: DERC5
   instructions:
     - DER is operating at least 50% if its rated power.
     - Connect a test load electrically in parallel with the DER.

@@ -6,6 +6,7 @@ Classes:
 TargetVersions:
   - v1.2
   - v1.3-beta/storage
+  - v1.3
 
 Criteria:
   checks:
@@ -34,11 +35,13 @@ Preconditions:
         start: $(now)
         duration_seconds: 60
         opModImpLimW: $(setMaxW * 2)
+        tag: DERC1
     - type: create-der-control
       parameters:
         start: $(now + '1 minute')
         duration_seconds: 420
         opModImpLimW: $(setMaxW * 0.2)
+        tag: DERC2
   instructions:
     - Connect a test load electrically in parallel with the DER.
     - Set the load to consume 0W.
@@ -77,7 +80,8 @@ Steps:
       - AFTER the last DERControl is correctly adhered to, click proceed to end the test.
     event:
         type: proceed
-        parameters: {}
+        parameters:
+          timeout_seconds: 180 # End test after 3 mins if proceed not pressed
     actions:
       - type: remove-steps
         parameters:

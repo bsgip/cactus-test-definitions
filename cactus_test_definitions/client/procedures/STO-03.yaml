@@ -1,10 +1,11 @@
 Description: Storage control with export limits - opModStorageTargetW with opModExpLimW
 Category: Control
 Classes:
-  - L
+  - STO
 
 TargetVersions:
   - v1.3-beta/storage
+  - v1.3
 
 Preconditions:
   init_actions:

@@ -7,6 +7,7 @@ Classes:
 TargetVersions:
   - v1.2
   - v1.3-beta/storage
+  - v1.3
 
 Criteria:
   checks:
@@ -40,6 +41,7 @@ Steps:
           start: $(now)
           duration_seconds: 60
           opModConnect: false
+          tag: DERC1
       - type: enable-steps
         parameters:
           steps:

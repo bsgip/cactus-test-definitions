@@ -6,6 +6,7 @@ Classes:
 TargetVersions:
   - v1.2
   - v1.3-beta/storage
+  - v1.3
 
 Criteria:
   checks:
@@ -201,14 +202,14 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - WAIT-DERC-2
+            - WAIT-DERC-1
       - type: remove-steps
         parameters:
           steps:
             - POST-DERC-1-RESPONSE-STARTED
 
   # (e) Wait for a short period
-  WAIT-DERC-2:
+  WAIT-DERC-1:
     event:
       type: wait
       parameters:
@@ -221,7 +222,7 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-DERC-2
+            - WAIT-DERC-1
 
   # (e) After the short period - configure a DERControl on DERP 1 - set to 0%
   GET-DERP-2:
@@ -1014,7 +1015,8 @@ Steps:
       - Click Proceed AFTER the DER is importing at the correct limit. 
     event:
       type: proceed
-      parameters: {}
+      parameters:
+        timeout_seconds: 300 # End test after 5 mins if proceed not pressed
     actions:
       - type: remove-steps
         parameters:

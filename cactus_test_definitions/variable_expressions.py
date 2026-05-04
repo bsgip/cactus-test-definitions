@@ -1,5 +1,5 @@
-import tokenize
 import abc
+import tokenize
 from dataclasses import dataclass
 from datetime import timedelta
 from enum import IntEnum, auto
@@ -51,6 +51,14 @@ class NamedVariableType(IntEnum):
     # Referenced in a test definition as $(now)
     NOW = auto()
 
+    # MUST resolve to a tz aware representation of the current datetime (in AEST) with hours/minutes/seconds being zero
+    # Referenced in a test definition as $(now_day)
+    NOW_DAY = auto()
+
+    # MUST resolve to a tz aware representation of the current datetime (in AEST) with minutes/seconds being zero
+    # Referenced in a test definition as $(now_hour)
+    NOW_HOUR = auto()
+
     # MUST resolve to the "DERSetting.setMaxW" of the current EndDevice under test. Value in Watts
     # Referenced in a test definition as $(setMaxW)
     DERSETTING_SET_MAX_W = auto()
@@ -81,6 +89,11 @@ class NamedVariableType(IntEnum):
     # Storage extension
     DERSETTING_SET_MIN_WH = auto()
     DERCAPABILITY_NEG_RTG_MAX_CHARGE_RATE_W = auto()  # -W (after multiplier applied), reference $negRtgMaxChargeRateW
+
+    # NMI — used for ConnectionPoint registration
+    # Referenced in a test definition as $(valid_nmi_1) and $(valid_nmi_2)
+    NMI_1 = auto()
+    NMI_2 = auto()
 
 
 class OperationType(IntEnum):
@@ -140,6 +153,10 @@ def named_variable_repr(named_var: NamedVariableType) -> str:
             return f"DERCapability.{snake_to_camel(param_name)}"
         case ["DERSETTING", param_name]:
             return f"DERSetting.{snake_to_camel(param_name)}"
+        case ["NMI", "1"]:
+            return "valid_nmi_1"
+        case ["NMI", "2"]:
+            return "valid_nmi_2"
 
     return snake_to_camel(name)
 
@@ -246,6 +263,10 @@ def parse_unary_expression(token: Token) -> Constant | NamedVariable:
         match token.string:
             case "now":
                 return NamedVariable(NamedVariableType.NOW)
+            case "now_hour":
+                return NamedVariable(NamedVariableType.NOW_HOUR)
+            case "now_day":
+                return NamedVariable(NamedVariableType.NOW_DAY)
             case "this":
                 if token.param_key == "this" or token.param_key is None:
                     raise UnparseableVariableExpressionError(f"$this cannot resolve to parameter {token.param_key}")
@@ -294,6 +315,10 @@ def parse_unary_expression(token: Token) -> Constant | NamedVariable:
                 return NamedVariable(NamedVariableType.DERSETTING_SET_MIN_WH)
             case "negRtgMaxChargeRateW":
                 return NamedVariable(NamedVariableType.DERCAPABILITY_NEG_RTG_MAX_CHARGE_RATE_W)
+            case "valid_nmi_1":
+                return NamedVariable(NamedVariableType.NMI_1)
+            case "valid_nmi_2":
+                return NamedVariable(NamedVariableType.NMI_2)
 
         raise UnparseableVariableExpressionError(f"'{token.string}' isn't recognized as a named variable")
 

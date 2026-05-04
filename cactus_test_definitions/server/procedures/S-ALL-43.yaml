@@ -5,6 +5,7 @@ Classes:
 
 TargetVersions:
  - v1.2
+ - v1.3
 
 Preconditions:
   required_clients:
@@ -15,6 +16,9 @@ Steps:
     repeat_until_pass: true
     client: client
     admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
       - type: set-poll-rate
         parameters:
           resource: DeviceCapability

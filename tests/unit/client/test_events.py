@@ -14,6 +14,9 @@ from cactus_test_definitions.errors import TestProcedureDefinitionError
         (Event("wait", {"duration_seconds": 3, "other": 4}), False),
         (Event("GET-request-received", {"endpoint": "/dcap"}), True),
         (Event("proceed", {}), True),
+        (Event("proceed", {"timeout_seconds": 30}), True),
+        (Event("proceed", {"timeout_seconds": "30"}), False),  # Must be integer
+        (Event("proceed", {"timeout_seconds": 30, "other": 1}), False),  # Unknown param
     ],
 )
 def test_validate_event_parameters(event: Event, is_valid: bool):

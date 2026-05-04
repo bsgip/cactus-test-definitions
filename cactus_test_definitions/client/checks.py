@@ -52,6 +52,10 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "deviceCategory_anyset": ParameterSchema(False, ParameterType.HexBinary),  # Any of these bits set to 1
         "check_lfdi": ParameterSchema(False, ParameterType.Boolean),  # Should LFDI be validated in detail
     },
+    "end-device-count": {
+        "minimum_count": ParameterSchema(False, ParameterType.Integer),
+        "maximum_count": ParameterSchema(False, ParameterType.Integer),
+    },
     "der-settings-contents": {
         "setGradW": ParameterSchema(False, ParameterType.Integer),  # Hundredths of a percent / second
         "doeModesEnabled": ParameterSchema(False, ParameterType.Boolean),  # Is ANY value set?
@@ -112,11 +116,28 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "status": ParameterSchema(False, ParameterType.Integer),
         "all": ParameterSchema(False, ParameterType.Boolean),
         "subject_tag": ParameterSchema(False, ParameterType.String),
+        "exists": ParameterSchema(
+            False, ParameterType.Boolean
+        ),  # Default is True - If True, assert the response exists. Otherwise assert it does NOT exist
     },
     "all-polls-at-correct-time": {
         "endpoint": ParameterSchema(True, ParameterType.String),  # e.g. /dcap
         "poll_interval_seconds": ParameterSchema(True, ParameterType.Integer),
         "request_type_str": ParameterSchema(True, ParameterType.String),  # e.g. GET, POST
+    },
+    "resource-requests": {
+        "resources": ParameterSchema(True, ParameterType.ListCSIPAusResource),  # What resource(s) to count
+        "minimum_count": ParameterSchema(False, ParameterType.Integer),  # Has at least this many requests
+        "maximum_count": ParameterSchema(False, ParameterType.Integer),  # Has at most this many requests
+    },
+    "price-response-contents": {
+        "latest": ParameterSchema(False, ParameterType.Boolean),
+        "status": ParameterSchema(False, ParameterType.Integer),
+        "all": ParameterSchema(False, ParameterType.Boolean),
+        "subject_tag": ParameterSchema(False, ParameterType.String),
+        "exists": ParameterSchema(
+            False, ParameterType.Boolean
+        ),  # Default is True - If True, assert the response exists. Otherwise assert it does NOT exist
     },
 }
 VALID_CHECK_NAMES: set[str] = set(CHECK_PARAMETER_SCHEMA.keys())

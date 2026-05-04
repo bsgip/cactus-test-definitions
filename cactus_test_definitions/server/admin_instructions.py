@@ -7,10 +7,7 @@ from cactus_test_definitions.parameters import (
     ParameterType,
     validate_parameters,
 )
-from cactus_test_definitions.variable_expressions import (
-    parse_variable_expression_body,
-    try_extract_variable_expression,
-)
+from cactus_test_definitions.variable_expressions import parse_variable_expression_body, try_extract_variable_expression
 
 
 @dataclass

@@ -1,10 +1,11 @@
 Description: Individual readings - storage
 Category: Monitoring
 Classes:
-  - L
+  - STO
 
 TargetVersions:
   - v1.3-beta/storage
+  - v1.3
 
 Criteria:
   checks:

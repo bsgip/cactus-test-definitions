@@ -1,0 +1,177 @@
+Description: Validate Client Interpretation of Pricing
+Category: Pricing
+Classes:
+  - PRC
+
+TargetVersions:
+  - v1.3
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+    
+
+Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+        tp_list_poll_seconds: 60
+        tti_list_poll_seconds: 60
+        
+  checks:
+    - type: end-device-contents
+      parameters: {}
+
+  actions:
+    - type: create-tariff-profile
+      parameters:
+        primacy: 0
+        fsa_id: 1
+        price_pow_10_multiplier: -6
+    - type: create-rate-component
+      parameters:
+        flow_direction: 1 # FlowDirectionType.FORWARD
+        power_of_ten_multiplier: 3
+        uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
+        tag: RC-1
+    - type: create-rate-component
+      parameters:
+        flow_direction: 19 # FlowDirectionType.REVERSE
+        power_of_ten_multiplier: 3
+        uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
+        tag: RC-2
+
+    - type: create-rate-component
+      parameters:
+        flow_direction: 1 # FlowDirectionType.FORWARD
+        power_of_ten_multiplier: 3
+        uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
+        tag: RC-3
+    
+    - type: create-rate-component
+      parameters:
+        power_of_ten_multiplier: 0
+        uom: 195 # UomType.TIME_DAY
+        tag: RC-4
+    
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-1
+        start: $(now_hour + '120 minutes')
+        duration_seconds: 300
+        price_pow10_encoded_block0: 1
+        price_pow10_encoded_block1: 2
+        price_start_pow10_block1: 100
+        tag: TTI-1
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-1
+        start: $(now_hour + '125 minutes')
+        duration_seconds: 300
+        price_pow10_encoded_block0: -1000001
+        tag: TTI-2
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-2
+        start: $(now_hour + '120 minutes')
+        duration_seconds: 300
+        price_pow10_encoded_block0: 1
+        price_pow10_encoded_block1: 2
+        price_start_pow10_block1: 100
+        tag: TTI-3
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-2
+        start: $(now_hour + '125 minutes')
+        duration_seconds: 300
+        price_pow10_encoded_block0: -1000001
+        tag: TTI-4
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-3
+        start: $(now_day)
+        duration_seconds: 172800
+        price_pow10_encoded_block0: 3
+        tag: TTI-5
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-4
+        start: $(now_hour + '120 minutes')
+        duration_seconds: 172800
+        price_pow10_encoded_block0: 10
+        tag: TTI-6
+    
+
+Steps:
+  
+  # (a)
+  GET-CTTI:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/tp/1/ctti
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - PROCEED-TEST-END
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-CTTI
+
+  PROCEED-TEST-END:
+    instructions:
+      - "Confirm client has the following pricing interpretation:"
+      - "For the duration of TTI-1 / TTI-3:"
+      - "- Import price will be a cost of $0.000004 for the first 100 kWh of import (consumption) and $0.000005 for any subsequent import"
+      - "- Export price will be a cost of $0.000001 for the first 100 kWh of export (generation) and $0.000002 for any subsequent export"
+      - "For the duration of TTI-2 / TTI-4:"
+      - "- Import price will be a credit of $0.999998 for each kWh of import"
+      - "- Export price will be a credit of $1.000001 for each kWh of export"
+      - "For the duration of TTI-5 (that doesn't overlap with the above intervals):"
+      - "- Import price will be a cost of $0.000003 for each kWh of import"
+      - "- Export has no explicit price"
+      - "For the day(s) overlapped by TTI-6 (today/tomorrow in AEST):"
+      - "- There will be a fixed cost of $0.000010 per day that is independent of any usage"
+    event:
+      type: proceed
+      parameters: {}
+    actions:
+      - type: cancel-time-tariff-intervals
+        parameters: {}
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-CANCEL-TTI
+      - type: remove-steps
+        parameters:
+          steps:
+            - PROCEED-TEST-END
+
+  # Not described in the test - but given the long lead time on these prices, we'll be cancelling them and ensuring
+  # the client detects the cancellation BEFORE shutting down
+  GET-CANCEL-TTI:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/tp/1/ctti
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-CANCEL-TTI
+
+  
