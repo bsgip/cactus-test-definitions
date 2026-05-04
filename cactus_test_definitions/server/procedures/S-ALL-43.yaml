@@ -19,6 +19,12 @@ Steps:
       - type: ensure-end-device
         parameters:
           registered: true
+      - type: ensure-fsa
+        parameters:
+          annotation: fsa1
+      - type: ensure-der-program
+        parameters:
+          fsa_annotation: fsa1
       - type: set-poll-rate
         parameters:
           resource: DeviceCapability
