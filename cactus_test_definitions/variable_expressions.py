@@ -129,7 +129,7 @@ def snake_to_camel(snake: str) -> str:
     return temp[0].lower() + temp[1:]
 
 
-def named_variable_repr(named_var: NamedVariableType) -> str:
+def named_variable_repr(named_var: NamedVariableType) -> str:  # noqa: C901
     """Takes named variable enum and turns its name into its recognisable 2030.5 form"""
     name = named_var.name
     if len(name.split("_")) == 1:
@@ -255,7 +255,7 @@ def parse_time_delta(var_body: str) -> timedelta:
         )
 
 
-def parse_unary_expression(token: Token) -> Constant | NamedVariable:
+def parse_unary_expression(token: Token) -> Constant | NamedVariable:  # noqa: C901
     """Parses a unary expression from a variable body"""
 
     if token.type == tokenize.NAME:
@@ -393,7 +393,7 @@ def parse_variable_expression_body(var_body: str, param_key: str | None) -> Name
         raise UnparseableVariableExpressionError(f"Unable to parse {var_body} into a simple binary/unary expression")
 
 
-def try_extract_variable_expression(body: Any) -> str | None:
+def try_extract_variable_expression(body: Any) -> str | None:  # noqa: ANN401
     """Checks to see if a variable body (of any type) can be parsed by parse_variable_expression_body. If it can,
     it will be returned as a string. Otherwise None will be returned
 
@@ -448,7 +448,7 @@ def try_extract_variable_expression(body: Any) -> str | None:
     return variable_expression
 
 
-def is_resolvable_variable(v: Any) -> bool:
+def is_resolvable_variable(v: Any) -> bool:  # noqa: ANN401
     """Returns True if the supplied value is a variable definition that requires resolving"""
     return isinstance(v, NamedVariable) or isinstance(v, Expression) or isinstance(v, Constant)
 

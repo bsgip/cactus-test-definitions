@@ -42,7 +42,7 @@ class ParameterSchema:
     expected_type: ParameterType
 
 
-def is_valid_parameter_type(expected_type: ParameterType, value: Any) -> bool:
+def is_valid_parameter_type(expected_type: ParameterType, value: Any) -> bool:  # noqa: C901, ANN401
     """Returns true if the specified value "passes" as the expected type. Only performs rudimentary checks to try
     and catch obvious misconfigurations"""
     if value is None:

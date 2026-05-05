@@ -18,7 +18,7 @@ class Action:
     type: str
     parameters: dict[str, Any]
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Some parameter values might contain variable expressions (eg: a string "$now") that needs to be replaced
         with an parsed Expression object instead."""
         for k, v in self.parameters.items():

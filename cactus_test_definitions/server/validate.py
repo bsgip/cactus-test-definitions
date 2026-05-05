@@ -8,7 +8,7 @@ from cactus_test_definitions.server.test_procedures import (
 )
 
 
-def validate_test_procedure(test_procedure: TestProcedure, test_procedure_id: TestProcedureId):
+def validate_test_procedure(test_procedure: TestProcedure, test_procedure_id: TestProcedureId) -> None:
     # Check preconditions
     if not test_procedure.preconditions.required_clients:
         raise TestProcedureDefinitionError(

@@ -65,7 +65,7 @@ select = ["E", "W", "F", "I", "S", "C90", "B", "UP", "ANN", "N"]
 max-complexity = 10
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["S", "ANN"]
+"tests/**" = ["S", "ANN", "N"]
 
 [tool.mypy]
 exclude = ["dist", "build", "tests"]
