@@ -22,7 +22,7 @@ def test_each_step_id_unique(tp_id: TestProcedureId):
     tp = get_test_procedure(tp_id)
     all_ids = [s.id for s in tp.steps]
     assert list(sorted(all_ids)) == list(sorted(set(all_ids)))
-    assert len(set((s.id for s in tp.steps))) == len(tp.steps), "All steps must have a unique id property"
+    assert len(set(s.id for s in tp.steps)) == len(tp.steps), "All steps must have a unique id property"
 
 
 @pytest.mark.parametrize("tp_id", TestProcedureId)

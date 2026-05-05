@@ -86,7 +86,7 @@ def collect_check_param_values(tp: TestProcedure, check_type: str, param_name: s
     ],
 )
 def test_TestProcedure_invalid_examples(tp_file: Path):
-    with open(tp_file, "r") as fp:
+    with open(tp_file) as fp:
         tp = parse_test_procedure(fp.read())
 
     with pytest.raises(TestProcedureDefinitionError):

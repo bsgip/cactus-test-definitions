@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from importlib import resources
 from pathlib import Path
 
@@ -52,7 +52,7 @@ def test_available_tests_populated():
 def test_error_on_duplicate_key():
     """Force test procedures to load and ensure they all validate (and we at least have a few)"""
 
-    with open(Path("tests/data/client/tp_error_duplicate_keys.yaml"), "r") as fp:
+    with open(Path("tests/data/client/tp_error_duplicate_keys.yaml")) as fp:
         yaml_contents = fp.read()
 
     with pytest.raises(ValueError):
@@ -62,7 +62,7 @@ def test_error_on_duplicate_key():
 def test_error_on_extra_key():
     """Force test procedures to load and ensure they all validate (and we at least have a few)"""
 
-    with open(Path("tests/data/client/tp_error_extra_keys.yaml"), "r") as fp:
+    with open(Path("tests/data/client/tp_error_extra_keys.yaml")) as fp:
         yaml_contents = fp.read()
 
     with pytest.raises(UnknownKeysError):
@@ -72,7 +72,7 @@ def test_error_on_extra_key():
 def test_TestProcedures_action_parameter_types():
     """Tests that lists/dicts/constants/datetimes can all be encoded/decoded via the yaml action definition"""
 
-    with open(Path("tests/data/client/tp_action_parameters.yaml"), "r") as fp:
+    with open(Path("tests/data/client/tp_action_parameters.yaml")) as fp:
         tp = parse_test_procedure(fp.read())
 
     step = tp.steps["Step-1"]
@@ -85,13 +85,13 @@ def test_TestProcedures_action_parameter_types():
             11,
             2.2,
             "List Item 3",
-            datetime(2020, 1, 2, 3, 4, 5, tzinfo=timezone.utc),
+            datetime(2020, 1, 2, 3, 4, 5, tzinfo=UTC),
         ],
         "param_dict_str": {"key1": "value1", "key2": "value2"},
         "param_dict_int": {"key11": 11, "key22": 22},
         "param_int": 11,
         "param_str": "Value 11",
-        "param_datetime_utc": datetime(2025, 1, 2, 3, 4, 5, tzinfo=timezone.utc),
+        "param_datetime_utc": datetime(2025, 1, 2, 3, 4, 5, tzinfo=UTC),
         "param_datetime_naive": datetime(2025, 1, 2, 3, 4, 5, tzinfo=None),
         "param_with_variable_date": NamedVariable(NamedVariableType.NOW),
         "param_with_variable_db_lookup": NamedVariable(NamedVariableType.DERSETTING_SET_MAX_W),

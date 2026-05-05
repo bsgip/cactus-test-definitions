@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
 from itertools import product
 from typing import Any
@@ -65,7 +65,7 @@ def test_is_valid_parameter_type_skipped_values(value: Any, type: ParameterType)
         (ParameterType.Integer, [2], False),
         (ParameterType.Integer, "2", False),
         (ParameterType.DateTime, datetime(2022, 11, 1, 1, 2, 3), True),
-        (ParameterType.DateTime, datetime(2022, 11, 1, 1, 2, 3, tzinfo=timezone.utc), True),
+        (ParameterType.DateTime, datetime(2022, 11, 1, 1, 2, 3, tzinfo=UTC), True),
         (ParameterType.DateTime, "2022-11-01T01:02:03Z", False),
         (ParameterType.DateTime, "2022-11-01T01:02:03", False),
         (ParameterType.DateTime, 2022, False),

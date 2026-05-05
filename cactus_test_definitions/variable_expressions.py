@@ -236,10 +236,10 @@ def parse_time_delta(var_body: str) -> timedelta:
 
     try:
         number = float(number_string)
-    except ValueError:
+    except ValueError as err:
         raise UnparseableVariableExpressionError(
             f"{var_body} can't be parsed into a timedelta. Bad number {number_string}"
-        )
+        ) from err
 
     if time_unit_string in {"day", "days"}:
         return timedelta(days=number)
@@ -328,8 +328,8 @@ def parse_unary_expression(token: Token) -> Constant | NamedVariable:
                 return Constant(float(token.string))
             else:
                 return Constant(int(token.string))
-    except ValueError:
-        raise UnparseableVariableExpressionError(f"'{token.string}' can't be converted to a number")
+    except ValueError as err:
+        raise UnparseableVariableExpressionError(f"'{token.string}' can't be converted to a number") from err
 
     if token.type == tokenize.STRING:
         return Constant(parse_time_delta(token.string))
@@ -382,8 +382,8 @@ def parse_variable_expression_body(var_body: str, param_key: str | None) -> Name
             for t in tokenize.generate_tokens(StringIO(var_body).readline)
             if t.type in {tokenize.NUMBER, tokenize.OP, tokenize.STRING, tokenize.NAME}
         ]
-    except tokenize.TokenError as exc:
-        raise UnparseableVariableExpressionError(f"Error tokenizing '{var_body}': {exc}")
+    except tokenize.TokenError as err:
+        raise UnparseableVariableExpressionError(f"Error tokenizing '{var_body}'") from err
 
     if len(var_tokens) == 1:
         return parse_unary_expression(var_tokens[0])

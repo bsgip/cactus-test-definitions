@@ -163,7 +163,7 @@ def get_yaml_contents(test_procedure_id: TestProcedureId) -> str:
     """Finds the YAML contents for the TestProcedure with the specified TestProcedureId"""
     yaml_resource = resources.files("cactus_test_definitions.server.procedures") / f"{test_procedure_id}.yaml"
     with resources.as_file(yaml_resource) as yaml_file:
-        with open(yaml_file, "r") as f:
+        with open(yaml_file) as f:
             yaml_contents = f.read()
             return yaml_contents
 
