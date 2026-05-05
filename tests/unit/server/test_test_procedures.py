@@ -3,13 +3,14 @@ from pathlib import Path
 
 import pytest
 from assertical.asserts.type import assert_dict_type
+from dataclass_wizard.errors import UnknownKeysError
+
 from cactus_test_definitions.server.test_procedures import (
     TestProcedure,
     TestProcedureId,
     get_all_test_procedures,
     parse_test_procedure,
 )
-from dataclass_wizard.errors import UnknownKeysError
 
 
 def test_TestProcedureId_synchronised():

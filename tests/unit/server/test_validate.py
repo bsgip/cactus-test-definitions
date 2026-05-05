@@ -1,4 +1,5 @@
 import pytest
+
 from cactus_test_definitions.server.actions import ACTION_PARAMETER_SCHEMA
 from cactus_test_definitions.server.test_procedures import (
     TestProcedureId,
@@ -36,9 +37,9 @@ def test_each_alias_defined(tp_id: str):
     CREATE_SUB_ACTION = "create-subscription"
     DELETE_SUB_ACTION = "delete-subscription"
     assert UPSERT_MUP_ACTION in ACTION_PARAMETER_SCHEMA, "If this fails - the action name has changed. Update this test"
-    assert (
-        INSERT_READING_ACTION in ACTION_PARAMETER_SCHEMA
-    ), "If this fails - the action name has changed. Update this test"
+    assert INSERT_READING_ACTION in ACTION_PARAMETER_SCHEMA, (
+        "If this fails - the action name has changed. Update this test"
+    )
     assert CREATE_SUB_ACTION in ACTION_PARAMETER_SCHEMA, "If this fails - the action name has changed. Update this test"
     assert DELETE_SUB_ACTION in ACTION_PARAMETER_SCHEMA, "If this fails - the action name has changed. Update this test"
 

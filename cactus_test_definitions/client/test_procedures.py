@@ -3,12 +3,13 @@ from enum import StrEnum
 from importlib import resources
 
 import yaml
+from dataclass_wizard import LoadMeta, YAMLWizard
+
 from cactus_test_definitions.client.actions import Action
 from cactus_test_definitions.client.checks import Check
 from cactus_test_definitions.client.events import Event
 from cactus_test_definitions.csipaus import CSIPAusVersion
 from cactus_test_definitions.schema import UniqueKeyLoader
-from dataclass_wizard import LoadMeta, YAMLWizard
 
 
 class TestProcedureId(StrEnum):

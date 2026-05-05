@@ -1,4 +1,5 @@
 import pytest
+
 from cactus_test_definitions import variable_expressions as varexps
 from cactus_test_definitions.client.events import Event, validate_event_parameters
 from cactus_test_definitions.errors import TestProcedureDefinitionError

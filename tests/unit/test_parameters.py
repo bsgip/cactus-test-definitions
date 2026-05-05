@@ -4,6 +4,7 @@ from itertools import product
 from typing import Any
 
 import pytest
+
 from cactus_test_definitions.errors import TestProcedureDefinitionError
 from cactus_test_definitions.parameters import (
     ParameterSchema,

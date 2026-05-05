@@ -4,6 +4,8 @@ from pathlib import Path
 
 import pytest
 from assertical.asserts.type import assert_dict_type
+from dataclass_wizard.errors import UnknownKeysError
+
 from cactus_test_definitions.client.test_procedures import (
     TestProcedure,
     TestProcedureId,
@@ -17,7 +19,6 @@ from cactus_test_definitions.variable_expressions import (
     NamedVariableType,
     OperationType,
 )
-from dataclass_wizard.errors import UnknownKeysError
 
 
 def test_TestProcedureId_synchronised():
