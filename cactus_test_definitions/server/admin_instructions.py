@@ -16,7 +16,7 @@ class AdminInstruction:
     client: str | None = None  # The RequiredClient.id this instruction refers to. If None - applies to the 0th client
     parameters: dict[str, Any] = None  # type: ignore # Forced in __post_init__
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if self.parameters is None:
             self.parameters = {}
 

@@ -3,13 +3,14 @@ from pathlib import Path
 
 import pytest
 from assertical.asserts.type import assert_dict_type
+from dataclass_wizard.errors import UnknownKeysError
+
 from cactus_test_definitions.server.test_procedures import (
     TestProcedure,
     TestProcedureId,
     get_all_test_procedures,
     parse_test_procedure,
 )
-from dataclass_wizard.errors import UnknownKeysError
 
 
 def test_TestProcedureId_synchronised():
@@ -43,7 +44,7 @@ def test_available_tests_populated():
 def test_error_on_duplicate_key():
     """Force test procedures to load and ensure they all validate (and we at least have a few)"""
 
-    with open(Path("tests/data/server/tp_error_duplicate_keys.yaml"), "r") as fp:
+    with open(Path("tests/data/server/tp_error_duplicate_keys.yaml")) as fp:
         yaml_contents = fp.read()
 
     with pytest.raises(ValueError):
@@ -53,7 +54,7 @@ def test_error_on_duplicate_key():
 def test_error_on_extra_key():
     """Force test procedures to load and ensure they all validate (and we at least have a few)"""
 
-    with open(Path("tests/data/server/tp_error_extra_keys.yaml"), "r") as fp:
+    with open(Path("tests/data/server/tp_error_extra_keys.yaml")) as fp:
         yaml_contents = fp.read()
 
     with pytest.raises(UnknownKeysError):

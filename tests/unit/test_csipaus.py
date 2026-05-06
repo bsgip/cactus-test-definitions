@@ -1,4 +1,5 @@
 import pytest
+
 from cactus_test_definitions.csipaus import (
     CSIPAusReadingLocation,
     CSIPAusReadingType,

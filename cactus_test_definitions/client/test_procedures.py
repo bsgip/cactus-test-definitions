@@ -3,12 +3,13 @@ from enum import StrEnum
 from importlib import resources
 
 import yaml
+from dataclass_wizard import LoadMeta, YAMLWizard
+
 from cactus_test_definitions.client.actions import Action
 from cactus_test_definitions.client.checks import Check
 from cactus_test_definitions.client.events import Event
 from cactus_test_definitions.csipaus import CSIPAusVersion
 from cactus_test_definitions.schema import UniqueKeyLoader
-from dataclass_wizard import LoadMeta, YAMLWizard
 
 
 class TestProcedureId(StrEnum):
@@ -183,7 +184,7 @@ def get_yaml_contents(test_procedure_id: TestProcedureId) -> str:
     """Finds the YAML contents for the TestProcedure with the specified TestProcedureId"""
     yaml_resource = resources.files("cactus_test_definitions.client.procedures") / f"{test_procedure_id}.yaml"
     with resources.as_file(yaml_resource) as yaml_file:
-        with open(yaml_file, "r") as f:
+        with open(yaml_file) as f:
             yaml_contents = f.read()
             return yaml_contents
 

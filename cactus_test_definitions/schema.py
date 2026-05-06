@@ -12,7 +12,7 @@ class UniqueKeyLoader(yaml.SafeLoader):
         key1: def
     """
 
-    def construct_mapping(self, node, deep=False):
+    def construct_mapping(self, node: yaml.MappingNode, deep: bool = False) -> dict:
         mapping = set()
         for key_node, _ in node.value:
             key = self.construct_object(key_node, deep=deep)

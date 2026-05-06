@@ -1,7 +1,8 @@
 import pytest
+
+from cactus_test_definitions.errors import TestProcedureDefinitionError
 from cactus_test_definitions.server.test_procedures import TestProcedureId, parse_test_procedure
 from cactus_test_definitions.server.validate import validate_test_procedure
-from cactus_test_definitions.errors import TestProcedureDefinitionError
 from cactus_test_definitions.variable_expressions import Expression
 
 # Minimal valid YAML mirroring S-ALL-21 precondition, with admin_instructions added

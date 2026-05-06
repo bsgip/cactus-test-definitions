@@ -3,8 +3,10 @@ from decimal import Decimal
 from typing import Any
 
 import pytest
+
 from cactus_test_definitions.client.test_procedures import Action
 from cactus_test_definitions.variable_expressions import (
+    BaseExpression,
     Constant,
     Expression,
     NamedVariable,
@@ -13,13 +15,12 @@ from cactus_test_definitions.variable_expressions import (
     UnparseableVariableExpressionError,
     has_named_variable,
     is_resolvable_variable,
-    parse_time_delta,
-    parse_variable_expression_body,
-    try_extract_variable_expression,
-    snake_to_camel,
     named_variable_repr,
     operation_repr,
-    BaseExpression,
+    parse_time_delta,
+    parse_variable_expression_body,
+    snake_to_camel,
+    try_extract_variable_expression,
 )
 
 

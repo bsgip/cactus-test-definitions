@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+
 from cactus_test_definitions.client.actions import ACTION_PARAMETER_SCHEMA, Action
 from cactus_test_definitions.client.checks import CHECK_PARAMETER_SCHEMA, Check
 from cactus_test_definitions.client.test_procedures import (
@@ -85,7 +86,7 @@ def collect_check_param_values(tp: TestProcedure, check_type: str, param_name: s
     ],
 )
 def test_TestProcedure_invalid_examples(tp_file: Path):
-    with open(tp_file, "r") as fp:
+    with open(tp_file) as fp:
         tp = parse_test_procedure(fp.read())
 
     with pytest.raises(TestProcedureDefinitionError):
@@ -146,16 +147,16 @@ def test_each_step_accessible(tp_id: TestProcedureId):  # noqa: C901
     # Each test should be added once and removed once
     for step_name in step_names:
         if step_name not in ignored_steps:
-            assert (
-                removal_count[step_name] == 1
-            ), f"{step_name}: Each test should be removed once otherwise the test cannot complete"
+            assert removal_count[step_name] == 1, (
+                f"{step_name}: Each test should be removed once otherwise the test cannot complete"
+            )
 
         if step_name == first_step:
             assert enabled_count[step_name] == 0, f"{step_name}: The first test step is already enabled"
         else:
-            assert (
-                enabled_count[step_name] == 1
-            ), f"{step_name}: Each test should be added once - not expecting loops of steps"
+            assert enabled_count[step_name] == 1, (
+                f"{step_name}: Each test should be added once - not expecting loops of steps"
+            )
 
 
 @pytest.mark.parametrize("tp_id", TestProcedureId)
@@ -191,9 +192,9 @@ def test_each_step_connected(tp_id: TestProcedureId):
         for n in [name for a in tp.preconditions.actions if a.type == "enable-steps" for name in a.parameters["steps"]]:
             visited_nodes.add(n)
 
-    assert (
-        step_names == visited_nodes
-    ), "Missing entries here indicate a step (or steps) that can't be reached from the root node"
+    assert step_names == visited_nodes, (
+        "Missing entries here indicate a step (or steps) that can't be reached from the root node"
+    )
 
 
 @pytest.mark.parametrize("tp_id", TestProcedureId)
