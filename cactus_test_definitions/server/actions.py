@@ -19,7 +19,7 @@ class Action:
     client: str | None = None  # use the client with this id to execute this action. If None, use the 0th client
     parameters: dict[str, Any] = None  # type: ignore # This will be forced in __post_init__
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Some parameter values might contain variable expressions (eg: a string "$now") that needs to be replaced
         with an parsed Expression object instead."""
         if self.parameters is None:

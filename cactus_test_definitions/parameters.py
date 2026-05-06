@@ -42,7 +42,7 @@ class ParameterSchema:
     expected_type: ParameterType
 
 
-def is_valid_parameter_type(expected_type: ParameterType, value: Any) -> bool:
+def is_valid_parameter_type(expected_type: ParameterType, value: Any) -> bool:  # noqa: C901, ANN401
     """Returns true if the specified value "passes" as the expected type. Only performs rudimentary checks to try
     and catch obvious misconfigurations"""
     if value is None:
@@ -73,9 +73,9 @@ def is_valid_parameter_type(expected_type: ParameterType, value: Any) -> bool:
         case ParameterType.DateTime:
             return isinstance(value, datetime)
         case ParameterType.ListString:
-            return isinstance(value, list) and all((isinstance(e, str) for e in value))
+            return isinstance(value, list) and all(isinstance(e, str) for e in value)
         case ParameterType.ListInteger:
-            return isinstance(value, list) and all((isinstance(e, int) for e in value))
+            return isinstance(value, list) and all(isinstance(e, int) for e in value)
         case ParameterType.HexBinary:
             try:
                 int(value, 16)
@@ -89,7 +89,7 @@ def is_valid_parameter_type(expected_type: ParameterType, value: Any) -> bool:
                 return False
         case ParameterType.ListCSIPAusResource:
             return isinstance(value, list) and all(
-                (is_valid_parameter_type(ParameterType.CSIPAusResource, e) for e in value)
+                is_valid_parameter_type(ParameterType.CSIPAusResource, e) for e in value
             )
         case ParameterType.CSIPAusReadingType:
             try:
@@ -98,7 +98,7 @@ def is_valid_parameter_type(expected_type: ParameterType, value: Any) -> bool:
                 return False
         case ParameterType.ListCSIPAusReadingType:
             return isinstance(value, list) and all(
-                (is_valid_parameter_type(ParameterType.CSIPAusReadingType, e) for e in value)
+                is_valid_parameter_type(ParameterType.CSIPAusReadingType, e) for e in value
             )
         case ParameterType.CSIPAusReadingLocation:
             try:
@@ -114,7 +114,7 @@ def is_valid_parameter_type(expected_type: ParameterType, value: Any) -> bool:
                 if (
                     not is_valid_parameter_type(ParameterType.CSIPAusReadingType, reading_type)
                     or not isinstance(reading_vals, list)
-                    or not all((is_valid_parameter_type(ParameterType.Float, rv) for rv in reading_vals))
+                    or not all(is_valid_parameter_type(ParameterType.Float, rv) for rv in reading_vals)
                 ):
                     return False
 

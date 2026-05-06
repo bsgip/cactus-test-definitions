@@ -26,7 +26,7 @@ class Event:
     parameters: dict[str, Any]  # Any parameters to the event listener
     checks: list[Check] | None = None  # This event will be blocked from triggering if any of these checks return False
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Some parameter values might contain variable expressions (eg: a string "$now") that needs to be replaced
         with an parsed Expression object instead."""
         for k, v in self.parameters.items():

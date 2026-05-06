@@ -129,7 +129,7 @@ def snake_to_camel(snake: str) -> str:
     return temp[0].lower() + temp[1:]
 
 
-def named_variable_repr(named_var: NamedVariableType) -> str:
+def named_variable_repr(named_var: NamedVariableType) -> str:  # noqa: C901
     """Takes named variable enum and turns its name into its recognisable 2030.5 form"""
     name = named_var.name
     if len(name.split("_")) == 1:
@@ -236,10 +236,10 @@ def parse_time_delta(var_body: str) -> timedelta:
 
     try:
         number = float(number_string)
-    except ValueError:
+    except ValueError as err:
         raise UnparseableVariableExpressionError(
             f"{var_body} can't be parsed into a timedelta. Bad number {number_string}"
-        )
+        ) from err
 
     if time_unit_string in {"day", "days"}:
         return timedelta(days=number)
@@ -255,7 +255,7 @@ def parse_time_delta(var_body: str) -> timedelta:
         )
 
 
-def parse_unary_expression(token: Token) -> Constant | NamedVariable:
+def parse_unary_expression(token: Token) -> Constant | NamedVariable:  # noqa: C901
     """Parses a unary expression from a variable body"""
 
     if token.type == tokenize.NAME:
@@ -328,8 +328,8 @@ def parse_unary_expression(token: Token) -> Constant | NamedVariable:
                 return Constant(float(token.string))
             else:
                 return Constant(int(token.string))
-    except ValueError:
-        raise UnparseableVariableExpressionError(f"'{token.string}' can't be converted to a number")
+    except ValueError as err:
+        raise UnparseableVariableExpressionError(f"'{token.string}' can't be converted to a number") from err
 
     if token.type == tokenize.STRING:
         return Constant(parse_time_delta(token.string))
@@ -382,8 +382,8 @@ def parse_variable_expression_body(var_body: str, param_key: str | None) -> Name
             for t in tokenize.generate_tokens(StringIO(var_body).readline)
             if t.type in {tokenize.NUMBER, tokenize.OP, tokenize.STRING, tokenize.NAME}
         ]
-    except tokenize.TokenError as exc:
-        raise UnparseableVariableExpressionError(f"Error tokenizing '{var_body}': {exc}")
+    except tokenize.TokenError as err:
+        raise UnparseableVariableExpressionError(f"Error tokenizing '{var_body}'") from err
 
     if len(var_tokens) == 1:
         return parse_unary_expression(var_tokens[0])
@@ -393,7 +393,7 @@ def parse_variable_expression_body(var_body: str, param_key: str | None) -> Name
         raise UnparseableVariableExpressionError(f"Unable to parse {var_body} into a simple binary/unary expression")
 
 
-def try_extract_variable_expression(body: Any) -> str | None:
+def try_extract_variable_expression(body: Any) -> str | None:  # noqa: ANN401
     """Checks to see if a variable body (of any type) can be parsed by parse_variable_expression_body. If it can,
     it will be returned as a string. Otherwise None will be returned
 
@@ -448,7 +448,7 @@ def try_extract_variable_expression(body: Any) -> str | None:
     return variable_expression
 
 
-def is_resolvable_variable(v: Any) -> bool:
+def is_resolvable_variable(v: Any) -> bool:  # noqa: ANN401
     """Returns True if the supplied value is a variable definition that requires resolving"""
     return isinstance(v, NamedVariable) or isinstance(v, Expression) or isinstance(v, Constant)
 
