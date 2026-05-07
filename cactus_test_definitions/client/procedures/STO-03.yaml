@@ -28,21 +28,21 @@ Preconditions:
       parameters:
         start: $(now + '300 seconds')
         duration_seconds: 900
-        opModStorageTargetW: $(rtgMaxDischargeRateW)
-        opModExpLimW: $(2 * rtgMaxDischargeRateW)
+        opModStorageTargetW: $(setMaxDischargeRateW)
+        opModExpLimW: $(2 * setMaxDischargeRateW)
   checks:
     - type: end-device-contents
       parameters: {}
     - type: der-capability-contents
       parameters: 
-        rtgMaxChargeRateW: "$(this == rtgMaxVA)"
-        rtgMaxDischargeRateW: "$(this == rtgMaxVA)"
+        rtgMaxChargeRateW: "$(this <= rtgMaxVA)"
+        rtgMaxDischargeRateW: "$(this <= rtgMaxVA)"
         vppModesSupported_set: "01"
         doeModesSupported_set: "01"
     - type: der-settings-contents
       parameters:
-        setMaxChargeRateW: "$(this == rtgMaxVA)"
-        setMaxDischargeRateW: "$(this == rtgMaxVA)"
+        setMaxChargeRateW: "$(this == setMaxVA)"
+        setMaxDischargeRateW: "$(this == setMaxVA)"
         vppModesEnabled_set: "01"
         doeModesEnabled_set: "01" 
     - type: readings-der-stored-energy
