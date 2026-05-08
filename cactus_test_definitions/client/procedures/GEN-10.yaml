@@ -1012,11 +1012,10 @@ Steps:
   WAIT-OBSERVE-DERP-1-6-DEFAULTS:
     instructions:
       - The device should ramp to DERP 1 DefaultDERControl opModExpLimW = 50% (as per TS 5573 [ee])
-      - Click Proceed AFTER the DER is exporting at the correct limit. 
     event:
-      type: proceed
+      type: wait
       parameters:
-        timeout_seconds: 300 # End test after 5 mins if proceed not pressed
+        duration_seconds: 300
     actions:
       - type: remove-steps
         parameters:
