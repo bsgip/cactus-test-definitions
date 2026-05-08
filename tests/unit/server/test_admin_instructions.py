@@ -59,10 +59,11 @@ def test_admin_instructions_parse_and_validate():
     # Parsing succeeds and validates
     assert step.repeat_until_pass is True
     assert step.admin_instructions is not None
+    assert step.admin_instructions is not None
     assert len(step.admin_instructions) == 2
 
     # check types
-    instruction_ensure, instruction_create = tp.steps[0].admin_instructions
+    instruction_ensure, instruction_create = step.admin_instructions
     assert instruction_ensure.type == "ensure-end-device"
     assert instruction_ensure.parameters == {"registered": True, "has_der_list": True}
     assert instruction_create.type == "create-default-der-control"
@@ -72,6 +73,7 @@ def test_admin_instructions_variable_expression_parsed():
     """Variable expressions in admin_instruction parameters are resolved to Expression objects,
     matching the same behaviour as Action parameters."""
     tp = parse_test_procedure(S_ALL_21_WITH_ADMIN_INSTRUCTIONS)
+    assert tp.steps[0].admin_instructions is not None and len(tp.steps[0].admin_instructions) > 1
     ai_create = tp.steps[0].admin_instructions[1]
 
     opmod = ai_create.parameters["opModImpLimW"]

@@ -291,6 +291,7 @@ def test_resource_tags_unique(tp_id: TestProcedureId):
         tags = collect_action_param_values(tp, action_name, param_name)
         seen: set[str] = set()
         for tag in tags:
+            assert tag is not None
             assert tag not in seen, f"{tp_id}: duplicate {action_name} {param_name} {tag!r}"
             seen.add(tag)
 

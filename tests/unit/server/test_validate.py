@@ -26,7 +26,7 @@ def test_each_step_id_unique(tp_id: TestProcedureId):
 
 
 @pytest.mark.parametrize("tp_id", TestProcedureId)
-def test_each_alias_defined(tp_id: str):
+def test_each_alias_defined(tp_id: TestProcedureId):
     """Ensures that each test procedure's steps that have actions using an alias... define those aliases in advance"""
 
     tp = get_test_procedure(tp_id)
@@ -54,10 +54,12 @@ def test_each_alias_defined(tp_id: str):
             sub_id = None
 
         if step.action.type == UPSERT_MUP_ACTION:
+            assert mup_id is not None
             mup_aliases_found.add(mup_id)
         elif step.action.type == INSERT_READING_ACTION:
             assert mup_id and (mup_id in mup_aliases_found), "mup_id hasn't been defined yet."
         elif step.action.type == CREATE_SUB_ACTION:
+            assert sub_id is not None
             sub_aliases_found.add(sub_id)
         elif step.action.type == DELETE_SUB_ACTION:
             assert sub_id and (sub_id in sub_aliases_found), "sub_id hasn't been defined yet."

@@ -173,11 +173,15 @@ def parse_test_procedure(yaml_contents: str) -> TestProcedure:
 
     This will ensure the YAML parser will use all the "strict" extensions to reduce the incidence of errors"""
 
-    return TestProcedure.from_yaml(
+    tp = TestProcedure.from_yaml(
         yaml_contents,
         decoder=yaml.load,  # type: ignore
         Loader=UniqueKeyLoader,
     )
+    if isinstance(tp, list):
+        raise ValueError("Expected a singleton - not a list")
+
+    return tp
 
 
 def get_yaml_contents(test_procedure_id: TestProcedureId) -> str:

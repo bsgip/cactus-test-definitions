@@ -43,6 +43,7 @@ dev = [
   "bandit",
   "mypy",
   "ruff",
+  "ty",
   "tox",
   "python-dotenv[cli]",
   "types-PyYAML",
