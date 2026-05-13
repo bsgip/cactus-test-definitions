@@ -1,4 +1,4 @@
-Description: Default Controls – Import Limit
+Description: Default Controls – Load Limit
 Category: Control
 Classes:
   # Note - L is explicitly omitted, this test is ONLY for subscription clients who ALSO certify against L class
