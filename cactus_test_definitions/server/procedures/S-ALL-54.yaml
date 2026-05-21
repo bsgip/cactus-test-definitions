@@ -49,8 +49,7 @@ Steps:
         resource: EndDevice
         expect_rejection: true
 
-  # Wait for the access to be granted
-  - id: 1A - CLIENT_NEW ENABLE ACCESS
+  - id: 1 - CLIENT_NEW ENABLE ACCESS
     client: client_new
     use_client_context: client_current
     repeat_until_pass: true
@@ -59,15 +58,6 @@ Steps:
         client: client_new
         parameters:
           granted: true
-    action:
-      type: refresh-resource
-      parameters:
-        resource: EndDevice
-
-
-  # Ensure that the client_current access is preserved
-  - id: 1B - CLIENT_CURRENT RETAIN ACCESS
-    client: client_current
     action:
       type: refresh-resource
       parameters:
