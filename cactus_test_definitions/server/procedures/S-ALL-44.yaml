@@ -25,98 +25,122 @@ Steps:
         parameters:
           status: scheduled
           duration_seconds: 60
+          opModExpLimW: $(setMaxW * 0.1)
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
+          opModExpLimW: $(setMaxW * 0.6)
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
+          opModExpLimW: $(setMaxW * 0.3)
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
+          opModExpLimW: $(setMaxW * 0.85)
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
+          opModExpLimW: $(setMaxW * 0.2)
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
+          opModExpLimW: $(setMaxW * 0.75)
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
+          opModExpLimW: $(setMaxW * 0.4)
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
+          opModExpLimW: $(setMaxW * 0.95)
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
+          opModExpLimW: $(setMaxW * 0.15)
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
+          opModExpLimW: $(setMaxW * 0.55)
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
+          opModExpLimW: $(setMaxW * 1.0)
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
+          opModExpLimW: $(setMaxW * 0.35)
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
+          opModExpLimW: $(setMaxW * 0.8)
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
+          opModExpLimW: $(setMaxW * 0.05)
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
+          opModExpLimW: $(setMaxW * 0.65)
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
+          opModExpLimW: $(setMaxW * 0.25)
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
+          opModExpLimW: $(setMaxW * 0.9)
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
+          opModExpLimW: $(setMaxW * 0.45)
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
+          opModExpLimW: $(setMaxW * 0.7)
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
+          opModExpLimW: $(setMaxW * 0.1)
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
+          opModExpLimW: $(setMaxW * 0.5)
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
+          opModExpLimW: $(setMaxW * 0.8)
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
+          opModExpLimW: $(setMaxW * 0.3)
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
+          opModExpLimW: $(setMaxW * 0.6)
     action:
       type: discovery
       parameters:
