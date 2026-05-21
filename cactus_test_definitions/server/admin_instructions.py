@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from enum import StrEnum
 from typing import Any
 
-from cactus_test_definitions.errors import TestProcedureDefinitionError
 from cactus_test_definitions.parameters import (
     ParameterSchema,
     ParameterType,
@@ -120,7 +119,6 @@ ADMIN_INSTRUCTION_PARAMETER_SCHEMA: dict[AdminInstructionType, dict[str, Paramet
         "rate_seconds": ParameterSchema(True, ParameterType.Integer),
     },
 }
-VALID_ADMIN_INSTRUCTION_NAMES: set[str] = {t.value for t in AdminInstructionType}
 
 
 def validate_admin_instruction_parameters(procedure_name: str, step_name: str, instruction: AdminInstruction) -> None:
@@ -128,12 +126,5 @@ def validate_admin_instruction_parameters(procedure_name: str, step_name: str, i
 
     raises TestProcedureDefinitionError on failure"""
     location = f"{procedure_name}.step[{step_name}].admin_instruction[{instruction.type}]"
-
-    parameter_schema = ADMIN_INSTRUCTION_PARAMETER_SCHEMA.get(instruction.type, None)
-    if parameter_schema is None:
-        raise TestProcedureDefinitionError(
-            f"{location} has an invalid admin instruction type '{instruction.type}'. "
-            f"Valid types: {VALID_ADMIN_INSTRUCTION_NAMES}"
-        )
-
+    parameter_schema = ADMIN_INSTRUCTION_PARAMETER_SCHEMA[instruction.type]
     validate_parameters(location, instruction.parameters, parameter_schema)
