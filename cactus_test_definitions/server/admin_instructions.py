@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from enum import StrEnum
 from typing import Any
 
 from cactus_test_definitions.errors import TestProcedureDefinitionError
@@ -10,13 +11,30 @@ from cactus_test_definitions.parameters import (
 from cactus_test_definitions.variable_expressions import parse_variable_expression_body, try_extract_variable_expression
 
 
+class AdminInstructionType(StrEnum):
+    ENSURE_END_DEVICE = "ensure-end-device"
+    ENSURE_FSA = "ensure-fsa"
+    ENSURE_DER_PROGRAM = "ensure-der-program"
+    ENSURE_DER_CONTROL_LIST = "ensure-der-control-list"
+    ENSURE_MUP_LIST_EMPTY = "ensure-mup-list-empty"
+    CREATE_DER_CONTROL = "create-der-control"
+    CREATE_DEFAULT_DER_CONTROL = "create-default-der-control"
+    CLEAR_DER_CONTROLS = "clear-der-controls"
+    SET_POLL_RATE = "set-poll-rate"
+    SET_POST_RATE = "set-post-rate"
+    SET_CLIENT_ACCESS = "set-client-access"
+
+
 @dataclass
 class AdminInstruction:
-    type: str
+    type: AdminInstructionType
     client: str | None = None  # The RequiredClient.id this instruction refers to. If None - applies to the 0th client
     parameters: dict[str, Any] = None  # type: ignore # Forced in __post_init__
 
     def __post_init__(self) -> None:
+        if not isinstance(self.type, AdminInstructionType):
+            self.type = AdminInstructionType(self.type)
+
         if self.parameters is None:
             self.parameters = {}
 
@@ -28,42 +46,42 @@ class AdminInstruction:
 
 # The parameter schema for each admin instruction type, keyed by type name.
 # Admin instructions describe desired server state to be sent to the server's admin API.
-ADMIN_INSTRUCTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
+ADMIN_INSTRUCTION_PARAMETER_SCHEMA: dict[AdminInstructionType, dict[str, ParameterSchema]] = {
     # Ensure an EndDevice registration exists (or does not exist) for the client.
     # has_der_list=True ensures the DER record includes DERCapabilityLink, DERSettingsLink, DERStatusLink.
-    "ensure-end-device": {
+    AdminInstructionType.ENSURE_END_DEVICE: {
         "registered": ParameterSchema(True, ParameterType.Boolean),
         "client_type": ParameterSchema(False, ParameterType.String),  # "device" or "aggregator"
         "has_der_list": ParameterSchema(False, ParameterType.Boolean),
         "has_registration_link": ParameterSchema(False, ParameterType.Boolean),
     },
     # Ensure the MirrorUsagePointList is empty (no registered MUPs).
-    "ensure-mup-list-empty": {},
+    AdminInstructionType.ENSURE_MUP_LIST_EMPTY: {},
     # Ensure a FunctionSetAssignment is attached to the client's EndDevice.
     # annotation is a label used to reference this FSA from later instructions (e.g. in ensure-der-program).
-    "ensure-fsa": {
+    AdminInstructionType.ENSURE_FSA: {
         "annotation": ParameterSchema(False, ParameterType.String),
         "primacy": ParameterSchema(False, ParameterType.Integer),
     },
     # Ensure a DERProgram exists within the FSA identified by fsa_annotation.
-    "ensure-der-program": {
+    AdminInstructionType.ENSURE_DER_PROGRAM: {
         "fsa_annotation": ParameterSchema(False, ParameterType.String),
         "primacy": ParameterSchema(False, ParameterType.Integer),
     },
     # Grant or revoke a client's access to the aggregator tenancy under test.
     # Covers the ENABLE/REMOVE ACCESS pattern from multi-client certificate rotation tests.
-    "set-client-access": {
+    AdminInstructionType.SET_CLIENT_ACCESS: {
         "granted": ParameterSchema(True, ParameterType.Boolean),
     },
     # Ensure the DERControlList is accessible to the client, optionally requiring it to be subscribable.
-    "ensure-der-control-list": {
+    AdminInstructionType.ENSURE_DER_CONTROL_LIST: {
         "subscribable": ParameterSchema(False, ParameterType.Boolean),
     },
     # Create a DERControl on the server. All control mode parameters are optional;
     # at least one should be provided. Variable expressions (e.g. $(setMaxW * 0.3)) are supported.
     # status: "active" (default) sets startTime in the past; "scheduled" sets startTime in the future.
     # Multiple "scheduled" controls should be stacked sequentially (non-overlapping) by the implementation.
-    "create-der-control": {
+    AdminInstructionType.CREATE_DER_CONTROL: {
         "status": ParameterSchema(True, ParameterType.String),  # "active" or "scheduled"
         "opModExpLimW": ParameterSchema(False, ParameterType.Float),
         "opModImpLimW": ParameterSchema(False, ParameterType.Float),
@@ -79,7 +97,7 @@ ADMIN_INSTRUCTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "start_offset_seconds": ParameterSchema(False, ParameterType.Integer),
     },
     # Create or replace the DefaultDERControl on the server. Variable expressions are supported.
-    "create-default-der-control": {
+    AdminInstructionType.CREATE_DEFAULT_DER_CONTROL: {
         "opModExpLimW": ParameterSchema(False, ParameterType.Float),
         "opModImpLimW": ParameterSchema(False, ParameterType.Float),
         "opModGenLimW": ParameterSchema(False, ParameterType.Float),
@@ -88,21 +106,21 @@ ADMIN_INSTRUCTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "primacy": ParameterSchema(False, ParameterType.Integer),
     },
     # Cancel active DERControls. If all=True, cancel all active controls; otherwise cancel the most recent.
-    "clear-der-controls": {
+    AdminInstructionType.CLEAR_DER_CONTROLS: {
         "all": ParameterSchema(False, ParameterType.Boolean),
     },
     # Set the poll rate for a given CSIP-Aus resource (e.g. DERProgramList, EndDeviceList).
-    "set-poll-rate": {
+    AdminInstructionType.SET_POLL_RATE: {
         "resource": ParameterSchema(True, ParameterType.CSIPAusResource),
         "rate_seconds": ParameterSchema(True, ParameterType.Integer),
     },
     # Set the post rate for a MirrorUsagePoint resource.
-    "set-post-rate": {
+    AdminInstructionType.SET_POST_RATE: {
         "resource": ParameterSchema(True, ParameterType.CSIPAusResource),
         "rate_seconds": ParameterSchema(True, ParameterType.Integer),
     },
 }
-VALID_ADMIN_INSTRUCTION_NAMES: set[str] = set(ADMIN_INSTRUCTION_PARAMETER_SCHEMA.keys())
+VALID_ADMIN_INSTRUCTION_NAMES: set[str] = {t.value for t in AdminInstructionType}
 
 
 def validate_admin_instruction_parameters(procedure_name: str, step_name: str, instruction: AdminInstruction) -> None:
