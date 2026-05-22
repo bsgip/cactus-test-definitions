@@ -18,22 +18,24 @@ jobs:
         
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/checkout@v6
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
         with:
           python-version: ${{ matrix.pyver }}
-      - name: Install linters
-        run: pip install .[dev,test]
+
+      - name: Install Dependencies
+        run: uv sync --extra dev --extra test
 
       - name: Lint (ruff)
-        run: ruff check .
+        run: uv run ruff check .
       - name: Format check
-        run: ruff format --check .
+        run: uv run ruff format --check .
       - name: Typing (ty)
-        run: ty check .
+        run: uv run ty check .
       - name: Security scan (bandit)
-        run: bandit -c pyproject.toml -r src/
+        run: uv run bandit -c pyproject.toml -r src/
 
   # This will run pytest against the specified version
   pytest:
@@ -44,18 +46,17 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
         with:
           python-version: ${{ matrix.pyver }}
-
+          
       - name: Install Dependencies
-        run: |
-          pip install .[test]
+        run: uv sync --extra test
 
       - name: Run Pytest
-        run: pytest
+        run: uv run pytest -n auto
 
       
