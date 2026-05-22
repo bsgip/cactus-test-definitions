@@ -143,9 +143,24 @@ Steps:
           parameters: 
             genConnectStatus_bit2: true
     actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - PROCEED-OBSERVE-DER
       - type: remove-steps
         parameters:
           steps:
             - PUT-DERSTATUS-REENERGIZE
 
-  
+  PROCEED-OBSERVE-DER:
+    instructions:
+      - The device should now be observed ramping import/export after reconnecting
+    event:
+      type: proceed
+      parameters:
+        timeout_seconds: 300
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - PROCEED-OBSERVE-DER

@@ -16,12 +16,20 @@ This repository also contains a small number of tests that verify that test defi
 First install the development and testing dependencies with,
 
 ```sh
+# uv
+uv sync --all-extras
+
+# pip
 python -m pip install --editable .[dev,test]
 ```
 
 Once installed, run the tests with,
 
 ```sh
+# uv
+uv run pytest
+
+# pip
 pytest
 ```
 

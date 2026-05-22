@@ -41,7 +41,7 @@ Preconditions:
     - DER is operating at least 50% if its rated power.
 
 Steps:
-  
+
   # (precondition)
   PRECONDITION-STARTUP:
     instructions:
@@ -148,7 +148,7 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-UPDATED-DERC-2
+            - POLL-DERC-1
             - POST-RESPONSE-STARTED
       - type: remove-steps
         parameters:
@@ -157,23 +157,16 @@ Steps:
 
 
   # (e)
-  GET-UPDATED-DERC-2:
+  POLL-DERC-1:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/fsa/1/derp
+        endpoint: /edev/1/fsa/1/derp/1/derc
     actions:
-      - type: create-der-control
-        parameters:
-          start: $(now)
-          duration_seconds: 900
-          opModExpLimW: $(setMaxW * 0.5)
-          opModImpLimW: $(setMaxW * 0.5)
-          tag: DERC2
       - type: remove-steps
         parameters:
           steps:
-            - GET-UPDATED-DERC-2
+            - POLL-DERC-1
 
   # (e)
   POST-RESPONSE-STARTED:
@@ -187,7 +180,7 @@ Steps:
           parameters: 
             latest: true
             status: 2
-            subject_tag: DERC2
+            subject_tag: DERC1
     actions:
       - type: remove-steps
         parameters:
