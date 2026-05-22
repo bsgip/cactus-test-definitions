@@ -89,6 +89,10 @@ class TestProcedureId(StrEnum):
     P_01 = "P-01"
     P_02 = "P-02"
 
+    # Alternate tests
+    ALT_ALL_29 = "ALT-ALL-29"
+    ALT_LOA_13 = "ALT-LOA-13"
+
     # Storage extension
     STO_01 = "STO-01"
     STO_02 = "STO-02"

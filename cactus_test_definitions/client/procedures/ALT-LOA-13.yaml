@@ -1,0 +1,74 @@
+Description: Tracking import-limit through variable load (EVSE Alternate - import limit increased by 20%)
+Category: DER
+Classes:
+  - DER-L
+
+TargetVersions:
+  - v1.2
+  - v1.3-beta/storage
+  - v1.3
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+
+Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60 
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+
+  checks:
+    - type: end-device-contents
+      parameters: {}
+    - type: der-settings-contents
+      parameters: {}
+  actions:
+    - type: create-der-control
+      parameters:
+        start: $(now)
+        duration_seconds: 60
+        opModImpLimW: $(setMaxW * 2)
+        tag: DERC1
+    - type: create-der-control
+      parameters:
+        start: $(now + '1 minute')
+        duration_seconds: 420
+        opModImpLimW: $(setMaxW * 0.4)
+        tag: DERC2
+  instructions:
+    - Connect a test load electrically in parallel with the DER.
+    - Set the load to consume 0W.
+
+Steps:
+
+  # This test is purely following a sequence of DERControls. It's expected that the following events occurs out of band:
+  # at t=0 - Test load is consuming 0W
+  # at t=120s - Test load is consuming 20% of setMaxW
+  # at t=240s - Test load is consuming 10% of setMaxW
+  # at t=360s - Test load is consuming 0W
+  #
+  # Validation MUST be performed by power meter to ensure that the DER is adjusting its power in response to changing 
+  # loads
+  WAIT-TEST-END:
+    instructions:
+      - At t=120s, set the load to consume 20% of the DER's rated active power.
+      - At t=240s, set the load to consume 10% of the DER's rated active power.
+      - At t=360s, set the load to consume 0W.
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 500
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-TEST-END
+      - type: finish-test
+        parameters: {}
