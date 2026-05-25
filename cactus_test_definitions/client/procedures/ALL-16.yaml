@@ -27,9 +27,15 @@ Preconditions:
         der_list_poll_seconds: 900 # Set this to a large value - testing they respond due to notification - not polling
         derp_list_poll_seconds: 900 # Set this to a large value - testing they respond due to notification - not polling
         mup_post_seconds: 60
+    - type: create-der-program
+      parameters:
+        primacy: 0
   checks:
     - type: end-device-contents
       parameters: {}
+    - type: subscription-contents
+      parameters:
+        subscribed_resource: /edev/1/derp/1/derc
   actions:
     # (a, b)
     - type: create-der-control
