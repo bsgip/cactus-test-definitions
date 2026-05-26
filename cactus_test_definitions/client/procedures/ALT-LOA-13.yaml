@@ -1,7 +1,7 @@
 Description: Tracking import-limit through variable load (EVSE Alternate - import limit increased by 20%)
 Category: DER
 Classes:
-  - DER-L
+  - DER-L-ALT
 
 TargetVersions:
   - v1.2

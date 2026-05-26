@@ -1,7 +1,7 @@
 Description: Validate Operating Telemetry (EVSE Alternate - import limits increased by 20%)
 Category: DER
 Classes:
-  - DER-A
+  - DER-A-ALT
 
 TargetVersions:
   - v1.2
