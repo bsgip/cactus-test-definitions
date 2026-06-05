@@ -44,7 +44,7 @@ Preconditions:
       parameters:
         start: $(now)
         duration_seconds: 300
-        opModGenLimW: $(setMaxW * 2)
+        opModGenLimW: $(maxExportW * 2)
 
   instructions:
     - EndDevice should be registered with active subscriptions before starting.
