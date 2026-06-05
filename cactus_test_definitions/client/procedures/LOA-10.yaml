@@ -120,7 +120,7 @@ Steps:
       - type: set-default-der-control
         parameters:
           derp_id: 1
-          opModImpLimW: $(setMaxW * 0.3)
+          opModImpLimW: $(maxImportW * 0.3)
       - type: enable-steps
         parameters:
           steps:
@@ -159,7 +159,7 @@ Steps:
         parameters:
           start: $(now)
           duration_seconds: 600
-          opModImpLimW: $(setMaxW * 2)
+          opModImpLimW: $(maxImportW * 2)
           fsa_id: 2
           primacy: 2
           tag: DERC1
@@ -339,7 +339,7 @@ Steps:
         parameters:
           start: $(now)
           duration_seconds: 300
-          opModImpLimW: $(setMaxW * 2)
+          opModImpLimW: $(maxImportW * 2)
           fsa_id: 2
           primacy: 2
           tag: DERC3
@@ -480,7 +480,7 @@ Steps:
         parameters:
           start: $(now)
           duration_seconds: 1200 # 20 minutes
-          opModImpLimW: $(setMaxW * 2)
+          opModImpLimW: $(maxImportW * 2)
           fsa_id: 2
           primacy: 2
           tag: DERC5
@@ -602,7 +602,7 @@ Steps:
         parameters:
           start: $(now)
           duration_seconds: 300 # 5 minutes
-          opModImpLimW: $(setMaxW * 0.5)
+          opModImpLimW: $(maxImportW * 0.5)
           fsa_id: 2
           primacy: 2
           tag: DERC6
@@ -738,8 +738,8 @@ Steps:
         parameters:
           start: $(now)
           duration_seconds: 300
-          opModImpLimW: $(setMaxW * 0.5)
-          opModLoadLimW: $(setMaxW * 0.3)
+          opModImpLimW: $(maxImportW * 0.5)
+          opModLoadLimW: $(maxImportW * 0.3)
           fsa_id: 2
           primacy: 2
           tag: DERC8
@@ -843,7 +843,7 @@ Steps:
         parameters:
           start: $(now)
           duration_seconds: 300
-          opModLoadLimW: $(setMaxW * 0.5)
+          opModLoadLimW: $(maxImportW * 0.5)
           fsa_id: 1
           primacy: 1
           tag: DERC9
@@ -880,7 +880,7 @@ Steps:
         parameters:
           start: $(now)
           duration_seconds: 300
-          opModImpLimW: $(setMaxW * 0.2)
+          opModImpLimW: $(maxImportW * 0.2)
           fsa_id: 2
           primacy: 2
           tag: DERC10
@@ -978,7 +978,7 @@ Steps:
       - type: set-default-der-control
         parameters:
           derp_id: 1
-          opModImpLimW: $(setMaxW * 0.5)
+          opModImpLimW: $(maxImportW * 0.5)
       - type: remove-steps
         parameters:
           steps:
@@ -996,7 +996,7 @@ Steps:
       - type: set-default-der-control
         parameters:
           derp_id: 6
-          opModImpLimW: $(setMaxW * 0.2)
+          opModImpLimW: $(maxImportW * 0.2)
       - type: cancel-active-der-controls
         parameters: {}
       - type: enable-steps

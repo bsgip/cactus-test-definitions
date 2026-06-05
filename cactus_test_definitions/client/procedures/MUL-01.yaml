@@ -37,8 +37,8 @@ Preconditions:
       parameters:
         start: $(now)
         duration_seconds: 900
-        opModExpLimW: $(setMaxW * 2)
-        opModImpLimW: $(setMaxW * 2)
+        opModExpLimW: $(maxExportW * 2)
+        opModImpLimW: $(maxImportW * 2)
 
 Steps:
   

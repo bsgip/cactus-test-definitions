@@ -44,7 +44,7 @@ Preconditions:
       parameters:
         start: $(now)
         duration_seconds: 300
-        opModLoadLimW: $(setMaxW * 2)
+        opModLoadLimW: $(maxImportW * 2)
   instructions:
     - EndDevice should be registered with active subscriptions before starting.
     - DER shall be consuming at least 50% of its active power rating.
