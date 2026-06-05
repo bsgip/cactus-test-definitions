@@ -60,8 +60,8 @@ Steps:
         parameters:
           start: $(now)
           duration_seconds: 120
-          opModExpLimW: $(setMaxW * 2)
-          opModImpLimW: $(setMaxW * 2)
+          opModExpLimW: $(maxExportW * 2)
+          opModImpLimW: $(maxImportW * 2)
       - type: enable-steps
         parameters:
           steps:
@@ -83,8 +83,8 @@ Steps:
         parameters:
           start: $(now)
           duration_seconds: 120
-          opModExpLimW: $(setMaxW * 0.3)
-          opModImpLimW: $(setMaxW * 0.3)
+          opModExpLimW: $(maxExportW * 0.3)
+          opModImpLimW: $(maxImportW * 0.3)
           pow_10_multipliers: 2
       - type: enable-steps
         parameters:
@@ -106,8 +106,8 @@ Steps:
         parameters:
           start: $(now)
           duration_seconds: 120
-          opModExpLimW: $(setMaxW * 0.4)
-          opModImpLimW: $(setMaxW * 0.4)
+          opModExpLimW: $(maxExportW * 0.4)
+          opModImpLimW: $(maxImportW * 0.4)
           pow_10_multipliers: 1
       - type: enable-steps
         parameters:
