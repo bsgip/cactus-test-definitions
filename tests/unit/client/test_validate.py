@@ -427,3 +427,13 @@ def test_endpoints_match_envoy(tp_id: TestProcedureId):
 
             match_found = any([does_endpoint_match(actual_endpoint, pattern) for pattern in valid_envoy_format_strings])
             assert match_found, f"Couldn't match '{actual_endpoint}' to a known envoy path"
+
+
+@pytest.mark.parametrize("tp_id", list(TestProcedureId))
+def test_disallow_immediate_start_with_checks(tp_id: TestProcedureId):
+    """Ensures that a test cannot have both immediate_start AND a precondition check. The combination of these
+    can (and likely will) result in the test being impossible to initialise"""
+
+    tp = get_test_procedure(tp_id)
+    if tp.preconditions is not None and tp.preconditions.immediate_start:
+        assert not tp.preconditions.checks, "do NOT define checks if immediate_start is True"
