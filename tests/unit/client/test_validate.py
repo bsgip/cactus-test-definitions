@@ -1,8 +1,11 @@
+import re
 from pathlib import Path
 from typing import Any
 
 import pytest
+from envoy_schema.server.schema import uri as envoy_uris
 
+from cactus_test_definitions.client import EVENT_PARAMETER_SCHEMA, Step
 from cactus_test_definitions.client.actions import ACTION_PARAMETER_SCHEMA, Action
 from cactus_test_definitions.client.checks import CHECK_PARAMETER_SCHEMA, Check
 from cactus_test_definitions.client.test_procedures import (
@@ -75,6 +78,27 @@ def collect_check_param_values(tp: TestProcedure, check_type: str, param_name: s
     assert param_name in CHECK_PARAMETER_SCHEMA[check_type], "Sanity check to catch typos / changes in definitions"
 
     return [ps.get(param_name) for ps in collect_check_params(tp, check_type) if param_name in ps]
+
+
+def collect_event_params(tp: TestProcedure, event_type: str) -> list[dict[str, Any]]:
+    """Collects all parameters for a specific check across all steps and preconditions."""
+
+    assert event_type in EVENT_PARAMETER_SCHEMA, "Sanity check to catch typos / changes in definitions"
+
+    all_steps: list[Step] = []
+    for step in tp.steps.values():
+        if step.event.type == event_type:
+            all_steps.append(step)
+    return [s.event.parameters or {} for s in tp.steps.values() if s.event.type == event_type]
+
+
+def collect_event_param_values(tp: TestProcedure, event_type: str, param_name: str) -> list[Any | None]:
+    """Collects all values of an event's parameter across all steps."""
+
+    assert event_type in EVENT_PARAMETER_SCHEMA, "Sanity check to catch typos / changes in definitions"
+    assert param_name in EVENT_PARAMETER_SCHEMA[event_type], "Sanity check to catch typos / changes in definitions"
+
+    return [ps.get(param_name) for ps in collect_event_params(tp, event_type) if param_name in ps]
 
 
 @pytest.mark.parametrize(
@@ -342,3 +366,64 @@ def test_invalid_parameter_combinations(tp_id: TestProcedureId):
         if derp_tag is not None:
             assert PARAM_PRIMACY not in ps, f"Cannot specify '{PARAM_PRIMACY}' as '{PARAM_DERP_TAG}' will override it"
             assert PARAM_FSA_ID not in ps, f"Cannot specify '{PARAM_FSA_ID}' as '{PARAM_DERP_TAG}' will override it"
+
+
+# A path component is treated as a wildcard only if it is ENTIRELY of the form
+# {text}, where text is any non-empty run of characters that isn't a path separator.
+_WILDCARD_PATTERN = re.compile(r"^\{[^/]+\}$")
+
+
+def does_endpoint_match(path: str, match: str) -> bool:
+    """Performs all logic for matching an "endpoint" to an incoming request's path.
+
+    A path component of the form '{name}' (the text inside the braces is arbitrary) acts
+    as a "wildcard" matching a single component of the path (a path component is part of
+    the path separated by '/'). It will NOT partially match.
+
+    eg:
+    match=/edev/{id}/derp/1   would match /edev/123/derp/1
+    match=/edev/1{id}3/derp/1 would NOT match /edev/123/derp/1
+
+    NOTE: This function expects paths WITHOUT any mount point prefix - those should be stripped before calling.
+    """
+    # Split into components up front so we can detect/compare wildcards
+    request_components = list(filter(None, path.split("/")))  # Remove empty strings
+    match_components = list(filter(None, match.split("/")))  # Remove empty strings
+
+    # If there are no wildcard components, do an EXACT match
+    if not any(_WILDCARD_PATTERN.match(c) for c in match_components):
+        return path == match
+
+    # Otherwise we need to do a component by component comparison
+
+    # Must have same number of components for a match
+    if len(request_components) != len(match_components):
+        return False
+
+    # Compare each component
+    for request_component, match_component in zip(request_components, match_components, strict=True):
+        if not _WILDCARD_PATTERN.match(match_component) and request_component != match_component:
+            return False
+
+    return True
+
+
+@pytest.mark.parametrize("tp_id", list(TestProcedureId))
+def test_endpoints_match_envoy(tp_id: TestProcedureId):
+    valid_envoy_format_strings = [
+        value for name, value in vars(envoy_uris).items() if isinstance(value, str) and not name.startswith("_")
+    ]
+    assert len(valid_envoy_format_strings) > 10
+
+    tp = get_test_procedure(tp_id)
+    for event_type in [
+        "GET-request-received",
+        "POST-request-received",
+        "PUT-request-received",
+        "DELETE-request-received",
+    ]:
+        for actual_endpoint in collect_event_param_values(tp, event_type, "endpoint"):
+            assert isinstance(actual_endpoint, str)
+
+            match_found = any([does_endpoint_match(actual_endpoint, pattern) for pattern in valid_envoy_format_strings])
+            assert match_found, f"Couldn't match '{actual_endpoint}' to a known envoy path"

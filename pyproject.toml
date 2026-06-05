@@ -47,7 +47,7 @@ dev = [
   "python-dotenv[cli]",
   "types-PyYAML",
 ]
-test = ["pytest", "pytest-xdist", "assertical"]
+test = ["pytest", "pytest-xdist", "assertical", "envoy-schema"]
 docs = ["sphinx"]
 
 [tool.pytest.ini_options]
