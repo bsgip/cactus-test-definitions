@@ -34,8 +34,8 @@ Preconditions:
   actions:
     - type: set-default-der-control
       parameters:
-        opModExpLimW: $(setMaxW * 0.3)
-        opModImpLimW: $(setMaxW * 0.3)
+        opModExpLimW: $(maxExportW * 0.3)
+        opModImpLimW: $(maxImportW * 0.3)
         
   instructions:
     - DER is operating at least 50% if its rated power.
@@ -55,8 +55,8 @@ Steps:
         parameters:
           start: $(now)
           duration_seconds: 240
-          opModExpLimW: $(setMaxW * 2)
-          opModImpLimW: $(setMaxW * 2)
+          opModExpLimW: $(maxExportW * 2)
+          opModImpLimW: $(maxImportW * 2)
           tag: PRECONDITION
       - type: enable-steps
         parameters:
@@ -121,8 +121,8 @@ Steps:
         parameters:
           start: $(now)
           duration_seconds: 900
-          opModExpLimW: $(setMaxW * 0.5)
-          opModImpLimW: $(setMaxW * 0.5)
+          opModExpLimW: $(maxExportW * 0.5)
+          opModImpLimW: $(maxImportW * 0.5)
           tag: DERC1
       - type: enable-steps
         parameters:

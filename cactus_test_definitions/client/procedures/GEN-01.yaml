@@ -33,7 +33,7 @@ Preconditions:
       parameters:
         start: $(now)
         duration_seconds: 300
-        opModExpLimW: $(setMaxW * 2)
+        opModExpLimW: $(maxExportW * 2)
   instructions:
     - DER shall be generating at the connection point at least 50% of its active power rating.
     

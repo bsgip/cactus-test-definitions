@@ -34,13 +34,13 @@ Preconditions:
       parameters:
         start: $(now)
         duration_seconds: 60
-        opModImpLimW: $(setMaxW * 2)
+        opModImpLimW: $(maxImportW * 2)
         tag: DERC1
     - type: create-der-control
       parameters:
         start: $(now + '1 minute')
         duration_seconds: 420
-        opModImpLimW: $(setMaxW * 0.4)
+        opModImpLimW: $(maxImportW * 0.4)
         tag: DERC2
   instructions:
     - Connect a test load electrically in parallel with the DER.
