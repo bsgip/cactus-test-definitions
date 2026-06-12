@@ -27,30 +27,35 @@ Steps:
           opModExpLimW: $(setMaxW * 2)
           duration_seconds: 120
           randomizeStart_seconds: 60
+          start_offset_seconds: 60
       - type: create-der-control
         parameters:
           status: scheduled
           opModExpLimW: $(setMaxW * 2)
           duration_seconds: 120
           randomizeStart_seconds: 60
+          start_offset_seconds: 260
       - type: create-der-control
         parameters:
           status: scheduled
           opModExpLimW: $(setMaxW * 2)
           duration_seconds: 120
           randomizeStart_seconds: 60
+          start_offset_seconds: 460
       - type: create-der-control
         parameters:
           status: scheduled
           opModExpLimW: $(setMaxW * 2)
           duration_seconds: 120
           randomizeStart_seconds: 60
+          start_offset_seconds: 660
       - type: create-der-control
         parameters:
           status: scheduled
           opModExpLimW: $(setMaxW * 2)
           duration_seconds: 120
           randomizeStart_seconds: 60
+          start_offset_seconds: 860
     action:
       type: discovery
       parameters:
