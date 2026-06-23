@@ -244,6 +244,8 @@ The following are all the `NamedVariable` types currently implemented
 | `$rtgMinPFUnderExcited` | Resolves to last supplied `DERCapability.rtgMinPFUnderExcited` as a number. Raises exceptions if value hasn't been set, causing test to fail.
 | `$rtgMaxWh` | Resolves to last supplied `DERCapability.rtgMaxWh` as a number. Raises exceptions if value hasn't been set, causing test to fail.
 | `$setMinWh` | Resolves to the last supplied value to `DERSetting.setMinWh` as a number. Can raise exceptions if this value hasn't been set (which will trigger a test evaluation to fail)
+| `$maxImportW` |  Resolves to `DERSetting.setMaxChargeRateW` when the device declares it, otherwise falls back to the mandatory `DERSetting.setMaxW`. Allows directional import power limit (Watts) for devices with asymmetric import/export capability.
+| `$maxExportW` | Resolves to `DERSetting.setMaxDischargeRateW` when the device declares it, otherwise falls back to the mandatory `DERSetting.setMaxW`. Allows directional export power limit (Watts) for devices with asymmetric import/export capability.
 
 
 Placeholder variables can also be used in some rudimentary expressions to make variations on the returned value. For example:
