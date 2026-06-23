@@ -26,121 +26,145 @@ Steps:
           status: scheduled
           duration_seconds: 60
           opModExpLimW: $(setMaxW * 0.1)
+          start_offset_seconds: 60
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
           opModExpLimW: $(setMaxW * 0.6)
+          start_offset_seconds: 130
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
           opModExpLimW: $(setMaxW * 0.3)
+          start_offset_seconds: 200
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
           opModExpLimW: $(setMaxW * 0.85)
+          start_offset_seconds: 280
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
           opModExpLimW: $(setMaxW * 0.2)
+          start_offset_seconds: 350
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
           opModExpLimW: $(setMaxW * 0.75)
+          start_offset_seconds: 420
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
           opModExpLimW: $(setMaxW * 0.4)
+          start_offset_seconds: 490
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
           opModExpLimW: $(setMaxW * 0.95)
+          start_offset_seconds: 560
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
           opModExpLimW: $(setMaxW * 0.15)
+          start_offset_seconds: 630
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
           opModExpLimW: $(setMaxW * 0.55)
+          start_offset_seconds: 700
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
           opModExpLimW: $(setMaxW * 1.0)
+          start_offset_seconds: 770
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
           opModExpLimW: $(setMaxW * 0.35)
+          start_offset_seconds: 840
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
           opModExpLimW: $(setMaxW * 0.8)
+          start_offset_seconds: 910
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
           opModExpLimW: $(setMaxW * 0.05)
+          start_offset_seconds: 980
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
           opModExpLimW: $(setMaxW * 0.65)
+          start_offset_seconds: 1050
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
           opModExpLimW: $(setMaxW * 0.25)
+          start_offset_seconds: 1120
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
           opModExpLimW: $(setMaxW * 0.9)
+          start_offset_seconds: 1190
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
           opModExpLimW: $(setMaxW * 0.45)
+          start_offset_seconds: 1260
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
           opModExpLimW: $(setMaxW * 0.7)
+          start_offset_seconds: 1330
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
           opModExpLimW: $(setMaxW * 0.1)
+          start_offset_seconds: 1400
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
           opModExpLimW: $(setMaxW * 0.5)
+          start_offset_seconds: 1470
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
           opModExpLimW: $(setMaxW * 0.8)
+          start_offset_seconds: 1540
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
           opModExpLimW: $(setMaxW * 0.3)
+          start_offset_seconds: 1610
       - type: create-der-control
         parameters:
           status: scheduled
           duration_seconds: 60
           opModExpLimW: $(setMaxW * 0.6)
+          start_offset_seconds: 1680
     action:
       type: discovery
       parameters:
@@ -169,4 +193,3 @@ Steps:
           maximum_count: 10
           event_status: 0
           duration: 60
-  
