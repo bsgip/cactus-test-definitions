@@ -97,16 +97,20 @@ Preconditions:
     - type: set-default-der-control
       parameters:
         derp_id: 1
+        opModImpLimW: 0
         opModExpLimW: 0
         setGradW: 167 # hundredths of a percent - this is 1.67% / second
-    # These default controls are not explicitly in the standards (SA TS5573), but we are adding here to let the 
-    # client know to keep polling at, e.g., /edev/1/derp/6/dderc, which allows step-bb-ii to work without using notifications.
-    # Previously, polling at /edev/1/derp/6/dderc was expected without any defaults being set.
     - type: set-default-der-control
       parameters:
         derp_id: 6
-        opModExpLimW: 0 # Set to export to not interefere with import observations in witness test
+        opModImpLimW: 0
+        opModExpLimW: 0
         setGradW: 167 # hundredths of a percent - this is 1.67% / second
+
+# PLEASE NOTE: The ramp rates here of 167 (1.67%/s, or 100%/min) differ from the TS5573 test procedures which request setGradW = 27 (16%/min).
+# This helps shorten the test procedure for witness testing, but is also required because it is not possible to follow the test procedure entirely as written.
+# For example, in step e, it is specified that no more than 5 mins shall pass before DERC2 is created. However due to the long ramp rate, it would not be
+# possible to observe DERC1 at 100% before the new control took effect (1.5 min to receive via poll, 4.5 min to ramp 30-100%).
 
 Steps:
   
@@ -208,12 +212,14 @@ Steps:
           steps:
             - POST-DERC-1-RESPONSE-STARTED
 
-  # (e) Wait for a short period
+  # (e) Wait for a short period.
+  # It may take up to 1.5 mins to obtain the DERC1 control (poll /derc) after its creation.
+  # Then the ramp from 30% to 100% at setGradW = 100%/min adds approx 1 min extra.
   WAIT-DERC-1:
     event:
       type: wait
       parameters:
-        duration_seconds: 60
+        duration_seconds: 180
     actions:
       - type: enable-steps
         parameters:
@@ -234,7 +240,7 @@ Steps:
       - type: create-der-control
         parameters:
           start: $(now)
-          duration_seconds: 840 # Should run for 5 minutes after DERC 1 is due to expire
+          duration_seconds: 810 # Should run for 5 minutes after DERC 1 is due to expire (7 mins left of DERC1 + 1.5 mins for poll + 5)
           opModImpLimW: 0
           fsa_id: 1
           primacy: 1
@@ -1015,7 +1021,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 300
+        duration_seconds: 120
     actions:
       - type: remove-steps
         parameters:
