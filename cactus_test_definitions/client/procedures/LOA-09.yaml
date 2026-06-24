@@ -20,10 +20,10 @@ Preconditions:
         dcap_poll_seconds: 60
         edev_list_poll_seconds: 60
         fsa_list_poll_seconds: 60
-        der_list_poll_seconds: 60 
+        der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
-  checks: 
+  checks:
     - type: end-device-contents
       parameters: {}
     - type: der-settings-contents
@@ -34,12 +34,15 @@ Preconditions:
         primacy: 0
     - type: set-default-der-control
       parameters:
-        opModImpLimW: $(maxImportW * 0.3)
-  instructions: 
+        opModImpLimW: $(maxImportW * 0.3) # This is set by the LOA-09 test procedure.
+        opModExpLimW: 0 # From TS5573 table 12.4.4
+        setGradW: 27 # hundredths of a percent per second
+
+  instructions:
     - DER should be importing at least 50% of its rated power.
-    
+
 Steps:
-  # (precondition)
+  # (precondition).
   PRECONDITION-STARTUP:
     instructions:
       - This step is to give time for the DER to start importing/exporting at least 50% of its rated power.
@@ -51,10 +54,10 @@ Steps:
       - type: create-der-control
         parameters:
           start: $(now)
-          duration_seconds: 300
+          duration_seconds: 420 # Must be at least 1.5 mins longer than the wait period below in order to be polled while still active
           opModExpLimW: $(maxExportW * 2)
           opModImpLimW: $(maxImportW * 2)
-          tag: DERC1
+          tag: PRECONDITION
       - type: enable-steps
         parameters:
           steps:
@@ -63,7 +66,7 @@ Steps:
         parameters:
           steps:
             - PRECONDITION-STARTUP
-  
+
   # (precondition)
   PRECONDITION-STARTUP-WAIT:
     instructions:
@@ -71,7 +74,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 120
+        duration_seconds: 270 # Ramp to 50% at 16%/min=3 mins, + 1.5 mins in case of late poll
     actions:
       - type: enable-steps
         parameters:
@@ -105,7 +108,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 120
+        duration_seconds: 120 # Ramp from 50% to 30% at 16%/min
     actions:
       - type: remove-steps
         parameters:
@@ -114,6 +117,4 @@ Steps:
       - type: finish-test
         parameters: {}
     instructions:
-      - After cancellation, DER shall reduce export to the DefaultDERControl value of 30%
-
-  
+      - After cancellation, DER shall reduce import to the DefaultDERControl value of 30%
