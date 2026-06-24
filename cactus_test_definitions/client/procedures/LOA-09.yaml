@@ -54,7 +54,7 @@ Steps:
       - type: create-der-control
         parameters:
           start: $(now)
-          duration_seconds: 420 # Must be at least 1.5 mins longer than the wait period below in order to be polled while still active
+          duration_seconds: 600 # Must be at least 1.5 mins longer than the wait period below in order to be polled while still active
           opModExpLimW: $(maxExportW * 2)
           opModImpLimW: $(maxImportW * 2)
           tag: PRECONDITION
@@ -74,7 +74,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 270 # Ramp to 50% at 16%/min=3 mins, + 1.5 mins in case of late poll
+        duration_seconds: 480 # Ramp to 100% at 16%/min=6.5 mins, + 1.5 mins in case of late poll (=8 mins)
     actions:
       - type: enable-steps
         parameters:
@@ -108,7 +108,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 120 # Ramp from 50% to 30% at 16%/min
+        duration_seconds: 300 # Ramp from 100% to 30% at 16%/min
     actions:
       - type: remove-steps
         parameters:
