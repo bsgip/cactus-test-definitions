@@ -34,12 +34,15 @@ Preconditions:
         primacy: 0
     - type: set-default-der-control
       parameters:
-        opModExpLimW: $(maxExportW * 0.3)
+        opModExpLimW: $(maxExportW * 0.3) # This is set by the GEN-09 test procedure.
+        opModImpLimW: 0 # From TS5573 table 12.4.4
+        setGradW: 27 # hundredths of a percent per second
+
   instructions: 
     - DER should be exporting at least 50% of its rated power.
     
 Steps:
-  # (precondition)
+  # (precondition). 
   PRECONDITION-STARTUP:
     instructions:
       - This step is to give time for the DER to start importing/exporting at least 50% of its rated power.
@@ -51,7 +54,7 @@ Steps:
       - type: create-der-control
         parameters:
           start: $(now)
-          duration_seconds: 300
+          duration_seconds: 420 # Must be at least 1.5 mins longer than the wait period below in order to be polled while still active
           opModExpLimW: $(maxExportW * 2)
           opModImpLimW: $(maxImportW * 2)
           tag: PRECONDITION
@@ -71,7 +74,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 120
+        duration_seconds: 270 # Ramp to 50% at 16%/min=3 mins, + 1.5 mins in case of late poll
     actions:
       - type: enable-steps
         parameters:
@@ -105,7 +108,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 180
+        duration_seconds: 120 # Ramp from 50% to 30% at 16%/min
     actions:
       - type: remove-steps
         parameters:
@@ -115,5 +118,3 @@ Steps:
         parameters: {}
     instructions:
       - After cancellation, DER shall reduce export to the DefaultDERControl value of 30%
-
-  
