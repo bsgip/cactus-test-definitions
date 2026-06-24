@@ -86,6 +86,11 @@ Preconditions:
     - type: create-der-program
       parameters:
         primacy: 0
+    - type: set-default-der-control
+      parameters:
+        opModExpLimW: 0
+        opModImpLimW: 0
+        setGradW: 27 # hundredths of a percent per second
 
   checks:
     - type: end-device-contents
@@ -104,7 +109,7 @@ Steps:
       - type: create-der-control # Create DERControl 1 - set to 200% of max
         parameters:
           start: $(now)
-          duration_seconds: 120
+          duration_seconds: 480 # Ramp from 0 to 100% at 16%/min, plus 1.5 mins in case of late first poll -> 8 mins
           opModGenLimW: $(maxExportW * 2)
           tag: DERC1
       - type: create-der-control # Create DERControl 2 - set to 100% of max
@@ -116,7 +121,7 @@ Steps:
       - type: create-der-control # Create DERControl 3 - set to 40% of max
         parameters:
           start: $(now + '4 minutes')
-          duration_seconds: 120
+          duration_seconds: 240 # DERC3 ramp from 100 to 40% at 16%/min -> 4 mins
           opModGenLimW: $(maxExportW * 0.4)
           tag: DERC3
       - type: create-der-control  # Create DERControl 4 - set to 25% of max
