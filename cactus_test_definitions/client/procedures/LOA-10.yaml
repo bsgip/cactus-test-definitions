@@ -113,7 +113,7 @@ Preconditions:
 # possible to observe DERC1 at 100% before the new control took effect (1.5 min to receive via poll, 4.5 min to ramp 30-100%).
 
 Steps:
-  
+
   # (a, b) - Create a Default DERControl at DERP 1 - set to 30% of max
   GET-DEFAULT-DERC:
     event:
@@ -177,7 +177,7 @@ Steps:
           steps:
             - GET-DERP-1
 
-  # (c, d) - Create a DERControl at DERP 6 - set to 200% of max
+  # (c, d) - Retrieve the control at DERP 6
   GET-DERC-1:
     event:
       type: GET-request-received
@@ -256,7 +256,7 @@ Steps:
           steps:
             - GET-DERP-2
 
-  # (e) Retrieve control from DERP1
+  # (e) - Retrieve the control at DERP 1
   GET-DERC-2:
     event:
       type: GET-request-received
@@ -359,7 +359,7 @@ Steps:
           steps:
             - GET-DERP-3
 
-  # (i) Retrieve control from DERP6
+  # (i) Retrieve control on DERP6
   GET-DERC-3:
     event:
       type: GET-request-received
@@ -474,8 +474,7 @@ Steps:
           steps:
             - GET-DERC-4
 
-  # (m) (ii) Configure the second DERControl on DERP6
-  # (n)
+  # (m, n) (ii) Configure the second DERControl on DERP6
   GET-DERP-5:
     event:
       type: GET-request-received
@@ -500,8 +499,7 @@ Steps:
           steps:
             - GET-DERP-5
 
-  # (m) (ii) Retrieve control on DERP6 
-  # (n)
+  # (m, n) (ii) retrieve control from correct derp
   GET-DERC-5:
     event:
       type: GET-request-received
@@ -623,7 +621,7 @@ Steps:
           steps:
             - GET-DERP-6
 
-  # (s) Create a DERControl on DERP6 at 50%
+  # (s) Retrieve control from correct DERP 6
   GET-DERC-6:
     event:
       type: GET-request-received
@@ -676,8 +674,8 @@ Steps:
         parameters:
           steps:
             - POST-DERC-5-RESPONSE-SUPERSEDED
-  
-   # (t) Observe DERControl 6
+
+  # (t) Observe DERControl 6
   WAIT-OBSERVE-DERC-6:
     instructions:
       - The device should ramp to DERC6 opModImpLimW = 50% (as per TS 5573 [t])
@@ -721,7 +719,7 @@ Steps:
           steps:
             - GET-DERP-7
 
-  # (v) (i) Retrieve control on DERP1
+  # (v) (i) Retrieve control from correct DERP1
   GET-DERC-7:
     event:
       type: GET-request-received
@@ -1029,4 +1027,3 @@ Steps:
             - WAIT-OBSERVE-DERP-1-6-DEFAULTS
       - type: finish-test
         parameters: {}
-

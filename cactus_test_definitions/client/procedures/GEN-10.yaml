@@ -109,7 +109,7 @@ Preconditions:
 
 # PLEASE NOTE: The ramp rates here of 167 (1.67%/s, or 100%/min) differ from the TS5573 test procedures which request setGradW = 27 (16%/min).
 # This helps shorten the test procedure for witness testing, but is also required because it is not possible to follow the test procedure entirely as written.
-# For example, in step e, it is specified that no more than 5 mins shall pass before DERC2 is created. However due to the long ramp rate, it would not be 
+# For example, in step e, it is specified that no more than 5 mins shall pass before DERC2 is created. However due to the long ramp rate, it would not be
 # possible to observe DERC1 at 100% before the new control took effect (1.5 min to receive via poll, 4.5 min to ramp 30-100%).
 
 Steps:
@@ -133,7 +133,7 @@ Steps:
         parameters:
           steps:
             - GET-DEFAULT-DERC
-  
+
   # (b) Wait to observe the 30% default control
   WAIT-OBSERVE-DEFAULT-DERC:
     instructions:
@@ -462,7 +462,7 @@ Steps:
           steps:
             - GET-DERP-4
 
-  # (m, n) (i) Configure the first DERControl on DERP1
+  # (m, n) (i) Retrieve control on DERP1
   GET-DERC-4:
     event:
       type: GET-request-received
@@ -811,7 +811,6 @@ Steps:
           steps:
             - POST-DERC-8-RESPONSE-STARTED
 
-
   # (x) This isn't strictly in the TS5573 definition but the intention is for this control to finish BEFORE
   # enabling the subsequent DERControls
   POST-DERC-7-RESPONSE-COMPLETED:
@@ -836,7 +835,6 @@ Steps:
         parameters:
           steps:
             - POST-DERC-7-RESPONSE-COMPLETED
-
 
   # (y) (i) Configure DERControl on DERP1
   GET-DERP-9:
