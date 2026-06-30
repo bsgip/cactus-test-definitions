@@ -37,9 +37,18 @@ Preconditions:
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
+
+  actions:
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 0
+        opModExpLimW: 0
+        setGradW: 27
+  
   instructions:
     - Connect a test load electrically in parallel with the DER.
     - Set the load to consume 25% of the DER's rated active power.
+
 
 Steps:
   # (b, c)

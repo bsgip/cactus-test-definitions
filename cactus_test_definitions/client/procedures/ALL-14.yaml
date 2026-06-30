@@ -27,7 +27,6 @@ Preconditions:
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
-
   actions:  
     - type: create-der-program
       parameters:
@@ -42,6 +41,11 @@ Preconditions:
             - POST-SUBSCRIPTION-DERP
             - POST-SUBSCRIPTION-DERC
             - POST-SUBSCRIPTION-DEFAULT-DERC
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 0
+        opModExpLimW: 0
+        setGradW: 27
 
 Steps:
 

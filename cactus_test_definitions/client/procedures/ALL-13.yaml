@@ -31,6 +31,12 @@ Preconditions:
   checks:
     - type: end-device-contents
       parameters: {}
+  actions:
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 0
+        opModExpLimW: 0
+        setGradW: 27
 
 Steps:
 
