@@ -36,6 +36,7 @@ Preconditions:
       parameters:
         opModImpLimW: 0
         opModExpLimW: 0
+        setGradW: 27
   instructions:
     - DER is exporting or importing at the connection point at least 50% of its rated power.
 

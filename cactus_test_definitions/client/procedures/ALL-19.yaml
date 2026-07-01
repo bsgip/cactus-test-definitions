@@ -7,7 +7,6 @@ Classes:
 TargetVersions:
   - v1.2
   - v1.3-beta/storage
-  - v1.3
 
 Criteria:
   checks:

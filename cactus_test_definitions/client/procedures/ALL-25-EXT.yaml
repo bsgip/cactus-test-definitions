@@ -56,6 +56,7 @@ Preconditions:
       parameters:
         opModExpLimW: 0
         opModImpLimW: 0
+        setGradW: 27
 
 Steps:
 
