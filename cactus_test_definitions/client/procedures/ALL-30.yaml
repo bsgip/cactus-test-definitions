@@ -115,7 +115,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 60 # Give the user time to power off the device
+        duration_seconds: 30 # Give the user time to power off the device
     actions:
       - type: enable-steps
         parameters:
