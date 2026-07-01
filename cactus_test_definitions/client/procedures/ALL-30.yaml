@@ -115,15 +115,8 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 240 # Give the user time to power off the device (needs to happen before DER control sends)
+        duration_seconds: 60 # Give the user time to power off the device
     actions:
-      - type: create-der-control
-        parameters:
-          start: $(now)
-          duration_seconds: 900
-          opModExpLimW: $(maxExportW * 0.5)
-          opModImpLimW: $(maxImportW * 0.5)
-          tag: DERC1
       - type: enable-steps
         parameters:
           steps:
@@ -142,6 +135,13 @@ Steps:
       type: proceed
       parameters: {}
     actions:
+      - type: create-der-control # Create this control after connection re-established. This avoids notifications being sent to the client during the disconnection.
+        parameters:
+          start: $(now - '60 seconds')
+          duration_seconds: 900
+          opModExpLimW: $(maxExportW * 0.5)
+          opModImpLimW: $(maxImportW * 0.5)
+          tag: DERC1
       - type: communications-status
         parameters:
           enabled: true
@@ -154,7 +154,6 @@ Steps:
         parameters:
           steps:
             - REESTABLISH-COMMUNICATION
-
 
   # (e)
   POLL-DERC-1:
@@ -186,4 +185,3 @@ Steps:
         parameters:
           steps:
             - POST-RESPONSE-STARTED
-    
