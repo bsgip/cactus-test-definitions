@@ -44,7 +44,7 @@ Preconditions:
       parameters:
         start: $(now)
         duration_seconds: 300
-        opModExpLimW: $(setMaxW * 2)
+        opModExpLimW: $(maxExportW * 2)
   instructions:
     - EndDevice should be registered with active subscriptions before starting.
     - DER shall be exporting at the connection point at least 50% of its active power rating.

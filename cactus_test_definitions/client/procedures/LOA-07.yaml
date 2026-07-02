@@ -47,11 +47,11 @@ Preconditions:
       parameters:
         start: $(now)
         duration_seconds: 300
-        opModImpLimW: $(setMaxW * 2)
+        opModImpLimW: $(maxImportW * 2)
     # (a, b)
     - type: set-default-der-control
       parameters:
-        opModImpLimW: $(setMaxW * 0.3)
+        opModImpLimW: $(maxImportW * 0.3)
   instructions:
     - EndDevice should be registered with active subscriptions before starting.
     - DER shall be importing from the connection point with at least 50% of its active power rating.
@@ -89,7 +89,7 @@ Steps:
         parameters:
           start: $(now)
           duration_seconds: 600
-          opModImpLimW: $(setMaxW * 2)
+          opModImpLimW: $(maxImportW * 2)
       - type: enable-steps
         parameters:
           steps:
