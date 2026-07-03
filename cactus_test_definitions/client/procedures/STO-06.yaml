@@ -40,20 +40,27 @@ Preconditions:
         "setMaxChargeRateW": "$(this == setMaxVA)",
         "setMaxDischargeRateW": "$(this == setMaxVA)",
         "vppModesEnabled_set": "01",
-        "doeModesEnabled_set": "01",  
+        "doeModesEnabled_set": "01",
+        "setMaxWh": "$(this <= rtgMaxWh)",
       }
     # Confirm stored energy requirement (which should contain 50% charge upon inspection) 
     - type: readings-der-stored-energy
       parameters: {
         "minimum_count": 1
       }
+  # setGradW and opModExpLimW is now set up at the start, inline with the test set up requirements in section 12.4.4 of SA TS 5573 (noting that this may be set up in configuration at a later date).
   actions:
     - type: set-default-der-control
       parameters:
-        opModExpLimW: 1500
+        opModExpLimW: 0
+        opModImpLimW: $(setMaxW)
+        setGradW: 27
 
 Steps:
-  # Client discovers control for opModStorageTargetW and opModExpLimW
+  # Client discovers all controls for opModStorageTargetW and opModExpLimW upfront
+  # The first control starts 5 minutes in the future with duration 15 minutes.
+  # All subsequent controls occur at the end time of the previous control, with duration of 15 minutes.
+  
   GET-DERC-1:
     event:
       type: GET-request-received
@@ -66,6 +73,35 @@ Steps:
           duration_seconds: 900
           opModStorageTargetW: $(setMaxDischargeRateW)
           opModExpLimW: $(2 * setMaxDischargeRateW)
+      - type: create-der-control
+        parameters:
+          start: $(now + '1200 seconds')
+          duration_seconds: 900
+          opModStorageTargetW: $(setMaxDischargeRateW)
+          opModExpLimW: $(0.5 * setMaxDischargeRateW) 
+      - type: create-der-control
+        parameters:
+          start: $(now + '2100 seconds')
+          duration_seconds: 900
+          opModStorageTargetW: $(0 - setMaxChargeRateW)  # Hack to obtain negative direction control
+          opModExpLimW: $(0.5 * setMaxDischargeRateW)
+      - type: create-der-control
+        parameters:
+          start: $(now + '3000 seconds')
+          duration_seconds: 900
+          opModStorageTargetW: 0
+          opModExpLimW: 0
+      - type: create-der-control
+        parameters:
+          start: $(now + '3900 seconds')
+          duration_seconds: 900
+          opModStorageTargetW: $(0.3 * setMaxDischargeRateW)
+          opModExpLimW: $(setMaxDischargeRateW)
+      - type: create-der-control
+        parameters:
+          start: $(now + '4800 seconds')
+          duration_seconds: 900
+          opModStorageTargetW: $(setMaxDischargeRateW)     
       - type: enable-steps
         parameters:
           steps:
@@ -74,8 +110,11 @@ Steps:
         parameters:
           steps:
             - GET-DERC-1
+            
+  # This wait step runs once all controls have been retrieved, and overlaps into the second control being executed.
+  # Each wait step corresponds to a particular control in the previous step as there are now 6 controls, each 15 minutes duration that run sequentially with no gaps.
+  # No action is required to be taken by the client - the wait step just provides an indication to the tester of where the client is up to in the test case.
   
-  # Waits for the new control to finish (with a bit of overtime)
   WAIT-CONTROL-END-1:
     event:
       type: wait
@@ -85,156 +124,84 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-2
+            - WAIT-CONTROL-END-2
       - type: remove-steps
         parameters:
           steps:
             - WAIT-CONTROL-END-1
-  
-  # Client discovers a new control for opModStorageTargetW and opModExpLimW
-  GET-DERC-2:
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /edev/1/fsa/1/derp
-    actions:
-      - type: create-der-control
-        parameters:
-          start: $(now + '300 seconds')
-          duration_seconds: 900
-          opModStorageTargetW: $(setMaxDischargeRateW)
-          opModExpLimW: $(0.5 * setMaxDischargeRateW)
-      - type: enable-steps
-        parameters:
-          steps:
-            - WAIT-CONTROL-END-2
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-DERC-2
-
-  # Waits for the new control to finish (with a bit of overtime)
+            
+  # Waits for the second control to finish (overtime already baked in from the wait in the first control)
   WAIT-CONTROL-END-2:
     event:
       type: wait
       parameters:
-        duration_seconds: 1260
+        duration_seconds: 900
     actions:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-3
+            - WAIT-CONTROL-END-3
       - type: remove-steps
         parameters:
           steps:
             - WAIT-CONTROL-END-2
 
-  # On this poll, client will discover negative value storage target control
-  GET-DERC-3:
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /edev/1/fsa/1/derp
-    actions:
-      - type: create-der-control
-        parameters:
-          start: $(now + '300 seconds')
-          duration_seconds: 900
-          opModStorageTargetW: $(0 - setMaxChargeRateW)  # Hack to obtain negative direction control
-          opModExpLimW: $(0.5 * setMaxDischargeRateW)
-      - type: enable-steps
-        parameters:
-          steps:
-            - WAIT-CONTROL-END-3
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-DERC-3
-
-  # Waits for the new control to finish (with a bit of overtime)
+  # Waits for the third control to finish (overtime already baked in from the wait in the first control)
   WAIT-CONTROL-END-3:
     event:
       type: wait
       parameters:
-        duration_seconds: 1260
+        duration_seconds: 900
     actions:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-4
+            - WAIT-CONTROL-END-4
       - type: remove-steps
         parameters:
           steps:
             - WAIT-CONTROL-END-3
 
-  # On this poll, client will discover zero value storage target control
-  GET-DERC-4:
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /edev/1/fsa/1/derp
-    actions:
-      - type: create-der-control
-        parameters:
-          start: $(now + '300 seconds')
-          duration_seconds: 900
-          opModStorageTargetW: 0
-          opModExpLimW: 0
-      - type: enable-steps
-        parameters:
-          steps:
-            - WAIT-CONTROL-END-4
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-DERC-4
-
-  # Waits for the new control to finish (with a bit of overtime)
+  # Waits for the fourth control to finish (overtime already baked in from the wait in the first control)
   WAIT-CONTROL-END-4:
     event:
       type: wait
       parameters:
-        duration_seconds: 1260
+        duration_seconds: 900
     actions:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-5
+            - WAIT-CONTROL-END-5
       - type: remove-steps
         parameters:
           steps:
             - WAIT-CONTROL-END-4
-
-  # On this poll, client will discover negative storage target control
-  GET-DERC-5:
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /edev/1/fsa/1/derp
-    actions:
-      - type: create-der-control
-        parameters:
-          start: $(now + '300 seconds')
-          duration_seconds: 900
-          opModStorageTargetW: $(0.3 * setMaxDischargeRateW)
-          opModExpLimW: $(setMaxDischargeRateW)
-      - type: enable-steps
-        parameters:
-          steps:
-            - WAIT-CONTROL-END-5
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-DERC-5
-    
-  # Waits for the new control to finish (with a bit of overtime)
+            
+  # Waits for the fifth control to finish (overtime already baked in from the wait in the first control)
   WAIT-CONTROL-END-5:
     event:
       type: wait
       parameters:
-        duration_seconds: 1260
+        duration_seconds: 900
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-CONTROL-END-6
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-CONTROL-END-5            
+
+  # Waits for the sixth control to finish (overtime already baked in from the wait in the first control)
+  WAIT-CONTROL-END-6:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 900
     actions:
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-CONTROL-END-5
+            - WAIT-CONTROL-END-6
