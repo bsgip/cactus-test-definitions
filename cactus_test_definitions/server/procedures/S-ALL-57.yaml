@@ -10,7 +10,8 @@ TargetVersions:
 Preconditions:
   required_clients:
     - id: client
-  
+      client_type: aggregator
+
 Steps:
   - id: PRECONDITION
     repeat_until_pass: true
