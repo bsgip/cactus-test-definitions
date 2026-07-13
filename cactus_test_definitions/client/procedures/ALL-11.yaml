@@ -38,7 +38,9 @@ Preconditions:
       parameters:
         start: $(now + '5 minutes')
         duration_seconds: 300
-        opModEnergize: false     
+        opModEnergize: false
+    - type: create-der-program
+      parameters: {}     
     - type: set-default-der-control
       parameters:
         opModImpLimW: 0

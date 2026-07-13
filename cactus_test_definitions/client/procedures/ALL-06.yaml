@@ -39,6 +39,8 @@ Preconditions:
         mup_post_seconds: 60
 
   actions:
+    - type: create-der-program
+      parameters: {}
     - type: set-default-der-control
       parameters:
         opModImpLimW: 0

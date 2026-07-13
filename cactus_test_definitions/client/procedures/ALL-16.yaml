@@ -43,6 +43,8 @@ Preconditions:
         start: $(now)
         duration_seconds: 300
         opModConnect: false
+    - type: create-der-program
+      parameters: {}
     - type: set-default-der-control
       parameters:
         opModImpLimW: 0

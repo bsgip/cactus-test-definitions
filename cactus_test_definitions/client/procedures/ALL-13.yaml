@@ -32,6 +32,8 @@ Preconditions:
     - type: end-device-contents
       parameters: {}
   actions:
+    - type: create-der-program
+      parameters: {}
     - type: set-default-der-control
       parameters:
         opModImpLimW: 0

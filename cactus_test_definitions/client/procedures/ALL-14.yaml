@@ -41,6 +41,8 @@ Preconditions:
             - POST-SUBSCRIPTION-DERP
             - POST-SUBSCRIPTION-DERC
             - POST-SUBSCRIPTION-DEFAULT-DERC
+    - type: create-der-program
+      parameters: {}
     - type: set-default-der-control
       parameters:
         opModImpLimW: 0
