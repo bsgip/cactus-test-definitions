@@ -31,7 +31,8 @@ Preconditions:
         genConnectStatus_bit0: true
   actions:
     - type: create-der-program
-      parameters: {}
+      parameters:         
+        primacy: 0
     - type: set-default-der-control
       parameters:
         opModImpLimW: 0

@@ -24,7 +24,8 @@ Preconditions:
       parameters:
         enabled: false
     - type: create-der-program
-      parameters: {}
+      parameters:         
+        primacy: 0
     - type: set-default-der-control
       parameters:
         opModImpLimW: 0
