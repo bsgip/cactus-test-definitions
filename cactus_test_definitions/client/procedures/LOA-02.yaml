@@ -33,7 +33,7 @@ Preconditions:
       parameters:
         start: $(now)
         duration_seconds: 300
-        opModLoadLimW: $(setMaxW * 2)
+        opModLoadLimW: $(maxImportW * 2)
   instructions:
     - DER shall be importing at the connection point with at least 50% of its active power rating.
     

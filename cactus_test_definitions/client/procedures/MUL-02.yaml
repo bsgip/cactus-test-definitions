@@ -50,8 +50,8 @@ Preconditions:
       parameters:
         start: $(now)
         duration_seconds: 120
-        opModExpLimW: $(setMaxW * 2)
-        opModImpLimW: $(setMaxW * 2)
+        opModExpLimW: $(maxExportW * 2)
+        opModImpLimW: $(maxImportW * 2)
     - type: create-der-control
       parameters:
         start: $(now + '2 minutes')

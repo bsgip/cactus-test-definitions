@@ -47,11 +47,11 @@ Preconditions:
       parameters:
         start: $(now)
         duration_seconds: 300
-        opModGenLimW: $(setMaxW * 2)
+        opModGenLimW: $(maxExportW * 2)
     # (a, b)
     - type: set-default-der-control
       parameters:
-        opModGenLimW: $(setMaxW * 0.3)
+        opModGenLimW: $(maxExportW * 0.3)
   instructions:
     - EndDevice should be registered with active subscriptions before starting.
     - DER shall be generating at least 50% of its active power rating.
@@ -89,7 +89,7 @@ Steps:
         parameters:
           start: $(now)
           duration_seconds: 600
-          opModGenLimW: $(setMaxW * 2)
+          opModGenLimW: $(maxExportW * 2)
       - type: enable-steps
         parameters:
           steps:

@@ -33,7 +33,7 @@ Preconditions:
       parameters:
         start: $(now)
         duration_seconds: 900
-        opModExpLimW: $(setMaxW * 2)
+        opModExpLimW: $(maxExportW * 2)
     - type: set-default-der-control
       parameters: {}
   instructions:
@@ -50,7 +50,7 @@ Steps:
     actions:
       - type: set-default-der-control
         parameters:
-          opModExpLimW: $(setMaxW * 0.3)
+          opModExpLimW: $(maxExportW * 0.3)
       - type: enable-steps
         parameters:
           steps:
@@ -92,7 +92,7 @@ Steps:
         parameters:
           start: $(now)
           duration_seconds: 600
-          opModExpLimW: $(setMaxW * 2)
+          opModExpLimW: $(maxExportW * 2)
       - type: enable-steps
         parameters:
           steps:

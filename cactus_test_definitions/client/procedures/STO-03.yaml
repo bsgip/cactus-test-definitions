@@ -24,10 +24,12 @@ Preconditions:
     - type: set-default-der-control
       parameters:
         opModExpLimW: 1500
+        opModImpLimW: $(setMaxW)
+        setGradW: 27
     - type: create-der-control
       parameters:
-        start: $(now + '300 seconds')
-        duration_seconds: 900
+        start: $(now)
+        duration_seconds: 480
         opModStorageTargetW: $(setMaxDischargeRateW)
         opModExpLimW: $(2 * setMaxDischargeRateW)
   checks:

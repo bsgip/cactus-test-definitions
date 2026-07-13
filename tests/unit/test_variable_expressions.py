@@ -190,6 +190,12 @@ def test_parse_time_delta(unquoted_raw: str, expected: timedelta | type[Exceptio
         ("setMinPFOverExcited", NamedVariable(NamedVariableType.DERSETTING_SET_MIN_PF_OVER_EXCITED)),
         ("setMinPFUnderExcited", NamedVariable(NamedVariableType.DERSETTING_SET_MIN_PF_UNDER_EXCITED)),
         ("setMaxWh", NamedVariable(NamedVariableType.DERSETTING_SET_MAX_WH)),
+        ("maxImportW", NamedVariable(NamedVariableType.DERSETTING_MAX_IMPORT_W)),
+        ("maxExportW", NamedVariable(NamedVariableType.DERSETTING_MAX_EXPORT_W)),
+        (
+            "0.5 * maxImportW",
+            Expression(OperationType.MULTIPLY, Constant(0.5), NamedVariable(NamedVariableType.DERSETTING_MAX_IMPORT_W)),
+        ),
         (
             "rtgMaxVar == 5.0",
             Expression(OperationType.EQ, NamedVariable(NamedVariableType.DERCAPABILITY_RTG_MAX_VAR), Constant(5.0)),
@@ -388,6 +394,8 @@ def test_snake_to_camel(input: str, expected: str) -> None:
         (NamedVariableType.DERCAPABILITY_RTG_MIN_PF_OVER_EXCITED, "DERCapability.rtgMinPFOverExcited"),
         (NamedVariableType.DERCAPABILITY_RTG_MIN_PF_UNDER_EXCITED, "DERCapability.rtgMinPFUnderExcited"),
         (NamedVariableType.DERCAPABILITY_NEG_RTG_MAX_CHARGE_RATE_W, "(-DERCapability.rtgMaxChargeRateW)"),
+        (NamedVariableType.DERSETTING_MAX_IMPORT_W, "(DERSetting.setMaxChargeRateW or DERSetting.setMaxW)"),
+        (NamedVariableType.DERSETTING_MAX_EXPORT_W, "(DERSetting.setMaxDischargeRateW or DERSetting.setMaxW)"),
         (NamedVariableType.NOW, "now"),
     ],
 )

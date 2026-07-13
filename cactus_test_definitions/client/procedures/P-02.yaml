@@ -54,8 +54,8 @@ Steps:
         parameters:
           start: $(now)
           duration_seconds: 120
-          opModExpLimW: $(setMaxW * 2)
-          opModImpLimW: $(setMaxW * 2)
+          opModExpLimW: $(maxExportW * 2)
+          opModImpLimW: $(maxImportW * 2)
           tag: DERC1
           der_program_tag: DERP1
       - type: enable-steps
@@ -150,8 +150,8 @@ Steps:
         parameters:
           start: $(now)
           duration_seconds: 120
-          opModExpLimW: $(setMaxW * 2)
-          opModImpLimW: $(setMaxW * 2)
+          opModExpLimW: $(maxExportW * 2)
+          opModImpLimW: $(maxImportW * 2)
           tag: DERC2
           der_program_tag: DERP2
       - type: remove-steps
