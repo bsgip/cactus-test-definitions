@@ -34,7 +34,7 @@ Preconditions:
       parameters:
         opModImpLimW: 0
         opModExpLimW: 0
-        setGradW: 27
+        setGradW: 27 # because of the slow ramps the client device may not achieve each control
     - type: create-der-control
       parameters:
         start: $(now)
