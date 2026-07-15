@@ -98,18 +98,16 @@ Preconditions:
       parameters:
         derp_id: 1
         opModImpLimW: 0
-        setGradW: 167 # hundredths of a percent - this is 1.67% / second
-    # These default controls are not explicitly in the standards (SA TS5573), but we are adding here to let the 
-    # client know to keep polling at, e.g., /edev/1/derp/6/dderc, which allows step-bb-ii to work without using notifications.
-    # Previously, polling at /edev/1/derp/6/dderc was expected without any defaults being set.
+        opModExpLimW: 0
+        setGradW: 27 # hundredths of a percent - this is 0.27% / second
     - type: set-default-der-control
       parameters:
         derp_id: 6
-        opModImpLimW: 0 # Set to import to not interefere with export observations in witness test
-        setGradW: 167 # hundredths of a percent - this is 1.67% / second
+        opModImpLimW: 0
+        opModExpLimW: 0
+        setGradW: 27 # hundredths of a percent - this is 0.27% / second
 
 Steps:
-
   # (a, b) - Create a Default DERControl at DERP 1 - set to 30% of max
   GET-DEFAULT-DERC:
     event:
@@ -130,14 +128,14 @@ Steps:
           steps:
             - GET-DEFAULT-DERC
   
-  # (b) Wait to observe the 30% default control
+  # (b) Wait to observe the 30% default control (ramp from 100 to 30% at 16%/min = 4.5mins)
   WAIT-OBSERVE-DEFAULT-DERC:
     instructions:
       - The device should ramp to DERP1 DefaultDERControl opModExpLimW = 30% (as per TS 5573 [b])
     event:
       type: wait
       parameters:
-        duration_seconds: 180
+        duration_seconds: 270
     actions:
       - type: enable-steps
         parameters:
@@ -158,7 +156,7 @@ Steps:
       - type: create-der-control
         parameters:
           start: $(now)
-          duration_seconds: 600
+          duration_seconds: 720 # Must remain active until DERC2 supersedes it (~t+600 worst case) so a superseded (not completed) response is posted
           opModExpLimW: $(maxExportW * 2)
           fsa_id: 2
           primacy: 2
@@ -213,7 +211,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 60
+        duration_seconds: 360 # Ramp up from 30% to 100% output (~260s) and account for 1.5 mins in polling cycle
     actions:
       - type: enable-steps
         parameters:
@@ -234,7 +232,7 @@ Steps:
       - type: create-der-control
         parameters:
           start: $(now)
-          duration_seconds: 840 # Should run for 5 minutes after DERC 1 is due to expire
+          duration_seconds: 900 # Ends >=5 mins after DERC1 expiry, covering the 200->0 setpoint ramp (~740s) to 0W
           opModExpLimW: 0
           fsa_id: 1
           primacy: 1
@@ -328,6 +326,10 @@ Steps:
           steps:
             - POST-DERC-2-RESPONSE-COMPLETED
 
+#####
+# LOGICAL BREAK IN TEST - NO INTER-DEPENDENCIES
+#####
+
   # (i) Create a new DERControl on DERP6 - set to 200%
   GET-DERP-3:
     event:
@@ -338,7 +340,7 @@ Steps:
       - type: create-der-control
         parameters:
           start: $(now)
-          duration_seconds: 300
+          duration_seconds: 600 # Covers 90s pickup + 0->100% output ramp (~370s)
           opModExpLimW: $(maxExportW * 2)
           fsa_id: 2
           primacy: 2
@@ -418,7 +420,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 120
+        duration_seconds: 660 # Setpoint ramp down 200->30% (~630s)
     actions:
       - type: enable-steps
         parameters:
@@ -429,6 +431,10 @@ Steps:
         parameters:
           steps:
             - WAIT-OBSERVE-DEFAULT-AFTER-DERC-3
+
+#####
+# LOGICAL BREAK IN TEST - NO INTER-DEPENDENCIES
+#####
 
   # (m, n) (i) Configure the first DERControl on DERP1
   GET-DERP-4:
@@ -578,7 +584,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 450
+        duration_seconds: 480 # 60s reconnect stability wait + 0->100% output ramp at wGra 16%/min (~375s)
     actions:
       - type: enable-steps
         parameters:
@@ -599,7 +605,7 @@ Steps:
       - type: create-der-control
         parameters:
           start: $(now)
-          duration_seconds: 300 # 5 minutes
+          duration_seconds: 900 # Covers 90s pickup + 200->50% setpoint ramp (~560s), and stays active until DERC7/8 supersede (~t+840)
           opModExpLimW: $(maxExportW * 0.5)
           fsa_id: 2
           primacy: 2
@@ -676,7 +682,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 120
+        duration_seconds: 600 # Setpoint ramp down 200->50% (~560s)
     actions:
       - type: enable-steps
         parameters:
@@ -698,7 +704,7 @@ Steps:
       - type: create-der-control
         parameters:
           start: $(now)
-          duration_seconds: 300
+          duration_seconds: 360 # Covers 90s pickup + 50->0% ramp (~185s) with dwell at 0W
           opModExpLimW: 0
           fsa_id: 1
           primacy: 1
@@ -735,7 +741,7 @@ Steps:
       - type: create-der-control
         parameters:
           start: $(now)
-          duration_seconds: 300
+          duration_seconds: 360 # Matched to DERC7 as per TS 5573 (v)
           opModExpLimW: $(maxExportW * 0.5)
           opModGenLimW: $(maxExportW * 0.3)
           fsa_id: 2
@@ -842,7 +848,7 @@ Steps:
       - type: create-der-control
         parameters:
           start: $(now)
-          duration_seconds: 300
+          duration_seconds: 480 # Must remain active until cancelled in (dd) (~t+270 worst case)
           opModGenLimW: $(maxExportW * 0.5)
           fsa_id: 1
           primacy: 1
@@ -879,7 +885,7 @@ Steps:
       - type: create-der-control
         parameters:
           start: $(now)
-          duration_seconds: 300
+          duration_seconds: 480 # Must remain active until cancelled in (dd) (~t+270 worst case)
           opModExpLimW: $(maxExportW * 0.2)
           fsa_id: 2
           primacy: 2
@@ -955,7 +961,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 120
+        duration_seconds: 180 # Small ramp (<=30% delta, ~110s) plus margin
     actions:
       - type: enable-steps
         parameters:
