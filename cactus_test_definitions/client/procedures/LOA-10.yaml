@@ -97,23 +97,19 @@ Preconditions:
     - type: set-default-der-control
       parameters:
         derp_id: 1
-        opModImpLimW: 0
         opModExpLimW: 0
         setGradW: 167 # hundredths of a percent - this is 1.67% / second
+    # These default controls are not explicitly in the standards (SA TS5573), but we are adding here to let the 
+    # client know to keep polling at, e.g., /edev/1/derp/6/dderc, which allows step-bb-ii to work without using notifications.
+    # Previously, polling at /edev/1/derp/6/dderc was expected without any defaults being set.
     - type: set-default-der-control
       parameters:
         derp_id: 6
-        opModImpLimW: 0
-        opModExpLimW: 0
+        opModExpLimW: 0 # Set to export to not interefere with import observations in witness test
         setGradW: 167 # hundredths of a percent - this is 1.67% / second
 
-# PLEASE NOTE: The ramp rates here of 167 (1.67%/s, or 100%/min) differ from the TS5573 test procedures which request setGradW = 27 (16%/min).
-# This helps shorten the test procedure for witness testing, but is also required because it is not possible to follow the test procedure entirely as written.
-# For example, in step e, it is specified that no more than 5 mins shall pass before DERC2 is created. However due to the long ramp rate, it would not be
-# possible to observe DERC1 at 100% before the new control took effect (1.5 min to receive via poll, 4.5 min to ramp 30-100%).
-
 Steps:
-
+  
   # (a, b) - Create a Default DERControl at DERP 1 - set to 30% of max
   GET-DEFAULT-DERC:
     event:
@@ -177,7 +173,7 @@ Steps:
           steps:
             - GET-DERP-1
 
-  # (c, d) - Retrieve the control at DERP 6
+  # (c, d) - Create a DERControl at DERP 6 - set to 200% of max
   GET-DERC-1:
     event:
       type: GET-request-received
@@ -212,14 +208,12 @@ Steps:
           steps:
             - POST-DERC-1-RESPONSE-STARTED
 
-  # (e) Wait for a short period.
-  # It may take up to 1.5 mins to obtain the DERC1 control (poll /derc) after its creation.
-  # Then the ramp from 30% to 100% at setGradW = 100%/min adds approx 1 min extra.
+  # (e) Wait for a short period
   WAIT-DERC-1:
     event:
       type: wait
       parameters:
-        duration_seconds: 180
+        duration_seconds: 60
     actions:
       - type: enable-steps
         parameters:
@@ -240,7 +234,7 @@ Steps:
       - type: create-der-control
         parameters:
           start: $(now)
-          duration_seconds: 810 # Should run for 5 minutes after DERC 1 is due to expire (7 mins left of DERC1 + 1.5 mins for poll + 5)
+          duration_seconds: 840 # Should run for 5 minutes after DERC 1 is due to expire
           opModImpLimW: 0
           fsa_id: 1
           primacy: 1
@@ -256,7 +250,7 @@ Steps:
           steps:
             - GET-DERP-2
 
-  # (e) - Retrieve the control at DERP 1
+  # (e) Retrieve control from DERP1
   GET-DERC-2:
     event:
       type: GET-request-received
@@ -359,7 +353,7 @@ Steps:
           steps:
             - GET-DERP-3
 
-  # (i) Retrieve control on DERP6
+  # (i) Retrieve control from DERP6
   GET-DERC-3:
     event:
       type: GET-request-received
@@ -474,7 +468,8 @@ Steps:
           steps:
             - GET-DERC-4
 
-  # (m, n) (ii) Configure the second DERControl on DERP6
+  # (m) (ii) Configure the second DERControl on DERP6
+  # (n)
   GET-DERP-5:
     event:
       type: GET-request-received
@@ -499,7 +494,8 @@ Steps:
           steps:
             - GET-DERP-5
 
-  # (m, n) (ii) retrieve control from correct derp
+  # (m) (ii) Retrieve control on DERP6 
+  # (n)
   GET-DERC-5:
     event:
       type: GET-request-received
@@ -621,7 +617,7 @@ Steps:
           steps:
             - GET-DERP-6
 
-  # (s) Retrieve control from correct DERP 6
+  # (s) Create a DERControl on DERP6 at 50%
   GET-DERC-6:
     event:
       type: GET-request-received
@@ -674,8 +670,8 @@ Steps:
         parameters:
           steps:
             - POST-DERC-5-RESPONSE-SUPERSEDED
-
-  # (t) Observe DERControl 6
+  
+   # (t) Observe DERControl 6
   WAIT-OBSERVE-DERC-6:
     instructions:
       - The device should ramp to DERC6 opModImpLimW = 50% (as per TS 5573 [t])
@@ -719,7 +715,7 @@ Steps:
           steps:
             - GET-DERP-7
 
-  # (v) (i) Retrieve control from correct DERP1
+  # (v) (i) Retrieve control on DERP1
   GET-DERC-7:
     event:
       type: GET-request-received
@@ -1019,7 +1015,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 120
+        duration_seconds: 300
     actions:
       - type: remove-steps
         parameters:
@@ -1027,3 +1023,4 @@ Steps:
             - WAIT-OBSERVE-DERP-1-6-DEFAULTS
       - type: finish-test
         parameters: {}
+
