@@ -90,6 +90,12 @@ class NamedVariableType(IntEnum):
     DERSETTING_SET_MIN_WH = auto()
     DERCAPABILITY_NEG_RTG_MAX_CHARGE_RATE_W = auto()  # -W (after multiplier applied), reference $negRtgMaxChargeRateW
 
+    # Synthetic directional power limits - account for devices with asymmetric import/export capability.
+    # MUST resolve to the relevant directional DERSetting rate when the device declares it, otherwise fall back to
+    # the mandatory DERSetting.setMaxW. Referenced as $(maxImportW) / $(maxExportW). Value in Watts
+    DERSETTING_MAX_IMPORT_W = auto()  # setMaxChargeRateW if set else setMaxW
+    DERSETTING_MAX_EXPORT_W = auto()  # setMaxDischargeRateW if set else setMaxW
+
     # NMI — used for ConnectionPoint registration
     # Referenced in a test definition as $(valid_nmi_1) and $(valid_nmi_2)
     NMI_1 = auto()
@@ -149,6 +155,10 @@ def named_variable_repr(named_var: NamedVariableType) -> str:  # noqa: C901
             return "DERSetting.setMinPFUnderExcited"
         case ["DERSETTING", "SET_MAX_VA"]:
             return "DERSetting.setMaxVA"
+        case ["DERSETTING", "MAX_IMPORT_W"]:
+            return "(DERSetting.setMaxChargeRateW or DERSetting.setMaxW)"
+        case ["DERSETTING", "MAX_EXPORT_W"]:
+            return "(DERSetting.setMaxDischargeRateW or DERSetting.setMaxW)"
         case ["DERCAPABILITY", param_name]:
             return f"DERCapability.{snake_to_camel(param_name)}"
         case ["DERSETTING", param_name]:
@@ -292,6 +302,10 @@ def parse_unary_expression(token: Token) -> Constant | NamedVariable:  # noqa: C
                 return NamedVariable(NamedVariableType.DERSETTING_SET_MIN_PF_UNDER_EXCITED)
             case "setMaxWh":
                 return NamedVariable(NamedVariableType.DERSETTING_SET_MAX_WH)
+            case "maxImportW":
+                return NamedVariable(NamedVariableType.DERSETTING_MAX_IMPORT_W)
+            case "maxExportW":
+                return NamedVariable(NamedVariableType.DERSETTING_MAX_EXPORT_W)
             case "rtgMaxVA":
                 return NamedVariable(NamedVariableType.DERCAPABILITY_RTG_MAX_VA)
             case "rtgMaxVar":

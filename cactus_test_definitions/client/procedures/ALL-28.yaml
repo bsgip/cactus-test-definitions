@@ -53,8 +53,8 @@ Steps:
         parameters:
           start: $(now)
           duration_seconds: 240
-          opModExpLimW: $(setMaxW * 2)
-          opModImpLimW: $(setMaxW * 2)
+          opModExpLimW: $(maxExportW * 2)
+          opModImpLimW: $(maxImportW * 2)
           tag: PRECONDITION
       - type: enable-steps
         parameters:
@@ -94,8 +94,8 @@ Steps:
         parameters:
           start: $(now)
           duration_seconds: 900
-          opModExpLimW: $(setMaxW * 0.3)
-          opModImpLimW: $(setMaxW * 0.3)
+          opModExpLimW: $(maxExportW * 0.3)
+          opModImpLimW: $(maxImportW * 0.3)
           tag: DERC1
       - type: enable-steps
         parameters:
@@ -134,8 +134,8 @@ Steps:
         parameters:
           start: $(now)
           duration_seconds: 300
-          opModExpLimW: $(setMaxW * 0.1)
-          opModImpLimW: $(setMaxW * 0.1)
+          opModExpLimW: $(maxExportW * 0.1)
+          opModImpLimW: $(maxImportW * 0.1)
           tag: DERC2
       - type: enable-steps
         parameters:
@@ -174,8 +174,8 @@ Steps:
         parameters:
           start: $(now)
           duration_seconds: 900 # Extra long but will be cancelled (give clients enough time to see cancellation)
-          opModExpLimW: $(setMaxW * 0.5)
-          opModImpLimW: $(setMaxW * 0.5)
+          opModExpLimW: $(maxExportW * 0.5)
+          opModImpLimW: $(maxImportW * 0.5)
           ramp_time_seconds: 60
           tag: DERC3
       - type: enable-steps
@@ -301,8 +301,8 @@ Steps:
         parameters:
           start: $(now)
           duration_seconds: 300
-          opModExpLimW: $(setMaxW * 0.3)
-          opModImpLimW: $(setMaxW * 0.3)
+          opModExpLimW: $(maxExportW * 0.3)
+          opModImpLimW: $(maxImportW * 0.3)
           tag: DERC4
       - type: enable-steps
         parameters:

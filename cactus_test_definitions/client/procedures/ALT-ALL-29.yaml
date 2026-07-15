@@ -39,29 +39,29 @@ Preconditions:
       parameters:
         start: $(now)
         duration_seconds: 120
-        opModExpLimW: $(setMaxW * 2)
-        opModImpLimW: $(setMaxW * 2)
+        opModExpLimW: $(maxExportW * 2)
+        opModImpLimW: $(maxImportW * 2)
         tag: DERC1
     - type: create-der-control
       parameters:
         start: $(now + '2 minutes')
         duration_seconds: 120
-        opModExpLimW: $(setMaxW * 0.5)
-        opModImpLimW: $(setMaxW * 0.5)
+        opModExpLimW: $(maxExportW * 0.5)
+        opModImpLimW: $(maxImportW * 0.5)
         tag: DERC2
     - type: create-der-control
       parameters:
         start: $(now + '4 minutes')
         duration_seconds: 120
-        opModExpLimW: $(setMaxW * 0.4)
-        opModImpLimW: $(setMaxW * 0.4)
+        opModExpLimW: $(maxExportW * 0.4)
+        opModImpLimW: $(maxImportW * 0.4)
         tag: DERC3
     - type: create-der-control
       parameters:
         start: $(now + '6 minutes')
         duration_seconds: 120
-        opModExpLimW: $(setMaxW * 0.3)
-        opModImpLimW: $(setMaxW * 0.3)
+        opModExpLimW: $(maxExportW * 0.3)
+        opModImpLimW: $(maxImportW * 0.3)
         tag: DERC4
     - type: create-der-control
       parameters:

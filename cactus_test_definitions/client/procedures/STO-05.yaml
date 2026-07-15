@@ -58,13 +58,40 @@ Criteria:
         vppModesEnabled_set: "01"
 
 Steps:
-  WAIT-NOOP:
+  GET-DER:
     event:
-      type: wait
+      type: GET-request-received
       parameters:
-        duration_seconds: 0
+        endpoint: /edev/1/der
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - PUT-DERCAPABILITY
+            - PUT-DERSETTINGS
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DER
+
+  PUT-DERCAPABILITY:
+    event:
+      type: PUT-request-received
+      parameters:
+        endpoint: /edev/1/der/1/dercap
     actions:
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-NOOP
+            - PUT-DERCAPABILITY
+
+  PUT-DERSETTINGS:
+    event:
+      type: PUT-request-received
+      parameters:
+        endpoint: /edev/1/der/1/derg
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - PUT-DERSETTINGS

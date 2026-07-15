@@ -34,7 +34,7 @@ Preconditions:
         primacy: 0
     - type: set-default-der-control
       parameters:
-        opModImpLimW: $(setMaxW * 0.3)
+        opModImpLimW: $(maxImportW * 0.3)
   instructions: 
     - DER should be importing at least 50% of its rated power.
     
@@ -52,8 +52,8 @@ Steps:
         parameters:
           start: $(now)
           duration_seconds: 300
-          opModExpLimW: $(setMaxW * 2)
-          opModImpLimW: $(setMaxW * 2)
+          opModExpLimW: $(maxExportW * 2)
+          opModImpLimW: $(maxImportW * 2)
           tag: DERC1
       - type: enable-steps
         parameters:
