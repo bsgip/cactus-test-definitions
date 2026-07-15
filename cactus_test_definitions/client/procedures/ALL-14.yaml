@@ -27,13 +27,7 @@ Preconditions:
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
-
   actions:  
-    - type: create-der-program
-      parameters:
-        primacy: 0
-    - type: set-default-der-control
-      parameters: {}
     # Start by enabling everything at the beginning as each step is (mostly) independent of the others
     - type: enable-steps
       parameters:
@@ -42,6 +36,14 @@ Preconditions:
             - POST-SUBSCRIPTION-DERP
             - POST-SUBSCRIPTION-DERC
             - POST-SUBSCRIPTION-DEFAULT-DERC
+    - type: create-der-program
+      parameters:         
+        primacy: 0
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 0
+        opModExpLimW: 0
+        setGradW: 27
 
 Steps:
 

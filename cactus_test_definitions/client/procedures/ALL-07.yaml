@@ -29,6 +29,15 @@ Preconditions:
     - type: der-status-contents
       parameters: 
         genConnectStatus_bit0: true
+  actions:
+    - type: create-der-program
+      parameters:         
+        primacy: 0
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 0
+        opModExpLimW: 0
+        setGradW: 27
 
 Steps:
   

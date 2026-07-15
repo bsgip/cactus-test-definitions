@@ -31,6 +31,14 @@ Preconditions:
         registration_pin: 33221 # Different from the PIN registered in ALL-01 - Should not match client PIN
         aggregator_lfdi: 3E4F45AB31EDFE5B67E343E5E4562E3100000000 # Trailing PEN digits set to 0
         aggregator_sfdi: 16726121139
+    - type: create-der-program
+      parameters:         
+        primacy: 0
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 0
+        opModExpLimW: 0
+        setGradW: 27   
 
 Steps:
   # (a, b, c)
