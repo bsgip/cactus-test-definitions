@@ -5,6 +5,7 @@ from typing import Any
 
 import pytest
 
+from cactus_test_definitions.csipaus import CSIPAusReadingType, CSIPAusResource
 from cactus_test_definitions.errors import TestProcedureDefinitionError
 from cactus_test_definitions.parameters import (
     ParameterSchema,
@@ -38,6 +39,52 @@ def test_is_valid_parameter_type_skipped_values(value: Any, type: ParameterType)
     actual = is_valid_parameter_type(type, value)
     assert isinstance(actual, bool)
     assert actual
+
+
+def test_is_valid_parameter_type_skipped_list_values():
+    """Tests that a number of values aren't considered and always return True"""
+
+    assert (
+        is_valid_parameter_type(
+            ParameterType.ListInteger, [0, NamedVariable(NamedVariableType.DERSETTING_SET_MAX_VA), 1]
+        )
+        is True
+    )
+    assert (
+        is_valid_parameter_type(
+            ParameterType.ListString,
+            [
+                "",
+                NamedVariable(NamedVariableType.RANDURI_1),
+                NamedVariable(NamedVariableType.RANDURI_2),
+                NamedVariable(NamedVariableType.RANDURI_3),
+                "abc",
+            ],
+        )
+        is True
+    )
+    assert (
+        is_valid_parameter_type(
+            ParameterType.ListCSIPAusReadingType,
+            [
+                CSIPAusReadingType.ActivePowerAverage,
+                NamedVariable(NamedVariableType.DERSETTING_SET_MAX_VA),
+                CSIPAusReadingType.FrequencyAverage,
+            ],
+        )
+        is True
+    )
+    assert (
+        is_valid_parameter_type(
+            ParameterType.ListCSIPAusResource,
+            [
+                CSIPAusResource.DER,
+                NamedVariable(NamedVariableType.RANDURI_1),
+                CSIPAusResource.ConsumptionTariffInterval,
+            ],
+        )
+        is True
+    )
 
 
 @pytest.mark.parametrize(

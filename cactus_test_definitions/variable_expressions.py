@@ -101,6 +101,15 @@ class NamedVariableType(IntEnum):
     NMI_1 = auto()
     NMI_2 = auto()
 
+    # Random URI Paths - eg "/abc123def456"
+    # Generated in way such that the following conditions are met:
+    # 1) repeated calls to RANDURI_X will return the same value for the duration of a test (stable)
+    # 2) RANDURI_X will always be unique when compared to RANDURI_Y (no collisions)
+    # 3) Rerunning a test at a later time will (likely) generate a different value for RANDURI_X
+    RANDURI_1 = auto()
+    RANDURI_2 = auto()
+    RANDURI_3 = auto()
+
 
 class OperationType(IntEnum):
     ADD = auto()
@@ -167,6 +176,12 @@ def named_variable_repr(named_var: NamedVariableType) -> str:  # noqa: C901
             return "valid_nmi_1"
         case ["NMI", "2"]:
             return "valid_nmi_2"
+        case ["RANDURI", "1"]:
+            return "randuri_1"
+        case ["RANDURI", "2"]:
+            return "randuri_2"
+        case ["RANDURI", "3"]:
+            return "randuri_3"
 
     return snake_to_camel(name)
 
@@ -333,6 +348,12 @@ def parse_unary_expression(token: Token) -> Constant | NamedVariable:  # noqa: C
                 return NamedVariable(NamedVariableType.NMI_1)
             case "valid_nmi_2":
                 return NamedVariable(NamedVariableType.NMI_2)
+            case "randuri_1":
+                return NamedVariable(NamedVariableType.RANDURI_1)
+            case "randuri_2":
+                return NamedVariable(NamedVariableType.RANDURI_2)
+            case "randuri_3":
+                return NamedVariable(NamedVariableType.RANDURI_3)
 
         raise UnparseableVariableExpressionError(f"'{token.string}' isn't recognized as a named variable")
 

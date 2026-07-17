@@ -22,9 +22,16 @@ class Action:
         """Some parameter values might contain variable expressions (eg: a string "$now") that needs to be replaced
         with an parsed Expression object instead."""
         for k, v in self.parameters.items():
-            variable_expr = try_extract_variable_expression(v)
-            if variable_expr:
-                self.parameters[k] = parse_variable_expression_body(variable_expr, k)
+            if isinstance(v, list):
+                for list_idx in range(len(v)):
+                    variable_expr = try_extract_variable_expression(v[list_idx])
+                    if variable_expr:
+                        v[list_idx] = parse_variable_expression_body(variable_expr, k)
+
+            else:
+                variable_expr = try_extract_variable_expression(v)
+                if variable_expr:
+                    self.parameters[k] = parse_variable_expression_body(variable_expr, k)
 
 
 # The parameter schema for each action, keyed by the action name
@@ -130,6 +137,10 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
     "remove-function-set-assignment": {
         "fsa_id": ParameterSchema(True, ParameterType.Integer),
     },  # Removes / Hides a FunctionSetAssignment
+    "create-wellknown-route": {
+        "version": ParameterSchema(True, ParameterType.String),
+        "dcap_paths": ParameterSchema(True, ParameterType.ListString),
+    },  # Adds a default
 }
 VALID_ACTION_NAMES: set[str] = set(ACTION_PARAMETER_SCHEMA.keys())
 

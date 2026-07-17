@@ -73,9 +73,9 @@ def is_valid_parameter_type(expected_type: ParameterType, value: Any) -> bool:  
         case ParameterType.DateTime:
             return isinstance(value, datetime)
         case ParameterType.ListString:
-            return isinstance(value, list) and all(isinstance(e, str) for e in value)
+            return isinstance(value, list) and all(isinstance(e, str) or is_resolvable_variable(e) for e in value)
         case ParameterType.ListInteger:
-            return isinstance(value, list) and all(isinstance(e, int) for e in value)
+            return isinstance(value, list) and all(isinstance(e, int) or is_resolvable_variable(e) for e in value)
         case ParameterType.HexBinary:
             try:
                 int(value, 16)
@@ -89,7 +89,7 @@ def is_valid_parameter_type(expected_type: ParameterType, value: Any) -> bool:  
                 return False
         case ParameterType.ListCSIPAusResource:
             return isinstance(value, list) and all(
-                is_valid_parameter_type(ParameterType.CSIPAusResource, e) for e in value
+                is_valid_parameter_type(ParameterType.CSIPAusResource, e) or is_resolvable_variable(e) for e in value
             )
         case ParameterType.CSIPAusReadingType:
             try:
@@ -98,7 +98,7 @@ def is_valid_parameter_type(expected_type: ParameterType, value: Any) -> bool:  
                 return False
         case ParameterType.ListCSIPAusReadingType:
             return isinstance(value, list) and all(
-                is_valid_parameter_type(ParameterType.CSIPAusReadingType, e) for e in value
+                is_valid_parameter_type(ParameterType.CSIPAusReadingType, e) or is_resolvable_variable(e) for e in value
             )
         case ParameterType.CSIPAusReadingLocation:
             try:

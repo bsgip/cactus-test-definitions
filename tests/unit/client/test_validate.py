@@ -5,6 +5,7 @@ from typing import Any
 import pytest
 from envoy_schema.server.schema import uri as envoy_uris
 
+from cactus_test_definitions import NamedVariable
 from cactus_test_definitions.client import EVENT_PARAMETER_SCHEMA, Step
 from cactus_test_definitions.client.actions import ACTION_PARAMETER_SCHEMA, Action
 from cactus_test_definitions.client.checks import CHECK_PARAMETER_SCHEMA, Check
@@ -423,10 +424,24 @@ def test_endpoints_match_envoy(tp_id: TestProcedureId):
         "DELETE-request-received",
     ]:
         for actual_endpoint in collect_event_param_values(tp, event_type, "endpoint"):
+            if isinstance(actual_endpoint, NamedVariable):
+                assert actual_endpoint.variable in {
+                    NamedVariableType.RANDURI_1,
+                    NamedVariableType.RANDURI_2,
+                    NamedVariableType.RANDURI_3,
+                }
+                continue
+
             assert isinstance(actual_endpoint, str)
 
             match_found = any([does_endpoint_match(actual_endpoint, pattern) for pattern in valid_envoy_format_strings])
             assert match_found, f"Couldn't match '{actual_endpoint}' to a known envoy path"
+
+        for proxy_endpoint in collect_event_param_values(tp, event_type, "proxy_to"):
+            assert isinstance(proxy_endpoint, str)
+
+            match_found = any([does_endpoint_match(proxy_endpoint, pattern) for pattern in valid_envoy_format_strings])
+            assert match_found, f"Couldn't match '{proxy_endpoint}' to a known envoy path"
 
 
 @pytest.mark.parametrize("tp_id", list(TestProcedureId))

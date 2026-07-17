@@ -2,6 +2,7 @@ from datetime import datetime
 
 import pytest
 
+from cactus_test_definitions import Expression
 from cactus_test_definitions import variable_expressions as varexps
 from cactus_test_definitions.client.actions import (
     Action,
@@ -71,3 +72,27 @@ def test_action_expression_using_storage_extension() -> None:
     assert check_set_min_wh.operation == varexps.OperationType.LTE
     assert check_set_min_wh.lhs_operand == varexps.NamedVariable(varexps.NamedVariableType.DERSETTING_SET_MIN_WH)
     assert check_set_min_wh.rhs_operand == varexps.NamedVariable(varexps.NamedVariableType.DERSETTING_SET_MAX_WH)
+
+
+def test_action_expression_lists() -> None:
+    """Tests the creation of an Action that has an expression as one of its parameters for a list"""
+    type_str = "some_action"
+    params = {"setMaxW": ["abc", "$(this == rtgMaxW)", "$now"]}
+    action = Action(type_str, params)
+
+    list_vals: list[str | Expression] = action.parameters["setMaxW"]
+    assert len(list_vals) == 3
+
+    # First entry is a string
+    assert isinstance(list_vals[0], str)
+    assert list_vals[0] == "abc"
+
+    # Second entry is an expression
+    assert isinstance(list_vals[1], varexps.Expression)
+    assert list_vals[1].operation == varexps.OperationType.EQ
+    assert list_vals[1].lhs_operand == varexps.NamedVariable(varexps.NamedVariableType.DERSETTING_SET_MAX_W)
+    assert list_vals[1].rhs_operand == varexps.NamedVariable(varexps.NamedVariableType.DERCAPABILITY_RTG_MAX_W)
+
+    # Third entry is a straight variable
+    assert isinstance(list_vals[2], varexps.NamedVariable)
+    assert list_vals[2] == varexps.NamedVariable(varexps.NamedVariableType.NOW)
