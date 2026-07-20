@@ -140,7 +140,11 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
     "create-wellknown-route": {
         "version": ParameterSchema(True, ParameterType.String),
         "dcap_paths": ParameterSchema(True, ParameterType.ListString),
-    },  # Adds a default
+    },  # Adds an entry to the .well-known/csipaus file
+    "add-proxy-route": {
+        "route": ParameterSchema(True, ParameterType.String),
+        "proxy_to": ParameterSchema(True, ParameterType.String),
+    },  # Future client requests to route (eg /dcap) will instead be proxied to the specified path (/my/other/dcap)
 }
 VALID_ACTION_NAMES: set[str] = set(ACTION_PARAMETER_SCHEMA.keys())
 

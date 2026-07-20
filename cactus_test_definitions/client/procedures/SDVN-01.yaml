@@ -52,6 +52,10 @@ Preconditions:
         version: "https://csipaus.org/ns/v1.3"
         dcap_paths:
           - "$randuri_3"
+    - type: add-proxy-route
+      parameters:
+        route: $randuri_3
+        proxy_to: /dcap # Act like the normal dcap endpoint -
     - type: enable-steps
       parameters:
         steps:

@@ -40,22 +40,18 @@ EVENT_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
     "GET-request-received": {
         "endpoint": ParameterSchema(True, ParameterType.String),
         "serve_request_first": ParameterSchema(False, ParameterType.Boolean),
-        "proxy_to": ParameterSchema(False, ParameterType.String),
     },
     "POST-request-received": {
         "endpoint": ParameterSchema(True, ParameterType.String),
         "serve_request_first": ParameterSchema(False, ParameterType.Boolean),
-        "proxy_to": ParameterSchema(False, ParameterType.String),
     },
     "PUT-request-received": {
         "endpoint": ParameterSchema(True, ParameterType.String),
         "serve_request_first": ParameterSchema(False, ParameterType.Boolean),
-        "proxy_to": ParameterSchema(False, ParameterType.String),
     },
     "DELETE-request-received": {
         "endpoint": ParameterSchema(True, ParameterType.String),
         "serve_request_first": ParameterSchema(False, ParameterType.Boolean),
-        "proxy_to": ParameterSchema(False, ParameterType.String),
     },
     "wait": {"duration_seconds": ParameterSchema(True, ParameterType.Integer)},
     "proceed": {"timeout_seconds": ParameterSchema(False, ParameterType.Integer)},
