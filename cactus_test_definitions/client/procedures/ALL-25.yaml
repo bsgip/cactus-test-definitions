@@ -27,7 +27,10 @@ Preconditions:
       parameters:
         primacy: 0
     - type: set-default-der-control
-      parameters: {}
+      parameters:
+        opModImpLimW: 0
+        opModExpLimW: 0
+        setGradW: 100 # this is the precondition from 5573
 
   checks:
     - type: end-device-contents
@@ -39,25 +42,6 @@ Preconditions:
     - DER shall be exporting or importing at least 50% of its active power rating at the connection point.
     
 Steps:
-  # (precondition)
-  # On first poll of default control - set setGradW to 1%/s
-  GET-DEFAULT-DERC-100:
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /edev/1/derp/1/dderc
-    actions:
-      - type: set-default-der-control
-        parameters:
-          setGradW: 100 # hundredths of a percent - this is 1%
-      - type: enable-steps
-        parameters:
-          steps:
-            - GET-DERP-LIST-1
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-DEFAULT-DERC-100
 
   # (a, b)
   GET-DERP-LIST-1:

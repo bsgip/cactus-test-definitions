@@ -42,6 +42,14 @@ Preconditions:
     - type: der-settings-contents
       parameters: {}
   actions:
+    - type: create-der-program
+      parameters:         
+        primacy: 0
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 0
+        opModExpLimW: 0
+        setGradW: 27
     # 24 minutes of sequential, non overlapping controls with random values (chosen by rolling a D10)
     - type: create-der-control
       parameters:

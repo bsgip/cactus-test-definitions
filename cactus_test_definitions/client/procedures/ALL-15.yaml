@@ -30,14 +30,12 @@ Preconditions:
     - type: create-der-program
       parameters:
         primacy: 0
-    
   checks:
     - type: end-device-contents
       parameters: {}
     - type: subscription-contents
       parameters:
         subscribed_resource: /edev/1/derp/1/derc
-
   actions:
   # (a, b)
     - type: create-der-control
@@ -45,6 +43,14 @@ Preconditions:
         start: $(now)
         duration_seconds: 300
         opModEnergize: false
+    - type: create-der-program
+      parameters:         
+        primacy: 0
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 0
+        opModExpLimW: 0
+        setGradW: 27
   instructions:
     - EndDevice should be registered with active subscriptions before starting.
     - DER shall be generating or consuming at least 50% of its active power rating.

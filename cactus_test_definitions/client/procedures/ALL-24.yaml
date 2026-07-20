@@ -44,6 +44,11 @@ Preconditions:
     - type: create-der-program
       parameters:
         primacy: 0
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 0
+        opModExpLimW: 0
+        setGradW: 27
 
   instructions:
     - DER shall be exporting or importing at least 50% of its active power rating at the connection point.

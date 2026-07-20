@@ -31,7 +31,10 @@ Preconditions:
       parameters:
         primacy: 0
     - type: set-default-der-control
-      parameters: {}
+      parameters:
+        opModImpLimW: 0
+        opModExpLimW: 0
+        setGradW: 27
 
   checks:
     - type: end-device-contents

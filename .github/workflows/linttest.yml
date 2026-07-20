@@ -25,6 +25,9 @@ jobs:
         with:
           python-version: ${{ matrix.pyver }}
 
+      - name: Check lockfile is up to date
+        run: uv lock --check
+
       - name: Install Dependencies
         run: uv sync --extra dev --extra test
 

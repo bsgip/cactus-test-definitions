@@ -7,7 +7,6 @@ Classes:
 TargetVersions:
   - v1.2
   - v1.3-beta/storage
-  - v1.3
 
 Criteria:
   checks:
@@ -24,6 +23,14 @@ Preconditions:
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
+    - type: create-der-program
+      parameters:         
+        primacy: 0
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 0
+        opModExpLimW: 0
+        setGradW: 27
   checks:
     - type: end-device-contents
       parameters: {}
