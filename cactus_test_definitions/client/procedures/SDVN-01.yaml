@@ -72,7 +72,6 @@ Steps:
       type: GET-request-received
       parameters:
         endpoint: $randuri_3
-        proxy_to: /dcap # Act like the normal dcap endpoint - 
     actions:
       - type: enable-steps
         parameters:
@@ -91,7 +90,7 @@ Steps:
     actions:
       - type: finish-test
         parameters:
-          fail_message: "DeviceCapability href should be discovered via .well-known file."
+          fail_message: "DeviceCapability href should be discovered via .well-known/csipaus file."
 
   FAIL-UNSUPPORTED-VERSION:
     event:

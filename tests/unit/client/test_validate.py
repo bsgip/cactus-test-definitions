@@ -437,12 +437,6 @@ def test_endpoints_match_envoy(tp_id: TestProcedureId):
             match_found = any([does_endpoint_match(actual_endpoint, pattern) for pattern in valid_envoy_format_strings])
             assert match_found, f"Couldn't match '{actual_endpoint}' to a known envoy path"
 
-        for proxy_endpoint in collect_event_param_values(tp, event_type, "proxy_to"):
-            assert isinstance(proxy_endpoint, str)
-
-            match_found = any([does_endpoint_match(proxy_endpoint, pattern) for pattern in valid_envoy_format_strings])
-            assert match_found, f"Couldn't match '{proxy_endpoint}' to a known envoy path"
-
 
 @pytest.mark.parametrize("tp_id", list(TestProcedureId))
 def test_disallow_immediate_start_with_checks(tp_id: TestProcedureId):
