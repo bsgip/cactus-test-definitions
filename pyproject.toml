@@ -49,6 +49,7 @@ dev = [
 ]
 test = ["pytest", "pytest-xdist", "assertical", "envoy-schema"]
 docs = ["sphinx"]
+build = ["twine"]
 
 [tool.pytest.ini_options]
 minversion = "6.0"
