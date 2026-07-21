@@ -108,6 +108,9 @@ class TestProcedureId(StrEnum):
     PRC_04 = "PRC-04"
     PRC_05 = "PRC-05"
 
+    # Service Discovery / Version Negotiation
+    SDVN_01 = "SDVN-01"
+
 
 @dataclass
 class Step:

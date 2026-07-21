@@ -84,10 +84,10 @@ Steps:
 These are the currently defined `Event` types that a `Step` can define
 | **name** | **params** | **description** |
 | -------- | ---------- | --------------- |
-| `GET-request-received`  | `endpoint: str` `serve_request_first: bool/None` |  Triggers when a client sends a GET request to the nominated endpoint. Will trigger BEFORE serving request to server unless `serve_request_first` is `True` in which case the event will be triggered AFTER the utility server has served the request (but before being proxied back to the device client) |
-| `POST-request-received` | `endpoint: str` `serve_request_first: bool/None` |  Triggers when a client sends a POST request to the nominated endpoint. Will trigger BEFORE serving request to server unless `serve_request_first` is `True` in which case the event will be triggered AFTER the utility server has served the request (but before being proxied back to the device client) |
-| `PUT-request-received` | `endpoint: str` `serve_request_first: bool/None` |  Triggers when a client sends a PUT request to the nominated endpoint. Will trigger BEFORE serving request to server unless `serve_request_first` is `True` in which case the event will be triggered AFTER the utility server has served the request (but before being proxied back to the device client) |
-| `DELETE-request-received` | `endpoint: str` `serve_request_first: bool/None` |  Triggers when a client sends a DELETE request to the nominated endpoint. Will trigger BEFORE serving request to server unless `serve_request_first` is `True` in which case the event will be triggered AFTER the utility server has served the request (but before being proxied back to the device client) |
+| `GET-request-received`  | `endpoint: str` `serve_request_first: bool/None` |  Triggers when a client sends a GET request to the nominated endpoint. Will trigger BEFORE serving request to server unless `serve_request_first` is `True` in which case the event will be triggered AFTER the utility server has served the request (but before being proxied back to the device client). |
+| `POST-request-received` | `endpoint: str` `serve_request_first: bool/None` |  Triggers when a client sends a POST request to the nominated endpoint. Will trigger BEFORE serving request to server unless `serve_request_first` is `True` in which case the event will be triggered AFTER the utility server has served the request (but before being proxied back to the device client). |
+| `PUT-request-received` | `endpoint: str` `serve_request_first: bool/None` |  Triggers when a client sends a PUT request to the nominated endpoint. Will trigger BEFORE serving request to server unless `serve_request_first` is `True` in which case the event will be triggered AFTER the utility server has served the request (but before being proxied back to the device client). |
+| `DELETE-request-received` | `endpoint: str` `serve_request_first: bool/None` |  Triggers when a client sends a DELETE request to the nominated endpoint. Will trigger BEFORE serving request to server unless `serve_request_first` is `True` in which case the event will be triggered AFTER the utility server has served the request (but before being proxied back to the device client). |
 | `wait` | `duration_seconds: str` |  Triggers `duration_seconds` after being initially activated |
 | `proceed` | - |  Waits for a proceed signal to be sent from the Cactus UI (i.e. NOT from a client). |
 
@@ -144,6 +144,8 @@ actions:
 | `cancel-time-tariff-intervals` | `tag: str/None` | Cancels all `TimeTariffInterval` instances (or selectively a nominated instance via `tag`). |
 | `delete-rate-component` | `tag: str` | Deletes the specified `RateComponent` (via `tag`) from its parent `TariffProfile.RateComponentList`. |
 | `remove-function-set-assignment` | `fsa_id: int` | Removes the specified `FunctionSetAssignment` from the `EndDevice(s)` `FunctionSetAssignmentList`. Underlying resources should remain unchanged. |
+| `create-wellknown-route` | `version: str` `dcap_paths: str[]` | Adds an extra entry to the `.well-known` CSIP-Aus file. This file by default includes an entry for the client's current version and `/dcap` endpoint. |
+| `add-proxy-route` | `route: str` `proxy_to: str` | Normally client requests to `/dcap` (route) will appear on the utility server at `/dcap` (proxy_to). Calls to this action will cause future client requests to `route` to instead proxy to `proxy_to`. Query params will be preserved on the proxy. |
 
 ### Checks
 
@@ -246,6 +248,7 @@ The following are all the `NamedVariable` types currently implemented
 | `$setMinWh` | Resolves to the last supplied value to `DERSetting.setMinWh` as a number. Can raise exceptions if this value hasn't been set (which will trigger a test evaluation to fail)
 | `$maxImportW` |  Resolves to `DERSetting.setMaxChargeRateW` when the device declares it, otherwise falls back to the mandatory `DERSetting.setMaxW`. Allows directional import power limit (Watts) for devices with asymmetric import/export capability.
 | `$maxExportW` | Resolves to `DERSetting.setMaxDischargeRateW` when the device declares it, otherwise falls back to the mandatory `DERSetting.setMaxW`. Allows directional export power limit (Watts) for devices with asymmetric import/export capability.
+| `randuri_1` `randuri_2` `randuri_3` | Resolves to a random URI path. Guaranteed to be stable (`$randuri_x` == `$randuri_x`) and unique (`randuri_x` != `randuri_y`) within a single test run | 
 
 
 Placeholder variables can also be used in some rudimentary expressions to make variations on the returned value. For example:

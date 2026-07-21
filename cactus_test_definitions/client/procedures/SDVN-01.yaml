@@ -1,0 +1,141 @@
+Description: Service Discovey and Version Negotiation
+Category: Registration
+Classes:
+  - A
+
+TargetVersions:
+  - v1.3-beta/storage
+  - v1.3
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters:
+        ignored_steps:
+          - FAIL-DEFAULT-DCAP
+          - FAIL-UNSUPPORTED-VERSION
+          - FAIL-MALFORMED-DCAP
+
+    # This ensures that the posted content had valid XML namespaces
+    - type: end-device-contents
+      parameters:
+        has_connection_point_id: true
+        check_lfdi: true
+
+Preconditions:
+  immediate_start: true # There will be no "init" phase - all interactions will be immediately logged against the test
+  actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+    - type: create-wellknown-route
+      parameters:
+        version: "https://csipaus.org/ns/v99.99"
+        dcap_paths:
+          - "$randuri_1"
+    - type: create-wellknown-route
+      parameters:
+        version: "null"
+        dcap_paths:
+          - "$randuri_2"
+    - type: create-wellknown-route
+      parameters:
+        version: "https://csipaus.org/ns/v1.2"
+        dcap_paths: []
+    - type: create-wellknown-route
+      parameters:
+        version: "https://csipaus.org/ns/v1.3"
+        dcap_paths:
+          - "$randuri_3"
+    - type: add-proxy-route
+      parameters:
+        route: $randuri_3
+        proxy_to: /dcap # Act like the normal dcap endpoint -
+    - type: enable-steps
+      parameters:
+        steps:
+          - FAIL-DEFAULT-DCAP
+          - FAIL-UNSUPPORTED-VERSION
+          - FAIL-MALFORMED-DCAP
+  
+
+Steps:
+
+  # This is the "normal" DeviceCapability route that has been randomised for the test
+  GET-DCAP:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: $randuri_3
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-EDEV
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DCAP
+
+  FAIL-DEFAULT-DCAP:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /dcap
+    actions:
+      - type: finish-test
+        parameters:
+          fail_message: "DeviceCapability href should be discovered via .well-known/csipaus file."
+
+  FAIL-UNSUPPORTED-VERSION:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: $randuri_1
+    actions:
+      - type: finish-test
+        parameters:
+          fail_message: "Clients shall not access DeviceCapability endpoints for unsupported versions (eg: v99.99)"
+
+  FAIL-MALFORMED-DCAP:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: $randuri_2
+    actions:
+      - type: finish-test
+        parameters:
+          fail_message: "Clients shall not access DeviceCapability endpoints for malformed versions."
+
+  # (c) client submits at least one XML payload to the server
+  POST-EDEV:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - PUT-CP
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-EDEV
+
+  # (c) client submits at least one XML payload to the server (this ensures we see a csip-aus xmlns)
+  PUT-CP:
+    event:
+      type: PUT-request-received
+      parameters:
+        endpoint: /edev/1/cp
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - PUT-CP

@@ -257,6 +257,11 @@ def test_parse_time_delta(unquoted_raw: str, expected: timedelta | type[Exceptio
                 Constant(50),
             ),
         ),
+        ("randuri_1", NamedVariable(NamedVariableType.RANDURI_1)),
+        ("randuri_2", NamedVariable(NamedVariableType.RANDURI_2)),
+        ("randuri_3", NamedVariable(NamedVariableType.RANDURI_3)),
+        ("randuri_", UnparseableVariableExpressionError),
+        ("randuri", UnparseableVariableExpressionError),
     ],
 )
 def test_parse_variable_expression_body(
