@@ -24,10 +24,13 @@ Preconditions:
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
+    - type: create-der-program
+      parameters:
+        primacy: 0
     - type: set-default-der-control
       parameters:
       # The import and export values are specified as 0 in TS5573 Table 12.4.4. They have been altered for this test so
-      # that a device can follow the load limits set in this test without being overridden. 
+      # that a device can follow the load limits set in this test without being overridden.
         opModImpLimW: 100
         opModExpLimW: 100
         setGradW: 27
