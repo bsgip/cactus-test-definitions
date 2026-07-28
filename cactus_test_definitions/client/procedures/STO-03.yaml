@@ -23,7 +23,7 @@ Preconditions:
   actions:
     - type: set-default-der-control
       parameters:
-        opModExpLimW: 1500
+        opModExpLimW: 0
         opModImpLimW: $(setMaxW)
         setGradW: 27
     - type: create-der-control
