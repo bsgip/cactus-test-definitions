@@ -23,6 +23,14 @@ Preconditions:
         der_list_poll_seconds: 60 
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
+    - type: create-der-program
+      parameters:
+        primacy: 0  
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 0
+        opModExpLimW: 0
+        setGradW: 600 # Altered from 27 defined in TS5573 table 12.4.4 so that control observation is not limited by slow ramping
   checks:
     - type: end-device-contents
       parameters: {}
