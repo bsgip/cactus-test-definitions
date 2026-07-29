@@ -52,6 +52,8 @@ Preconditions:
     - type: set-default-der-control
       parameters:
         opModImpLimW: $(maxImportW * 0.3)
+        opModExpLimW: 0
+        setGradW: 27
   instructions:
     - EndDevice should be registered with active subscriptions before starting.
     - DER shall be importing from the connection point with at least 50% of its active power rating.
@@ -83,7 +85,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 120
+        duration_seconds: 780 # Ramp from 200 to 30% at 0.27%/s = 13 minutes
     actions:
       - type: create-der-control
         parameters:
@@ -99,14 +101,31 @@ Steps:
           steps:
             - WAIT-DEVICE-RAMP
     instructions:
-      - DER should be ramping to the DefaultDERControl value of 30% max power at rate setGradW (default 0.27%/s).
+      - DER should ramp down to the DefaultDERControl value of 30% max power at rate setGradW (default 0.27%/s).
 
   # (f, g, h)
   WAIT-CONTROL-FINISH:
     event:
       type: wait
       parameters:
-        duration_seconds: 720
+        duration_seconds: 600
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-RAMP-DEFAULT-DERC
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-CONTROL-FINISH
+    instructions:
+      - DER should ramp up to the active DERControl unconstrained value at rate setGradW (default 0.27%/s).
+
+  WAIT-RAMP-DEFAULT-DERC:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 780 # Ramp from 200 to 30% at 0.27%/s = 13 minutes
     actions:
       - type: create-der-control
         parameters:
@@ -116,7 +135,6 @@ Steps:
       - type: set-default-der-control
         parameters:
           cancelled: true
-
       - type: enable-steps
         parameters:
           steps:
@@ -124,17 +142,16 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-CONTROL-FINISH
+            - WAIT-RAMP-DEFAULT-DERC
     instructions:
-      - DER should be ramping to the active DERControl unconstrained value at rate setGradW (default 0.27%/s).
-      - Upon completion of the active DERControl (10 minutes) the DER should ramp to the DefaultDERControl value of 30% max power.
+      - Upon completion of the active DERControl (10 minutes) the DER should ramp down to the DefaultDERControl value of 30% max power at rate setGradW (default 0.27%/s).
 
   # (i)
   WAIT-TEST-FINISH:
     event:
       type: wait
       parameters:
-        duration_seconds: 720
+        duration_seconds: 120 # The device should ramp from 30% to 0 at 16%/min
     actions:
       - type: remove-steps
         parameters:
@@ -143,4 +160,4 @@ Steps:
       - type: finish-test
         parameters: {}
     instructions:
-      - DER should be ramping to the active DERControl 0W value at rate setGradW (default 0.27%/s).
+      - DER should ramp down to the active DERControl 0W value at rate setGradW (default 0.27%/s).
