@@ -23,6 +23,14 @@ Preconditions:
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
+    - type: create-der-program
+      parameters:
+        primacy: 0
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 100 # Increased from the 0 efined in TS5573 Table 12.4.4 in order to observe the LOA limit changes without overriding them
+        opModExpLimW: 0
+        setGradW: 600 # This is increased from the 27 defined in TS5573 Table 12.4.4 in order to comply with the <30s ramp specified in step c
   checks:
     - type: end-device-contents
       parameters: {}
@@ -48,11 +56,26 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-ZERO
+            - WAIT-CONTROL
       - type: remove-steps
         parameters:
           steps:
             - GET-DERC-INITIAL
+
+  WAIT-CONTROL:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 60 # Wait for the control to reach at least 50%
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-ZERO
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-CONTROL
 
   # (a, b, c)
   GET-DERC-ZERO:
@@ -66,9 +89,24 @@ Steps:
           start: $(now)
           duration_seconds: 300
           opModLoadLimW: 0
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-REACH-ZERO
       - type: remove-steps
         parameters:
           steps:
             - GET-DERC-ZERO
-          
-  
+
+  WAIT-REACH-ZERO:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 120 # Wait for the control to be polled, then to reach 0
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-REACH-ZERO
+      - type: finish-test
+        parameters: {}
