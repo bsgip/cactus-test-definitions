@@ -36,7 +36,7 @@ Preconditions:
       parameters:
         opModExpLimW: $(maxExportW * 0.3)
         opModImpLimW: $(maxImportW * 0.3)
-        
+        setGradW: 600 # Altered from 27 defined in TS5573 table 12.4.4 so that control observation is not limited by slow ramping
   instructions:
     - DER is operating at least 50% if its rated power.
 
