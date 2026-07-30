@@ -17,8 +17,13 @@ Criteria:
 Preconditions:
   init_actions:
     - type: create-der-program
-      parameters:
+      parameters:         
         primacy: 0
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 100 # Altered from the 0 defined in TS5573 in order to observe DER Control effects
+        opModExpLimW: 100 # Altered from the 0 defined in TS5573 in order to observe DER Control effects
+        setGradW: 27
   checks:
     - type: end-device-contents
       parameters: {}
