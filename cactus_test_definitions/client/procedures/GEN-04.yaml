@@ -33,7 +33,7 @@ Preconditions:
       # that a device can follow the generation limits set in this test without being overridden.
         opModImpLimW: 100
         opModExpLimW: 100
-        setGradW: 27
+        setGradW: 167 # Increased from 27 in Table 12.4.4 to avoid two 13 minute waits without altering the test intent
   checks:
     - type: end-device-contents
       parameters: {}
@@ -91,11 +91,11 @@ Steps:
 
   WAIT-RAMP-DEFAULT-DERC:
     instructions:
-    - DER should ramp down generation to 30% at the rate of setGradW (default 0.27%/s)
+    - DER should ramp down generation to 30% at the rate of setGradW
     event:
       type: wait
       parameters:
-        duration_seconds: 780 # Ramp from 200 to 30% at 0.27%/s = 13 minutes
+        duration_seconds: 120 # Ramp from 200 to 30% at 100%/min = 2 minutes
     actions:
       - type: enable-steps
         parameters:
@@ -128,10 +128,10 @@ Steps:
           steps:
             - GET-DERC-2
       
-  # (f, g) Waits for the new control to finish (with a bit of overtime)
+  # (f, g) Waits for the new control to finish
   WAIT-CONTROL-END:
     instructions:
-    - DER should discover a new control and then ramp up to unconstrained at the rate of setGradW (default 0.27%/s)
+    - DER should discover a new control and then ramp up to unconstrained at the rate of setGradW
     event:
       type: wait
       parameters:
@@ -148,11 +148,11 @@ Steps:
 
   WAIT-RAMP-DEFAULT-DERC-2:
     instructions:
-    - DER should ramp down generation to 30% at the rate of setGradW (default 0.27%/s)
+    - DER should ramp down generation to 30% at the rate of setGradW
     event:
       type: wait
       parameters:
-        duration_seconds: 780 # Ramp from 200 to 30% at 0.27%/s = 13 minutes
+        duration_seconds: 120 # Ramp from 200 to 30% at 100%/min = 2 minutes
     actions:
       - type: enable-steps
         parameters:
@@ -191,7 +191,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 120 # The device should ramp from 30% to 0 at 16%/min
+        duration_seconds: 60 # The device should ramp from 30% to 0
     actions:
       - type: remove-steps
         parameters:
@@ -200,4 +200,4 @@ Steps:
       - type: finish-test
         parameters: {}
     instructions:
-    - DER shall ramp down generation to 0W at the rate of setGradW (default 0.27%/s)
+    - DER shall ramp down generation to 0W at the rate of setGradW
