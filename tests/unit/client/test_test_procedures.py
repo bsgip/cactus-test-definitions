@@ -6,6 +6,7 @@ import pytest
 from assertical.asserts.type import assert_dict_type
 from dataclass_wizard.errors import UnknownKeysError
 
+from cactus_test_definitions.client.actions import Action
 from cactus_test_definitions.client.test_procedures import (
     TestProcedure,
     TestProcedureId,
@@ -67,6 +68,27 @@ def test_error_on_extra_key():
 
     with pytest.raises(UnknownKeysError):
         parse_test_procedure(yaml_contents)
+
+
+def test_preconditions_include_der_program_and_default_der_control():
+    """Every test procedure must set up a DERProgram and a default DERControl in its preconditions (as either
+    init_actions or actions) so that clients always have a well-defined default control state to fall back to."""
+
+    all_tps = get_all_test_procedures()
+    missing: dict[str, set[str]] = {}
+    for tp_id, tp in all_tps.items():
+        preconditions = tp.preconditions
+        precondition_actions: list[Action] = []
+        if preconditions is not None:
+            precondition_actions = (preconditions.init_actions or []) + (preconditions.actions or [])
+        action_types = {a.type for a in precondition_actions}
+
+        required = {"create-der-program", "set-default-der-control"}
+        missing_types = required - action_types
+        if missing_types:
+            missing[tp_id] = missing_types
+
+    assert not missing, f"Test procedures missing required precondition actions: {missing}"
 
 
 def test_TestProcedures_action_parameter_types():
