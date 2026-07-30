@@ -55,7 +55,7 @@ Preconditions:
         opModImpLimW: $(maxExportW) # TS5573 sets this to 0, however we must set it to 100%
         # To avoid curtailing load which is the purpose of this test
         opModLoadLimW: $(maxImportW * 0.3)
-        setGradW: 27
+        setGradW: 167 # Increased from 27 in Table 12.4.4 to avoid two 13 minute waits without altering the test intent
   instructions:
     - EndDevice should be registered with active subscriptions before starting.
     - DER shall be consuming at least 50% of its active power rating.
@@ -87,7 +87,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 780 # Ramp from 200 to 30% at 0.27%/s = 13 minutes
+        duration_seconds: 120 # Ramp from 200 to 30% at 100%/min = 2 minutes
     actions:
       - type: create-der-control
         parameters:
@@ -103,7 +103,7 @@ Steps:
           steps:
             - WAIT-DEVICE-RAMP
     instructions:
-      - DER should ramp down to the DefaultDERControl value of 30% max power at rate setGradW (default 0.27%/s).
+      - DER should ramp down to the DefaultDERControl value of 30% max power at rate setGradW
 
   # (f, g, h)
   WAIT-CONTROL-FINISH:
@@ -121,13 +121,13 @@ Steps:
           steps:
             - WAIT-CONTROL-FINISH
     instructions:
-      - DER should ramp up to the active DERControl unconstrained value at rate setGradW (default 0.27%/s).
+      - DER should ramp up to the active DERControl unconstrained value at rate setGradW
 
   WAIT-RAMP-DEFAULT-DERC:
     event:
       type: wait
       parameters:
-        duration_seconds: 780 # Ramp from 200 to 30% at 0.27%/s = 13 minutes
+        duration_seconds: 120 # Ramp from 200 to 30% at 100%/min = 2 minutes
     actions:
       - type: create-der-control
         parameters:
@@ -146,14 +146,14 @@ Steps:
           steps:
             - WAIT-RAMP-DEFAULT-DERC
     instructions:
-      - Upon completion of the active DERControl (10 minutes) the DER should ramp down to the DefaultDERControl value of 30% max power at rate setGradW (default 0.27%/s).
+      - Upon completion of the active DERControl (10 minutes) the DER should ramp down to the DefaultDERControl value of 30% max power at rate setGradW
 
   # (i)
   WAIT-TEST-FINISH:
     event:
       type: wait
       parameters:
-        duration_seconds: 120 # The device should ramp from 30% to 0 at 16%/min
+        duration_seconds: 60 # The device should ramp from 30% to 0
     actions:
       - type: remove-steps
         parameters:
@@ -162,4 +162,4 @@ Steps:
       - type: finish-test
         parameters: {}
     instructions:
-      - DER should ramp down to the active DERControl 0W value at rate setGradW (default 0.27%/s).
+      - DER should ramp down to the active DERControl 0W value at rate setGradW
