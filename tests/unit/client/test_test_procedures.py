@@ -70,13 +70,26 @@ def test_error_on_extra_key():
         parse_test_procedure(yaml_contents)
 
 
+# Test procedures that are intentionally exempt from requiring create-der-program/set-default-der-control in
+# their preconditions, along with the reason why.
+PRECONDITION_DER_PROGRAM_AND_CONTROL_EXCEPTIONS = {
+    TestProcedureId.P_01: "Provisional test - Does not improve the test, not part of TS5573 requirements.",
+    TestProcedureId.P_02: "Provisional test - Does not improve the test, not part of TS5573 requirements.",
+}
+
+
 def test_preconditions_include_der_program_and_default_der_control():
     """Every test procedure must set up a DERProgram and a default DERControl in its preconditions (as either
-    init_actions or actions) so that clients always have a well-defined default control state to fall back to."""
+    init_actions or actions) as defined in TS5573 table 12.4.4.
+
+    A small set of test procedures are exempt - see PRECONDITION_DER_PROGRAM_AND_CONTROL_EXCEPTIONS."""
 
     all_tps = get_all_test_procedures()
     missing: dict[str, set[str]] = {}
     for tp_id, tp in all_tps.items():
+        if tp_id in PRECONDITION_DER_PROGRAM_AND_CONTROL_EXCEPTIONS:
+            continue
+
         preconditions = tp.preconditions
         precondition_actions: list[Action] = []
         if preconditions is not None:
