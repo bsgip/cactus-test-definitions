@@ -138,6 +138,7 @@ Steps:
                 - /edev/1/fsa
                 - /edev/1/der
                 - /edev/1/fsa/1/derp
+                - /edev/1/derp/1/dderc
               poll_interval_seconds: 120
               request_type_str: GET
           - type: all-polls-at-correct-time
@@ -145,7 +146,7 @@ Steps:
               endpoints:
                 - /mup
               poll_interval_seconds: 60
-              request_type_str: POST
+              request_type_str: GET
     actions:
       - type: remove-steps
         parameters:
