@@ -189,6 +189,7 @@ checks:
 | `subscription-contents` | `subscribed_resource: str` | True if a subscription to `subscribed_resource` has been created | 
 | `readings-der-stored-energy` | `minimum_count: int/none` `minimum_level: float/none` `maximum_level: float/none` `window_seconds: uint/none` | True if any MirrorUsagePoint has a MirrorMeterReading for DER stored energy with `minimum_count` entries and/or readings all above and/or below `minimum_level`/`maximum_level` respectively; optionally for `window_seconds` |
 | `resource-requests` | `resources: list[CSIPAusResource]` `minimum_count: int/None` `maximum_count: int/None` | True if the client has made requests to the nominated `CSIPResource` the requisite number of times. | 
+| `all-polls-at-correct-time` | `endpoints: list[str]` `poll_interval_seconds: int` `request_type_str: str` | True if every request of type `request_type_str` (e.g. `GET`/`POST`) to each of the nominated `endpoints` (e.g. `["/dcap", "/edev"]`) arrived at intervals matching `poll_interval_seconds`. `endpoints` supports a `*` wildcard (e.g. `/mup/*`), with each matched concrete path (e.g. `/mup/2`, `/mup/3`) checked independently. Timing uses tolerance windows rather than exact spacing: a gap greater than 1.5x the interval counts as a missed poll (tolerating at most one miss per 5x-interval window), and over-polling is capped per 3x-interval window. |
 
 
 #### Hexbinary Parameters for Bitwise Operations
