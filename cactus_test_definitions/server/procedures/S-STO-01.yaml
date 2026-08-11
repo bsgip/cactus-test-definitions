@@ -1,0 +1,94 @@
+Description: Storage Energy Readings
+Category: Monitoring
+Classes:
+ - A
+
+TargetVersions:
+ - v1.3
+
+Preconditions:
+  required_clients:
+    - id: client
+
+Steps:
+  - id: PRECONDITION
+    repeat_until_pass: true
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - DeviceCapability
+          - MirrorUsagePointList
+          - DER
+    checks:
+      - type: end-device
+        parameters:
+          matches_client: true
+
+  - id: 1 - DISCOVER INITIAL MUPS
+    repeat_until_pass: true
+    admin_instructions:
+      - type: ensure-mup-list-empty
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - MirrorUsagePoint
+    checks:
+      - type: mirror-usage-point
+        parameters:
+          matches: false # MirrorUsagePoints must be initially empty for client.
+
+  - id: 3,4 - CREATE MUP FOR STORED ENERGY
+    action:
+      type: upsert-mup
+      parameters:
+        mup_id: mup_storage
+        location: Device
+        reading_types:
+          - StoredEnergy
+    checks:
+      - type: mirror-usage-point
+        parameters:
+          location: Device
+          matches: true
+          reading_types:
+            - StoredEnergy
+
+  - id: 5,6 - DISCOVER MUP WITH POSTRATE
+    repeat_until_pass: true
+    admin_instructions:
+      - type: set-post-rate
+        parameters:
+          resource: MirrorUsagePoint
+          rate_seconds: 60
+    action:
+      type: refresh-resource
+      parameters:
+        resource: MirrorUsagePoint
+    checks:
+      - type: mirror-usage-point
+        parameters:
+          location: Device
+          matches: true
+          reading_types:
+            - StoredEnergy
+          post_rate_seconds: 60
+
+  - id: 7 - POST STORED ENERGY READINGS
+    action:
+      type: insert-readings
+      parameters:
+        mup_id: mup_storage
+        values:
+          StoredEnergy: [5000, 5250, 5500, 5750]
+
+  # NOTE: The final steps of this test (8-10) verify that individual readings can be re-fetched via the
+  # Location header returned when submitting them. As href is optional, it is assumed many servers will not
+  # currently support this. While waiting for a discussion by the CIRG it has been decided to omit this step
+  # of testing for now (consistent with S-ALL-06).
