@@ -86,6 +86,15 @@ Preconditions:
     - type: create-der-program
       parameters:
         primacy: 0
+    - type: set-default-der-control
+      parameters:
+      # The import and export values are specified as 0 in TS5573 Table 12.4.4. They have been altered for this test so
+      # that a device can follow the load limits set in this test without being overridden.
+      # The setGradW specified in TS5573 is 27. This has been increased for this test in order to observe DERControls
+      # during witness tests in a reasonable time frame.
+        opModImpLimW: 100
+        opModExpLimW: 100
+        setGradW: 600  # 6%/s which is about 17s for 100% to 0.
 
   checks:
     - type: end-device-contents

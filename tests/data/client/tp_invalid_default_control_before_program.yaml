@@ -1,0 +1,24 @@
+
+Description: Test with set-default-der-control called before any DERProgram exists
+Category: Registration
+Classes:
+  - A
+  - DR-A
+TargetVersions:
+  - v1.2
+Preconditions:
+  init_actions:
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 100
+Steps:
+  STEP1:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /dcap
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - STEP1

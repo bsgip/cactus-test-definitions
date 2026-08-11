@@ -56,6 +56,38 @@ def validate_test_procedure_actions(test_procedure: TestProcedure, test_procedur
             validate_action(test_procedure, test_procedure_id, step_name, action)
 
 
+def validate_der_program_exists_before_default_control(
+    test_procedure: TestProcedure, test_procedure_id: TestProcedureId
+) -> None:
+    """set-default-der-control (without an explicit derp_id) requires a DERProgram to already exist - the runner
+    will not create one implicitly (unlike create-der-control). Ensure create-der-program/create-der-control always
+    precedes such a call, in actual execution order: init_actions, then preconditions actions, then step actions.
+
+    raises TestProcedureDefinitionError on failure
+    """
+    ordered_action_lists: list[tuple[list[Action] | None, str]] = []
+    if test_procedure.preconditions:
+        ordered_action_lists.append((test_procedure.preconditions.init_actions, "Precondition init_actions"))
+        ordered_action_lists.append((test_procedure.preconditions.actions, "Precondition actions"))
+    ordered_action_lists.extend((step.actions, step_name) for step_name, step in test_procedure.steps.items())
+
+    has_der_program = False
+    for actions, location in ordered_action_lists:
+        for action in actions or []:
+            if action.type in ("create-der-program", "create-der-control"):
+                has_der_program = True
+            elif (
+                action.type == "set-default-der-control"
+                and action.parameters.get("derp_id") is None
+                and not has_der_program
+            ):
+                raise TestProcedureDefinitionError(
+                    f"{test_procedure_id}.{location}. set-default-der-control has no derp_id and no "
+                    "create-der-program/create-der-control has executed yet - the runner has no DERProgram "
+                    "to attach the DefaultDERControl to."
+                )
+
+
 def validate_test_procedure_checks(test_procedure: TestProcedure, test_procedure_id: TestProcedureId) -> None:
     """Validate checks of a test procedure
 
@@ -96,3 +128,4 @@ def validate_test_procedure(test_procedure: TestProcedure, test_procedure_id: Te
     validate_test_procedure_actions(test_procedure, test_procedure_id)
     validate_test_procedure_checks(test_procedure, test_procedure_id)
     validate_test_procedure_events(test_procedure, test_procedure_id)
+    validate_der_program_exists_before_default_control(test_procedure, test_procedure_id)
