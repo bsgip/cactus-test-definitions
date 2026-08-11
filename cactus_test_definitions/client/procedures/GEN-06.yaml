@@ -29,7 +29,12 @@ Preconditions:
     - type: create-der-program
       parameters:
         primacy: 0
-        
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 0
+        opModExpLimW: 100 # Increased from the 0 defined in TS5573 Table 12.4.4 in order to observe the GEN limit changes without overriding them
+        setGradW: 600 # This is increased from the 27 defined in TS5573 Table 12.4.4 in order to comply with the ramps specified
+
   checks:
     - type: end-device-contents
       parameters: {}
@@ -55,12 +60,12 @@ Steps:
   # NOTE - The majority of this test's validation is watching 
 
   # (a, b, c)
-  # After a short delay (to allow precondition actions to propagate subscriptions)
+  # After a short delay (to allow precondition actions to propagate subscriptions) and for device to ramp to full power
   WAIT-CREATE-DERC:
     event:
       type: wait
       parameters:
-        duration_seconds: 60
+        duration_seconds: 90
     actions:
       - type: create-der-control
         parameters:
@@ -81,11 +86,11 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 480 # enough time for the control to start, run and then finish
+        duration_seconds: 60 # enough time for the control to be received and ramp down
     actions:
       - type: remove-steps
         parameters:
           steps:
             - WAIT-TEST-FINISH
     instructions:
-      - DER should be observed ramping to and then from 0W control.
+      - DER should be observed ramping to the 0W control.
