@@ -34,7 +34,10 @@ Preconditions:
         primacy: 0
     - type: set-default-der-control
       parameters:
+        opModExpLimW: 0
         opModImpLimW: $(maxImportW * 0.3)
+        setGradW: 600 # This is increased from the 27 specified in TS5573 Table 12.4.4 in order for the ramp 
+        # Behaviour to be observed in a reasonable time frame
   instructions: 
     - DER should be importing at least 50% of its rated power.
     
@@ -105,7 +108,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 120
+        duration_seconds: 60
     actions:
       - type: remove-steps
         parameters:
