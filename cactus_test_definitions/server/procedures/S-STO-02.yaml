@@ -1,0 +1,72 @@
+Description: Storage Capabilities and Settings
+Category: Monitoring
+Classes:
+ - A
+
+TargetVersions:
+ - v1.3
+
+Preconditions:
+  required_clients:
+    - id: client
+
+Steps:
+  - id: PRECONDITION
+    repeat_until_pass: true
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+          has_der_list: true
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - DER
+    checks:
+      - type: end-device
+        parameters:
+          matches_client: true
+      - type: discovered
+        parameters:
+          links:
+            - DERCapability
+            - DERSettings
+  
+  - id: 1,2 - POST DERCAPABILITY
+    action:
+      type: upsert-der-capability
+      parameters:
+        type: 83 # COMBINED_PV_AND_STORAGE
+        modesSupported: 1
+        doeModesSupported: 1
+        rtgMaxVA: 5000
+        rtgMaxVar: 5000
+        rtgMaxVarNeg: 5000
+        rtgMaxW: 5000
+        rtgMinPFOverExcited: 90
+        rtgMinPFUnderExcited: 90
+        rtgMaxChargeRateW: 5000
+        rtgMaxDischargeRateW: 5000
+        rtgMaxWh: 10000
+        vppModesSupported: 1 # opModStorageTargetW
+
+  - id: 3,4 - POST DERSETTINGS
+    action:
+      type: upsert-der-settings
+      parameters:
+        setGradW: 1000
+        modesEnabled: 1
+        doeModesEnabled: 1
+        setMaxVA: 5000
+        setMaxVar: 5000
+        setMaxVarNeg: 5000
+        setMaxW: 5000
+        setMinPFOverExcited: 90
+        setMinPFUnderExcited: 90
+        setMaxChargeRateW: 5000
+        setMaxDischargeRateW: 5000
+        setMaxWh: 10000
+        setMinWh: 0
+        vppModesEnabled: 1 # opModStorageTargetW
