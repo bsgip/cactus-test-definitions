@@ -121,7 +121,7 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         ),  # Default is True - If True, assert the response exists. Otherwise assert it does NOT exist
     },
     "all-polls-at-correct-time": {
-        "endpoints": ParameterSchema(True, ParameterType.ListString),  # e.g. ["/dcap"] or ["/derp", "/derc"]
+        "endpoint": ParameterSchema(True, ParameterType.String),  # e.g. /dcap
         "poll_interval_seconds": ParameterSchema(True, ParameterType.Integer),
         "request_type_str": ParameterSchema(True, ParameterType.String),  # e.g. GET, POST
     },
