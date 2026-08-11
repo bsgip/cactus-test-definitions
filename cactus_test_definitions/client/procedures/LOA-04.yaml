@@ -24,6 +24,16 @@ Preconditions:
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
+    - type: create-der-program
+      parameters:
+        primacy: 0
+    - type: set-default-der-control
+      parameters:
+      # The import and export values are specified as 0 in TS5573 Table 12.4.4. They have been altered for this test so
+      # that a device can follow the load limits set in this test without being overridden.
+        opModImpLimW: 100
+        opModExpLimW: 100
+        setGradW: 167 # Increased from 27 in Table 12.4.4 to avoid two 13 minute waits without altering the test intent
   checks:
     - type: end-device-contents
       parameters: {}
@@ -35,8 +45,6 @@ Preconditions:
         start: $(now)
         duration_seconds: 900
         opModLoadLimW: $(maxImportW * 2)
-    - type: set-default-der-control
-      parameters: {}
   instructions:
     - DER shall be importing at least 50% of its active power rating.
     
@@ -75,11 +83,28 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-DERC-2
+            - WAIT-RAMP-DEFAULT-DERC
       - type: remove-steps
         parameters:
           steps:
             - GET-DERC-1
+
+  WAIT-RAMP-DEFAULT-DERC:
+    instructions:
+    - DER should ramp down import to 30% at the rate of setGradW
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 120 # Ramp from 200 to 30% at 100%/min = 2 minutes
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-2
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-RAMP-DEFAULT-DERC
 
   # (d, e) On this poll, client will discover control was cancelled and a new control will be added at 200% of setMaxW
   GET-DERC-2:
@@ -105,10 +130,29 @@ Steps:
       
   # (f, g) Waits for the new control to finish (with a bit of overtime)
   WAIT-CONTROL-END:
+    instructions:
+    - DER should discover a new control and then ramp up to unconstrained at the rate of setGradW
     event:
       type: wait
       parameters:
-        duration_seconds: 660
+        duration_seconds: 600
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-RAMP-DEFAULT-DERC-2
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-CONTROL-END
+
+  WAIT-RAMP-DEFAULT-DERC-2:
+    instructions:
+    - DER should ramp down import to 30% at the rate of setGradW
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 120 # Ramp from 200 to 30% at 100%/min = 2 minutes
     actions:
       - type: enable-steps
         parameters:
@@ -117,12 +161,8 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-CONTROL-END
-    instructions:
-    - DER should ramp down import to 30% at the rate of setGradW (default 0.27%/s)
-    - DER should then discover a new control and then ramp up to unconstrained at the rate of setGradW (default 0.27%/s)
-    - Upon control completion, DER should then ramp down to 30% at the rate of setGradW (default 0.27%/s)
-  
+            - WAIT-RAMP-DEFAULT-DERC-2
+
   # (h) On this poll, client will discover control the DefaultDERControl is cancelled and a new 0W control is in place
   GET-DERC-3:
     event:
@@ -147,12 +187,11 @@ Steps:
           steps:
             - GET-DERC-3
 
-
   WAIT-TEST-END:
     event:
       type: wait
       parameters:
-        duration_seconds: 120
+        duration_seconds: 60 # The device should ramp from 30% to 0
     actions:
       - type: remove-steps
         parameters:
@@ -161,4 +200,4 @@ Steps:
       - type: finish-test
         parameters: {}
     instructions:
-    - DER shall ramp down import to 0W at the rate of setGradW (default 0.27%/s)
+    - DER shall ramp down import to 0W at the rate of setGradW
