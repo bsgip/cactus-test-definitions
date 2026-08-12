@@ -6,11 +6,40 @@ from cactus_test_definitions.client.test_procedures import (
     TestProcedureId,
 )
 from cactus_test_definitions.errors import TestProcedureDefinitionError
-from cactus_test_definitions.variable_expressions import BaseExpression
+from cactus_test_definitions.variable_expressions import Expression, NamedVariable, NamedVariableType
 
 # Action types whose implementation looks up the "active" EndDevice/Site under test
 # (e.g. create_der_control), can't go in init_actions
 ACTIONS_REQUIRING_REGISTERED_END_DEVICE = {"create-der-control"}
+
+# NamedVariableType members that don't depend on any state the client under test provides - these are safe to use
+# anywhere, including init_actions (which run immediately on /initialise, before any client interaction).
+# Deliberately an allowlist rather than a blocklist of "unsafe" variables: every OTHER NamedVariableType (including
+# ones added in future, eg new DERSETTING_*/DERCAPABILITY_* entries) is rejected in init_actions by default, until
+# someone explicitly proves it's safe by adding it here
+NAMED_VARIABLES_SAFE_IN_INIT_ACTIONS = {
+    NamedVariableType.NOW,
+    NamedVariableType.NOW_DAY,
+    NamedVariableType.NOW_HOUR,
+    NamedVariableType.NMI_1,
+    NamedVariableType.NMI_2,
+    NamedVariableType.RANDURI_1,
+    NamedVariableType.RANDURI_2,
+    NamedVariableType.RANDURI_3,
+}
+
+
+def _references_unsafe_named_variable(value: object) -> bool:
+    """Recursively checks a (possibly parsed) parameter value for a NamedVariable that isn't explicitly known-safe
+    for use in init_actions (ie: it may depend on client/device state that can't exist until after the client under
+    test has registered)."""
+    if isinstance(value, NamedVariable):
+        return value.variable not in NAMED_VARIABLES_SAFE_IN_INIT_ACTIONS
+    if isinstance(value, Expression):
+        return _references_unsafe_named_variable(value.lhs_operand) or _references_unsafe_named_variable(
+            value.rhs_operand
+        )
+    return False
 
 
 def validate_action(
@@ -96,7 +125,20 @@ def validate_der_program_exists_before_default_control(
 def validate_init_actions_have_no_dynamic_parameters(
     test_procedure: TestProcedure, test_procedure_id: TestProcedureId
 ) -> None:
-    """init_actions fire at /initialise, so cant depend on client state ($)"""
+    """init_actions fire at /initialise, before the client under test has had any opportunity to register (eg an
+    EndDevice, DERSetting or DERCapability). So nothing in init_actions can depend on state that only exists once
+    the client has registered:
+
+    - A NamedVariable not in NAMED_VARIABLES_SAFE_IN_INIT_ACTIONS (eg $(maxImportW), $(setMaxW)) resolves at
+      test-execution-time from client-provided state and will raise UnresolvableVariableError if attempted here.
+    - Actions like create-der-control look up the "active" EndDevice/Site directly and will fail outright, even with
+      constant parameters, since no EndDevice has been registered yet.
+
+    Such actions belong in Preconditions.actions instead, which only runs once Preconditions.checks (eg
+    der-settings-contents) have passed - i.e. after the client has registered.
+
+    raises TestProcedureDefinitionError on failure
+    """
     if not test_procedure.preconditions or not test_procedure.preconditions.init_actions:
         return
 
@@ -109,11 +151,12 @@ def validate_init_actions_have_no_dynamic_parameters(
 
         for value in (action.parameters or {}).values():
             values = value if isinstance(value, list) else [value]
-            if any(isinstance(v, BaseExpression) for v in values):
+            if any(_references_unsafe_named_variable(v) for v in values):
                 raise TestProcedureDefinitionError(
-                    f"{test_procedure_id}.Precondition init_actions[{action.type}] references a $(...) expression. "
-                    "init_actions run before the client under test has registered, so nothing dynamic can be "
-                    "resolved here. Move this action to Preconditions.actions."
+                    f"{test_procedure_id}.Precondition init_actions[{action.type}] references a variable that isn't "
+                    "known-safe for init_actions. init_actions run before the client under test has registered, so "
+                    "nothing dependent on client/device state can be resolved here. Move this action to "
+                    "Preconditions.actions."
                 )
 
 
