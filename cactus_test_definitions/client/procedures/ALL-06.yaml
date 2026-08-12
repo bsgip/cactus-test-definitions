@@ -43,9 +43,11 @@ Preconditions:
     - type: set-default-der-control
       parameters:
       # The import and export values are specified as 0 in TS5573 Table 12.4.4. They have been altered for this test so
-      # that a device can see the difference when the active control is set to 0.
-        opModImpLimW: $(maxImportW)
-        opModExpLimW: $(maxExportW)
+      # that a device can see the difference when the active control is set to 0. A per-device value (e.g.
+      # $(maxImportW)) can't be resolved here - init_actions fire before the client under test has registered - so
+      # a large static value is used instead.
+        opModImpLimW: 200000
+        opModExpLimW: 200000
         setGradW: 27
   instructions:
     - Connect a test load electrically in parallel with the DER.
