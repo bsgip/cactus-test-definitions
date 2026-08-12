@@ -91,6 +91,7 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "opModEnergize": ParameterSchema(False, ParameterType.Boolean),  # Filters controls based on this value
         "opModConnect": ParameterSchema(False, ParameterType.Boolean),  # Filters controls based on this value
         "opModFixedW": ParameterSchema(False, ParameterType.Float),  # Filters controls based on this value
+        "opModStorageTargetW": ParameterSchema(False, ParameterType.Float),  # Filters controls based on this value
         "rampTms": ParameterSchema(False, ParameterType.Integer),  # Filter on this val. 0 means negative assertion
         "randomizeStart": ParameterSchema(False, ParameterType.Integer),  # Filter on this val (in seconds)
         "event_status": ParameterSchema(False, ParameterType.Integer),  # Filter on Event.status value

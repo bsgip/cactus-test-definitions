@@ -1,0 +1,183 @@
+Description: Storage Target Control with Export Limits
+Category: Control
+Classes:
+ - A
+
+TargetVersions:
+ - v1.3
+
+Preconditions:
+  required_clients:
+    - id: client
+
+Steps:
+  - id: PRECONDITION
+    repeat_until_pass: true
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+          has_der_list: true
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - DER
+    checks:
+      - type: end-device
+        parameters:
+          matches_client: true
+      - type: discovered
+        parameters:
+          links:
+            - DERCapability
+            - DERSettings
+
+  - id: 1,2 - POST DERCAPABILITY # As per S-STO-02
+    action:
+      type: upsert-der-capability
+      parameters:
+        type: 83 # COMBINED_PV_AND_STORAGE
+        modesSupported: 1
+        doeModesSupported: 1
+        rtgMaxVA: 5000
+        rtgMaxVar: 5000
+        rtgMaxVarNeg: 5000
+        rtgMaxW: 5000
+        rtgMinPFOverExcited: 90
+        rtgMinPFUnderExcited: 90
+        rtgMaxChargeRateW: 5000
+        rtgMaxDischargeRateW: 5000
+        rtgMaxWh: 10000
+        vppModesSupported: 1 # opModStorageTargetW
+
+  - id: 3,4 - POST DERSETTINGS # As per S-STO-02
+    action:
+      type: upsert-der-settings
+      parameters:
+        setGradW: 1000
+        modesEnabled: 1
+        doeModesEnabled: 1
+        setMaxVA: 5000
+        setMaxVar: 5000
+        setMaxVarNeg: 5000
+        setMaxW: 5000
+        setMinPFOverExcited: 90
+        setMinPFUnderExcited: 90
+        setMaxChargeRateW: 5000
+        setMaxDischargeRateW: 5000
+        setMaxWh: 10000
+        setMinWh: 0
+        vppModesEnabled: 1 # opModStorageTargetW
+
+  - id: SET DEFAULT EXPORT LIMIT
+    repeat_until_pass: true
+    admin_instructions:
+      - type: create-default-der-control
+        parameters:
+          opModExpLimW: 1500 # Default export limit of 1.5kW
+      - type: clear-der-controls
+        parameters:
+          all: true
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - DERControl
+          - DefaultDERControl
+    checks:
+      - type: default-der-control
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          opModExpLimW: 1500
+      - type: der-control
+        parameters:
+          maximum_count: 0 # No active controls at the start of the test
+
+
+  - id: 1 - CONFIGURE STORAGE TARGET CONTROL WITH EXPORT LIMIT
+    repeat_until_pass: true
+    admin_instructions:
+      - type: create-der-control
+        parameters:
+          status: scheduled
+          start_offset_seconds: 300 # Starts 5 minutes in the future
+          duration_seconds: 300 # Ends 10 minutes in the future
+          opModStorageTargetW: $(setMaxW * 0.5)
+          opModExpLimW: $(setMaxW * 2)
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - DERControl
+    checks:
+      - type: der-control
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          opModStorageTargetW: $(setMaxW * 0.5)
+          opModExpLimW: $(setMaxW * 2)
+          event_status: 0 # Scheduled
+
+  - id: 2,3 - CLIENT RECEIVES CONTROL, SERVER CONFIRMS
+    repeat_until_pass: true
+    action:
+      type: respond-der-controls # sends control response = 1 (received)
+    checks:
+      - type: der-control-responses
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          sent_response_type: 1 # Received
+
+  - id: WAIT for DERControl start time
+    action:
+      type: wait
+      parameters:
+        duration_seconds: 320 # 5 minutes and 20 second buffer
+
+  - id: 4 - DERControl starts
+    repeat_until_pass: true
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - DERControl
+    checks:
+      - type: der-control # Check event status has been updated
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          opModStorageTargetW: $(setMaxW * 0.5)
+          opModExpLimW: $(setMaxW * 2)
+          event_status: 1 # Active
+
+  - id: 5,6 - CLIENT POSTS STARTED, SERVER CONFIRMS
+    repeat_until_pass: true
+    action:
+      type: respond-der-controls # sends control response = 2 (started)
+    checks:
+      - type: der-control-responses
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          sent_response_type: 2 # Started
+
+  - id: WAIT for DERControl end time
+    action:
+      type: wait
+      parameters:
+        duration_seconds: 320 # remaining 5 minute duration and 20 second buffer
+
+  - id: 7,8,9 - DERControl completes, client posts completed, server confirms
+    repeat_until_pass: true
+    action:
+      type: respond-der-controls # sends control response = 3 (completed)
+    checks:
+      - type: der-control-responses
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          sent_response_type: 3 # Completed
