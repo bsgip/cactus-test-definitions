@@ -1,0 +1,154 @@
+Description: Provisional - Long running control test
+Category: Provisional
+Classes:
+  - P-A
+
+TargetVersions:
+  - v1.2
+  - v1.3
+  - v1.3-beta/storage
+
+Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+  
+  actions:
+    - type: create-der-program
+      parameters:
+        primacy: 1
+        tag: DERP1
+    - type: set-default-der-control
+      parameters:
+        opModExpLimW: $(maxExportW * 0.3)
+        opModImpLimW: $(maxImportW * 0.3)
+        setGradW: 100 # 1% / second
+  checks:
+    - type: end-device-contents
+      parameters: {}
+    - type: der-settings-contents
+      parameters: {}
+        
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+      
+Steps:
+  GET-DERP-LIST:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now + '2 minutes')
+          duration_seconds: 86400 # 24 hours
+          opModExpLimW: 0
+          opModImpLimW: 0
+          tag: DERC1
+          der_program_tag: DERP1
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-DERC1-RESPONSE-RECEIVED
+            - POST-DERC1-RESPONSE-STARTED
+            - PROCEED-OBSERVE-ZERO
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-LIST
+
+  POST-DERC1-RESPONSE-RECEIVED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 1 # Received
+            subject_tag: DERC1
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC1-RESPONSE-RECEIVED
+
+  POST-DERC1-RESPONSE-STARTED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2 # Started
+            subject_tag: DERC1
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC1-RESPONSE-STARTED
+
+  PROCEED-OBSERVE-ZERO:
+    instructions:
+      - The device should now be observed ramping import/export to zero once DERC1 starts
+    event:
+      type: proceed
+      parameters:
+        timeout_seconds: 420 # 5 minutes plus the 2 minute start time
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-DERC1-RESPONSE-CANCELLED
+            - PROCEED-OBSERVE-DEFAULT
+      - type: cancel-active-der-controls
+        parameters: {}
+      - type: remove-steps
+        parameters:
+          steps:
+            - PROCEED-OBSERVE-ZERO
+
+  POST-DERC1-RESPONSE-CANCELLED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 6 # Cancelled
+            subject_tag: DERC1
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC1-RESPONSE-CANCELLED
+
+  PROCEED-OBSERVE-DEFAULT:
+    instructions:
+      - The device should now be observed ramping import/export to default of 30%
+    event:
+      type: proceed
+      parameters:
+        timeout_seconds: 300
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - PROCEED-OBSERVE-DEFAULT
