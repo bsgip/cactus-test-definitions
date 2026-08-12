@@ -30,7 +30,7 @@ Preconditions:
     - type: set-default-der-control
       parameters:
         opModImpLimW: 0
-        opModExpLimW: 100 # Increased from the 0 efined in TS5573 Table 12.4.4 in order to observe the GEN limit changes without overriding them
+        opModExpLimW: $(maxExportW) # Increased from the 0 efined in TS5573 Table 12.4.4 in order to observe the GEN limit changes without overriding them
         setGradW: 600 # This is increased from the 27 defined in TS5573 Table 12.4.4 in order to comply with the <30s ramp specified in step c
   checks:
     - type: end-device-contents

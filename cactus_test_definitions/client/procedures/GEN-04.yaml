@@ -31,8 +31,8 @@ Preconditions:
       parameters:
       # The import and export values are specified as 0 in TS5573 Table 12.4.4. They have been altered for this test so
       # that a device can follow the generation limits set in this test without being overridden.
-        opModImpLimW: 100
-        opModExpLimW: 100
+        opModImpLimW: $(maxImportW)
+        opModExpLimW: $(maxExportW)
         setGradW: 167 # Increased from 27 in Table 12.4.4 to avoid two 13 minute waits without altering the test intent
   checks:
     - type: end-device-contents

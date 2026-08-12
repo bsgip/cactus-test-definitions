@@ -31,7 +31,7 @@ Preconditions:
         primacy: 0
     - type: set-default-der-control
       parameters:
-        opModImpLimW: 100 # Increased from the 0 defined in TS5573 Table 12.4.4 in order to observe the LOA limit changes without overriding them
+        opModImpLimW: $(maxImportW) # Increased from the 0 defined in TS5573 Table 12.4.4 in order to observe the LOA limit changes without overriding them
         opModExpLimW: 0
         setGradW: 600 # This is increased from the 27 defined in TS5573 Table 12.4.4 in order to comply with the ramps specified
 

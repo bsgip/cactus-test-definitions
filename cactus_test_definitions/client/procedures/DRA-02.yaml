@@ -29,8 +29,8 @@ Preconditions:
         primacy: 0
     - type: set-default-der-control
       parameters:
-        opModImpLimW: 100 # Altered from the 0 defined in TS5573 in order to observe DER Control effects
-        opModExpLimW: 100 # Altered from the 0 defined in TS5573 in order to observe DER Control effects
+        opModImpLimW: $(maxImportW) # Altered from the 0 defined in TS5573 in order to observe DER Control effects
+        opModExpLimW: $(maxExportW) # Altered from the 0 defined in TS5573 in order to observe DER Control effects
         setGradW: 27
   checks:
     - type: end-device-contents
