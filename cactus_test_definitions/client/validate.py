@@ -6,6 +6,11 @@ from cactus_test_definitions.client.test_procedures import (
     TestProcedureId,
 )
 from cactus_test_definitions.errors import TestProcedureDefinitionError
+from cactus_test_definitions.variable_expressions import BaseExpression
+
+# Action types whose implementation looks up the "active" EndDevice/Site under test
+# (e.g. create_der_control), can't go in init_actions
+ACTIONS_REQUIRING_REGISTERED_END_DEVICE = {"create-der-control"}
 
 
 def validate_action(
@@ -88,6 +93,30 @@ def validate_der_program_exists_before_default_control(
                 )
 
 
+def validate_init_actions_have_no_dynamic_parameters(
+    test_procedure: TestProcedure, test_procedure_id: TestProcedureId
+) -> None:
+    """init_actions fire at /initialise, so cant depend on client state ($)"""
+    if not test_procedure.preconditions or not test_procedure.preconditions.init_actions:
+        return
+
+    for action in test_procedure.preconditions.init_actions:
+        if action.type in ACTIONS_REQUIRING_REGISTERED_END_DEVICE:
+            raise TestProcedureDefinitionError(
+                f"{test_procedure_id}.Precondition init_actions[{action.type}] requires an already registered "
+                "EndDevice, which can't exist yet at init_actions time. Move it to Preconditions.actions."
+            )
+
+        for value in (action.parameters or {}).values():
+            values = value if isinstance(value, list) else [value]
+            if any(isinstance(v, BaseExpression) for v in values):
+                raise TestProcedureDefinitionError(
+                    f"{test_procedure_id}.Precondition init_actions[{action.type}] references a $(...) expression. "
+                    "init_actions run before the client under test has registered, so nothing dynamic can be "
+                    "resolved here. Move this action to Preconditions.actions."
+                )
+
+
 def validate_test_procedure_checks(test_procedure: TestProcedure, test_procedure_id: TestProcedureId) -> None:
     """Validate checks of a test procedure
 
@@ -129,3 +158,4 @@ def validate_test_procedure(test_procedure: TestProcedure, test_procedure_id: Te
     validate_test_procedure_checks(test_procedure, test_procedure_id)
     validate_test_procedure_events(test_procedure, test_procedure_id)
     validate_der_program_exists_before_default_control(test_procedure, test_procedure_id)
+    validate_init_actions_have_no_dynamic_parameters(test_procedure, test_procedure_id)

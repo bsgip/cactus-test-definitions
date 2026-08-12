@@ -1,0 +1,28 @@
+Description: Test with create-der-control (requires a registered EndDevice) in Preconditions.init_actions
+Category: Registration
+Classes:
+  - A
+  - DR-A
+TargetVersions:
+  - v1.2
+Preconditions:
+  init_actions:
+    - type: create-der-program
+      parameters:
+        primacy: 0
+    - type: create-der-control
+      parameters:
+        start: "2024-01-01T00:00:00Z"
+        duration_seconds: 300
+        opModImpLimW: 100
+Steps:
+  STEP1:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /dcap
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - STEP1

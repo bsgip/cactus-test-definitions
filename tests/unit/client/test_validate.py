@@ -109,6 +109,8 @@ def collect_event_param_values(tp: TestProcedure, event_type: str, param_name: s
         Path("tests/data/client/tp_invalid_bad_step_enable.yaml"),
         Path("tests/data/client/tp_invalid_bad_step_remove.yaml"),
         Path("tests/data/client/tp_invalid_default_control_before_program.yaml"),
+        Path("tests/data/client/tp_invalid_init_actions_dynamic_parameter.yaml"),
+        Path("tests/data/client/tp_invalid_init_actions_requires_end_device.yaml"),
     ],
 )
 def test_TestProcedure_invalid_examples(tp_file: Path):
