@@ -10,19 +10,27 @@ TargetVersions:
 
 Preconditions:
   init_actions:
-      - type: create-der-program
-        parameters:
-          primacy: 0
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+    - type: create-der-program
+      parameters:
+        primacy: 0
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 100 # Altered from the 0 defined in TS5573 in order to observe DER Control effects
+        opModExpLimW: 100 # Altered from the 0 defined in TS5573 in order to observe DER Control effects
+        setGradW: 27
   checks:
     - type: end-device-contents
       parameters: {}
     - type: der-settings-contents
       parameters: {}
-  actions:
-    - type: set-comms-rate
-      parameters:
-        der_list_poll_seconds: 60
-        derp_list_poll_seconds: 60
   instructions:
     - The controlled device should be connected to the grid and consuming 90% (+/- 5%) of its nameplate rating maximum.
 
@@ -333,4 +341,3 @@ Steps:
             - WAIT-DERC-4
       - type: finish-test
         parameters: {}
-
