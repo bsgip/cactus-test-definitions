@@ -29,11 +29,6 @@ Preconditions:
     - type: create-der-program
       parameters:
         primacy: 0
-    - type: set-default-der-control
-      parameters:
-        opModImpLimW: $(maxImportW) # Increased from the 0 defined in TS5573 Table 12.4.4 in order to observe the LOA limit changes without overriding them
-        opModExpLimW: 0
-        setGradW: 600 # This is increased from the 27 defined in TS5573 Table 12.4.4 in order to comply with the ramps specified
 
   checks:
     - type: end-device-contents
@@ -45,6 +40,11 @@ Preconditions:
         subscribed_resource: /edev/1/derp/1/derc
 
   actions:
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: $(maxImportW) # Increased from the 0 defined in TS5573 Table 12.4.4 in order to observe the LOA limit changes without overriding them
+        opModExpLimW: 0
+        setGradW: 600 # This is increased from the 27 defined in TS5573 Table 12.4.4 in order to comply with the ramps specified
     - type: create-der-control
       parameters:
         start: $(now)

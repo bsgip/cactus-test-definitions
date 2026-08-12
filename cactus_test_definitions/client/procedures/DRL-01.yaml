@@ -21,16 +21,17 @@ Preconditions:
     - type: create-der-program
       parameters:
         primacy: 0
-    - type: set-default-der-control
-      parameters:
-        opModImpLimW: $(maxImportW) # Altered from the 0 defined in TS5573 in order to observe DER Control effects
-        opModExpLimW: $(maxExportW) # Altered from the 0 defined in TS5573 in order to observe DER Control effects
-        setGradW: 27
   checks:
     - type: end-device-contents
       parameters: {}
     - type: der-settings-contents
       parameters: {}
+  actions:
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: $(maxImportW) # Altered from the 0 defined in TS5573 in order to observe DER Control effects
+        opModExpLimW: $(maxExportW) # Altered from the 0 defined in TS5573 in order to observe DER Control effects
+        setGradW: 27
   instructions:
     - The controlled device should be connected to the grid and consuming 90% (+/- 5%) of its nameplate rating maximum.
 
