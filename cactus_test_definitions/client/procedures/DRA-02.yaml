@@ -25,18 +25,19 @@ Preconditions:
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
     - type: create-der-program
-      parameters:         
-        primacy: 0
-    - type: set-default-der-control
       parameters:
-        opModImpLimW: $(maxImportW) # Altered from the 0 defined in TS5573 in order to observe DER Control effects
-        opModExpLimW: $(maxExportW) # Altered from the 0 defined in TS5573 in order to observe DER Control effects
-        setGradW: 27
+        primacy: 0
   checks:
     - type: end-device-contents
       parameters: {}
     - type: der-settings-contents
       parameters: {}
+  actions:
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: $(maxImportW) # Altered from the 0 defined in TS5573 in order to observe DER Control effects
+        opModExpLimW: $(maxExportW) # Altered from the 0 defined in TS5573 in order to observe DER Control effects
+        setGradW: 27
   instructions:
     - The controlled device is connected to the grid and consuming/generating power of at least 50% of its nameplate rating
       

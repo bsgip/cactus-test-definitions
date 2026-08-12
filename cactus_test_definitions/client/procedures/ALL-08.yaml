@@ -26,6 +26,13 @@ Preconditions:
     - type: create-der-program
       parameters:
         primacy: 0
+  checks:
+    - type: end-device-contents
+      parameters: {}
+    - type: der-status-contents
+      parameters:
+        operationalModeStatus: 2
+  actions:
     - type: set-default-der-control
       parameters:
       # The import and export values are specified as 0 in TS5573 Table 12.4.4. These have been altered for this test so
@@ -33,12 +40,6 @@ Preconditions:
         opModImpLimW: $(maxImportW)
         opModExpLimW: $(maxExportW)
         setGradW: 27
-  checks:
-    - type: end-device-contents
-      parameters: {}
-    - type: der-status-contents
-      parameters: 
-        operationalModeStatus: 2
   instructions:
     - DER shall be generating or consuming at least 50% of the DER's active power rating.
       

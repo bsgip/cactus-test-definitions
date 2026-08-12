@@ -27,6 +27,12 @@ Preconditions:
     - type: create-der-program
       parameters:
         primacy: 0
+  checks:
+    - type: end-device-contents
+      parameters: {}
+    - type: der-settings-contents
+      parameters: {}
+  actions:
     - type: set-default-der-control
       parameters:
       # The import and export values are specified as 0 in TS5573 Table 12.4.4. Set them to the site's absolute
@@ -34,12 +40,6 @@ Preconditions:
         opModImpLimW: $(maxImportW)
         opModExpLimW: $(maxExportW)
         setGradW: 167 # Increased from 27 in Table 12.4.4 to avoid two 13 minute waits without altering the test intent
-  checks:
-    - type: end-device-contents
-      parameters: {}
-    - type: der-settings-contents
-      parameters: {}
-  actions:
     - type: create-der-control
       parameters:
         start: $(now)
