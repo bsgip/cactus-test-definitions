@@ -24,6 +24,23 @@ Criteria:
       parameters:
         all: true
         status: 2 # Started
+    - type: all-polls-at-correct-time
+      parameters:
+        endpoints:
+          - /dcap
+          - /edev
+          - /edev/1/fsa
+          - /edev/1/der
+          - /edev/1/fsa/1/derp
+          - /edev/1/derp/1/dderc
+        poll_interval_seconds: 120
+        request_type_str: GET
+    - type: all-polls-at-correct-time
+      parameters:
+        endpoints:
+          - /mup
+        poll_interval_seconds: 60
+        request_type_str: GET
 
 Preconditions:
   init_actions:
@@ -129,24 +146,6 @@ Steps:
       type: wait
       parameters:
         duration_seconds: 180
-      checks:
-          - type: all-polls-at-correct-time
-            parameters:
-              endpoints:
-                - /dcap
-                - /edev
-                - /edev/1/fsa
-                - /edev/1/der
-                - /edev/1/fsa/1/derp
-                - /edev/1/derp/1/dderc
-              poll_interval_seconds: 120
-              request_type_str: GET
-          - type: all-polls-at-correct-time
-            parameters:
-              endpoints:
-                - /mup
-              poll_interval_seconds: 60
-              request_type_str: GET
     actions:
       - type: remove-steps
         parameters:

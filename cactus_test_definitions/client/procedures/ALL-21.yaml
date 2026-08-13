@@ -25,6 +25,18 @@ Criteria:
       parameters:
         all: true
         status: 3 # Every control has a completed response
+    - type: all-polls-at-correct-time
+      parameters:
+        endpoints:
+          - /dcap
+          - /edev
+          - /edev/1/fsa
+          - /edev/1/der
+          - /edev/1/fsa/1/derp
+          - /edev/1/derp/1/dderc
+          - /mup
+        poll_interval_seconds: 60
+        request_type_str: GET
 
 Preconditions:
   init_actions:
@@ -226,19 +238,6 @@ Steps:
       type: wait
       parameters:
         duration_seconds: 1500 # 25 minutes
-      checks:
-        - type: all-polls-at-correct-time
-          parameters:
-            endpoints:
-              - /dcap
-              - /edev
-              - /edev/1/fsa
-              - /edev/1/der
-              - /edev/1/fsa/1/derp
-              - /edev/1/derp/1/dderc
-              - /mup
-            poll_interval_seconds: 60
-            request_type_str: GET
     actions:
       - type: remove-steps
         parameters:
