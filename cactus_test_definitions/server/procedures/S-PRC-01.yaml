@@ -1,0 +1,155 @@
+Description: CSIP-AUS Pricing Extension Resource Compliance
+Category: Pricing
+Classes:
+ - A
+
+TargetVersions:
+ - v1.3
+
+Preconditions:
+  required_clients:
+    - id: client
+
+Steps:
+  - id: (A) PRECONDITION
+    repeat_until_pass: true
+    client: client
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+      - type: ensure-fsa
+        parameters:
+          annotation: fsa1
+      - type: ensure-tariff-profile
+        parameters:
+          fsa_annotation: fsa1
+          primacy: 1
+          currency_code: 36  # AUD
+      - type: create-rate-component
+        parameters:
+          tag: rc1
+          role_flags: 0
+          commodity: 2       # electricity
+          flow_direction: 1  # forward
+          uom: 72            # Wh
+      - type: create-rate-component
+        parameters:
+          tag: rc2
+          role_flags: 0
+          commodity: 2
+          flow_direction: 1
+          uom: 72
+      - type: create-time-tariff-interval
+        parameters:
+          rate_component_tag: rc1
+          duration_seconds: 10
+          price_pow10_encoded: 100
+      - type: create-time-tariff-interval
+        parameters:
+          rate_component_tag: rc1
+          duration_seconds: 10
+          price_pow10_encoded: 150
+      - type: create-time-tariff-interval
+        parameters:
+          rate_component_tag: rc2
+          duration_seconds: 10
+          price_pow10_encoded: 200
+      - type: set-poll-rate
+        parameters:
+          resource: TariffProfileList
+          rate_seconds: 300
+      - type: set-poll-rate
+        parameters:
+          resource: CombinedTimeTariffIntervalList
+          rate_seconds: 120
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - FunctionSetAssignments
+          - TariffProfileList
+    checks:
+      - type: end-device
+        parameters:
+          matches_client: true
+      - type: discovered
+        parameters:
+          links: [TariffProfileList]
+
+  - id: (2) TariffProfile
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - TariffProfile
+    checks:
+      - type: discovered
+        parameters:
+          resources: [TariffProfile]
+          links: [RateComponentList, CombinedTimeTariffIntervalList]
+      - type: poll-rate
+        parameters:
+          resource: TariffProfileList
+          poll_rate_seconds: 300
+
+  - id: (3) CombinedTimeTariffIntervalList
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - CombinedTimeTariffIntervalList
+    checks:
+      - type: poll-rate
+        parameters:
+          resource: CombinedTimeTariffIntervalList
+          poll_rate_seconds: 120
+      - type: time-tariff-interval
+        parameters:
+          resource: CombinedTimeTariffIntervalList
+          minimum_count: 3
+          maximum_count: 3
+          consumption_tariff_interval_list_summary_present: true
+
+  - id: (4,5) RateComponentList and RateComponentLink cross-check
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - RateComponentList
+    checks:
+      - type: discovered
+        parameters:
+          resources: [RateComponent]
+      - type: rate-component
+        parameters:
+          minimum_count: 2
+          maximum_count: 2
+          active_time_tariff_interval_list_link_present: false
+      - type: time-tariff-interval
+        parameters:
+          resource: CombinedTimeTariffIntervalList
+          minimum_count: 3
+          maximum_count: 3
+          rate_component_link_resolves: true
+          distinct_rate_component_link_count: 2
+
+  - id: (6) WAIT for TimeTariffIntervals to expire
+    client: client
+    action:
+      type: wait
+      parameters:
+        duration_seconds: 15
+
+  - id: (7) Confirm expired TimeTariffIntervals are no longer published
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - CombinedTimeTariffIntervalList
+    checks:
+      - type: time-tariff-interval
+        parameters:
+          resource: CombinedTimeTariffIntervalList
+          maximum_count: 0

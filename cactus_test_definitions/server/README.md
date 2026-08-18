@@ -70,7 +70,36 @@ Steps:
     instructions: # List of text strings to render while this test is executing
     repeat_until_pass: # Most steps if failed will abort the test, setting this to true will repeat this step regularly
                        # until a pass is recorded (eg - use it to prompt a server to inject a DERControl)
+    admin_instructions: # A list of AdminInstruction definitions - see section on Admin Instructions below
+      - type:  # string identifier of the admin instruction type - see table below
+        parameters: # Any parameters to modify the default behaviour of the admin instruction - see table below
 ```
+
+
+### Admin Instructions
+
+An `AdminInstruction` is optional programmatic setup performed on the utility server. It allows EndDevice registration,
+DERControl creation, etc, to be performed programatically rather than manual intervention via admin api, or direct 
+database alteration. This can be supported by writing a pluggy implementation for the server under test in the same
+format as the cactus-client-envoy repository: https://github.com/bsgip/cactus-client-envoy.
+
+
+| **name** | **params** | **description** |
+| -------- | ---------- | --------------- |
+| `ensure-end-device` | `registered: bool` `client_type: str/None` `has_der_list: bool/None` `has_registration_link: bool/None` | Ensures an `EndDevice` registration exists (or does not exist, if `registered: false`) for the client. `has_der_list` ensures the DER record includes `DERCapabilityLink`/`DERSettingsLink`/`DERStatusLink`. |
+| `ensure-mup-list-empty` | None | Ensures the `MirrorUsagePointList` is empty (no registered MUPs). |
+| `ensure-fsa` | `annotation: str/None` `primacy: int/None` | Ensures a `FunctionSetAssignment` is attached to the client's `EndDevice`. `annotation` is a label used to reference this FSA from later instructions (eg in `ensure-der-program`). |
+| `ensure-der-program` | `fsa_annotation: str/None` `primacy: int/None` | Ensures a `DERProgram` exists within the FSA identified by `fsa_annotation`. |
+| `set-client-access` | `granted: bool` | Grants or revokes a client's access to the aggregator tenancy under test. |
+| `ensure-der-control-list` | `subscribable: bool/None` | Ensures the `DERControlList` is accessible to the client, optionally requiring it to be subscribable. |
+| `create-der-control` | `status: str` `opModExpLimW: float/None` `opModImpLimW: float/None` `opModGenLimW: float/None` `opModLoadLimW: float/None` `opModConnect: bool/None` `opModEnergize: bool/None` `opModFixedW: float/None` `opModStorageTargetW: float/None` `rampTms: int/None` `randomizeStart_seconds: int/None` `duration_seconds: int/None` `primacy: int/None` `start_offset_seconds: int/None` | Creates a `DERControl` on the server. `status: "active"` sets `startTime` in the past; `"scheduled"` sets it in the future (multiple scheduled controls stack sequentially, non-overlapping). All control mode parameters are optional; at least one should be provided. Variable expressions (eg `$(setMaxW * 0.3)`) are supported. |
+| `create-default-der-control` | `opModExpLimW: float/None` `opModImpLimW: float/None` `opModGenLimW: float/None` `opModLoadLimW: float/None` `setGradW: int/None` `primacy: int/None` | Creates or replaces the `DefaultDERControl` on the server. Variable expressions are supported. |
+| `clear-der-controls` | `all: bool/None` | Cancels active `DERControl`s. If `all: true`, cancels all active controls; otherwise cancels the most recent. |
+| `set-poll-rate` | `resource: CSIPAusResource` `rate_seconds: int` | Sets the poll rate for a given CSIP-Aus resource (eg `DERProgramList`, `EndDeviceList`). |
+| `set-post-rate` | `resource: CSIPAusResource` `rate_seconds: int` | Sets the post rate for a `MirrorUsagePoint` resource. |
+| `ensure-tariff-profile` | `fsa_annotation: str/None` `primacy: int` `currency_code: int` | Ensures a `TariffProfile` exists within the FSA identified by `fsa_annotation`. |
+| `create-rate-component` | `tag: str` `role_flags: int` `commodity: int/None` `flow_direction: int/None` `uom: int/None` | Creates a `RateComponent` within the (single) `TariffProfile`. `tag` labels it for later reference from `create-time-tariff-interval`. `commodity`/`flow_direction`/`uom` describe the `RateComponent`'s `ReadingType`. |
+| `create-time-tariff-interval` | `rate_component_tag: str` `duration_seconds: int` `price_pow10_encoded: int` | Creates a `TimeTariffInterval` (a priced rate) within the `RateComponent` identified by `rate_component_tag`. |
 
 
 ### Actions
@@ -131,6 +160,8 @@ A `Check` is a boolean test of what the client has in its current context. They 
 | `subscription` | `matches: bool` `resource: CSIPAusResource`| Does a Subscription exist for the specified resource (or not exist if `matches` is false). |
 | `poll-rate` | `resource: CSIPAusResource` `poll_rate_seconds: int` | Does the nominated resource have the specified poll rate. |
 | `der-control-responses` | `minimum_count: int/None` `maximum_count: int/None` `sent_response_type: int/None` | Counts current DERControl(s) that have transmitted the specified ResponseType via a Response. |
+| `rate-component` | `minimum_count: int/None` `maximum_count: int/None` `active_time_tariff_interval_list_link_present: bool/None` | Are there enough RateComponent(s) that satisfy the filter criteria? If `active_time_tariff_interval_list_link_present` is set, asserts every discovered RateComponent's `ActiveTimeTariffIntervalListLink` presence matches. |
+| `time-tariff-interval` | `resource: CSIPAusResource` `minimum_count: int/None` `maximum_count: int/None` `rate_component_link_resolves: bool/None` `distinct_rate_component_link_count: int/None` `consumption_tariff_interval_list_summary_present: bool/None` | Are there enough TimeTariffInterval entries (read from either `TimeTariffIntervalList` or `CombinedTimeTariffIntervalList`) that satisfy the filter criteria? |
 
 
 ### Parameter Variable Resolution

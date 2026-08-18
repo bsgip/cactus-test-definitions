@@ -22,6 +22,9 @@ class AdminInstructionType(StrEnum):
     SET_POLL_RATE = "set-poll-rate"
     SET_POST_RATE = "set-post-rate"
     SET_CLIENT_ACCESS = "set-client-access"
+    ENSURE_TARIFF_PROFILE = "ensure-tariff-profile"
+    CREATE_RATE_COMPONENT = "create-rate-component"
+    CREATE_TIME_TARIFF_INTERVAL = "create-time-tariff-interval"
 
 
 @dataclass
@@ -118,6 +121,27 @@ ADMIN_INSTRUCTION_PARAMETER_SCHEMA: dict[AdminInstructionType, dict[str, Paramet
     AdminInstructionType.SET_POST_RATE: {
         "resource": ParameterSchema(True, ParameterType.CSIPAusResource),
         "rate_seconds": ParameterSchema(True, ParameterType.Integer),
+    },
+    # Ensure a TariffProfile exists within the FSA identified by fsa_annotation.
+    AdminInstructionType.ENSURE_TARIFF_PROFILE: {
+        "fsa_annotation": ParameterSchema(False, ParameterType.String),
+        "primacy": ParameterSchema(True, ParameterType.Integer),
+        "currency_code": ParameterSchema(True, ParameterType.Integer),
+    },
+    # Create a RateComponent within the (single) TariffProfile. tag labels it for later reference from
+    # create-time-tariff-interval.
+    AdminInstructionType.CREATE_RATE_COMPONENT: {
+        "tag": ParameterSchema(True, ParameterType.String),
+        "role_flags": ParameterSchema(True, ParameterType.Integer),
+        "commodity": ParameterSchema(False, ParameterType.Integer),
+        "flow_direction": ParameterSchema(False, ParameterType.Integer),
+        "uom": ParameterSchema(False, ParameterType.Integer),
+    },
+    # Create a TimeTariffInterval (a priced rate) within the RateComponent identified by rate_component_tag.
+    AdminInstructionType.CREATE_TIME_TARIFF_INTERVAL: {
+        "rate_component_tag": ParameterSchema(True, ParameterType.String),
+        "duration_seconds": ParameterSchema(True, ParameterType.Integer),
+        "price_pow10_encoded": ParameterSchema(True, ParameterType.Integer),
     },
 }
 

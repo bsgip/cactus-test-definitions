@@ -137,6 +137,29 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "resource": ParameterSchema(True, ParameterType.CSIPAusResource),
         "poll_rate_seconds": ParameterSchema(True, ParameterType.Integer),
     },  # Asserts a specific poll rate value
+    "rate-component": {
+        "minimum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at least this many RateComponents
+        "maximum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at most this many RateComponents
+        "active_time_tariff_interval_list_link_present": ParameterSchema(
+            False, ParameterType.Boolean
+        ),  # If set - asserts whether ActiveTimeTariffIntervalListLink is present on every discovered RateComponent
+    },
+    "time-tariff-interval": {
+        "resource": ParameterSchema(
+            True, ParameterType.CSIPAusResource
+        ),  # TimeTariffIntervalList or CombinedTimeTariffIntervalList - selects where entries are read from
+        "minimum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at least this many entries to pass
+        "maximum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at most this many entries to pass
+        "rate_component_link_resolves": ParameterSchema(
+            False, ParameterType.Boolean
+        ),  # If True - every entry's RateComponentLink must resolve to a discovered RateComponent
+        "distinct_rate_component_link_count": ParameterSchema(
+            False, ParameterType.Integer
+        ),  # Asserts the number of distinct RateComponentLink.href values across entries
+        "consumption_tariff_interval_list_summary_present": ParameterSchema(
+            False, ParameterType.Boolean
+        ),  # If True - every entry must have a ConsumptionTariffIntervalListSummary with results >= 1
+    },
     "der-control-responses": {
         "minimum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at least this many matches to pass
         "maximum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at most this many matches to pass
