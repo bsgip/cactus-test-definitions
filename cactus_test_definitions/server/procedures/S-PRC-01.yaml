@@ -117,7 +117,7 @@ Steps:
       type: discovery
       parameters:
         resources:
-          - RateComponentList
+          - RateComponent
     checks:
       - type: discovered
         parameters:
