@@ -88,7 +88,6 @@ class NamedVariableType(IntEnum):
 
     # Storage extension
     DERSETTING_SET_MIN_WH = auto()
-    DERCAPABILITY_NEG_RTG_MAX_CHARGE_RATE_W = auto()  # -W (after multiplier applied), reference $negRtgMaxChargeRateW
 
     # Synthetic directional power limits - account for devices with asymmetric import/export capability.
     # MUST resolve to the relevant directional DERSetting rate when the device declares it, otherwise fall back to
@@ -150,8 +149,6 @@ def named_variable_repr(named_var: NamedVariableType) -> str:  # noqa: C901
     if len(name.split("_")) == 1:
         return snake_to_camel(name)
     match name.split("_", 1):
-        case ["DERCAPABILITY", "NEG_RTG_MAX_CHARGE_RATE_W"]:
-            return "(-DERCapability.rtgMaxChargeRateW)"
         case ["DERCAPABILITY", "RTG_MAX_VA"]:
             return "DERCapability.rtgMaxVA"
         case ["DERCAPABILITY", "RTG_MIN_PF_OVER_EXCITED"]:
@@ -242,6 +239,19 @@ class Expression(BaseExpression):
                 f"{self.rhs_operand.expression_representation()}",
             ]
         )
+
+
+@dataclass
+class Negate(BaseExpression):
+    """Unary negation of a single already-parsed sub-expression (eg '-maxExportW', '-(1.05 * maxExportW)').
+
+    The operand must be a single NamedVariable, Constant, or one-level Expression - this doesn't support
+    arbitrary nesting depth (eg negating a Negate isn't supported)."""
+
+    operand: NamedVariable | Constant | Expression
+
+    def expression_representation(self) -> str:
+        return f"-({self.operand.expression_representation()})"
 
 
 def parse_time_delta(var_body: str) -> timedelta:
@@ -342,8 +352,6 @@ def parse_unary_expression(token: Token) -> Constant | NamedVariable:  # noqa: C
             # Storage extension
             case "setMinWh":
                 return NamedVariable(NamedVariableType.DERSETTING_SET_MIN_WH)
-            case "negRtgMaxChargeRateW":
-                return NamedVariable(NamedVariableType.DERCAPABILITY_NEG_RTG_MAX_CHARGE_RATE_W)
             case "valid_nmi_1":
                 return NamedVariable(NamedVariableType.NMI_1)
             case "valid_nmi_2":
@@ -387,7 +395,9 @@ def parse_binary_expression(lhs_token: Token, operation: Token, rhs_token: Token
     return Expression(operation=operation_type, lhs_operand=lhs, rhs_operand=rhs)
 
 
-def parse_variable_expression_body(var_body: str, param_key: str | None) -> NamedVariable | Expression | Constant:
+def parse_variable_expression_body(
+    var_body: str, param_key: str | None
+) -> NamedVariable | Expression | Constant | Negate:
     """Given a variable definition: $(now - '5 seconds') - this function should be passed contents of that variable
     definition (the string within the parentheses) eg: "now - '5 seconds'
 
@@ -419,6 +429,20 @@ def parse_variable_expression_body(var_body: str, param_key: str | None) -> Name
         ]
     except tokenize.TokenError as err:
         raise UnparseableVariableExpressionError(f"Error tokenizing '{var_body}'") from err
+
+    # A leading '-' negates the (unary or binary) expression that follows it - eg '-maxExportW' or
+    # '-1.05 * maxExportW'. A '-' anywhere else (eg '0 - maxExportW') is binary subtraction, handled below as
+    # before.
+    if var_tokens and var_tokens[0].type == tokenize.OP and var_tokens[0].string == "-":
+        remainder = var_tokens[1:]
+        if len(remainder) == 1:
+            return Negate(parse_unary_expression(remainder[0]))
+        elif len(remainder) == 3:
+            return Negate(parse_binary_expression(remainder[0], remainder[1], remainder[2]))
+        else:
+            raise UnparseableVariableExpressionError(
+                f"Unable to parse {var_body} into a simple negated binary/unary expression"
+            )
 
     if len(var_tokens) == 1:
         return parse_unary_expression(var_tokens[0])
@@ -485,7 +509,7 @@ def try_extract_variable_expression(body: Any) -> str | None:  # noqa: ANN401
 
 def is_resolvable_variable(v: Any) -> bool:  # noqa: ANN401
     """Returns True if the supplied value is a variable definition that requires resolving"""
-    return isinstance(v, NamedVariable) or isinstance(v, Expression) or isinstance(v, Constant)
+    return isinstance(v, NamedVariable) or isinstance(v, Expression) or isinstance(v, Constant) or isinstance(v, Negate)
 
 
 def has_named_variable(
