@@ -70,8 +70,8 @@ Preconditions:
         duration_seconds: 300
         opModImpLimW: $(maxImportW * 2)
   instructions:
-    - DER shall be importing at the connection point with at least 50% of its active power rating.
-    
+    - The test cannot be started until site telemetry is between 50 and 100% import (check the sign carefully).
+    - Device telemetry must also be sent, and is the inverse of site (check the sign carefully).
 Steps:
   # (precondition)
   GET-DERC-INITIAL:
