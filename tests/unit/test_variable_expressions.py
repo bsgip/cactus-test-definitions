@@ -11,6 +11,7 @@ from cactus_test_definitions.variable_expressions import (
     Expression,
     NamedVariable,
     NamedVariableType,
+    Negate,
     OperationType,
     UnparseableVariableExpressionError,
     has_named_variable,
@@ -249,23 +250,38 @@ def test_parse_time_delta(unquoted_raw: str, expected: timedelta | type[Exceptio
             "setMinWh >= 0.5",
             Expression(OperationType.GTE, NamedVariable(NamedVariableType.DERSETTING_SET_MIN_WH), Constant(0.5)),
         ),
-        (
-            "negRtgMaxChargeRateW + 50",
-            Expression(
-                OperationType.ADD,
-                NamedVariable(NamedVariableType.DERCAPABILITY_NEG_RTG_MAX_CHARGE_RATE_W),
-                Constant(50),
-            ),
-        ),
         ("randuri_1", NamedVariable(NamedVariableType.RANDURI_1)),
         ("randuri_2", NamedVariable(NamedVariableType.RANDURI_2)),
         ("randuri_3", NamedVariable(NamedVariableType.RANDURI_3)),
         ("randuri_", UnparseableVariableExpressionError),
         ("randuri", UnparseableVariableExpressionError),
+        # Unary negation - a leading '-' negates the (unary or binary) expression that follows it
+        ("-maxExportW", Negate(NamedVariable(NamedVariableType.DERSETTING_MAX_EXPORT_W))),
+        ("-rtgMaxChargeRateW", Negate(NamedVariable(NamedVariableType.DERCAPABILITY_RTG_MAX_CHARGE_RATE_W))),
+        (
+            "-1.05 * maxExportW",
+            Negate(
+                Expression(OperationType.MULTIPLY, Constant(1.05), NamedVariable(NamedVariableType.DERSETTING_MAX_EXPORT_W))  # noqa: E501
+            ),
+        ),
+        (
+            "-maxExportW * 1.05",
+            Negate(
+                Expression(OperationType.MULTIPLY, NamedVariable(NamedVariableType.DERSETTING_MAX_EXPORT_W), Constant(1.05))  # noqa: E501
+            ),
+        ),
+        # A '-' that isn't the leading token is still binary subtraction, not negation
+        ("5 - 3", Expression(OperationType.SUBTRACT, Constant(5), Constant(3))),
+        (
+            "now - '5 minutes'",
+            Expression(OperationType.SUBTRACT, NamedVariable(NamedVariableType.NOW), Constant(timedelta(minutes=5))),
+        ),
+        ("-", UnparseableVariableExpressionError),  # Nothing to negate
+        ("--maxExportW", UnparseableVariableExpressionError),  # Double negation/nesting isn't supported
     ],
 )
 def test_parse_variable_expression_body(
-    var_body: str, expected: type[Exception] | NamedVariable | Constant | Expression
+    var_body: str, expected: type[Exception] | NamedVariable | Constant | Expression | Negate
 ):
     """Top level parsing test to ensure that a variety of variable bodies parse (or fail) in an expected fashion"""
 
@@ -274,7 +290,7 @@ def test_parse_variable_expression_body(
             parse_variable_expression_body(var_body, None)
     else:
         actual = parse_variable_expression_body(var_body, None)
-        assert isinstance(actual, NamedVariable) or isinstance(actual, Constant) or isinstance(actual, Expression)
+        assert isinstance(actual, NamedVariable | Constant | Expression | Negate)
         assert actual == expected, f"Input string: {var_body}"
 
 
@@ -329,6 +345,7 @@ def test_parse_variable_expression_body_this(
         (Constant(1.23), True),
         (Constant(timedelta(5)), True),
         (Expression(OperationType.ADD, Constant(1.23), NamedVariable(NamedVariableType.NOW)), True),
+        (Negate(NamedVariable(NamedVariableType.NOW)), True),
     ],
 )
 def test_is_resolvable_variable(input: Any, expected: bool):
@@ -398,7 +415,6 @@ def test_snake_to_camel(input: str, expected: str) -> None:
         (NamedVariableType.DERSETTING_SET_MIN_PF_UNDER_EXCITED, "DERSetting.setMinPFUnderExcited"),
         (NamedVariableType.DERCAPABILITY_RTG_MIN_PF_OVER_EXCITED, "DERCapability.rtgMinPFOverExcited"),
         (NamedVariableType.DERCAPABILITY_RTG_MIN_PF_UNDER_EXCITED, "DERCapability.rtgMinPFUnderExcited"),
-        (NamedVariableType.DERCAPABILITY_NEG_RTG_MAX_CHARGE_RATE_W, "(-DERCapability.rtgMaxChargeRateW)"),
         (NamedVariableType.DERSETTING_MAX_IMPORT_W, "(DERSetting.setMaxChargeRateW or DERSetting.setMaxW)"),
         (NamedVariableType.DERSETTING_MAX_EXPORT_W, "(DERSetting.setMaxDischargeRateW or DERSetting.setMaxW)"),
         (NamedVariableType.NOW, "now"),
@@ -436,6 +452,10 @@ def test_operation_repr(input: OperationType, expected: str) -> None:
             "DERSetting.setMinWh + 5.5",
         ),
         (Constant(654.456), "654.456"),
+        (
+            Negate(NamedVariable(NamedVariableType.DERSETTING_MAX_EXPORT_W)),
+            "-((DERSetting.setMaxDischargeRateW or DERSetting.setMaxW))",
+        ),
     ],
 )
 def test_base_expression_expression_representation(input: BaseExpression, expected: str) -> None:
