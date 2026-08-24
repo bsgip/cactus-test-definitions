@@ -18,13 +18,13 @@ Criteria:
       # we assume load must be sufficient to offset any on site generation and keep site power above 0.
       # there is also a default control with opmodexplimw=0.
       parameters:
-        minimum_level: $(1.05 * maxImportW)
-        maximum_level: $(-0.05 * maxImportW)
+        maximum_level: $(1.05 * maxImportW)
+        minimum_level: $(-0.05 * maxImportW)
     - type: readings-der-active-power
       # DER is assumed to act as the inverse of the site power above. 
       parameters:
-        maximum_level: $(-1.05 * maxImportW)
-        minimum_level: $(0.05 * maxImportW)
+        minimum_level: $(-1.05 * maxImportW)
+        maximum_level: $(0.05 * maxImportW)
 
 Preconditions:
   init_actions:
@@ -54,15 +54,15 @@ Preconditions:
       # site is currently importing between 50% and 105% of the DER's rated import capacity.
       parameters:
         latest_reading_only: true
-        minimum_level: $(1.05 * maxImportW)
-        maximum_level: $(0.5 * maxImportW)
+        maximum_level: $(1.05 * maxImportW)
+        minimum_level: $(0.5 * maxImportW)
     - type: readings-der-active-power
       # Gate test start on telemetry rather than trusting the out-of-band instruction below alone: confirm the
       # device is currently importing between 50% and 105% of the DER's rated import capacity.
       parameters:
         latest_reading_only: true
-        maximum_level: $(-1.05 * maxImportW)
-        minimum_level: $(-0.5 * maxImportW)
+        minimum_level: $(-1.05 * maxImportW)
+        maximum_level: $(-0.5 * maxImportW)
   actions:
     - type: create-der-control
       parameters:
