@@ -39,12 +39,7 @@ def factory_readings_schema() -> dict[str, Any]:
         "minimum_count": ParameterSchema(False, ParameterType.Integer),
         "minimum_level": ParameterSchema(False, ParameterType.Float),
         "maximum_level": ParameterSchema(False, ParameterType.Float),
-        # Window backwards from the time this is called. NULL means all times.
         "window_seconds": ParameterSchema(False, ParameterType.UnsignedInteger),
-        # If True - only the single most recent reading (per SiteReadingType) is checked against
-        # minimum_level/maximum_level, rather than every/windowed historical reading. Mutually exclusive with
-        # window_seconds. Suited to gating a Preconditions check on current device state.
-        "latest_reading_only": ParameterSchema(False, ParameterType.Boolean),
     }
 
 
