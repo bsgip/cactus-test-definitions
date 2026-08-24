@@ -12,6 +12,19 @@ Criteria:
   checks:
     - type: all-steps-complete
       parameters: {}
+    - type: readings-site-active-power
+      # site active power should never exceed its own rated export capacity
+      # site active power should always be negative during this test: with export at 50% for test start,
+      # we assume generation must be sufficient to offset any on site loads and keep site power below 0.
+      # there is also a default control with opmodimplimw=0.
+      parameters:
+        minimum_level: $(-1.05 * maxExportW)
+        maximum_level: $(0.05 * maxExportW)
+    - type: readings-der-active-power
+      # DER is assumed to act as the inverse of the site power above. 
+      parameters:
+        maximum_level: $(1.05 * maxExportW)
+        minimum_level: $(-0.05 * maxExportW)
 
 Preconditions:
   init_actions:
@@ -36,6 +49,20 @@ Preconditions:
       parameters: {}
     - type: der-settings-contents
       parameters: {}
+    - type: readings-site-active-power
+      # Gate test start on telemetry rather than trusting the out-of-band instruction below alone: confirm the
+      # site is currently exporting between 50% and 105% of the DER's rated export capacity.
+      parameters:
+        latest_reading_only: true
+        minimum_level: $(-1.05 * maxExportW)
+        maximum_level: $(-0.5 * maxExportW)
+    - type: readings-der-active-power
+      # Gate test start on telemetry rather than trusting the out-of-band instruction below alone: confirm the
+      # device is currently exporting between 50% and 105% of the DER's rated export capacity.
+      parameters:
+        latest_reading_only: true
+        maximum_level: $(1.05 * maxExportW)
+        minimum_level: $(0.5 * maxExportW)
   actions:
     - type: create-der-control
       parameters:
@@ -44,6 +71,8 @@ Preconditions:
         opModExpLimW: $(maxExportW * 2)
   instructions:
     - DER shall be generating at the connection point at least 50% of its active power rating.
+    - The test cannot be started until site telemetry is between 50 and 100% export (check the sign carefully).
+    - Device telemetry must also be sent, and is the inverse of site (check the sign carefully).
     
 Steps:
   # (precondition)

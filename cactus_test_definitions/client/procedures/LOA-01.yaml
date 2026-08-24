@@ -12,6 +12,19 @@ Criteria:
   checks:
     - type: all-steps-complete
       parameters: {}
+    - type: readings-site-active-power
+      # site active power should never exceed its own rated import capacity
+      # site active power should always be positive during this test: with import at 50% for test start,
+      # we assume load must be sufficient to offset any on site generation and keep site power above 0.
+      # there is also a default control with opmodexplimw=0.
+      parameters:
+        maximum_level: $(1.05 * maxImportW)
+        minimum_level: $(-0.05 * maxImportW)
+    - type: readings-der-active-power
+      # DER is assumed to act as the inverse of the site power above. 
+      parameters:
+        minimum_level: $(-1.05 * maxImportW)
+        maximum_level: $(0.05 * maxImportW)
 
 Preconditions:
   init_actions:
@@ -36,6 +49,20 @@ Preconditions:
       parameters: {}
     - type: der-settings-contents
       parameters: {}
+    - type: readings-site-active-power
+      # Gate test start on telemetry rather than trusting the out-of-band instruction below alone: confirm the
+      # site is currently importing between 50% and 105% of the DER's rated import capacity.
+      parameters:
+        latest_reading_only: true
+        maximum_level: $(1.05 * maxImportW)
+        minimum_level: $(0.5 * maxImportW)
+    - type: readings-der-active-power
+      # Gate test start on telemetry rather than trusting the out-of-band instruction below alone: confirm the
+      # device is currently importing between 50% and 105% of the DER's rated import capacity.
+      parameters:
+        latest_reading_only: true
+        minimum_level: $(-1.05 * maxImportW)
+        maximum_level: $(-0.5 * maxImportW)
   actions:
     - type: create-der-control
       parameters:
@@ -43,8 +70,9 @@ Preconditions:
         duration_seconds: 300
         opModImpLimW: $(maxImportW * 2)
   instructions:
-    - DER shall be importing at the connection point with at least 50% of its active power rating.
-    
+    - DER shall be importing at the connection point at least 50% of its active power rating.
+    - The test cannot be started until site telemetry is between 50 and 100% import (check the sign carefully).
+    - Device telemetry must also be sent, and is the inverse of site (check the sign carefully).
 Steps:
   # (precondition)
   GET-DERC-INITIAL:
