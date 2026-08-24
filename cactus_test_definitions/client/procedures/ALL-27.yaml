@@ -34,8 +34,8 @@ Preconditions:
         primacy: 0
     - type: set-default-der-control
       parameters:
-        opModImpLimW: 0
-        opModExpLimW: 0
+        opModImpLimW: $(maxImportW) # Increased from 0 in TS5573 table 12.4.4 so that the reconnect can be easily observed
+        opModExpLimW: $(maxExportW) # Increased from 0 in TS5573 table 12.4.4 so that the reconnect can be easily observed
         setGradW: 27
     
 Steps:
