@@ -261,13 +261,17 @@ def test_parse_time_delta(unquoted_raw: str, expected: timedelta | type[Exceptio
         (
             "-1.05 * maxExportW",
             Negate(
-                Expression(OperationType.MULTIPLY, Constant(1.05), NamedVariable(NamedVariableType.DERSETTING_MAX_EXPORT_W))  # noqa: E501
+                Expression(
+                    OperationType.MULTIPLY, Constant(1.05), NamedVariable(NamedVariableType.DERSETTING_MAX_EXPORT_W)
+                )  # noqa: E501
             ),
         ),
         (
             "-maxExportW * 1.05",
             Negate(
-                Expression(OperationType.MULTIPLY, NamedVariable(NamedVariableType.DERSETTING_MAX_EXPORT_W), Constant(1.05))  # noqa: E501
+                Expression(
+                    OperationType.MULTIPLY, NamedVariable(NamedVariableType.DERSETTING_MAX_EXPORT_W), Constant(1.05)
+                )  # noqa: E501
             ),
         ),
         # A '-' that isn't the leading token is still binary subtraction, not negation
