@@ -1,0 +1,93 @@
+Description: Provisional - DERControlList request backoff on HTTP 429 without Retry-After
+Category: Provisional
+Classes:
+  - P-A
+
+TargetVersions:
+  - v1.2
+  - v1.3-beta/storage
+  - v1.3
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+
+    # No Retry-After is given, so the client is free to retry on its own schedule
+    # exponential backoff (eg: 1/2/4/8/16/32/64s cumulative ~= 7 requests inside the 120s block window is
+    # still fine), plus one further resumed poll once the block expires. maximum_count is only here to catch
+    # actual hammering: a tight/no-backoff retry loop would blow well past this. minimum_count proves the
+    # client actually comes back and resumes polling rather than giving up on the resource forever.
+    - type: resource-requests
+      parameters:
+        resources:
+          - DERControlList
+          - DERControl
+        minimum_count: 2
+        maximum_count: 9
+
+Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+  actions:
+    - type: create-der-program
+      parameters:
+        primacy: 0
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 0
+        opModExpLimW: 0
+        setGradW: 27
+  checks:
+    - type: end-device-contents
+      parameters: {}
+
+Steps:
+  # (a) Let the client poll DERControlList as normal, then force the next requests to that endpoint to 429
+  # with no Retry-After header, for a fixed block window - after which the override auto-expires and requests
+  # are served normally again
+  GET-DERC-INITIAL:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: force-response-status
+        parameters:
+          endpoint: /edev/1/derp/1/derc
+          status: 429
+          duration_seconds: 120
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-FOR-RESUME
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-INITIAL
+
+  # (b) With no Retry-After, retrying on its own schedule is acceptable - but the client must not burst a heap
+  # of retries trying to recover sooner than that, and should resume polling normally once the block window
+  # ends. Both properties are verified by the Criteria resource-requests check above once this step (and the
+  # test) completes.
+  WAIT-FOR-RESUME:
+    instructions:
+      - The device should receive an HTTP 429 (no Retry-After) on its DERControlList poll. Retrying with a reasonable backoff (including its own exponential backoff) is fine, but it must not hammer the server with tight/no-backoff retries, and should resume normal polling once the block window ends.
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 210 # 120s block + margin for the client's next on-schedule poll afterwards
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-FOR-RESUME
+      - type: finish-test
+        parameters: {}
