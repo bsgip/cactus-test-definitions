@@ -1,0 +1,92 @@
+Description: Provisional - DERControlList request backoff on HTTP 429 (Retry-After)
+Category: Provisional
+Classes:
+  - P-A
+
+TargetVersions:
+  - v1.2
+  - v1.3-beta/storage
+  - v1.3
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+
+    # Exactly 2 requests expected across the whole test: the initial poll that triggered the 429, and a single
+    # resumed poll once the Retry-After period has genuinely elapsed. minimum_count proves the client actually
+    # comes back (doesn't give up on the resource forever); maximum_count proves it didn't re-poll early/hammer
+    # while the 429 override was still active.
+    - type: resource-requests
+      parameters:
+        resources:
+          - DERControlList
+          - DERControl
+        minimum_count: 2
+        maximum_count: 2
+
+Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+  actions:
+    - type: create-der-program
+      parameters:
+        primacy: 0
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 0
+        opModExpLimW: 0
+        setGradW: 27
+  checks:
+    - type: end-device-contents
+      parameters: {}
+
+Steps:
+  # (a) Let the client poll DERControlList as normal, then force the next requests to that endpoint to 429 for
+  # exactly as long as the advertised Retry-After - after that the override auto-expires and requests are
+  # served normally again
+  GET-DERC-INITIAL:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: force-response-status
+        parameters:
+          endpoint: /edev/1/derp/1/derc
+          status: 429
+          retry_after_seconds: 180
+          duration_seconds: 180
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-FOR-RESUME
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-INITIAL
+
+  # (b) The client should honour Retry-After and stay quiet on DERControlList until it elapses, then resume
+  # polling normally. Both properties are verified by the Criteria resource-requests check above once this
+  # step (and the test) completes.
+  WAIT-FOR-RESUME:
+    instructions:
+      - The device should receive an HTTP 429 (Retry-After 180s) on its DERControlList poll, must not re-poll that resource again until the Retry-After period has elapsed, and should then resume polling normally.
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 280 # 180s block + margin for the client's next on-schedule poll afterwards
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-FOR-RESUME
+      - type: finish-test
+        parameters: {}
