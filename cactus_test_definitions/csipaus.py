@@ -29,6 +29,13 @@ class CSIPAusResource(StrEnum):
     FunctionSetAssignmentsList = "FunctionSetAssignmentsList"
     FunctionSetAssignments = "FunctionSetAssignments"
 
+    # The following 5 resources are not used by envoy, but support discovery for servers in cactus-client server testing
+    UsagePointList = "UsagePointList"
+    UsagePoint = "UsagePoint"
+    MeterReadingList = "MeterReadingList"
+    MeterReading = "MeterReading"
+    ReadingType = "ReadingType"
+
     DERProgramList = "DERProgramList"
     DERProgram = "DERProgram"
 
