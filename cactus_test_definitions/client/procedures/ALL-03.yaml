@@ -48,7 +48,6 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - GET-EDEV
             - GET-TM
             - POST-EDEV
       - type: remove-steps
