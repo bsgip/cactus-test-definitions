@@ -66,21 +66,25 @@ Preconditions:
     - Set the load to consume 25% of the DER's rated active power.
 
 Steps:
+
+  # NOTE - Pending review by the CIRG - this has been disabled as a client seeing an MUP-List with all=0
+  #        can reasonably be expected to skip this step.
+  #
   # (b, c)
-  GET-MUP:
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /mup
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-MUP
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-MUP
+  #GET-MUP:
+  #  event:
+  #    type: GET-request-received
+  #    parameters:
+  #      endpoint: /mup
+  #  actions:
+  #    - type: enable-steps
+  #      parameters:
+  #        steps:
+  #          - POST-MUP
+  #    - type: remove-steps
+  #      parameters:
+  #        steps:
+  #          - GET-MUP
   # (d, e) 
   POST-MUP:
     event:
