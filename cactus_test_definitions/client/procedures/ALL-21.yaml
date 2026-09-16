@@ -48,12 +48,8 @@ Preconditions:
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
-  checks:
-    - type: end-device-contents
-      parameters: {}
-    - type: der-settings-contents
-      parameters: {}
-  actions:
+
+    # Create DERProgram / defaults early so that the client is ready to pickup DERControls as soon as the test starts
     - type: create-der-program
       parameters:         
         primacy: 0
@@ -62,6 +58,12 @@ Preconditions:
         opModImpLimW: 0
         opModExpLimW: 0
         setGradW: 27
+  checks:
+    - type: end-device-contents
+      parameters: {}
+    - type: der-settings-contents
+      parameters: {}
+  actions:
     # 24 minutes of sequential, non overlapping controls with random values (chosen by rolling a D10)
     - type: create-der-control
       parameters:

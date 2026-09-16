@@ -53,7 +53,7 @@ Criteria:
       parameters: 
         setMaxVA: "$(this <= rtgMaxVA)" # Maximum apparent power
         setMaxVar: "$(this <= rtgMaxVar)" # Maximum reactive power delivered
-        setMaxVarNeg: "$(this <= rtgMaxVarNeg)" # Maximum reactive power received
+        setMaxVarNeg: "$(this >= rtgMaxVarNeg)" # Maximum reactive power received
         setMaxW: "$(this <= rtgMaxW)" # Maximum active power
         setMinPFOverExcited:  "$(this >= rtgMinPFOverExcited)" # Minimum power factor displacement
         setMinPFUnderExcited: "$(this >= rtgMinPFUnderExcited)" # Minimum power factor displacement
