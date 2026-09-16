@@ -89,6 +89,7 @@ class TestProcedureId(StrEnum):
     P_01 = "P-01"
     P_02 = "P-02"
     P_03 = "P-03"
+    P_04 = "P-04"
 
     # Alternate tests
     ALT_ALL_29 = "ALT-ALL-29"
