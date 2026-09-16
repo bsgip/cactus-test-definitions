@@ -1,0 +1,286 @@
+Description: Provisional - DERProgram relocation forces re-discovery (no href caching)
+Category: Provisional
+Classes:
+  - P-A
+
+TargetVersions:
+  - v1.2
+  - v1.3-beta/storage
+  - v1.3
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters:
+        ignored_steps:
+          - FAIL-OLD-DERP-ACCESS
+          - FAIL-OLD-DERC-ACCESS
+
+Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+  actions:
+    - type: create-der-program
+      parameters:
+        primacy: 1
+        fsa_id: 1
+        tag: DERP1
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 0
+        opModExpLimW: 0
+        setGradW: 27
+  checks:
+    - type: end-device-contents
+      parameters: {}
+    - type: der-settings-contents
+      parameters: {}
+
+Steps:
+  # (a) Let the client discover DERP1 (href /edev/1/derp/1) normally and respond to a control under it
+  GET-DERC-1:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 120
+          opModExpLimW: $(maxExportW * 2)
+          opModImpLimW: $(maxImportW * 2)
+          tag: DERC1
+          der_program_tag: DERP1
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-DERC1-RESPONSE-RECEIVED
+            - POST-DERC1-RESPONSE-STARTED
+            - POST-DERC1-RESPONSE-COMPLETED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-1
+
+  POST-DERC1-RESPONSE-RECEIVED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters:
+            latest: true
+            status: 1
+            subject_tag: DERC1
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC1-RESPONSE-RECEIVED
+
+  POST-DERC1-RESPONSE-STARTED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters:
+            latest: true
+            status: 2
+            subject_tag: DERC1
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC1-RESPONSE-STARTED
+
+  # (b) Now relocate the resource: DERP1 is removed from the FSA and DERP2 added under the same fsa_id.
+  # This fakes a device DERProgram being moved. Client must re-discover it via the DERProgramList rather than continuing
+  # to poll its previously cached href.
+  POST-DERC1-RESPONSE-COMPLETED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters:
+            latest: true
+            status: 3
+            subject_tag: DERC1
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-UPDATED-DERP-LIST
+            - REDISCOVERY-TIMEOUT
+      - type: remove-function-set-assignment
+        parameters:
+          fsa_id: 1
+      - type: create-der-program
+        parameters:
+          primacy: 1
+          fsa_id: 1
+          tag: DERP2
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC1-RESPONSE-COMPLETED
+
+  # Fails the test if re-discovery doesn't complete in a reasonable window
+  REDISCOVERY-TIMEOUT:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 300
+    actions:
+      - type: finish-test
+        parameters:
+          fail_message: >
+            Client did not re-poll DERProgramList and rediscover its relocated DERProgram within the expected
+            window after the previous DERProgram was removed from its FunctionSetAssignments.
+
+  # Wait for the client to pick up the FunctionSetAssignments/DERProgramList change before trapping any further
+  # use of the now-stale DERP1 href - up to this point a cached poll of the old href is still legitimate
+  GET-UPDATED-DERP-LIST:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - FAIL-OLD-DERP-ACCESS
+            - FAIL-OLD-DERC-ACCESS
+            - GET-DERC-2
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-UPDATED-DERP-LIST
+
+  # This should be unreachable once the client has re-discovered its DERProgramList - a hit here means the
+  # client cached the original DERProgram href instead of re-resolving it
+  FAIL-OLD-DERP-ACCESS:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1
+    actions:
+      - type: finish-test
+        parameters:
+          fail_message: >
+            Client fetched the old (moved) DERProgram href directly instead of re-discovering it via
+            DERProgramList - resource hrefs must not be cached indefinitely.
+
+  # As above, but for the old DERProgram's DERControlList
+  FAIL-OLD-DERC-ACCESS:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: finish-test
+        parameters:
+          fail_message: >
+            Client polled the old (moved) DERControlList href instead of re-discovering the DERProgram's new
+            location via DERProgramList.
+
+  # (c) Confirm the client actually followed the new href chain (DERProgramList -> DERP2 -> DERControlList)
+  # and is fully operational at the new location
+  GET-DERC-2:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/2/derc
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 120
+          opModExpLimW: $(maxExportW * 2)
+          opModImpLimW: $(maxImportW * 2)
+          tag: DERC2
+          der_program_tag: DERP2
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-DERC2-RESPONSE-RECEIVED
+            - POST-DERC2-RESPONSE-STARTED
+            - POST-DERC2-RESPONSE-COMPLETED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-2
+            - REDISCOVERY-TIMEOUT
+
+  POST-DERC2-RESPONSE-RECEIVED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters:
+            latest: true
+            status: 1
+            subject_tag: DERC2
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC2-RESPONSE-RECEIVED
+
+  POST-DERC2-RESPONSE-STARTED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters:
+            latest: true
+            status: 2
+            subject_tag: DERC2
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC2-RESPONSE-STARTED
+
+  POST-DERC2-RESPONSE-COMPLETED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters:
+            latest: true
+            status: 3
+            subject_tag: DERC2
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC2-RESPONSE-COMPLETED
+            - FAIL-OLD-DERP-ACCESS
+            - FAIL-OLD-DERC-ACCESS
+      - type: finish-test
+        parameters: {}
