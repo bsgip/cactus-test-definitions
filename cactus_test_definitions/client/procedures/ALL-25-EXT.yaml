@@ -39,6 +39,7 @@ Preconditions:
         der_list_poll_seconds: 3600
         derp_list_poll_seconds: 3600
         mup_post_seconds: 3600
+        mup_list_poll_seconds: 3600
 
   checks:
     - type: end-device-contents

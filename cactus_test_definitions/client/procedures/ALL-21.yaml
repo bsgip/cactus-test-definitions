@@ -48,6 +48,7 @@ Preconditions:
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
+        mup_list_poll_seconds: 60
 
     # Create DERProgram / defaults early so that the client is ready to pickup DERControls as soon as the test starts
     - type: create-der-program
