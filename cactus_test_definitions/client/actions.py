@@ -89,6 +89,7 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "fsa_list_poll_seconds": ParameterSchema(False, ParameterType.Integer),
         "derp_list_poll_seconds": ParameterSchema(False, ParameterType.Integer),
         "der_list_poll_seconds": ParameterSchema(False, ParameterType.Integer),
+        "mup_list_poll_seconds": ParameterSchema(False, ParameterType.Integer),
         "mup_post_seconds": ParameterSchema(False, ParameterType.Integer),
         "tp_list_poll_seconds": ParameterSchema(False, ParameterType.Integer),  # TariffProfileList poll rate
         "tti_list_poll_seconds": ParameterSchema(False, ParameterType.Integer),  # TimeTariffIntervalList poll rate

@@ -30,6 +30,7 @@ Preconditions:
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
+        mup_list_poll_seconds: 60
         tp_list_poll_seconds: 300
         tti_list_poll_seconds: 60
     - type: create-der-program

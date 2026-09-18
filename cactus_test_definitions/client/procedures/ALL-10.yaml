@@ -38,6 +38,7 @@ Preconditions:
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
+        mup_list_poll_seconds: 60
   actions:
     - type: create-der-program
       parameters:         
@@ -62,7 +63,7 @@ Steps:
     actions:
       - type: set-comms-rate
         parameters:
-          mup_post_seconds: 300
+          mup_post_seconds: 300 # we leave the pollRate at 60s for quick discovery
       - type: enable-steps
         parameters:
           steps:

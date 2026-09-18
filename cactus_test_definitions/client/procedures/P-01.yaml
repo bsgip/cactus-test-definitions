@@ -18,6 +18,7 @@ Preconditions:
         der_list_poll_seconds: 60
         derp_list_poll_seconds: 60
         mup_post_seconds: 60
+        mup_list_poll_seconds: 60
 
   checks:
     - type: end-device-count # Can't start until 2 EndDevice's are registered
