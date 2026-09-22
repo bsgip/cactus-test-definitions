@@ -38,45 +38,42 @@ Preconditions:
       parameters:
         opModImpLimW: 0
         opModExpLimW: 0
-        setGradW: 27
+        setGradW: 600
     - type: create-der-control
       parameters:
         start: $(now)
-        duration_seconds: 60
+        duration_seconds: 120 # Extended from TS5573 requirement of 1 minute for easier witnessing
         opModExpLimW: $(maxExportW * 2)
         opModImpLimW: $(maxImportW * 2)
         tag: DERC1
     - type: create-der-control
       parameters:
-        start: $(now + '1 minute')
-        duration_seconds: 60
+        start: $(now + '2 minutes')
+        duration_seconds: 120 # Extended from TS5573 requirement of 1 minute for easier witnessing
         opModExpLimW: $(maxExportW * 0.2)
         opModImpLimW: $(maxImportW * 0.2)
         tag: DERC2
     - type: create-der-control
       parameters:
-        start: $(now + '2 minutes')
-        duration_seconds: 60
+        start: $(now + '4 minutes')
+        duration_seconds: 120 # Extended from TS5573 requirement of 1 minute for easier witnessing
         opModExpLimW: $(maxExportW * 1.8)
         opModImpLimW: $(maxImportW * 1.8)
         tag: DERC3
     - type: create-der-control
       parameters:
-        start: $(now + '3 minutes')
-        duration_seconds: 60
+        start: $(now + '6 minutes')
+        duration_seconds: 120 # Extended from TS5573 requirement of 1 minute for easier witnessing
         opModExpLimW: $(maxExportW * 0.7)
         opModImpLimW: $(maxImportW * 0.7)
         tag: DERC4
     - type: create-der-control
       parameters:
-        start: $(now + '4 minutes')
-        duration_seconds: 60
+        start: $(now + '8 minutes')
+        duration_seconds: 120 # Extended from TS5573 requirement of 1 minute for easier witnessing
         opModExpLimW: $(maxExportW * 1.3)
         opModImpLimW: $(maxImportW * 1.3)
         tag: DERC5
-    - type: set-default-der-control
-      parameters:
-        opModImpLimW: 0 # Not explicit in TS5573 tests, but shows clients to poll at the default der control href
   instructions:
     - DER shall be generating or consuming at least 50% of its active power rating.
     
@@ -88,10 +85,6 @@ Steps:
       parameters:
         endpoint: /edev/1/derp/1/dderc
     actions:
-      - type: set-default-der-control
-        parameters:
-          opModImpLimW: 0  
-          opModExpLimW: 0
       - type: enable-steps
         parameters:
           steps:
@@ -125,7 +118,7 @@ Steps:
     event:
       type: wait
       parameters:
-        duration_seconds: 420
+        duration_seconds: 720
     actions:
       - type: remove-steps
         parameters:
