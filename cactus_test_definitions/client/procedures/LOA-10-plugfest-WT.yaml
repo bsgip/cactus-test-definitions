@@ -1,0 +1,1027 @@
+Description: Primacy Validation for loads
+Category: DER
+Classes:
+  - DER-L
+
+TargetVersions:
+  - v1.2
+  - v1.3-beta/storage
+  - v1.3
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+
+Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60 
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+        mup_list_poll_seconds: 60
+
+  checks:
+    - type: end-device-contents
+      parameters: {}
+    - type: der-settings-contents
+      parameters: {}
+
+  actions:
+    # FSA1 has 5 DERPrograms at higher PRIORITY (lower primacy)
+    - type: create-der-program
+      parameters: 
+        primacy: 1
+        fsa_id: 1
+    - type: create-der-program
+      parameters: 
+        primacy: 1
+        fsa_id: 1
+    - type: create-der-program
+      parameters: 
+        primacy: 1
+        fsa_id: 1
+    - type: create-der-program
+      parameters: 
+        primacy: 1
+        fsa_id: 1
+    - type: create-der-program
+      parameters: 
+        primacy: 1
+        fsa_id: 1
+
+    # FSA2 has 10 DERPrograms at lower PRIORITY (higher primacy)
+    - type: create-der-program
+      parameters: 
+        primacy: 2
+        fsa_id: 2
+    - type: create-der-program
+      parameters: 
+        primacy: 2
+        fsa_id: 2
+    - type: create-der-program
+      parameters: 
+        primacy: 2
+        fsa_id: 2
+    - type: create-der-program
+      parameters: 
+        primacy: 2
+        fsa_id: 2
+    - type: create-der-program
+      parameters: 
+        primacy: 2
+        fsa_id: 2
+    - type: create-der-program
+      parameters: 
+        primacy: 2
+        fsa_id: 2
+    - type: create-der-program
+      parameters: 
+        primacy: 2
+        fsa_id: 2
+    - type: create-der-program
+      parameters: 
+        primacy: 2
+        fsa_id: 2
+    - type: create-der-program
+      parameters:
+        primacy: 2
+        fsa_id: 2
+    - type: create-der-program
+      parameters: 
+        primacy: 2
+        fsa_id: 2
+    - type: set-default-der-control
+      parameters:
+        derp_id: 1
+        opModImpLimW: 0
+        opModExpLimW: 0
+        setGradW: 167 # Altered from 27 defined in TS5573 table 12.4.4 so that control observation is not limited by slow ramping
+        # A slow ramp would interfere with many explicitly defined control times in the test
+    - type: set-default-der-control
+      parameters:
+        derp_id: 6
+        opModImpLimW: 0
+        opModExpLimW: 0
+        setGradW: 167 # Altered from 27 defined in TS5573 table 12.4.4 so that control observation is not limited by slow ramping
+        # A slow ramp would interfere with many explicitly defined control times in the test
+
+Steps:
+  # (a, b) - Create a Default DERControl at DERP 1 - set to 30% of max
+  GET-DEFAULT-DERC:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/dderc
+    actions:
+      - type: set-default-der-control
+        parameters:
+          derp_id: 1
+          opModImpLimW: $(maxImportW * 0.3)
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-OBSERVE-DEFAULT-DERC
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DEFAULT-DERC
+
+  # (b) Wait to observe the 30% default control
+  WAIT-OBSERVE-DEFAULT-DERC:
+    instructions:
+      - The device should ramp to DERP1 DefaultDERControl opModImpLimW = 30% (as per TS 5573 [b])
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 180
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERP-1
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-OBSERVE-DEFAULT-DERC
+
+  # (c, d) - Create a DERControl at DERP 6 - set to 200% of max
+  GET-DERP-1:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/2/derp
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 600
+          opModImpLimW: $(maxImportW * 2)
+          fsa_id: 2
+          primacy: 2
+          tag: DERC1
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-1
+            - POST-DERC-1-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-1
+
+  # (c, d) - Create a DERControl at DERP 6 - set to 200% of max
+  GET-DERC-1:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/6/derc
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-1
+
+  # (d) Wait for "Started" response from DERC-1
+  POST-DERC-1-RESPONSE-STARTED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
+            subject_tag: DERC1
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-DERC-1
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC-1-RESPONSE-STARTED
+
+  # (e) Wait for a short period
+  WAIT-DERC-1:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 60
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERP-2
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-DERC-1
+
+  # (e) After the short period - configure a DERControl on DERP 1 - set to 0%
+  GET-DERP-2:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/1/derp
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 840 # Should run for 5 minutes after DERC 1 is due to expire
+          opModImpLimW: 0
+          fsa_id: 1
+          primacy: 1
+          tag: DERC2
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-2
+            - POST-DERC-2-RESPONSE-STARTED
+            - POST-DERC-1-RESPONSE-SUPERSEDED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-2
+
+  # (e) Retrieve control from DERP1
+  GET-DERC-2:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-2
+
+  # (f) Receive response started for DERControl 2
+  POST-DERC-2-RESPONSE-STARTED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
+            subject_tag: DERC2
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-DERC-2-RESPONSE-COMPLETED
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC-2-RESPONSE-STARTED
+
+  # (g) Client should get a superseded response for DERControl 1
+  POST-DERC-1-RESPONSE-SUPERSEDED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 7
+            subject_tag: DERC1
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC-1-RESPONSE-SUPERSEDED
+
+    
+  # (h) Client should get a completed response for DERControl 2
+  POST-DERC-2-RESPONSE-COMPLETED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 3
+            subject_tag: DERC2
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERP-3
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC-2-RESPONSE-COMPLETED
+
+  # (i) Create a new DERControl on DERP6 - set to 200%
+  GET-DERP-3:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/2/derp
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 300
+          opModImpLimW: $(maxImportW * 2)
+          fsa_id: 2
+          primacy: 2
+          tag: DERC3
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-3
+            - POST-DERC-3-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-3
+
+  # (i) Retrieve control from DERP6
+  GET-DERC-3:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/6/derc
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-3
+
+  # (j) Receive response started for DERControl 3
+  POST-DERC-3-RESPONSE-STARTED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
+            subject_tag: DERC3
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-DERC-3-RESPONSE-COMPLETED
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC-3-RESPONSE-STARTED
+
+  # (k, l) Wait for completed response on DERC 3
+  POST-DERC-3-RESPONSE-COMPLETED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 3
+            subject_tag: DERC3
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-OBSERVE-DEFAULT-AFTER-DERC-3
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC-3-RESPONSE-COMPLETED
+
+  # (l) Wait to observe the 30% default control again
+  WAIT-OBSERVE-DEFAULT-AFTER-DERC-3:
+    instructions:
+      - The device should ramp to DERP1 DefaultDERControl opModImpLimW = 30% (as per TS 5573 [l])
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 120
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERP-4
+            - GET-DERP-5
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-OBSERVE-DEFAULT-AFTER-DERC-3
+
+  # (m, n) (i) Configure the first DERControl on DERP1
+  GET-DERP-4:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/1/derp
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 300
+          opModLoadLimW: 0
+          opModConnect: false
+          fsa_id: 1
+          primacy: 1
+          tag: DERC4
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-4
+            - POST-DERC-4-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-4
+
+  # (m, n) (i) Retrieve control on DERP1
+  GET-DERC-4:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-4
+
+  # (m) (ii) Configure the second DERControl on DERP6
+  # (n)
+  GET-DERP-5:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/2/derp
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 1200 # 20 minutes
+          opModImpLimW: $(maxImportW * 2)
+          fsa_id: 2
+          primacy: 2
+          tag: DERC5
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-5
+            - POST-DERC-5-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-5
+
+  # (m) (ii) Retrieve control on DERP6 
+  # (n)
+  GET-DERC-5:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/6/derc
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-5
+
+  # (o) Receive response started for DERControl 4
+  POST-DERC-4-RESPONSE-STARTED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
+            subject_tag: DERC4
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-DERC-4-RESPONSE-COMPLETED
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC-4-RESPONSE-STARTED
+
+  # (o) Receive response started for DERControl 5
+  POST-DERC-5-RESPONSE-STARTED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
+            subject_tag: DERC5
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC-5-RESPONSE-STARTED
+
+
+  # (p, q, r) Do nothing but wait for DERControl 4 to complete
+  POST-DERC-4-RESPONSE-COMPLETED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 3
+            subject_tag: DERC4
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-OBSERVE-DERC-5
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC-4-RESPONSE-COMPLETED
+
+  # (q) Wait to observe the return to DERC 5
+  WAIT-OBSERVE-DERC-5:
+    instructions:
+      - The device should wait 60s on reconnection, then ramp to DERC5 opModImpLimW = 200% (as per TS 5573 [q]), at NZS4777.2 wGra (16%/min)
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 450
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERP-6
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-OBSERVE-DERC-5
+
+  # (s) Create a DERControl on DERP6 at 50%
+  GET-DERP-6:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/2/derp
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 300 # 5 minutes
+          opModImpLimW: $(maxImportW * 0.5)
+          fsa_id: 2
+          primacy: 2
+          tag: DERC6
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-6
+            - POST-DERC-5-RESPONSE-SUPERSEDED
+            - POST-DERC-6-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-6
+
+  # (s) Create a DERControl on DERP6 at 50%
+  GET-DERC-6:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/6/derc
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-6
+
+  # (t) Receive started Response for DERControl 6
+  POST-DERC-6-RESPONSE-STARTED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
+            subject_tag: DERC6
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-OBSERVE-DERC-6
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC-6-RESPONSE-STARTED
+
+  # (u) Receive superseded Response for DERControl 5
+  POST-DERC-5-RESPONSE-SUPERSEDED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 7
+            subject_tag: DERC5
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC-5-RESPONSE-SUPERSEDED
+  
+   # (t) Observe DERControl 6
+  WAIT-OBSERVE-DERC-6:
+    instructions:
+      - The device should ramp to DERC6 opModImpLimW = 50% (as per TS 5573 [t])
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 120
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERP-7
+            - GET-DERP-8
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-OBSERVE-DERC-6
+
+  # (v) (i) Create a DERControl on DERP1 at 0%
+  GET-DERP-7:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/1/derp
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 300
+          opModImpLimW: 0
+          fsa_id: 1
+          primacy: 1
+          tag: DERC7
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-7
+            - POST-DERC-7-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-7
+
+  # (v) (i) Retrieve control on DERP1
+  GET-DERC-7:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-7
+
+  # (v) (ii) Create a DERControl on DERP6 at 50% / 30%
+  GET-DERP-8:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/2/derp
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 300
+          opModImpLimW: $(maxImportW * 0.5)
+          opModLoadLimW: $(maxImportW * 0.3)
+          fsa_id: 2
+          primacy: 2
+          tag: DERC8
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-8
+            - POST-DERC-8-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-8
+
+  # (v) (ii) Retrieve control on DERP6
+  GET-DERC-8:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/6/derc
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-8
+
+  # (w, x) Receive the DERControl Response started for DERControl 7
+  POST-DERC-7-RESPONSE-STARTED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
+            subject_tag: DERC7
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-DERC-7-RESPONSE-COMPLETED
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC-7-RESPONSE-STARTED
+
+  # (w, x) Receive the DERControl Response started for DERControl 8
+  POST-DERC-8-RESPONSE-STARTED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
+            subject_tag: DERC8
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC-8-RESPONSE-STARTED
+
+  # (x) This isn't strictly in the TS5573 definition but the intention is for this control to finish BEFORE
+  # enabling the subsequent DERControls
+  POST-DERC-7-RESPONSE-COMPLETED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 3
+            subject_tag: DERC7
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERP-9
+            - GET-DERP-10
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC-7-RESPONSE-COMPLETED
+
+  # (y) (i) Configure DERControl on DERP1
+  GET-DERP-9:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/1/derp
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 300
+          opModLoadLimW: $(maxImportW * 0.5)
+          fsa_id: 1
+          primacy: 1
+          tag: DERC9
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-9
+            - POST-DERC-9-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-9
+
+  # (y) (i) Retrieve control on DERP1
+  GET-DERC-9:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-9
+
+  # (y) (ii) Configure DERControl on DERP6
+  GET-DERP-10:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/2/derp
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 300
+          opModImpLimW: $(maxImportW * 0.2)
+          fsa_id: 2
+          primacy: 2
+          tag: DERC10
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-10
+            - POST-DERC-10-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERP-10
+
+  # (y) (ii) Retrieve control on DERP6
+  GET-DERC-10:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/6/derc
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-10
+
+  # (z, aa) Wait for Response started for DERControl 9
+  POST-DERC-9-RESPONSE-STARTED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
+            subject_tag: DERC9
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-OBSERVE-DERC-9-10
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC-9-RESPONSE-STARTED
+
+  # (z, aa) Wait for Response started for DERControl 10
+  POST-DERC-10-RESPONSE-STARTED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
+            subject_tag: DERC10
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-DERC-10-RESPONSE-STARTED
+
+  # (z) Wait to observe 20% on DERC9
+  WAIT-OBSERVE-DERC-9-10:
+    instructions:
+      - The device should ramp to DERC 9/10 opModImpLimW = 20% (as per TS 5573 [z])
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 120
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-UPDATED-DEFAULT-DERP-1
+            - GET-UPDATED-DEFAULT-DERP-6
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-OBSERVE-DERC-9-10
+    
+  # (bb) (i) Create an updated default for DERProgram 1 at 50%
+  # (cc)
+  GET-UPDATED-DEFAULT-DERP-1:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/dderc
+    actions:
+      - type: set-default-der-control
+        parameters:
+          derp_id: 1
+          opModImpLimW: $(maxImportW * 0.5)
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-UPDATED-DEFAULT-DERP-1
+
+  # (bb) (ii) Create an updated default for DERProgram 6 at 20%
+  # (cc)
+  # (dd) - Also cancel active controls
+  GET-UPDATED-DEFAULT-DERP-6:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/6/dderc
+    actions:
+      - type: set-default-der-control
+        parameters:
+          derp_id: 6
+          opModImpLimW: $(maxImportW * 0.2)
+      - type: cancel-active-der-controls
+        parameters: {}
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-OBSERVE-DERP-1-6-DEFAULTS
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-UPDATED-DEFAULT-DERP-6
+
+  # (ee) Wait for DER to increase to 50%
+  WAIT-OBSERVE-DERP-1-6-DEFAULTS:
+    instructions:
+      - The device should ramp to DERP 1 DefaultDERControl opModImpLimW = 50% (as per TS 5573 [ee])
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 300
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-OBSERVE-DERP-1-6-DEFAULTS
+      - type: finish-test
+        parameters: {}
+

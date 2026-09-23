@@ -1,0 +1,123 @@
+Description: Response to Cancelled Import Control
+Category: DER
+Classes:
+  - DER-L
+
+TargetVersions:
+  - v1.2
+  - v1.3-beta/storage
+  - v1.3
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+
+Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60 
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+        mup_list_poll_seconds: 60
+  checks: 
+    - type: end-device-contents
+      parameters: {}
+    - type: der-settings-contents
+      parameters: {}
+  actions:
+    - type: create-der-program
+      parameters:
+        primacy: 0
+    - type: set-default-der-control
+      parameters:
+        opModExpLimW: 0
+        opModImpLimW: $(maxImportW * 0.3)
+        setGradW: 600 # This is increased from the 27 specified in TS5573 Table 12.4.4 in order for the ramp 
+        # Behaviour to be observed in a reasonable time frame
+  instructions: 
+    - DER should be importing at least 50% of its rated power.
+    
+Steps:
+  # (precondition)
+  PRECONDITION-STARTUP:
+    instructions:
+      - This step is to give time for the DER to start importing/exporting at least 50% of its rated power.
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/1/derp
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 300
+          opModExpLimW: $(maxExportW * 2)
+          opModImpLimW: $(maxImportW * 2)
+          tag: DERC1
+      - type: enable-steps
+        parameters:
+          steps:
+            - PRECONDITION-STARTUP-WAIT
+      - type: remove-steps
+        parameters:
+          steps:
+            - PRECONDITION-STARTUP
+  
+  # (precondition)
+  PRECONDITION-STARTUP-WAIT:
+    instructions:
+      - This step is to give time for the DER to start importing/exporting at least 50% of its rated power.
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 120
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC
+      - type: remove-steps
+        parameters:
+          steps:
+            - PRECONDITION-STARTUP-WAIT
+
+  # (a, b)
+  GET-DERC:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: cancel-active-der-controls
+        parameters: {}
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-TILL-END
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC
+
+  # (b)
+  WAIT-TILL-END:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 60
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-TILL-END
+      - type: finish-test
+        parameters: {}
+    instructions:
+      - After cancellation, DER shall reduce export to the DefaultDERControl value of 30%
+
+  

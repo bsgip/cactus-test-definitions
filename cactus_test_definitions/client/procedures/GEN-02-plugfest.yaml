@@ -1,0 +1,125 @@
+Description: Active Control – Generation Limit
+Category: Control
+Classes:
+  - G
+
+TargetVersions:
+  - v1.2
+  - v1.3-beta/storage
+  - v1.3
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+    - type: all-polls-at-correct-time
+      parameters:
+        endpoints:
+          - /dcap
+          - /edev
+          - /edev/1/fsa
+          - /edev/1/der
+          - /edev/1/fsa/1/derp
+          - /edev/1/derp/1/dderc
+          - /mup
+        poll_interval_seconds: 60
+        request_type_str: GET
+
+Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+        mup_list_poll_seconds: 60
+    - type: create-der-program
+      parameters:
+        primacy: 0
+  checks:
+    - type: end-device-contents
+      parameters: {}
+    - type: der-settings-contents
+      parameters: {}
+  actions:
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 0
+        opModExpLimW: $(maxExportW) # Increased from the 0 efined in TS5573 Table 12.4.4 in order to observe the GEN limit changes without overriding them
+        setGradW: 600 # This is increased from the 27 defined in TS5573 Table 12.4.4 in order to comply with the <30s ramp specified in step c
+    - type: create-der-control
+      parameters:
+        start: $(now)
+        duration_seconds: 300
+        opModGenLimW: $(maxExportW * 2)
+  instructions:
+    - DER shall be generating at the connection point at least 50% of its active power rating.
+    
+Steps:
+  # (precondition)
+  GET-DERC-INITIAL:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-CONTROL
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-INITIAL
+
+  WAIT-CONTROL:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 60 # Wait for the control to reach at least 50%
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-ZERO
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-CONTROL
+
+  # (a, b, c)
+  GET-DERC-ZERO:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/1/derp
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 300
+          opModGenLimW: 0
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-REACH-ZERO
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-ZERO
+
+  WAIT-REACH-ZERO:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 120 # Wait for the control to be polled, then to reach 0
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-REACH-ZERO
+      - type: finish-test
+        parameters: {}

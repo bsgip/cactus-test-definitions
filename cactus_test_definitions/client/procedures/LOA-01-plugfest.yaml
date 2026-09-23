@@ -1,0 +1,141 @@
+Description: Active Control – Import Limit
+Category: Control
+Classes:
+  - L
+
+TargetVersions:
+  - v1.2
+  - v1.3-beta/storage
+  - v1.3
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+    - type: readings-site-active-power
+      # site active power should never exceed its own rated import capacity
+      # site active power should always be positive during this test: with import at 50% for test start,
+      # we assume load must be sufficient to offset any on site generation and keep site power above 0.
+      # there is also a default control with opmodexplimw=0.
+      parameters:
+        maximum_level: $(1.05 * maxImportW)
+        minimum_level: $(-0.05 * maxImportW)
+    - type: readings-der-active-power
+      # DER is assumed to act as the inverse of the site power above. 
+      parameters:
+        minimum_level: $(-1.05 * maxImportW)
+        maximum_level: $(0.05 * maxImportW)
+
+Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+        mup_list_poll_seconds: 60
+    - type: create-der-program
+      parameters:         
+        primacy: 0
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 0
+        opModExpLimW: 0
+        setGradW: 600 # This is increased from the 27 defined in TS5573 Table 12.4.4 in order to comply with the <30s ramp specified in step c
+  checks:
+    - type: end-device-contents
+      parameters: {}
+    - type: der-settings-contents
+      parameters: {}
+    - type: readings-site-active-power
+      # Gate test start on telemetry rather than trusting the out-of-band instruction below alone: confirm the
+      # site is currently importing between 50% and 105% of the DER's rated import capacity.
+      parameters:
+        latest_reading_only: true
+        maximum_level: $(1.05 * maxImportW)
+        minimum_level: $(0.5 * maxImportW)
+    - type: readings-der-active-power
+      # Gate test start on telemetry rather than trusting the out-of-band instruction below alone: confirm the
+      # device is currently importing between 50% and 105% of the DER's rated import capacity.
+      parameters:
+        latest_reading_only: true
+        minimum_level: $(-1.05 * maxImportW)
+        maximum_level: $(-0.5 * maxImportW)
+  actions:
+    - type: create-der-control
+      parameters:
+        start: $(now)
+        duration_seconds: 300
+        opModImpLimW: $(maxImportW * 2)
+  instructions:
+    - DER shall be importing at the connection point at least 50% of its active power rating.
+    - The test cannot be started until site telemetry is between 50 and 100% import (check the sign carefully).
+    - Device telemetry must also be sent, and is the inverse of site (check the sign carefully).
+Steps:
+  # (precondition)
+  GET-DERC-INITIAL:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-CONTROL
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-INITIAL
+  
+  WAIT-CONTROL:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 60 # Wait for the control to reach at least 50%
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-ZERO
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-CONTROL
+
+  # (a, b, c)
+  GET-DERC-ZERO:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/1/derp
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 300
+          opModImpLimW: 0
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-REACH-ZERO
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-ZERO
+  
+  WAIT-REACH-ZERO:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 120 # Wait for the control to be polled, then to reach 0
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-REACH-ZERO
+      - type: finish-test
+        parameters: {}

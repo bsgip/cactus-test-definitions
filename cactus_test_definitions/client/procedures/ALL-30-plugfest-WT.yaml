@@ -1,0 +1,188 @@
+Description: Persisting Settings Through Reconnection
+Category: DER
+Classes:
+  - DER-A
+
+TargetVersions:
+  - v1.2
+  - v1.3-beta/storage
+  - v1.3
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+
+Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+        mup_list_poll_seconds: 60
+    - type: create-der-program
+      parameters:
+        primacy: 0
+  checks:
+    - type: end-device-contents
+      parameters: {}
+    - type: der-settings-contents
+      parameters: {}
+  actions:
+    - type: set-default-der-control
+      parameters:
+        opModExpLimW: $(maxExportW * 0.3)
+        opModImpLimW: $(maxImportW * 0.3)
+        setGradW: 600 # Altered from 27 defined in TS5573 table 12.4.4 so that control observation is not limited by slow ramping
+  instructions:
+    - DER is operating at least 50% if its rated power.
+
+Steps:
+
+  # (precondition)
+  PRECONDITION-STARTUP:
+    instructions:
+      - This step is to give time for the DER to start importing/exporting at least 50% of its rated power.
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/1/derp
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 240
+          opModExpLimW: $(maxExportW * 2)
+          opModImpLimW: $(maxImportW * 2)
+          tag: PRECONDITION
+      - type: enable-steps
+        parameters:
+          steps:
+            - PRECONDITION-STARTUP-WAIT
+      - type: remove-steps
+        parameters:
+          steps:
+            - PRECONDITION-STARTUP
+  
+  # (precondition)
+  PRECONDITION-STARTUP-WAIT:
+    instructions:
+      - This step is to give time for the DER to start importing/exporting at least 50% of its rated power.
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 120
+    actions:
+      # The 200% DERControl is ONLY relevant for the precondition. We want it gone for the main body of the test
+      - type: cancel-active-der-controls  
+        parameters: {}
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DEFAULT-DERC
+      - type: remove-steps
+        parameters:
+          steps:
+            - PRECONDITION-STARTUP-WAIT
+
+  # (precondition) - Wait for the DefaultDERControl to be picked up
+  GET-DEFAULT-DERC:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/dderc
+        serve_request_first: true
+    actions:
+      - type: communications-status
+        parameters:
+          enabled: false
+      - type: enable-steps
+        parameters:
+          steps:
+            - CLIENT-POWER-CYCLE
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DEFAULT-DERC
+
+  # (a, b, c)
+  CLIENT-POWER-CYCLE:
+    instructions:
+      - Power cycle (turn off then back on again) the communications client, and while it is offline, disable the communications interface between the client and utility server (e.g. by unplugging an appropriate network cable).
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 30 # Give the user time to power off the device
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - REESTABLISH-COMMUNICATION
+      - type: remove-steps
+        parameters:
+          steps:
+            - CLIENT-POWER-CYCLE
+  
+  # (d)
+  REESTABLISH-COMMUNICATION:
+    instructions:
+      - Re-establish communications between the client and utility server (e.g. by plugging the network cable back in).
+      - Click this button once the DER has turned back on, and is following the default DERControl of 30% of rated active power. 
+    event:
+      type: proceed
+      parameters: {}
+    actions:
+      - type: create-der-control # Create this control after connection re-established. This avoids notifications being sent to the client during the disconnection.
+        parameters:
+          start: $(now - '60 seconds')
+          duration_seconds: 900
+          opModExpLimW: $(maxExportW * 0.5)
+          opModImpLimW: $(maxImportW * 0.5)
+          tag: DERC1
+      - type: communications-status
+        parameters:
+          enabled: true
+      - type: enable-steps
+        parameters:
+          steps:
+            - POLL-DERC-1
+            - POST-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - REESTABLISH-COMMUNICATION
+
+  # (e)
+  POLL-DERC-1:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/derc
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POLL-DERC-1
+
+  # (e)
+  POST-RESPONSE-STARTED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
+            subject_tag: DERC1
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-STARTED

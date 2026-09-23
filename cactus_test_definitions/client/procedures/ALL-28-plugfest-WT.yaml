@@ -1,0 +1,349 @@
+Description: Response to Changing Ramp-Rates
+Category: DER
+Classes:
+  - DER-A
+
+TargetVersions:
+  - v1.2
+  - v1.3-beta/storage
+  - v1.3
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+
+Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+        mup_list_poll_seconds: 60
+  checks:
+    - type: end-device-contents
+      parameters: {}
+    - type: der-settings-contents
+      parameters: {}
+  actions:
+    - type: create-der-program
+      parameters:
+        primacy: 0  
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 0
+        opModExpLimW: 0
+        # The first DERControl ramp in this test is expected to be at 15s with setGradW as NULL
+  instructions:
+    - DER is exporting or importing at the connection point at least 50% of its rated power.
+
+Steps:
+  # (precondition)
+  PRECONDITION-STARTUP:
+    instructions:
+      - This step is to give time for the DER to start importing/exporting at least 50% of its rated power.
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/1/derp
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 240
+          opModExpLimW: $(maxExportW * 2)
+          opModImpLimW: $(maxImportW * 2)
+          tag: PRECONDITION
+      - type: enable-steps
+        parameters:
+          steps:
+            - PRECONDITION-STARTUP-WAIT
+      - type: remove-steps
+        parameters:
+          steps:
+            - PRECONDITION-STARTUP
+  
+  # (precondition)
+  PRECONDITION-STARTUP-WAIT:
+    instructions:
+      - This step is to give time for the DER to start importing/exporting at least 50% of its rated power.
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 120
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-1
+      - type: remove-steps
+        parameters:
+          steps:
+            - PRECONDITION-STARTUP-WAIT
+
+  # (precondition)
+  GET-DERC-1:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/1/derp
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 900
+          opModExpLimW: $(maxExportW * 0.3)
+          opModImpLimW: $(maxImportW * 0.3)
+          tag: DERC1
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-RAMP-DERC-1
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-1
+
+  WAIT-RAMP-DERC-1:
+    instructions:
+      - Observe that DER ramps to 30% limit.
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 120
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-2
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-RAMP-DERC-1
+
+  # (a, b)
+  GET-DERC-2:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/1/derp
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 300
+          opModExpLimW: $(maxExportW * 0.1)
+          opModImpLimW: $(maxImportW * 0.1)
+          tag: DERC2
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-RAMP-DERC-2
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-2
+
+  WAIT-RAMP-DERC-2:
+    instructions:
+      - Observe that DER ramps to 10% limit within 15s as per step (b).
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 120
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-3
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-RAMP-DERC-2
+
+  # (c, d)
+  GET-DERC-3:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/1/derp
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 900 # Extra long but will be cancelled (give clients enough time to see cancellation)
+          opModExpLimW: $(maxExportW * 0.5)
+          opModImpLimW: $(maxImportW * 0.5)
+          ramp_time_seconds: 60
+          tag: DERC3
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-RAMP-DERC-3
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-3
+
+  # (d)
+  WAIT-RAMP-DERC-3:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 180
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DEFAULT-DERC
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-RAMP-DERC-3
+    instructions:
+      - The DER shall ramp export/import to 50% in 60 seconds (due to rampTms being 60s).
+
+  # (e)
+  GET-DEFAULT-DERC:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/derp/1/dderc
+    actions:
+      - type: set-default-der-control
+        parameters:
+          setGradW: 100 # hundredths of a percent - this is 1%
+          opModImpLimW: 0
+          opModExpLimW: 0
+      - type: enable-steps
+        parameters:
+          steps:
+            - PUT-DERSETTINGS-SET-GRAD-W
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DEFAULT-DERC
+
+  # (f, g)
+  PUT-DERSETTINGS-SET-GRAD-W:
+    event:
+      type: PUT-request-received
+      parameters:
+        endpoint: /edev/1/der/1/derg
+        serve_request_first: true # Run this AFTER server receives the request
+      checks:
+        - type: der-settings-contents
+          parameters:
+            setGradW: 100
+    actions:
+      - type: cancel-active-der-controls
+        parameters: {}
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-CANCELLED
+      - type: remove-steps
+        parameters:
+          steps:
+            - PUT-DERSETTINGS-SET-GRAD-W
+
+  # (h)
+  POST-RESPONSE-CANCELLED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 6
+            subject_tag: DERC3
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-RAMP-DEFAULT
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-CANCELLED
+
+  # (i)
+  WAIT-RAMP-DEFAULT:
+    instructions:
+        - The DER shall reduce export/import to the current DefaultDERControl limit of 0W at the new ramp rate of 1 %/s.
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 180
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-DERC-4
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-RAMP-DEFAULT
+
+  # (j)
+  GET-DERC-4:
+    event:
+      type: GET-request-received
+      parameters:
+        endpoint: /edev/1/fsa/1/derp
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now)
+          duration_seconds: 300
+          opModExpLimW: $(maxExportW * 0.3)
+          opModImpLimW: $(maxImportW * 0.3)
+          tag: DERC4
+      - type: enable-steps
+        parameters:
+          steps:
+            - WAIT-RAMP-DERC-4
+            - POST-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - GET-DERC-4
+
+  WAIT-RAMP-DERC-4:
+    instructions:
+      - Observe that DER ramps to 30% at new ramp rate of 1% per step (l).
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 180
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-RAMP-DERC-4
+
+  # (k)
+  POST-RESPONSE-STARTED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
+            subject_tag: DERC4
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-STARTED

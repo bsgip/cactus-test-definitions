@@ -1,0 +1,313 @@
+Description: Control Responses
+Category: Control
+Classes:
+  - A
+
+TargetVersions:
+  - v1.2
+  - v1.3-beta/storage
+  - v1.3
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+    - type: response-contents
+      parameters:
+        all: true
+        status: 1
+
+Preconditions:
+  init_actions:
+    - type: set-comms-rate
+      parameters:
+        dcap_poll_seconds: 60
+        edev_list_poll_seconds: 60
+        fsa_list_poll_seconds: 60
+        der_list_poll_seconds: 60
+        derp_list_poll_seconds: 60
+        mup_post_seconds: 60
+        mup_list_poll_seconds: 60
+  checks:
+    - type: end-device-contents
+      parameters: {}
+    - type: der-settings-contents
+      parameters: {}
+
+  actions:
+    # (a)
+    - type: create-der-control
+      parameters:
+        tag: DERC1
+        start: $(now)
+        duration_seconds: 120
+        opModExpLimW: $(maxExportW * 2)
+        opModImpLimW: $(maxImportW * 2)
+    - type: create-der-program
+      parameters:         
+        primacy: 0
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 0
+        opModExpLimW: 0
+        setGradW: 27
+
+    
+Steps:
+
+  # (b)
+  POST-RESPONSE-RECEIVED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 1
+            subject_tag: DERC1
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-RECEIVED
+
+  # (c, d)
+  POST-RESPONSE-STARTED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
+            subject_tag: DERC1
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-COMPLETED
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-STARTED
+
+  # (e, f, g)
+  POST-RESPONSE-COMPLETED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 3
+            subject_tag: DERC1
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-SECOND-RESPONSE-RECEIVED
+      - type: create-der-control
+        parameters:
+          start: $(now + '5 minutes')
+          duration_seconds: 600
+          opModExpLimW: $(maxExportW * 2)
+          opModImpLimW: $(maxImportW * 2)
+          tag: DERC2
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-RESPONSE-COMPLETED
+
+  # (h)
+  POST-SECOND-RESPONSE-RECEIVED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 1
+            subject_tag: DERC2
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-SECOND-RESPONSE-STARTED
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-SECOND-RESPONSE-RECEIVED
+
+  # (i, j)
+  POST-SECOND-RESPONSE-STARTED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 2
+            subject_tag: DERC2
+    actions:
+      - type: cancel-active-der-controls
+        parameters: {}
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-SECOND-RESPONSE-CANCELLED
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-SECOND-RESPONSE-STARTED
+
+
+  # (k, l)
+  POST-SECOND-RESPONSE-CANCELLED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 6
+            subject_tag: DERC2
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now + '10 minutes')
+          duration_seconds: 120
+          opModExpLimW: 0
+          opModImpLimW: 0
+          tag: DERC3
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-THIRD-RESPONSE-RECEIVED
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-SECOND-RESPONSE-CANCELLED
+
+  # (m, n)
+  POST-THIRD-RESPONSE-RECEIVED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 1
+            subject_tag: DERC3
+    actions:
+      - type: cancel-active-der-controls
+        parameters: {}
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-THIRD-RESPONSE-CANCELLED
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-THIRD-RESPONSE-RECEIVED
+
+  # (o, p)
+  POST-THIRD-RESPONSE-CANCELLED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 6
+            subject_tag: DERC3
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now + '10 minutes')
+          duration_seconds: 600
+          opModExpLimW: $(maxExportW * 2)
+          opModImpLimW: $(maxImportW * 2)
+          tag: DERC4
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-FOURTH-RESPONSE-RECEIVED
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-THIRD-RESPONSE-CANCELLED
+
+  # (q, r)
+  POST-FOURTH-RESPONSE-RECEIVED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            latest: true
+            status: 1
+            subject_tag: DERC4
+    actions:
+      - type: create-der-control
+        parameters:
+          start: $(now + '10 minutes')
+          duration_seconds: 60
+          opModExpLimW: 0
+          opModImpLimW: 0
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-FOURTH-RESPONSE-SUPERSEDED
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-FOURTH-RESPONSE-RECEIVED
+
+  # (s)
+  POST-FOURTH-RESPONSE-SUPERSEDED:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /edev/1/rsps/site_control/rsp
+        serve_request_first: true
+      checks:
+        - type: response-contents
+          parameters: 
+            status: 7
+            subject_tag: DERC4
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-FOURTH-RESPONSE-SUPERSEDED
