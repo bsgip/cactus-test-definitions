@@ -39,20 +39,24 @@ Preconditions:
         setGradW: 27
 
 Steps:
-  GET-MUP:
-    event:
-      type: GET-request-received
-      parameters:
-        endpoint: /mup
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-MUP
-      - type: remove-steps
-        parameters:
-          steps:
-            - GET-MUP
+  # As per ALL-06
+  # NOTE - Pending review by the CIRG - this has been disabled as a client seeing an MUP-List with all=0
+  #        can reasonably be expected to skip this step.
+  #
+  #GET-MUP:
+  #  event:
+  #    type: GET-request-received
+  #    parameters:
+  #      endpoint: /mup
+  #  actions:
+  #    - type: enable-steps
+  #      parameters:
+  #        steps:
+  #          - POST-MUP
+  #    - type: remove-steps
+  #      parameters:
+  #        steps:
+  #          - GET-MUP
 
   POST-MUP:
     event:
