@@ -18,15 +18,15 @@ Criteria:
     #   two posts @ 300 seconds
     #   one post @ 60 seconds (after update)
     - type: readings-site-active-power
-      parameters: {"minimum_count": 3} 
+      parameters: {"minimum_count": 4} 
     - type: readings-site-reactive-power
-      parameters: {"minimum_count": 3}
+      parameters: {"minimum_count": 4}
     - type: readings-voltage
-      parameters: {"minimum_count": 3}
+      parameters: {"minimum_count": 4}
     - type: readings-der-active-power
-      parameters: {"minimum_count": 3}
+      parameters: {"minimum_count": 4}
     - type: readings-der-reactive-power
-      parameters: {"minimum_count": 3}
+      parameters: {"minimum_count": 4}
 
 Preconditions:
   init_actions:
@@ -104,15 +104,31 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - POST-MUP-1
-            - WAIT-TILL-END
+            - POST-MUP-1     
       - type: remove-steps
         parameters:
           steps:
             - GET-MUP-UPDATED
 
-  # (f) - This is our proxy for making sure that post rate has returned to 60s - it has 90 seconds to be hit after GET-MUP-UPDATED
+  # (f) - Depending on client implementation, the client may update the post rate immediately or may complete posting at the old post rate.
   POST-MUP-1:
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /mup/*
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - POST-MUP-2
+            - WAIT-TILL-END
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-MUP-1 
+            
+  # (f) - This is our proxy for making sure that post rate has returned to 60s - it has 90 seconds to be hit after POST-MUP-1
+  POST-MUP-2:
     event:
       type: POST-request-received
       parameters:
@@ -121,8 +137,8 @@ Steps:
       - type: remove-steps
         parameters:
           steps:
-            - POST-MUP-1
-
+            - POST-MUP-2 
+              
   # (f)
   WAIT-TILL-END:
     event:
