@@ -415,7 +415,9 @@ def does_endpoint_match(path: str, match: str) -> bool:
 @pytest.mark.parametrize("tp_id", list(TestProcedureId))
 def test_endpoints_match_envoy(tp_id: TestProcedureId):
     valid_envoy_format_strings = [
-        value for name, value in vars(envoy_uris).items() if isinstance(value, str) and not name.startswith("_")
+        value
+        for name, value in vars(envoy_uris).items()
+        if isinstance(value, str) and not name.startswith("_") and not value == envoy_uris.DERProgramListUri
     ]
     assert len(valid_envoy_format_strings) > 10
 
