@@ -90,6 +90,8 @@ Steps:
         - type: der-status-contents
           parameters:
             genConnectStatus_bit0: false
+            genConnectStatus_bit1: false
+            genConnectStatus_bit2: false
     actions:
       - type: remove-steps
         parameters:
@@ -123,6 +125,8 @@ Steps:
         - type: der-status-contents
           parameters:
             genConnectStatus_bit0: true
+            genConnectStatus_bit1: true
+            genConnectStatus_bit2: true
     actions:
       - type: remove-steps
         parameters:
