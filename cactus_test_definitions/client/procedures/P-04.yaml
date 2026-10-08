@@ -160,7 +160,7 @@ Steps:
     event:
       type: GET-request-received
       parameters:
-        endpoint: /edev/1/derp
+        endpoint: /edev/1/fsa/1/derp
     actions:
       - type: enable-steps
         parameters:
