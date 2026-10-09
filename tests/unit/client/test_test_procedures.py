@@ -47,7 +47,7 @@ def test_available_tests_populated():
 
     all_tps = get_all_test_procedures()
     assert_dict_type(TestProcedureId, TestProcedure, all_tps, count=len(TestProcedureId))
-    assert all_tps[TestProcedureId.ALL_01] != all_tps[TestProcedureId.ALL_02], "Sanity check on uniqueness"
+    assert all_tps[TestProcedureId.PF_11] != all_tps[TestProcedureId.ALL_02], "Sanity check on uniqueness"
 
 
 def test_error_on_duplicate_key():
@@ -72,10 +72,7 @@ def test_error_on_extra_key():
 
 # Test procedures that are intentionally exempt from requiring create-der-program/set-default-der-control in
 # their preconditions, along with the reason why.
-PRECONDITION_DER_PROGRAM_AND_CONTROL_EXCEPTIONS = {
-    TestProcedureId.P_01: "Provisional test - Does not improve the test, not part of TS5573 requirements.",
-    TestProcedureId.P_02: "Provisional test - Does not improve the test, not part of TS5573 requirements.",
-}
+PRECONDITION_DER_PROGRAM_AND_CONTROL_EXCEPTIONS = {}
 
 
 def test_preconditions_include_der_program_and_default_der_control():
