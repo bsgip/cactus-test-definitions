@@ -42,8 +42,8 @@ Preconditions:
         primacy: 0
     - type: set-default-der-control
       parameters:
-        opModImpLimW: 0
-        opModExpLimW: 0
+        opModImpLimW: $(maxImportW * 2) # We will revise this to 0 later - for init phase, we need the DER to submit a reading
+        opModExpLimW: $(maxExportW * 2) # We will revise this to 0 later - for init phase, we need the DER to submit a reading
         setGradW: 600 # This is increased from the 27 defined in TS5573 Table 12.4.4 in order to comply with the <30s ramp specified in step c
   checks:
     - type: end-device-contents
@@ -65,6 +65,11 @@ Preconditions:
         minimum_level: $(-1.05 * maxImportW)
         maximum_level: $(-0.5 * maxImportW)
   actions:
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 0
+        opModExpLimW: 0
+        setGradW: 600 # This is increased from the 27 defined in TS5573 Table 12.4.4 in order to comply with the <30s ramp specified in step c
     - type: create-der-control
       parameters:
         start: $(now)
