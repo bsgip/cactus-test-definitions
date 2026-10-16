@@ -22,12 +22,18 @@ class TestProcedureId(StrEnum):
     ALL_02 = "ALL-02"
 
     # Plugfest Versioned Tests
+    #PF_ALL_02 = "PF-ALL-02"
     PF_11 = "PF-11"
     PF_13 = "PF-13"
     PF_21 = "PF-21"
     PF_23 = "PF-23"
     PF_26 = "PF-26"
+    PF_28 = "PF-28"
     PF_30 = "PF-30"
+
+    #Spliting Limits
+    GEN_11 = "GEN-11"
+    LOA_11 = "LOA-11"
 
     # Pricing extension
     PRC_02 = "PRC-02"
