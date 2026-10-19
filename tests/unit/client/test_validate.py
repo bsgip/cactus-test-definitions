@@ -118,7 +118,7 @@ def test_TestProcedure_invalid_examples(tp_file: Path):
         tp = parse_test_procedure(fp.read())
 
     with pytest.raises(TestProcedureDefinitionError):
-        validate_test_procedure(tp, TestProcedureId.ALL_02)
+        validate_test_procedure(tp, TestProcedureId.PF_01)
 
 
 @pytest.mark.parametrize("tp_id", TestProcedureId)

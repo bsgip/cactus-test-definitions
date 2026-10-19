@@ -47,7 +47,7 @@ def test_available_tests_populated():
 
     all_tps = get_all_test_procedures()
     assert_dict_type(TestProcedureId, TestProcedure, all_tps, count=len(TestProcedureId))
-    assert all_tps[TestProcedureId.PF_11] != all_tps[TestProcedureId.ALL_02], "Sanity check on uniqueness"
+    assert all_tps[TestProcedureId.PF_01] != all_tps[TestProcedureId.PF_02], "Sanity check on uniqueness"
 
 
 def test_error_on_duplicate_key():
