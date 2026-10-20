@@ -1,0 +1,1917 @@
+Description: "Dynala and AEMO dynamic-day signal #3"
+Category: Plugfest
+Classes:
+  - A
+
+TargetVersions:
+  - v1.3
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+
+Preconditions:
+  init_actions:
+    # The Feb 25 flat Dynala import charge has its own component; the Oct 9 baseline is zero.
+    # TTI duration carries each component's constant tariff price until its next update.
+    # Prices are encoded in AUD/kWh: Dynala rate x 1,000,000; AEMO RRP (AUD/MWh) x 1,000.
+    - type: set-comms-rate
+      parameters:
+        fsa_list_poll_seconds: 20
+        tp_list_poll_seconds: 20
+        tti_list_poll_seconds: 20
+
+    - type: create-tariff-profile
+      parameters:
+        primacy: 65
+        fsa_id: 1
+        price_pow_10_multiplier: -6
+        tag: TP-DYNALA-IMPORT
+    - type: create-tariff-profile
+      parameters:
+        primacy: 65
+        fsa_id: 1
+        price_pow_10_multiplier: -6
+        tag: TP-DYNALA-EXPORT
+    - type: create-tariff-profile
+      parameters:
+        primacy: 66
+        fsa_id: 1
+        price_pow_10_multiplier: -6
+        tag: TP-AEMO-IMPORT
+
+    - type: create-rate-component
+      parameters:
+        tariff_profile_tag: TP-DYNALA-IMPORT
+        flow_direction: 1 # FlowDirectionType.FORWARD
+        power_of_ten_multiplier: 3
+        uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
+        tag: RC-DYNALA-IMPORT-BASE
+    - type: create-rate-component
+      parameters:
+        tariff_profile_tag: TP-DYNALA-IMPORT
+        flow_direction: 1 # FlowDirectionType.FORWARD
+        power_of_ten_multiplier: 3
+        uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
+        tag: RC-DYNALA-IMPORT-DYNAMIC
+    - type: create-rate-component
+      parameters:
+        tariff_profile_tag: TP-DYNALA-EXPORT
+        flow_direction: 19 # FlowDirectionType.REVERSE
+        power_of_ten_multiplier: 3
+        uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
+        tag: RC-DYNALA-EXPORT
+    - type: create-rate-component
+      parameters:
+        tariff_profile_tag: TP-AEMO-IMPORT
+        flow_direction: 1 # FlowDirectionType.FORWARD
+        power_of_ten_multiplier: 3
+        uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
+        tag: RC-AEMO-IMPORT
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '30 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -2375
+        tag: OCT-IMP-01
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '30 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 2375
+        tag: OCT-EXP-01
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '30 seconds')
+        duration_seconds: 90
+        price_pow10_encoded_block0: 53150
+        tag: OCT-AEMO-01
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '60 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -5676
+        tag: OCT-IMP-02
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '60 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 5676
+        tag: OCT-EXP-02
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '90 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -10448
+        tag: OCT-IMP-03
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '90 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 10448
+        tag: OCT-EXP-03
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '120 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -17236
+        tag: OCT-IMP-04
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '120 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 17236
+        tag: OCT-EXP-04
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '120 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 52210
+        tag: OCT-AEMO-04
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '150 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -25499
+        tag: OCT-IMP-05
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '150 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 25499
+        tag: OCT-EXP-05
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '150 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 53150
+        tag: OCT-AEMO-05
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '180 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -38745
+        tag: OCT-IMP-06
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '180 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 38745
+        tag: OCT-EXP-06
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '180 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 46580
+        tag: OCT-AEMO-06
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '210 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -53679
+        tag: OCT-IMP-07
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '210 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 53679
+        tag: OCT-EXP-07
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '210 seconds')
+        duration_seconds: 90
+        price_pow10_encoded_block0: 52210
+        tag: OCT-AEMO-07
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '240 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -66833
+        tag: OCT-IMP-08
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '240 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 66833
+        tag: OCT-EXP-08
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '270 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -82904
+        tag: OCT-IMP-09
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '270 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 82904
+        tag: OCT-EXP-09
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '300 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -102291
+        tag: OCT-IMP-10
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '300 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 102291
+        tag: OCT-EXP-10
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '300 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 25100
+        tag: OCT-AEMO-10
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '330 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -125319
+        tag: OCT-IMP-11
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '330 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 125319
+        tag: OCT-EXP-11
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '330 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 46700
+        tag: OCT-AEMO-11
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '360 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -154362
+        tag: OCT-IMP-12
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '360 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 154362
+        tag: OCT-EXP-12
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '360 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 53150
+        tag: OCT-AEMO-12
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '390 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -189847
+        tag: OCT-IMP-13
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '390 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 189847
+        tag: OCT-EXP-13
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '390 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 52210
+        tag: OCT-AEMO-13
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '420 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -211687
+        tag: OCT-IMP-14
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '420 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 211687
+        tag: OCT-EXP-14
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '420 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 53150
+        tag: OCT-AEMO-14
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '450 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -231013
+        tag: OCT-IMP-15
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '450 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 231013
+        tag: OCT-EXP-15
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '450 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 52210
+        tag: OCT-AEMO-15
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '480 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -251465
+        tag: OCT-IMP-16
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '480 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 251465
+        tag: OCT-EXP-16
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '510 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -273684
+        tag: OCT-IMP-17
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '510 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 273684
+        tag: OCT-EXP-17
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '510 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 53150
+        tag: OCT-AEMO-17
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '540 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -298523
+        tag: OCT-IMP-18
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '540 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 298523
+        tag: OCT-EXP-18
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '540 seconds')
+        duration_seconds: 90
+        price_pow10_encoded_block0: 52210
+        tag: OCT-AEMO-18
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '570 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -324809
+        tag: OCT-IMP-19
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '570 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 324809
+        tag: OCT-EXP-19
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '600 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -355855
+        tag: OCT-IMP-20
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '600 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 355855
+        tag: OCT-EXP-20
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '630 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -389818
+        tag: OCT-IMP-21
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '630 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 389818
+        tag: OCT-EXP-21
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '630 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 53150
+        tag: OCT-AEMO-21
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '660 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -427970
+        tag: OCT-IMP-22
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '660 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 427970
+        tag: OCT-EXP-22
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '690 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -468709
+        tag: OCT-IMP-23
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '690 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 468709
+        tag: OCT-EXP-23
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '690 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 52210
+        tag: OCT-AEMO-23
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '720 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -513275
+        tag: OCT-IMP-24
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '720 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 513275
+        tag: OCT-EXP-24
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '720 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 46750
+        tag: OCT-AEMO-24
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '750 seconds')
+        duration_seconds: 270
+        price_pow10_encoded_block0: -556825
+        tag: OCT-IMP-25
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '750 seconds')
+        duration_seconds: 270
+        price_pow10_encoded_block0: 556825
+        tag: OCT-EXP-25
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '750 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 52210
+        tag: OCT-AEMO-25
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '780 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 42930
+        tag: OCT-AEMO-26
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '810 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 52210
+        tag: OCT-AEMO-27
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '840 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 42930
+        tag: OCT-AEMO-28
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '870 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 52210
+        tag: OCT-AEMO-29
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '900 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 42940
+        tag: OCT-AEMO-30
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '930 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 52210
+        tag: OCT-AEMO-31
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '960 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 42080
+        tag: OCT-AEMO-32
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '990 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 42940
+        tag: OCT-AEMO-33
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1020 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -538983
+        tag: OCT-IMP-34
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1020 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 538983
+        tag: OCT-EXP-34
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1050 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -513275
+        tag: OCT-IMP-35
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1050 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 513275
+        tag: OCT-EXP-35
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1050 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 53150
+        tag: OCT-AEMO-35
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1080 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -487644
+        tag: OCT-IMP-36
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1080 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 487644
+        tag: OCT-EXP-36
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1080 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 42800
+        tag: OCT-AEMO-36
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1110 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -464360
+        tag: OCT-IMP-37
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1110 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 464360
+        tag: OCT-EXP-37
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1140 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -414215
+        tag: OCT-IMP-38
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1140 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 414215
+        tag: OCT-EXP-38
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1140 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 53150
+        tag: OCT-AEMO-38
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1170 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -376393
+        tag: OCT-IMP-39
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1170 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 376393
+        tag: OCT-EXP-39
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1170 seconds')
+        duration_seconds: 90
+        price_pow10_encoded_block0: 52210
+        tag: OCT-AEMO-39
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1200 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -335634
+        tag: OCT-IMP-40
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1200 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 335634
+        tag: OCT-EXP-40
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1230 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -299926
+        tag: OCT-IMP-41
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1230 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 299926
+        tag: OCT-EXP-41
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1260 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -267326
+        tag: OCT-IMP-42
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1260 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 267326
+        tag: OCT-EXP-42
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1260 seconds')
+        duration_seconds: 90
+        price_pow10_encoded_block0: 53150
+        tag: OCT-AEMO-42
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1290 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -240460
+        tag: OCT-IMP-43
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1290 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 240460
+        tag: OCT-EXP-43
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1320 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -203827
+        tag: OCT-IMP-44
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1320 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 203827
+        tag: OCT-EXP-44
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1350 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -175544
+        tag: OCT-IMP-45
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1350 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 175544
+        tag: OCT-EXP-45
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1350 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 61020
+        tag: OCT-AEMO-45
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1380 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -148221
+        tag: OCT-IMP-46
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1380 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 148221
+        tag: OCT-EXP-46
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1380 seconds')
+        duration_seconds: 150
+        price_pow10_encoded_block0: 53150
+        tag: OCT-AEMO-46
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1410 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -120292
+        tag: OCT-IMP-47
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1410 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 120292
+        tag: OCT-EXP-47
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1440 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -97434
+        tag: OCT-IMP-48
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1440 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 97434
+        tag: OCT-EXP-48
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1470 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -78725
+        tag: OCT-IMP-49
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1470 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 78725
+        tag: OCT-EXP-49
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1500 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -62938
+        tag: OCT-IMP-50
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1500 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 62938
+        tag: OCT-EXP-50
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1530 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -50105
+        tag: OCT-IMP-51
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1530 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 50105
+        tag: OCT-EXP-51
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1530 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 68020
+        tag: OCT-AEMO-51
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1560 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -41918
+        tag: OCT-IMP-52
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1560 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 41918
+        tag: OCT-EXP-52
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1560 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 67440
+        tag: OCT-AEMO-52
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1590 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -35028
+        tag: OCT-IMP-53
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1590 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 35028
+        tag: OCT-EXP-53
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1590 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 64020
+        tag: OCT-AEMO-53
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1620 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -28345
+        tag: OCT-IMP-54
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1620 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 28345
+        tag: OCT-EXP-54
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1620 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 53150
+        tag: OCT-AEMO-54
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1650 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -22050
+        tag: OCT-IMP-55
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1650 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 22050
+        tag: OCT-EXP-55
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1650 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 76300
+        tag: OCT-AEMO-55
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1680 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -16716
+        tag: OCT-IMP-56
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1680 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 16716
+        tag: OCT-EXP-56
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1680 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 64020
+        tag: OCT-AEMO-56
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1710 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -13699
+        tag: OCT-IMP-57
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1710 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 13699
+        tag: OCT-EXP-57
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1710 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 76300
+        tag: OCT-AEMO-57
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1740 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -10337
+        tag: OCT-IMP-58
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1740 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 10337
+        tag: OCT-EXP-58
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1770 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -7868
+        tag: OCT-IMP-59
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1770 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 7868
+        tag: OCT-EXP-59
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1770 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 84790
+        tag: OCT-AEMO-59
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1800 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -6100
+        tag: OCT-IMP-60
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1800 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 6100
+        tag: OCT-EXP-60
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1800 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 99010
+        tag: OCT-AEMO-60
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1830 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -4082
+        tag: OCT-IMP-61
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1830 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 4082
+        tag: OCT-EXP-61
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1830 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 67440
+        tag: OCT-AEMO-61
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1860 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -1998
+        tag: OCT-IMP-62
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1860 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 1998
+        tag: OCT-EXP-62
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1890 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -472
+        tag: OCT-IMP-63
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1890 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 472
+        tag: OCT-EXP-63
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1890 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 64020
+        tag: OCT-AEMO-63
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-BASE
+        start: $(now + '1920 seconds')
+        duration_seconds: 1650
+        price_pow10_encoded_block0: 24300
+        tag: DYNALA-BASE-FEB25
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1920 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 4000
+        tag: FEB25-IMP-01
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1920 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -28300
+        tag: FEB25-EXP-01
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1920 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 84790
+        tag: FEB25-AEMO-01
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1950 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 15100
+        tag: FEB25-IMP-02
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1950 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -39400
+        tag: FEB25-EXP-02
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1980 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 51800
+        tag: FEB25-IMP-03
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1980 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -76100
+        tag: FEB25-EXP-03
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1980 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 77000
+        tag: FEB25-AEMO-03
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '2010 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 81500
+        tag: FEB25-IMP-04
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '2010 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -105800
+        tag: FEB25-EXP-04
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2010 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 57350
+        tag: FEB25-AEMO-04
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '2040 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 180600
+        tag: FEB25-IMP-05
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '2040 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -204900
+        tag: FEB25-EXP-05
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2040 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 84790
+        tag: FEB25-AEMO-05
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '2070 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 256200
+        tag: FEB25-IMP-06
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '2070 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -280500
+        tag: FEB25-EXP-06
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '2100 seconds')
+        duration_seconds: 390
+        price_pow10_encoded_block0: 268100
+        tag: FEB25-IMP-07
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '2100 seconds')
+        duration_seconds: 390
+        price_pow10_encoded_block0: -292400
+        tag: FEB25-EXP-07
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2100 seconds')
+        duration_seconds: 90
+        price_pow10_encoded_block0: 57350
+        tag: FEB25-AEMO-07
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2190 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 56611
+        tag: FEB25-AEMO-10
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2220 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 46829
+        tag: FEB25-AEMO-11
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2250 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 35521
+        tag: FEB25-AEMO-12
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2280 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 38238
+        tag: FEB25-AEMO-13
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2310 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 37724
+        tag: FEB25-AEMO-14
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2340 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 35698
+        tag: FEB25-AEMO-15
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2370 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 59940
+        tag: FEB25-AEMO-16
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2400 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 57202
+        tag: FEB25-AEMO-17
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2430 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 35880
+        tag: FEB25-AEMO-18
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '2490 seconds')
+        duration_seconds: 510
+        price_pow10_encoded_block0: 1068500
+        tag: FEB25-IMP-20
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '2490 seconds')
+        duration_seconds: 510
+        price_pow10_encoded_block0: -1092800
+        tag: FEB25-EXP-20
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2490 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 39348
+        tag: FEB25-AEMO-20
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2520 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 56980
+        tag: FEB25-AEMO-21
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2550 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 55189
+        tag: FEB25-AEMO-22
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2580 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 57320
+        tag: FEB25-AEMO-23
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2610 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 83844
+        tag: FEB25-AEMO-24
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2640 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 67851
+        tag: FEB25-AEMO-25
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2670 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 66356
+        tag: FEB25-AEMO-26
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2700 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 57320
+        tag: FEB25-AEMO-27
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2760 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 52859
+        tag: FEB25-AEMO-29
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2790 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 37900
+        tag: FEB25-AEMO-30
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2820 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 68538
+        tag: FEB25-AEMO-31
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2850 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 68437
+        tag: FEB25-AEMO-32
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2880 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 89670
+        tag: FEB25-AEMO-33
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2910 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 79950
+        tag: FEB25-AEMO-34
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2940 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 99000
+        tag: FEB25-AEMO-35
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '2970 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 86630
+        tag: FEB25-AEMO-36
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '3000 seconds')
+        duration_seconds: 420
+        price_pow10_encoded_block0: 268100
+        tag: FEB25-IMP-37
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '3000 seconds')
+        duration_seconds: 420
+        price_pow10_encoded_block0: -292400
+        tag: FEB25-EXP-37
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '3000 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 54390
+        tag: FEB25-AEMO-37
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '3030 seconds')
+        duration_seconds: 90
+        price_pow10_encoded_block0: 57320
+        tag: FEB25-AEMO-38
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '3120 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 69958
+        tag: FEB25-AEMO-41
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '3150 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 67120
+        tag: FEB25-AEMO-42
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '3180 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 71916
+        tag: FEB25-AEMO-43
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '3210 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 75046
+        tag: FEB25-AEMO-44
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '3240 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 65161
+        tag: FEB25-AEMO-45
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '3270 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 106577
+        tag: FEB25-AEMO-46
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '3300 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 81083
+        tag: FEB25-AEMO-47
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '3330 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 100010
+        tag: FEB25-AEMO-48
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '3360 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 98193
+        tag: FEB25-AEMO-49
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '3390 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 100020
+        tag: FEB25-AEMO-50
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '3420 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 189100
+        tag: FEB25-IMP-51
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '3420 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -213400
+        tag: FEB25-EXP-51
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '3420 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 75889
+        tag: FEB25-AEMO-51
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '3450 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 80300
+        tag: FEB25-IMP-52
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '3450 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -104600
+        tag: FEB25-EXP-52
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '3450 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 78182
+        tag: FEB25-AEMO-52
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '3480 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 49100
+        tag: FEB25-IMP-53
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '3480 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -73400
+        tag: FEB25-EXP-53
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '3480 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 77558
+        tag: FEB25-AEMO-53
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '3510 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 11700
+        tag: FEB25-IMP-54
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '3510 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -36000
+        tag: FEB25-EXP-54
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '3510 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 77849
+        tag: FEB25-AEMO-54
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '3540 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 4100
+        tag: FEB25-IMP-55
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '3540 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: -28400
+        tag: FEB25-EXP-55
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '3540 seconds')
+        duration_seconds: 30
+        price_pow10_encoded_block0: 79385
+        tag: FEB25-AEMO-55
+
+Steps:
+  WAIT-TEST-END:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 3600
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-TEST-END
+      - type: finish-test
+        parameters: {}

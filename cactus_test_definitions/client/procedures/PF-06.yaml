@@ -1,0 +1,797 @@
+Description: "Dynala and AEMO dynamic-day signal #2"
+Category: Plugfest
+Classes:
+  - A
+
+TargetVersions:
+  - v1.3
+
+Criteria:
+  checks:
+    - type: all-steps-complete
+      parameters: {}
+
+Preconditions:
+  init_actions:
+    # The flat Dynala import charge has its own component; dynamic import TTIs are deltas from that baseline.
+    # TTI duration carries each component's constant tariff price until its next update.
+    # Prices are encoded in AUD/kWh: Dynala rate x 1,000,000; AEMO RRP (AUD/MWh) x 1,000.
+    - type: set-comms-rate
+      parameters:
+        fsa_list_poll_seconds: 20
+        tp_list_poll_seconds: 20
+        tti_list_poll_seconds: 20
+
+    - type: create-tariff-profile
+      parameters:
+        primacy: 65
+        fsa_id: 1
+        price_pow_10_multiplier: -6
+        tag: TP-DYNALA-IMPORT
+    - type: create-tariff-profile
+      parameters:
+        primacy: 65
+        fsa_id: 1
+        price_pow_10_multiplier: -6
+        tag: TP-DYNALA-EXPORT
+    - type: create-tariff-profile
+      parameters:
+        primacy: 66
+        fsa_id: 1
+        price_pow_10_multiplier: -6
+        tag: TP-AEMO-IMPORT
+
+    - type: create-rate-component
+      parameters:
+        tariff_profile_tag: TP-DYNALA-IMPORT
+        flow_direction: 1 # FlowDirectionType.FORWARD
+        power_of_ten_multiplier: 3
+        uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
+        tag: RC-DYNALA-IMPORT-BASE
+    - type: create-rate-component
+      parameters:
+        tariff_profile_tag: TP-DYNALA-IMPORT
+        flow_direction: 1 # FlowDirectionType.FORWARD
+        power_of_ten_multiplier: 3
+        uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
+        tag: RC-DYNALA-IMPORT-DYNAMIC
+    - type: create-rate-component
+      parameters:
+        tariff_profile_tag: TP-DYNALA-EXPORT
+        flow_direction: 19 # FlowDirectionType.REVERSE
+        power_of_ten_multiplier: 3
+        uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
+        tag: RC-DYNALA-EXPORT
+    - type: create-rate-component
+      parameters:
+        tariff_profile_tag: TP-AEMO-IMPORT
+        flow_direction: 1 # FlowDirectionType.FORWARD
+        power_of_ten_multiplier: 3
+        uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
+        tag: RC-AEMO-IMPORT
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-BASE
+        start: $(now + '30 seconds')
+        duration_seconds: 1860
+        price_pow10_encoded_block0: 24300
+        tag: DYNALA-BASE-IMPORT
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '30 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 8600
+        tag: DYNALA-IMP-01
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '30 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -32900
+        tag: DYNALA-EXP-01
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '30 seconds')
+        duration_seconds: 120
+        price_pow10_encoded_block0: 37910
+        tag: AEMO-IMP-01
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '90 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 25400
+        tag: DYNALA-IMP-02
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '90 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -49700
+        tag: DYNALA-EXP-02
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '150 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 51100
+        tag: DYNALA-IMP-03
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '150 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -75400
+        tag: DYNALA-EXP-03
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '150 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 37890
+        tag: AEMO-IMP-03
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '210 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 89800
+        tag: DYNALA-IMP-04
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '210 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -114100
+        tag: DYNALA-EXP-04
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '210 seconds')
+        duration_seconds: 120
+        price_pow10_encoded_block0: 37910
+        tag: AEMO-IMP-04
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '270 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 148700
+        tag: DYNALA-IMP-05
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '270 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -173000
+        tag: DYNALA-EXP-05
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '330 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 238000
+        tag: DYNALA-IMP-06
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '330 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -262300
+        tag: DYNALA-EXP-06
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '330 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 57080
+        tag: AEMO-IMP-06
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '390 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 298000
+        tag: DYNALA-IMP-07
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '390 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -322300
+        tag: DYNALA-EXP-07
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '390 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 78000
+        tag: AEMO-IMP-07
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '450 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 371800
+        tag: DYNALA-IMP-08
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '450 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -396100
+        tag: DYNALA-EXP-08
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '450 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 65290
+        tag: AEMO-IMP-08
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '510 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 461500
+        tag: DYNALA-IMP-09
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '510 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -485800
+        tag: DYNALA-EXP-09
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '510 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 37910
+        tag: AEMO-IMP-09
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '570 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 572800
+        tag: DYNALA-IMP-10
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '570 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -597100
+        tag: DYNALA-EXP-10
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '570 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 57060
+        tag: AEMO-IMP-10
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '630 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 709500
+        tag: DYNALA-IMP-11
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '630 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -733800
+        tag: DYNALA-EXP-11
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '630 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 40540
+        tag: AEMO-IMP-11
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '690 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 875800
+        tag: DYNALA-IMP-12
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '690 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -900100
+        tag: DYNALA-EXP-12
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '690 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 57080
+        tag: AEMO-IMP-12
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '750 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 817100
+        tag: DYNALA-IMP-13
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '750 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -841400
+        tag: DYNALA-EXP-13
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '750 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 76190
+        tag: AEMO-IMP-13
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '810 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 760700
+        tag: DYNALA-IMP-14
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '810 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -785000
+        tag: DYNALA-EXP-14
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '810 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 57080
+        tag: AEMO-IMP-14
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '870 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 708100
+        tag: DYNALA-IMP-15
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '870 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -732400
+        tag: DYNALA-EXP-15
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '870 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 100010
+        tag: AEMO-IMP-15
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '930 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 660300
+        tag: DYNALA-IMP-16
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '930 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -684600
+        tag: DYNALA-EXP-16
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '930 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 106866
+        tag: AEMO-IMP-16
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '990 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 614400
+        tag: DYNALA-IMP-17
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '990 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -638700
+        tag: DYNALA-EXP-17
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '990 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 100010
+        tag: AEMO-IMP-17
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1050 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 571600
+        tag: DYNALA-IMP-18
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1050 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -595900
+        tag: DYNALA-EXP-18
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1050 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 108010
+        tag: AEMO-IMP-18
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1110 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 471000
+        tag: DYNALA-IMP-19
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1110 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -495300
+        tag: DYNALA-EXP-19
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1110 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 100010
+        tag: AEMO-IMP-19
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1170 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 387400
+        tag: DYNALA-IMP-20
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1170 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -411700
+        tag: DYNALA-EXP-20
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1170 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 64890
+        tag: AEMO-IMP-20
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1230 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 317800
+        tag: DYNALA-IMP-21
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1230 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -342100
+        tag: DYNALA-EXP-21
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1230 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 65300
+        tag: AEMO-IMP-21
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1290 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 260100
+        tag: DYNALA-IMP-22
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1290 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -284400
+        tag: DYNALA-EXP-22
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1290 seconds')
+        duration_seconds: 120
+        price_pow10_encoded_block0: 57080
+        tag: AEMO-IMP-22
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1350 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 212000
+        tag: DYNALA-IMP-23
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1350 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -236300
+        tag: DYNALA-EXP-23
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1410 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 172100
+        tag: DYNALA-IMP-24
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1410 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -196400
+        tag: DYNALA-EXP-24
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1410 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 40540
+        tag: AEMO-IMP-24
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1470 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 122000
+        tag: DYNALA-IMP-25
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1470 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -146300
+        tag: DYNALA-EXP-25
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1470 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 56980
+        tag: AEMO-IMP-25
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1530 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 84600
+        tag: DYNALA-IMP-26
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1530 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -108900
+        tag: DYNALA-EXP-26
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1530 seconds')
+        duration_seconds: 120
+        price_pow10_encoded_block0: 57060
+        tag: AEMO-IMP-26
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1590 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 56800
+        tag: DYNALA-IMP-27
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1590 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -81100
+        tag: DYNALA-EXP-27
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1650 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 36100
+        tag: DYNALA-IMP-28
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1650 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -60400
+        tag: DYNALA-EXP-28
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1650 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 56980
+        tag: AEMO-IMP-28
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1710 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 20700
+        tag: DYNALA-IMP-29
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1710 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -45000
+        tag: DYNALA-EXP-29
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1710 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 57061
+        tag: AEMO-IMP-29
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1770 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 9300
+        tag: DYNALA-IMP-30
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1770 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -33600
+        tag: DYNALA-EXP-30
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-AEMO-IMPORT
+        start: $(now + '1770 seconds')
+        duration_seconds: 120
+        price_pow10_encoded_block0: 57060
+        tag: AEMO-IMP-30
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-IMPORT-DYNAMIC
+        start: $(now + '1830 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: 3700
+        tag: DYNALA-IMP-31
+
+    - type: create-time-tariff-interval
+      parameters:
+        rate_component_tag: RC-DYNALA-EXPORT
+        start: $(now + '1830 seconds')
+        duration_seconds: 60
+        price_pow10_encoded_block0: -28000
+        tag: DYNALA-EXP-31
+
+Steps:
+  WAIT-TEST-END:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 1920
+    actions:
+      - type: remove-steps
+        parameters:
+          steps:
+            - WAIT-TEST-END
+      - type: finish-test
+        parameters: {}

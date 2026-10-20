@@ -25,6 +25,9 @@ class TestProcedureId(StrEnum):
     PF_02 = "PF-02"
     PF_03 = "PF-03"
     PF_04 = "PF-04"
+    PF_05 = "PF-05"
+    PF_06 = "PF-06"
+    PF_07 = "PF-07"
 
 
 @dataclass
