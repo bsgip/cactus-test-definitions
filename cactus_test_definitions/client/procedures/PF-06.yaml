@@ -21,6 +21,15 @@ Preconditions:
         fsa_list_poll_seconds: 20
         tp_list_poll_seconds: 20
         tti_list_poll_seconds: 20
+    # Create DERProgram / defaults early so that the client is ready to pickup DERControls as soon as the test starts
+    - type: create-der-program
+      parameters:         
+        primacy: 0
+    - type: set-default-der-control
+      parameters:
+        opModImpLimW: 0
+        opModExpLimW: 0
+        setGradW: 27
 
     - type: create-tariff-profile
       parameters:
@@ -69,7 +78,13 @@ Preconditions:
         power_of_ten_multiplier: 3
         uom: 72 # UomType.REAL_ENERGY_WATT_HOURS
         tag: RC-AEMO-IMPORT
-
+    
+  checks:
+    - type: end-device-contents
+      parameters: {}
+    - type: der-settings-contents
+      parameters: {}
+  actions:
     - type: create-time-tariff-interval
       parameters:
         rate_component_tag: RC-DYNALA-IMPORT-BASE
