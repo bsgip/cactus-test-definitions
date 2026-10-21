@@ -90,13 +90,13 @@ Preconditions:
     - type: create-der-control
       parameters:
         start: $(now + '6 minutes')
-        duration_seconds: 30
-        opModExpLimW: 0
-        opModImpLimW: 0
+        duration_seconds: 120
+        opModExpLimW: $(maxExportW * 0.25)
+        opModImpLimW: $(maxExportW * 0.25)
         tag: DERC4
     - type: create-der-control
       parameters:
-        start: $(now + '390 seconds') # 6.5 minutes
+        start: $(now + '8 minutes') 
         duration_seconds: 120
         opModExpLimW: $(maxExportW * 0.1)
         opModImpLimW: $(maxImportW * 0.1)
