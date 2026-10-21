@@ -22,9 +22,13 @@ class TestProcedureId(StrEnum):
     # Plugfest Versioned Tests
     # PF_ALL_02 = "PF-ALL-02"
     PF_01 = "PF-01"
+    PF_01_MIN = "PF-01-MIN"
     PF_02 = "PF-02"
+    PF_02_MIN = "PF-02-MIN"
     PF_03 = "PF-03"
+    PF_03_MIN = "PF-03-MIN"
     PF_04 = "PF-04"
+    PF_04_MIN = "PF-04-MIN"
     PF_05 = "PF-05"
     PF_06 = "PF-06"
     PF_07 = "PF-07"
