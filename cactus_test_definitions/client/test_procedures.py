@@ -33,6 +33,8 @@ class TestProcedureId(StrEnum):
     PF_06 = "PF-06"
     PF_07 = "PF-07"
 
+    ALL_28 = "ALL-28"
+
 
 @dataclass
 class Step:
