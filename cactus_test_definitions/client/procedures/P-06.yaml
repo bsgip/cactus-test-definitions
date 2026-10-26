@@ -50,9 +50,9 @@ Preconditions:
       parameters: {}
 
 Steps:
-  # (a) Let the client poll DERControlList as normal, then force the next requests to that endpoint to 429 for
-  # exactly as long as the advertised Retry-After - after that the override auto-expires and requests are
-  # served normally again
+  # (a) The first DERControlList poll fires this step BEFORE it is served, so that poll (and every request to
+  # that endpoint for exactly as long as the advertised Retry-After) receives a 429 - after that the override
+  # auto-expires and requests are served normally again
   GET-DERC-INITIAL:
     event:
       type: GET-request-received
