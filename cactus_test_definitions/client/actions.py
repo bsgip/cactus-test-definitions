@@ -152,7 +152,8 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "retry_after_seconds": ParameterSchema(False, ParameterType.Integer),  # Sets the Retry-After response header
         "duration_seconds": ParameterSchema(
             False, ParameterType.Integer
-        ),  # Apply for this long (default: unlimited, until cleared by another force-response-status)
+        ),  # Apply for this long (default: unlimited). Re-running for the same endpoint replaces the override, so
+        # duration_seconds: 0 is the way to clear it early (any status, even 200, is otherwise still forced)
     },  # Intercepts matching requests before they reach the normal handler and returns the given status instead.
     # Auto expires after duration_seconds (measured from when this action runs), after which matching requests are
     # served normally again - independent of whatever value (if any) was sent in the Retry-After header.
