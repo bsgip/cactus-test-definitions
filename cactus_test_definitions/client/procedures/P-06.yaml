@@ -13,17 +13,19 @@ Criteria:
     - type: all-steps-complete
       parameters: {}
 
-    # Exactly 2 requests expected across the whole test: the initial poll that triggered the 429, and a single
-    # resumed poll once the Retry-After period has genuinely elapsed. minimum_count proves the client actually
-    # comes back (doesn't give up on the resource forever); maximum_count proves it didn't re-poll early/hammer
-    # while the 429 override was still active.
+    # Expected requests across the whole test: the initial poll that triggered the 429, a resumed poll once the
+    # Retry-After period has genuinely elapsed, and possibly one further on-schedule poll (60s rate) before the
+    # 280s wait ends - depending on when in the 180-240s window the client resumed. minimum_count proves the
+    # client actually comes back (doesn't give up on the resource forever); maximum_count proves it didn't
+    # re-poll early/hammer while the 429 override was still active (a client ignoring Retry-After and polling on
+    # its normal 60s schedule makes ~5 requests).
     - type: resource-requests
       parameters:
         resources:
           - DERControlList
           - DERControl
         minimum_count: 2
-        maximum_count: 2
+        maximum_count: 3
 
 Preconditions:
   init_actions:
