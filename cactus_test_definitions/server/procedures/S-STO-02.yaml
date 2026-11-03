@@ -1,0 +1,73 @@
+Description: S-STO-02 Storage Capabilities and Settings
+Category: Storage
+Classes:
+ - STO
+
+TargetVersions:
+ - v1.3
+
+Preconditions:
+  required_clients:
+    - id: client
+
+Steps:
+  - id: PRECONDITION
+    repeat_until_pass: true
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+          has_der_list: true
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - DER
+    checks:
+      - type: end-device 
+        parameters:
+          matches_client: true
+      - type: discovered
+        parameters:
+          links:
+            - DERCapability
+            - DERSettings
+
+  - id: STEP 1,2 - PUT DERCapability
+    action: 
+      type: upsert-der-capability
+      parameters:
+        type: 4
+        rtgMaxW: 10000
+        modesSupported: 3
+        doeModesSupported: 3
+        vppModesSupported: 1 # opModStorageTargetW set
+        rtgMaxVA: 2000
+        rtgMaxVar: 2001
+        rtgMaxVarNeg: 2002
+        rtgMinPFOverExcited: 2003
+        rtgMinPFUnderExcited: 2004
+        rtgMaxChargeRateW: 2005
+        rtgMaxDischargeRateW: 2006
+        rtgMaxWh: 2007
+
+  - id: STEP 3,4 - PUT DERSettings
+    action: 
+      type: upsert-der-settings
+      parameters:
+        setMaxW: 10000
+        setGradW: 1000
+        modesEnabled: 3
+        doeModesEnabled: 3
+        vppModesEnabled: 1 # opModStorageTargetW set
+        setMaxVA: 1000
+        setMaxVar: 1001
+        setMaxVarNeg: 1002
+        setMinPFOverExcited: 1003
+        setMinPFUnderExcited: 1004
+        setMaxChargeRateW: 1005
+        setMaxDischargeRateW: 1006
+        setMinWh: 1007
+        setMaxWh: 1008
+        

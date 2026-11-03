@@ -99,12 +99,31 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "rtgMaxW": ParameterSchema(True, ParameterType.Integer),
         "modesSupported": ParameterSchema(True, ParameterType.Integer),
         "doeModesSupported": ParameterSchema(True, ParameterType.Integer),
+        "vppModesSupported": ParameterSchema(False, ParameterType.Integer),  # Requires v1.3 Storage
+        "rtgMaxVA": ParameterSchema(False, ParameterType.Integer),  # Requires v1.3 Storage
+        "rtgMaxVar": ParameterSchema(False, ParameterType.Integer),  # Requires v1.3 Storage
+        "rtgMaxVarNeg": ParameterSchema(False, ParameterType.Integer),  # Requires v1.3 Storage
+        "rtgMinPFOverExcited": ParameterSchema(False, ParameterType.Integer),  # Requires v1.3 Storage
+        "rtgMinPFUnderExcited": ParameterSchema(False, ParameterType.Integer),  # Requires v1.3 Storage
+        "rtgMaxChargeRateW": ParameterSchema(False, ParameterType.Integer),  # Requires v1.3 Storage
+        "rtgMaxDischargeRateW": ParameterSchema(False, ParameterType.Integer),  # Requires v1.3 Storage
+        "rtgMaxWh": ParameterSchema(False, ParameterType.Integer),  # Requires v1.3 Storage
     },  # Sends DERCapability - validates that the server persisted the values correctly
     "upsert-der-settings": {
         "setMaxW": ParameterSchema(True, ParameterType.Integer),
         "setGradW": ParameterSchema(True, ParameterType.Integer),
         "modesEnabled": ParameterSchema(True, ParameterType.Integer),
         "doeModesEnabled": ParameterSchema(True, ParameterType.Integer),
+        "vppModesEnabled": ParameterSchema(False, ParameterType.Integer),  # Requires v1.3 Storage
+        "setMaxVA": ParameterSchema(False, ParameterType.Integer),  # Requires v1.3 Storage
+        "setMaxVar": ParameterSchema(False, ParameterType.Integer),  # Requires v1.3 Storage
+        "setMaxVarNeg": ParameterSchema(False, ParameterType.Integer),  # Requires v1.3 Storage
+        "setMinPFOverExcited": ParameterSchema(False, ParameterType.Integer),  # Requires v1.3 Storage
+        "setMinPFUnderExcited": ParameterSchema(False, ParameterType.Integer),  # Requires v1.3 Storage
+        "setMaxChargeRateW": ParameterSchema(False, ParameterType.Integer),  # Requires v1.3 Storage
+        "setMaxDischargeRateW": ParameterSchema(False, ParameterType.Integer),  # Requires v1.3 Storage
+        "setMaxWh": ParameterSchema(False, ParameterType.Integer),  # Requires v1.3 Storage
+        "setMinWh": ParameterSchema(False, ParameterType.Integer),  # Requires v1.3 Storage
     },  # Sends DERSettings - validates that the server persisted the values correctly
     "send-malformed-der-settings": {
         "updatedTime_missing": ParameterSchema(True, ParameterType.Boolean),  # If true - updatedTime will be stripped

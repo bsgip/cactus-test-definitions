@@ -82,6 +82,10 @@ class TestProcedureId(StrEnum):
     S_OPT_05 = "S-OPT-05"
     # S-OPT-06 DRED
 
+    S_STO_01 = "S-STO-01"
+    S_STO_02 = "S-STO-02"
+    S_STO_03 = "S-STO-03"
+
 
 class ClientType(StrEnum):
     DEVICE = "device"  # This is a direct device client - i.e. the cert will match a SPECIFIC EndDevice
