@@ -40,6 +40,12 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "resources": ParameterSchema(False, ParameterType.ListCSIPAusResource),
         "links": ParameterSchema(False, ParameterType.ListCSIPAusResource),
     },
+    "well-known-discovered": {
+        "minimum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at least this many matches to pass
+        "maximum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at most this many matches to pass
+        "versions": ParameterSchema(False, ParameterType.ListCSIPAusVersion),  # Matches ANY version in this list
+        "matches_dcap": ParameterSchema(False, ParameterType.Boolean),  # Matches ANY entry that has the configured dcap
+    },  # Filters/counts the results of the most recent .well-known/csipaus discovery
     "time-synced": {},  # Passes if the current Time resource is synced with this client's date/time
     "function-set-assignment": {
         "minimum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at least this many FSAs to pass

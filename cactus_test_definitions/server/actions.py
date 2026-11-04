@@ -40,6 +40,7 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         ),  # If set - delay this until the upcoming polling window (eg- wait for the next whole minute)
         "list_limit": ParameterSchema(False, ParameterType.Integer),
     },  # Performs a full discovery / refresh of the client's context from DeviceCapability downwards
+    "well-known-discovery": {},  # Performs discovery of the server .well-known/csipaus file
     "notifications": {
         "sub_id": ParameterSchema(True, ParameterType.String),  # Must match a previously created subscription
         "collect": ParameterSchema(
@@ -56,6 +57,16 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "expect_rejection_or_empty": ParameterSchema(
             False, ParameterType.Boolean
         ),  # Similar to expect_rejection but also allow en empty list (if it's a list resource)
+        "expect_not_acceptable": ParameterSchema(False, ParameterType.Boolean),  # True - expect HTTP 406
+        "expect_not_acceptable_or_v12": ParameterSchema(
+            False, ParameterType.Boolean
+        ),  # True - expect HTTP 406 OR a CSIP-AUS v1.2 equivalent as a failover
+        "version_value_overrides": ParameterSchema(
+            False, ParameterType.ListString
+        ),  # If set - indicate CSIP-AUS version preferences, corresponds 1-1 with version_qf_overrides
+        "version_qf_overrides": ParameterSchema(
+            False, ParameterType.ListFloat
+        ),  # If set - indicate CSIP-AUS version quality factors, corresponds 1-1 with version_value_overrides
     },  # Force an existing resource (in the client's context) to be re-fetched via href. Updates context on success
     "insert-end-device": {
         "force_lfdi": ParameterSchema(False, ParameterType.String),  # Forces the use of this LFDI
@@ -133,6 +144,14 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "endDeviceLFDI_unknown": ParameterSchema(True, ParameterType.Boolean),  # If true - endDeviceLfdi will be random
         "response_invalid": ParameterSchema(True, ParameterType.Boolean),  # If true - response will be a reserved value
     },  # Sends a malformed Response (using the most recent DERControl replyTo) - expects a failure response
+    "send-malformed-edev": {
+        "legacy_xmlns": ParameterSchema(
+            True, ParameterType.Boolean
+        ),  # If true - The xmlns will be for a legacy CSIP-AUS version
+        "legacy_version_header": ParameterSchema(
+            True, ParameterType.Boolean
+        ),  # If true - The version negotiation header will be for a legacy CSIP-AUS version
+    },  # Sends a malformed EndDevice - expects a failure and that the server will NOT change anything
     "create-subscription": {
         "sub_id": ParameterSchema(True, ParameterType.String),  # Used to alias the returned subscription ID
         "resource": ParameterSchema(True, ParameterType.CSIPAusResource),

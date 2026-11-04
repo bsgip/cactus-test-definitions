@@ -1,0 +1,126 @@
+Description: S-SDVN-01 Service Discovery and Schema Version Negotiation
+Category: Registration
+Classes:
+ - A
+
+TargetVersions:
+ - v1.3
+
+Preconditions:
+  required_clients:
+    - id: client
+
+Steps:
+  - id: PRECONDITION
+    repeat_until_pass: true
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: false
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+    checks:
+      - type: end-device # Block until there is NO EndDevice registered
+        parameters:
+          matches_client: false
+
+  - id: 1 - DISCOVER WELL-KNOWN
+    action:
+      type: well-known-discovery
+      parameters: {}
+    checks:
+      - type: well-known-discovered
+        parameters:
+          versions:
+            - v1.2
+          matches_dcap: true
+          minimum_count: 1
+          maximum_count: 1
+
+  # Perform a normal discovery of the DeviceCapability
+  - id: 2,3 - FETCH DCAP
+    action: 
+      type: refresh-resource
+      parameters:
+        resource: DeviceCapability
+  
+  - id: 4,5 - FETCH DCAP (EQUAL VERSIONS)
+    action: 
+      type: refresh-resource
+      parameters:
+        resource: DeviceCapability
+        version_value_overrides:
+          - v1.2
+          - v1.3
+        version_qf_overrides:
+          - 1
+          - 1
+
+  - id: 6,7 - FETCH DCAP (UNKNOWN VERSION PREFERENCE)
+    action: 
+      type: refresh-resource
+      parameters:
+        resource: DeviceCapability
+        version_value_overrides:
+          - v99-beta
+          - v1.3
+        version_qf_overrides:
+          - 1
+          - 0.5
+
+  - id: 8,9 - FETCH DCAP (NO VERSION)
+    action: 
+      type: refresh-resource
+      parameters:
+        resource: DeviceCapability
+        version_value_overrides: []
+        version_qf_overrides: []
+        expect_not_acceptable_or_v12: true
+
+  - id: 10,11 - FETCH DCAP (UNKNOWN VERSION)
+    action: 
+      type: refresh-resource
+      parameters:
+        resource: DeviceCapability
+        version_value_overrides:
+          - v99-beta
+        version_qf_overrides:
+          - 1
+        expect_not_acceptable: true
+
+  - id: 12,13 - POST EDEV (LEGACY XMLNS)
+    action: 
+      type: send-malformed-edev
+      parameters:
+        legacy_xmlns: true
+        legacy_version_header: false
+
+  - id: 14,15 - POST EDEV (LEGACY VERSION)
+    action: 
+      type: send-malformed-edev
+      parameters:
+        legacy_xmlns: false
+        legacy_version_header: true
+
+  # This only exists to ensure the above two actions don't populate the EndDeviceList
+  - id: 16 - CHECK REJECTED
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+    checks:
+      - type: end-device # There should still be no EndDevice registered
+        parameters:
+          matches_client: false
+
+  - id: 16 - REGISTER
+    action: 
+      type: insert-end-device
+    checks:
+      - type: end-device
+        parameters:
+          matches_client: true 
