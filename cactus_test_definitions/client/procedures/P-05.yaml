@@ -51,9 +51,9 @@ Preconditions:
       parameters: {}
 
 Steps:
-  # (a) Let the client poll DERControlList as normal, then force the next requests to that endpoint to 429
-  # with no Retry-After header, for a fixed block window - after which the override auto-expires and requests
-  # are served normally again
+  # (a) The first DERControlList poll fires this step BEFORE it is served, so that poll (and every request to
+  # that endpoint for the block window) receives a 429 with no Retry-After header - after which the override
+  # auto-expires and requests are served normally again
   GET-DERC-INITIAL:
     event:
       type: GET-request-received
