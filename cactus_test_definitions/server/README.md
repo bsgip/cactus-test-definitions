@@ -94,18 +94,20 @@ action:
 | **name** | **params** | **description** |
 | -------- | ---------- | --------------- |
 | `discovery` | `resources: list[CSIPAusResource]` `next_polling_window: bool/None` `list_limit: int/None` | Performs a full discovery / refresh of the client's context from DeviceCapability downwards, looking to discover the specific resources. Can be delayed until the next polling window and/or fixed to ONLY fetch a maximum number of entities. |
+| `well-known-discovery` | | Navigates to the root path of the configured DeviceCapability URI looking for a .`/.well-known/csipaus` file. Will be loaded into the client context. | 
 | `notifications` | `sub_id: str` `collect: bool/None` `disable: bool/None` | `sub_id` must match a previously created subscription. If `collect`, consumes subscription notifications and inserts them into the current context, if `disable` causes the subscription notification webhook to simulate an outage (return HTTP 5XX) |
 | `wait` | `duration_seconds: int` | Performs no action for the nominated period of time |
-| `refresh-resource` | `resource: CSIPAusResource` `expect_rejection: bool/None` `expect_rejection_or_empty: bool/None` | Forces a particular resource to be refreshed (using existing hrefs in context). Can be set to expect a HTTP 4XX ErrorResponse and/or an empty list resource (if appropriate). |
+| `refresh-resource` | `resource: CSIPAusResource` `expect_rejection: bool/None` `expect_rejection_or_empty: bool/None` `expect_not_acceptable: bool/None` `expect_not_acceptable_or_v12: bool/None` `version_value_overrides: list[string]/None` `version_qf_overrides: list[float]/None` | Forces a particular resource to be refreshed (using existing hrefs in context). Can be set to expect a HTTP 4XX ErrorResponse and/or an empty list resource (if appropriate). Can override the default version negotiation headers with custom values. |
 | `insert-end-device` | `force_lfdi: str/None` `expect_rejection: bool/None` | Causes the client to submit a new EndDevice registration and resolves the returned Location header |
 | `upsert-connection-point` | `connectionPointId: str` `expect_rejection: bool/None` | Causes the client to submit a new ConnectionPoint with ID for the client's EndDevice |
 | `upsert-mup` | `mup_id: str` `location: CSIPAusReadingLocation` `reading_types: list[CSIPAusReadingType]` `mmr_mrids: list[str]/None` `pow10_multiplier: int/None`  `expect_rejection: bool/None` `set_mup_mrid: str/None` | Submits a MirrorUsagePoint with MirrorMeterReading's. Will ensure stable MRID values for the same sets of parameters (unless overridden with mmr_mrids). `mup_id` will alias this MirrorUsagePoint for future action calls. |
 | `insert-readings` | `mup_id: str` `values: ReadingTypeValues` `expect_rejection: bool/None` | Begins the submission of readings (at MUP post rate, to an earlier call to `upsert-mup` with the same `mup_id`). Will interleave transmission with subsequent steps (non blocking) if multiple sets of values are specified |
 | `upsert-der-status` | `genConnectStatus: int/None` `operationalModeStatus: int/None` `alarmStatus: int/None` `expect_rejection: bool/None` | Sends DERStatus - validates that the server persisted the values correctly |
-| `upsert-der-capability` | `type: int` `rtgMaxW: int` `modesSupported: int` `doeModesSupported: int` | Sends DERCapability - validates that the server persisted the values correctly |
-| `upsert-der-settings` | `setMaxW: int` `setGradW: int` `modesEnabled: int` `doeModesEnabled: int` | Sends DERSettings - validates that the server persisted the values correctly |
+| `upsert-der-capability` | `type: int` `rtgMaxW: int` `modesSupported: int` `doeModesSupported: int` `vppModesSupported: int/None` `rtgMaxVA: int/None` `rtgMaxVar: int/None` `rtgMaxVarNeg: int/None` `rtgMinPFOverExcited: int/None` `rtgMinPFUnderExcited: int/None` `rtgMaxChargeRateW: int/None` `rtgMaxDischargeRateW: int/None` `rtgMaxWh: int/None` | Sends DERCapability - validates that the server persisted the values correctly |
+| `upsert-der-settings` | `setMaxW: int` `setGradW: int` `modesEnabled: int` `doeModesEnabled: int` `vppModesEnabled: int/None` `setMaxVA: int/None` `setMaxVar: int/None` `setMaxVarNeg: int/None` `setMinPFOverExcited: int/None` `setMinPFUnderExcited: int/None` `setMaxChargeRateW: int/None` `setMaxDischargeRateW: int/None` `setMaxWh: int/None` `setMinWh: int/None` | Sends DERSettings - validates that the server persisted the values correctly |
 | `send-malformed-der-settings` | `updatedTime_missing: bool` | Sends a malformed DERSettings - expects a failure and that the server will NOT change anything |
 | `send-malformed-response` | `mrid_unknown: bool` `endDeviceLFDI_unknown: bool` `response_invalid: bool`  | Sends a malformed Response (using the most recent DERControl replyTo) - expects a failure response |
+| `send-malformed-edev` | `legacy_xmlns: bool` `legacy_version_header: bool` | Sends a malformed EndDevice with the expectation that it will fail. Expected failure depends on how the request is malformed |
 | `create-subscription` | `sub_id: str` `resource: CSIPAusResource` | Sends a new Subscription - validates that the server persisted the values correctly via Location. `sub_id` will alias this subscription for future action calls. |
 | `delete-subscription` | `sub_id: str` | Sends a deletion for a previously created Subscription. |
 | `respond-der-controls` | None | Enumerates all known DERControls and sends a Response for any that require it. |
@@ -120,6 +122,7 @@ A `Check` is a boolean test of what the client has in its current context. They 
 | **name** | **params** | **description** |
 | -------- | ---------- | --------------- |
 | `discovered` | `resources: list[CSIPAusResource]` `links: list[CSIPAusResource]` | Does the client's context have the nominated resources (or the parent resource with an appropriate link). |
+| `well-known-discovered` | `minimum_count: int/None` `maximum_count: int/None` `versions: list[CSIPAusVersion]/None` `matches_dcap: bool/None` | Counts .well-known/csipaus entries matching the specified criteria. |
 | `time-sync` | None | Does the client have a TimeResponse and does it closely map to the client's local time. |
 | `function-set-assignment` | `minimum_count: int/None` `maximum_count: int/None` `matches_client_edev: bool/None` | Are there the correct number of FunctionSetAssignments that may or may not belong solely under the client's EndDevice (or any accessible EndDevice) |
 | `end-device-list` | `minimum_count: int/None` `maximum_count: int/None` `poll_rate: int/None` `sub_id: str/None` | Are there a correct number of EndDeviceList that match the filter criteria |
@@ -131,6 +134,10 @@ A `Check` is a boolean test of what the client has in its current context. They 
 | `subscription` | `matches: bool` `resource: CSIPAusResource`| Does a Subscription exist for the specified resource (or not exist if `matches` is false). |
 | `poll-rate` | `resource: CSIPAusResource` `poll_rate_seconds: int` | Does the nominated resource have the specified poll rate. |
 | `der-control-responses` | `minimum_count: int/None` `maximum_count: int/None` `sent_response_type: int/None` | Counts current DERControl(s) that have transmitted the specified ResponseType via a Response. |
+| `tariff-profile` | `minimum_count: int/None` `maximum_count: int/None` `primacy: int/None` `sub_id: str/None` | Counts discovered TariffProfiles matching the specified filter criteria |
+| `rate-component` | `minimum_count: int/None` `maximum_count: int/None` `sub_id: str/None` | Counts discovered RateComponents matching the specified filter criteria |
+| `time-tariff-interval` | `minimum_count: int/None` `maximum_count: int/None` `sub_id: str/None` `rate_component_index: int/None` | Counts discovered TimeTariffIntervals matching the specified filter criteria (rate_component_index is 0 based) |
+| `time-tariff-interval-valid-references` | | True if each discovered TimeTariffInterval has their ConsumptionTariffIntervalSummary and RateComponentLink pointing to already discovered prices/rate components |
 
 
 ### Parameter Variable Resolution

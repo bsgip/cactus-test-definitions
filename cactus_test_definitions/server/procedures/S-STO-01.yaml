@@ -1,0 +1,86 @@
+Description: S-STO-01 Storage Energy Readings
+Category: Storage
+Classes:
+ - STO
+
+TargetVersions:
+ - v1.3
+
+Preconditions:
+  required_clients:
+    - id: client
+
+Steps:
+  - id: PRECONDITION
+    repeat_until_pass: true
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - EndDevice
+          - DeviceCapability
+          - MirrorUsagePointList
+          - DER
+    checks:
+      - type: end-device # This will be the check that will block UNTIL there is an existing EndDevice registration
+        parameters:
+          matches_client: true
+
+  - id: 1,2 - DISCOVER INITIAL MUPS
+    repeat_until_pass: true
+    admin_instructions:
+      - type: ensure-mup-list-empty
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - MirrorUsagePoint
+    checks:
+      - type: mirror-usage-point
+        parameters:
+          matches: false # MirrorUsagePoints must be initially empty for client.
+
+  # upsert-mup will resolve the Location header which covers steps 9/10
+  - id: 3,4,9,10 - CREATE MUP FOR DEVICE
+    action: 
+      type: upsert-mup
+      parameters:
+        mup_id: mup_device
+        location: Device
+        reading_types: 
+          - StoredEnergyInstantaneous
+    checks:
+      - type: mirror-usage-point
+        parameters:
+          location: Device
+          matches: true
+          reading_types: 
+          - StoredEnergyInstantaneous
+
+  # The test also requires a client GET on the MUP list to ensure the record exists
+  - id: 5,6 - RE-DISCOVER MUPS
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - MirrorUsagePoint
+    checks:
+      - type: mirror-usage-point
+        parameters:
+          location: Device
+          matches: true
+          reading_types: 
+          - StoredEnergyInstantaneous
+
+  - id: 7,8 - POST READINGS TO DEVICE
+    action: 
+      type: insert-readings
+      parameters:
+        mup_id: mup_device
+        values:
+          StoredEnergyInstantaneous: [1000, 1100, 1200, 1300]
+

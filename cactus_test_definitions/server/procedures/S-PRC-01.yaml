@@ -1,0 +1,143 @@
+Description: S-PRC-01 Pricing Extension Resource Compliance
+Category: Pricing
+Classes:
+ - PRC
+
+TargetVersions:
+ - v1.3
+
+Preconditions:
+  required_clients:
+    - id: client
+  
+Steps:
+  - id: (A) PRECONDITION
+    repeat_until_pass: true
+    admin_instructions:
+      - type: ensure-end-device
+        parameters:
+          registered: true
+      - type: ensure-tariff-profile
+        parameters:
+          annotation: tp1
+      - type: ensure-rate-component
+        parameters:
+          tariff_profile_annotation: tp1
+          annotation: rc1
+          flow_direction: 1 # Import
+      - type: ensure-rate-component
+        parameters:
+          tariff_profile_annotation: tp1
+          annotation: rc2
+          flow_direction: 19 # Export
+      - type: ensure-time-tariff-interval
+        parameters:
+          rate_component_annotation: rc1
+          status: scheduled
+          price: 1
+      - type: ensure-time-tariff-interval
+        parameters:
+          rate_component_annotation: rc1
+          status: scheduled
+          price: 2
+      - type: ensure-time-tariff-interval
+        parameters:
+          rate_component_annotation: rc2
+          status: scheduled
+          price: 3
+      - type: set-poll-rate
+        parameters:
+          resource: TariffProfileList
+          rate_seconds: 300
+      - type: set-poll-rate
+        parameters:
+          resource: CombinedTimeTariffIntervalList
+          rate_seconds: 60
+      
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - TariffProfile
+          - RateComponent
+    checks:
+      - type: end-device 
+        parameters:
+          matches_client: true 
+      - type: discovered
+        parameters:
+          links: 
+            - CombinedTimeTariffIntervalList
+      - type: tariff-profile
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+      - type: rate-component
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+      - type: poll-rate
+        parameters:
+          resource: TariffProfileList
+          poll_rate_seconds: 300
+      - type: poll-rate
+        parameters:
+          resource: CombinedTimeTariffIntervalList
+          poll_rate_seconds: 60
+    
+
+  # This will discover via CombinedTariffIntervalList and check all content
+  - id: 1..5 - CREATE TIME TARIFF INTERVALS
+    repeat_until_pass: true
+    admin_instructions:
+      - type: ensure-time-tariff-interval
+        parameters:
+          rate_component_annotation: rc1
+          status: scheduled
+          price: 1
+      - type: ensure-time-tariff-interval
+        parameters:
+          rate_component_annotation: rc1
+          status: scheduled
+          price: 2
+      - type: ensure-time-tariff-interval
+        parameters:
+          rate_component_annotation: rc2
+          status: scheduled
+          price: 3
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - TimeTariffInterval
+          - ConsumptionTariffInterval
+    checks:
+      - type: time-tariff-interval
+        parameters:
+          minimum_count: 2
+          maximum_count: 2
+          rate_component_index: 0
+      - type: time-tariff-interval
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          rate_component_index: 1
+      - type: time-tariff-interval
+        parameters:
+          minimum_count: 3
+          maximum_count: 3
+      - type: time-tariff-interval-valid-references
+        parameters: {}
+
+  - id: 6 - TIME TARIFF INTERVAL EXPIRY
+    repeat_until_pass: true
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - TimeTariffInterval
+    checks:
+      - type: time-tariff-interval
+        parameters:
+          minimum_count: 0
+          maximum_count: 0

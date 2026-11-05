@@ -94,6 +94,9 @@ class CSIPAusReadingType(StrEnum):
     VoltageSinglePhaseMaximum = "VoltageSinglePhaseMaximum"
     VoltageSinglePhaseMinimum = "VoltageSinglePhaseMinimum"
 
+    # The following only apply to CSIPAUS v1.3 onwards
+    StoredEnergyInstantaneous = "StoredEnergyInstantaneous"
+
 
 def is_list_resource(resource: CSIPAusResource) -> bool:
     """Returns true if the specified resource is classified as a list resource (i.e. it supports list query params) and

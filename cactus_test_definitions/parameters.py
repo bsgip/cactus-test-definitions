@@ -4,6 +4,7 @@ from decimal import Decimal
 from enum import IntEnum, auto
 from typing import Any
 
+from cactus_test_definitions import CSIPAusVersion
 from cactus_test_definitions.csipaus import (
     CSIPAusReadingLocation,
     CSIPAusReadingType,
@@ -32,6 +33,9 @@ class ParameterType(IntEnum):
     ReadingTypeValues = auto()  # A dict of type dict[CSIPAusReadingType, list[float]], each list has the same length
     UnsignedInteger = auto()
     ListInteger = auto()  # List of integers
+    ListFloat = auto()  # List of floats
+    CSIPAusVersion = auto()  # Member of cactus_test_definitions.csipaus.CSIPAusVersion
+    ListCSIPAusVersion = auto()  # List where each member is a cactus_test_definitions.csipaus.CSIPAusVersion
 
 
 @dataclass(frozen=True)
@@ -76,6 +80,10 @@ def is_valid_parameter_type(expected_type: ParameterType, value: Any) -> bool:  
             return isinstance(value, list) and all(isinstance(e, str) or is_resolvable_variable(e) for e in value)
         case ParameterType.ListInteger:
             return isinstance(value, list) and all(isinstance(e, int) or is_resolvable_variable(e) for e in value)
+        case ParameterType.ListFloat:
+            return isinstance(value, list) and all(
+                isinstance(e, float) or isinstance(e, int) or is_resolvable_variable(e) for e in value
+            )
         case ParameterType.HexBinary:
             try:
                 int(value, 16)
@@ -123,6 +131,15 @@ def is_valid_parameter_type(expected_type: ParameterType, value: Any) -> bool:  
                 elif last_length != len(reading_vals):
                     return False
             return True
+        case ParameterType.CSIPAusVersion:
+            try:
+                return CSIPAusVersion(value) == value
+            except Exception:
+                return False
+        case ParameterType.ListCSIPAusVersion:
+            return isinstance(value, list) and all(
+                is_valid_parameter_type(ParameterType.CSIPAusVersion, e) or is_resolvable_variable(e) for e in value
+            )
 
     raise TestProcedureDefinitionError(f"Unexpected ParameterType: {ParameterType}")
 

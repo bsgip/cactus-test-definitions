@@ -22,6 +22,9 @@ class AdminInstructionType(StrEnum):
     SET_POLL_RATE = "set-poll-rate"
     SET_POST_RATE = "set-post-rate"
     SET_CLIENT_ACCESS = "set-client-access"
+    ENSURE_TARIFF_PROFILE = "ensure-tariff-profile"
+    ENSURE_RATE_COMPONENT = "ensure-rate-component"
+    ENSURE_TIME_TARIFF_INTERVAL = "ensure-time-tariff-interval"
 
 
 @dataclass
@@ -89,6 +92,7 @@ ADMIN_INSTRUCTION_PARAMETER_SCHEMA: dict[AdminInstructionType, dict[str, Paramet
         "opModConnect": ParameterSchema(False, ParameterType.Boolean),
         "opModEnergize": ParameterSchema(False, ParameterType.Boolean),
         "opModFixedW": ParameterSchema(False, ParameterType.Float),
+        "opModStorageTargetW": ParameterSchema(False, ParameterType.Float),
         "rampTms": ParameterSchema(False, ParameterType.Integer),
         "randomizeStart_seconds": ParameterSchema(False, ParameterType.Integer),
         "duration_seconds": ParameterSchema(False, ParameterType.Integer),
@@ -117,6 +121,25 @@ ADMIN_INSTRUCTION_PARAMETER_SCHEMA: dict[AdminInstructionType, dict[str, Paramet
     AdminInstructionType.SET_POST_RATE: {
         "resource": ParameterSchema(True, ParameterType.CSIPAusResource),
         "rate_seconds": ParameterSchema(True, ParameterType.Integer),
+    },
+    # Ensure a TariffProfile matching the specified criteria is accessible to the client
+    # annotation is a label used to reference this TP from later instructions (e.g. in ensure-rate-component).
+    AdminInstructionType.ENSURE_TARIFF_PROFILE: {
+        "annotation": ParameterSchema(False, ParameterType.String),
+        "primacy": ParameterSchema(False, ParameterType.Integer),
+    },
+    # Ensure a RateComponent matching the specified criteria is accessible to the client
+    # annotation is a label used to reference this RC from later instructions (e.g. in ensure-time-tariff-interval).
+    AdminInstructionType.ENSURE_RATE_COMPONENT: {
+        "annotation": ParameterSchema(False, ParameterType.String),
+        "tariff_profile_annotation": ParameterSchema(False, ParameterType.String),
+        "flow_direction": ParameterSchema(False, ParameterType.Integer),
+    },
+    # Ensure a RateComponent matching the specified criteria is accessible to the client
+    AdminInstructionType.ENSURE_TIME_TARIFF_INTERVAL: {
+        "rate_component_annotation": ParameterSchema(False, ParameterType.String),
+        "status": ParameterSchema(True, ParameterType.String),  # "active" or "scheduled"
+        "price": ParameterSchema(False, ParameterType.Integer),  # The raw price integer - NOT inclusive of price pow10
     },
 }
 
