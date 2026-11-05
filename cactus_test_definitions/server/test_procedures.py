@@ -82,6 +82,8 @@ class TestProcedureId(StrEnum):
     S_OPT_05 = "S-OPT-05"
     # S-OPT-06 DRED
 
+    S_PRC_01 = "S-PRC-01"
+
     S_SDVN_01 = "S-SDVN-01"
 
     S_STO_01 = "S-STO-01"

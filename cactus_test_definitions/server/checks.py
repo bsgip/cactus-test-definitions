@@ -150,6 +150,34 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
             True, ParameterType.Integer
         ),  # Filters for DERControls that have sent this response type
     },  # Counts DERControls in context that have sent the specified ResponseType
+    "tariff-profile": {
+        "minimum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at least this many tps to pass
+        "maximum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at most this many tps to pass
+        "primacy": ParameterSchema(False, ParameterType.Integer),  # Filters tps based on this primacy value
+        "sub_id": ParameterSchema(
+            False, ParameterType.String
+        ),  # Filters tps to only those received via this named subscription
+    },
+    "rate-component": {
+        "minimum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at least this many rcs to pass
+        "maximum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at most this many rcs to pass
+        "sub_id": ParameterSchema(
+            False, ParameterType.String
+        ),  # Filters rcs to only those received via this named subscription
+    },
+    "time-tariff-interval": {
+        "minimum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at least this many ttis to pass
+        "maximum_count": ParameterSchema(False, ParameterType.Integer),  # Needs at most this many ttis to pass
+        "sub_id": ParameterSchema(
+            False, ParameterType.String
+        ),  # Filters ttis to only those received via this named subscription
+        "rate_component_index": ParameterSchema(
+            False, ParameterType.Integer
+        ),  # Filters ttis that belong to the nth (0 based) RateComponent index (based on order in RateComponentList)
+    },
+    "time-tariff-interval-valid-references": {
+        #
+    },  # True if each TimeTariffInterval has their CTI summary and RC link point to known prices/rate components
 }
 VALID_CHECK_NAMES: set[str] = set(CHECK_PARAMETER_SCHEMA.keys())
 

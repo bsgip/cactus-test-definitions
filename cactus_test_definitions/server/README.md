@@ -134,6 +134,10 @@ A `Check` is a boolean test of what the client has in its current context. They 
 | `subscription` | `matches: bool` `resource: CSIPAusResource`| Does a Subscription exist for the specified resource (or not exist if `matches` is false). |
 | `poll-rate` | `resource: CSIPAusResource` `poll_rate_seconds: int` | Does the nominated resource have the specified poll rate. |
 | `der-control-responses` | `minimum_count: int/None` `maximum_count: int/None` `sent_response_type: int/None` | Counts current DERControl(s) that have transmitted the specified ResponseType via a Response. |
+| `tariff-profile` | `minimum_count: int/None` `maximum_count: int/None` `primacy: int/None` `sub_id: str/None` | Counts discovered TariffProfiles matching the specified filter criteria |
+| `rate-component` | `minimum_count: int/None` `maximum_count: int/None` `sub_id: str/None` | Counts discovered RateComponents matching the specified filter criteria |
+| `time-tariff-interval` | `minimum_count: int/None` `maximum_count: int/None` `sub_id: str/None` `rate_component_index: int/None` | Counts discovered TimeTariffIntervals matching the specified filter criteria (rate_component_index is 0 based) |
+| `time-tariff-interval-valid-references` | | True if each discovered TimeTariffInterval has their ConsumptionTariffIntervalSummary and RateComponentLink pointing to already discovered prices/rate components |
 
 
 ### Parameter Variable Resolution
