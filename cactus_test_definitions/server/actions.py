@@ -71,10 +71,16 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
     "insert-end-device": {
         "force_lfdi": ParameterSchema(False, ParameterType.String),  # Forces the use of this LFDI
         "expect_rejection": ParameterSchema(False, ParameterType.Boolean),  # If set - expect 4XX and ErrorPayload
+        "invalid_version_header": ParameterSchema(
+            False, ParameterType.Boolean
+        ),  # The version negotiation header will be for an invalid CSIP-AUS version - server must reject with HTTP 406
     },  # Inserts an EndDevice and then validates the returned Location header
     "upsert-connection-point": {
         "connectionPointId": ParameterSchema(True, ParameterType.String),
         "expect_rejection": ParameterSchema(False, ParameterType.Boolean),  # If set - expect ErrorPayload reasonCode 1
+        "legacy_xmlns": ParameterSchema(
+            False, ParameterType.Boolean
+        ),  # If true - The xmlns will be for a legacy CSIP-AUS version and the server should respond HTTP 400
     },
     "upsert-mup": {
         "mup_id": ParameterSchema(True, ParameterType.String),  # Used to alias the returned MUP ID
@@ -144,14 +150,6 @@ ACTION_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
         "endDeviceLFDI_unknown": ParameterSchema(True, ParameterType.Boolean),  # If true - endDeviceLfdi will be random
         "response_invalid": ParameterSchema(True, ParameterType.Boolean),  # If true - response will be a reserved value
     },  # Sends a malformed Response (using the most recent DERControl replyTo) - expects a failure response
-    "send-malformed-edev": {
-        "legacy_xmlns": ParameterSchema(
-            True, ParameterType.Boolean
-        ),  # If true - The xmlns will be for a legacy CSIP-AUS version
-        "legacy_version_header": ParameterSchema(
-            True, ParameterType.Boolean
-        ),  # If true - The version negotiation header will be for a legacy CSIP-AUS version
-    },  # Sends a malformed EndDevice - expects a failure and that the server will NOT change anything
     "create-subscription": {
         "sub_id": ParameterSchema(True, ParameterType.String),  # Used to alias the returned subscription ID
         "resource": ParameterSchema(True, ParameterType.CSIPAusResource),

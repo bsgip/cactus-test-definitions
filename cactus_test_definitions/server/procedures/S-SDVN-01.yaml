@@ -91,22 +91,16 @@ Steps:
           - 1
         expect_not_acceptable: true
 
-  - id: 12,13 - POST EDEV (LEGACY XMLNS)
-    action: 
-      type: send-malformed-edev
-      parameters:
-        legacy_xmlns: true
-        legacy_version_header: false
-
+  # We are slightly re-ordering the test as this step MUST prevent an EndDevice registration from occuring so
+  # we do it first
   - id: 14,15 - POST EDEV (LEGACY VERSION)
     action: 
-      type: send-malformed-edev
+      type: insert-end-device
       parameters:
-        legacy_xmlns: false
-        legacy_version_header: true
+        invalid_version_header: true
 
-  # This only exists to ensure the above two actions don't populate the EndDeviceList
-  - id: 16 - CHECK REJECTED
+  # This only exists to ensure the above action didn't populate the EndDeviceList
+  - id: 15 - CHECK REJECTED
     action:
       type: discovery
       parameters:
@@ -117,10 +111,23 @@ Steps:
         parameters:
           matches_client: false
 
-  - id: 16 - REGISTER
+  # This is out of order because the legacy XML namespace ONLY applies to connection point. There is no csipaus ns on 
+  # EndDevice that a client will populate. As such - we slightly re-order things and check it during ConnectionPoint
+  # updating - that means we need to do a successful EndDevice registration first.
+  - id: 16 - REGISTER EDEV
     action: 
       type: insert-end-device
-    checks:
-      - type: end-device
-        parameters:
-          matches_client: true 
+      parameters: {} # This should succeed - we test the XML NS in the next step
+        
+  - id: 12,13 - PUT CP (LEGACY XMLNS)
+    action: 
+      type: upsert-connection-point
+      parameters:
+        connectionPointId: $(valid_nmi_1) # A valid NMI (in the testing range)
+        legacy_xmlns: true # This will result in a rejection
+        
+  - id: 16 - PUT CP
+    action: 
+      type: upsert-connection-point
+      parameters:
+        connectionPointId: $(valid_nmi_1) # A valid NMI (in the testing range)
