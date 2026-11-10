@@ -35,7 +35,7 @@ Steps:
       - type: well-known-discovered
         parameters:
           versions:
-            - v1.2
+            - v1.3
           matches_dcap: true
           minimum_count: 1
           maximum_count: 1
