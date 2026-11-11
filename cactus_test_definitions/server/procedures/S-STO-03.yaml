@@ -13,7 +13,6 @@ Preconditions:
 Steps:
   - id: PRECONDITION
     repeat_until_pass: true
-    client: client
     admin_instructions:
       - type: ensure-end-device
         parameters:
@@ -26,9 +25,9 @@ Steps:
       parameters:
         resources:
           - EndDevice
-          - DERControlList
           - DER
           - DERControl
+          - DefaultDERControl
     checks:
       - type: end-device 
         parameters:
@@ -43,7 +42,6 @@ Steps:
 
   - id: 1 - CREATE DERCONTROL
     repeat_until_pass: true
-    client: client
     admin_instructions:
       - type: create-der-control
         parameters:
@@ -64,11 +62,40 @@ Steps:
           opModExpLimW: 2000
           opModStorageTargetW: 1000
 
-  - id: 2..9 - NOTIFY DERCONTROL
-    repeat_until_pass: true # Wait until we have submitted started and completed Responses
-    client: client
+  - id: 2,3 - NOTIFY RECEIVED
     action: 
-      type: respond-der-controls # keep checking for Responses - continue until we've sent 2 (started) and 3 (completed)
+      type: respond-der-controls
+    checks:
+      - type: der-control-responses
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          sent_response_type: 1 # EVENT_RECEIVED
+
+  - id: 4 - WAIT STARTED
+    repeat_until_pass: true
+    action:
+      type: discovery
+      parameters:
+        resources:
+          - DERControl
+    checks:
+      - type: der-control
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+      - type: der-control
+        parameters:
+          minimum_count: 1
+          maximum_count: 1
+          event_status: 1 # Active
+          opModExpLimW: 2000
+          opModStorageTargetW: 1000
+
+  - id: 5,6,7,8 - NOTIFY STARTED, COMPLETED
+    repeat_until_pass: true # Wait until we have submitted started and completed Responses
+    action: 
+      type: respond-der-controls
     checks:
       - type: der-control-responses
         parameters:
