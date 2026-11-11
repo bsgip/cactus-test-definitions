@@ -30,21 +30,6 @@ Steps:
           tariff_profile_annotation: tp1
           annotation: rc2
           flow_direction: 19 # Export
-      - type: ensure-time-tariff-interval
-        parameters:
-          rate_component_annotation: rc1
-          status: scheduled
-          price: 1
-      - type: ensure-time-tariff-interval
-        parameters:
-          rate_component_annotation: rc1
-          status: scheduled
-          price: 2
-      - type: ensure-time-tariff-interval
-        parameters:
-          rate_component_annotation: rc2
-          status: scheduled
-          price: 3
       - type: set-poll-rate
         parameters:
           resource: TariffProfileList
@@ -59,6 +44,7 @@ Steps:
       parameters:
         resources:
           - TariffProfile
+          - CombinedTimeTariffIntervalList
           - RateComponent
     checks:
       - type: end-device 
@@ -74,8 +60,8 @@ Steps:
           maximum_count: 1
       - type: rate-component
         parameters:
-          minimum_count: 1
-          maximum_count: 1
+          minimum_count: 2
+          maximum_count: 2
       - type: poll-rate
         parameters:
           resource: TariffProfileList
@@ -116,12 +102,12 @@ Steps:
         parameters:
           minimum_count: 2
           maximum_count: 2
-          rate_component_index: 0
+          rate_component_index: 1 # Note - 2030.5 requires these return in creation DESCENDING order
       - type: time-tariff-interval
         parameters:
           minimum_count: 1
           maximum_count: 1
-          rate_component_index: 1
+          rate_component_index: 0 # Note - 2030.5 requires these return in creation DESCENDING order
       - type: time-tariff-interval
         parameters:
           minimum_count: 3
