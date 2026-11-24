@@ -59,6 +59,10 @@ class NamedVariableType(IntEnum):
     # Referenced in a test definition as $(now_hour)
     NOW_HOUR = auto()
 
+    # MUST resolve to the resolvable namespace URI of the CSIP-AUS version that a test procedure is operating under.
+    # eg - executing for a v1.3 test - this would return https://csipaus.org/ns/v1.3
+    VERSION_URI = auto()
+
     # MUST resolve to the "DERSetting.setMaxW" of the current EndDevice under test. Value in Watts
     # Referenced in a test definition as $(setMaxW)
     DERSETTING_SET_MAX_W = auto()
@@ -179,6 +183,8 @@ def named_variable_repr(named_var: NamedVariableType) -> str:  # noqa: C901
             return "randuri_2"
         case ["RANDURI", "3"]:
             return "randuri_3"
+        case ["VERSION", "URI"]:
+            return "version_uri"
 
     return snake_to_camel(name)
 
@@ -302,6 +308,8 @@ def parse_unary_expression(token: Token) -> Constant | NamedVariable:  # noqa: C
                 return NamedVariable(NamedVariableType.NOW_HOUR)
             case "now_day":
                 return NamedVariable(NamedVariableType.NOW_DAY)
+            case "version_uri":
+                return NamedVariable(NamedVariableType.VERSION_URI)
             case "this":
                 if token.param_key == "this" or token.param_key is None:
                     raise UnparseableVariableExpressionError(f"$this cannot resolve to parameter {token.param_key}")

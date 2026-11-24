@@ -4,7 +4,6 @@ Classes:
   - A
 
 TargetVersions:
-  - v1.3-beta/storage
   - v1.3
 
 Criteria:
@@ -58,7 +57,7 @@ Preconditions:
         dcap_paths: []
     - type: create-wellknown-route
       parameters:
-        version: "https://csipaus.org/ns/v1.3"
+        version: "$version_uri" # This will be the current version eg https://csipaus.org/ns/v1.3
         dcap_paths:
           - "$randuri_3"
     - type: add-proxy-route
