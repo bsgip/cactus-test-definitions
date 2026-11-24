@@ -27,6 +27,8 @@ Criteria:
       parameters: {"minimum_count": 4}
     - type: readings-der-reactive-power
       parameters: {"minimum_count": 4}
+    - type: voltage-phase-code
+      parameters: {}
 
 Preconditions:
   init_actions:
