@@ -45,6 +45,9 @@ def factory_readings_schema() -> dict[str, Any]:
         # minimum_level/maximum_level, rather than every/windowed historical reading. Mutually exclusive with
         # window_seconds. Suited to gating a Preconditions check on current device state.
         "latest_reading_only": ParameterSchema(False, ParameterType.Boolean),
+        "reading_length_seconds": ParameterSchema(
+            False, ParameterType.UnsignedInteger
+        ),  # Filter to readings of this length (can be combined with other filters)
     }
 
 
