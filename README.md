@@ -227,6 +227,7 @@ The following are all the `NamedVariable` types currently implemented
 | `$now` | Resolves to the current moment in time (timezone aware). Returns a datetime |
 | `$now_day` | Resolves to the start of the current day (as Australian Eastern Standard Time). Returns a datetime |
 | `$now_hour` | Resolves to the start of the current hour (as Australian Eastern Standard Time). Returns a datetime |
+| `$version_uri` | Resolves to the version namespace URI that a test is executing under, eg `https://csipaus.org/ns/v1.3` if this is being run as a v1.3 test. Returns a string |
 | `$this` | Self reference to a parameter that is supplied as the key for the parameter check. Must have a corresponding NamedVariable that it can resolve to, derived from the key e.g `setMaxW`
 | `$setMaxW` | Resolves to the last supplied value to `DERSetting.setMaxW` as a number. Can raise exceptions if this value hasn't been set (which will trigger a test evaluation to fail) |
 | `$setMaxVA` | Resolves to the last supplied value to `DERSetting.setMaxVA` as a number. Can raise exceptions if this value hasn't been set (which will trigger a test evaluation to fail) |
@@ -249,7 +250,7 @@ The following are all the `NamedVariable` types currently implemented
 | `$setMinWh` | Resolves to the last supplied value to `DERSetting.setMinWh` as a number. Can raise exceptions if this value hasn't been set (which will trigger a test evaluation to fail)
 | `$maxImportW` |  Resolves to `DERSetting.setMaxChargeRateW` when the device declares it, otherwise falls back to the mandatory `DERSetting.setMaxW`. Allows directional import power limit (Watts) for devices with asymmetric import/export capability.
 | `$maxExportW` | Resolves to `DERSetting.setMaxDischargeRateW` when the device declares it, otherwise falls back to the mandatory `DERSetting.setMaxW`. Allows directional export power limit (Watts) for devices with asymmetric import/export capability.
-| `randuri_1` `randuri_2` `randuri_3` | Resolves to a random URI path. Guaranteed to be stable (`$randuri_x` == `$randuri_x`) and unique (`randuri_x` != `randuri_y`) within a single test run | 
+| `$randuri_1` `$randuri_2` `$randuri_3` | Resolves to a random URI path. Guaranteed to be stable (`$randuri_x` == `$randuri_x`) and unique (`randuri_x` != `randuri_y`) within a single test run | 
 
 
 Placeholder variables can also be used in some rudimentary expressions to make variations on the returned value. For example:

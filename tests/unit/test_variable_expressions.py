@@ -148,6 +148,8 @@ def test_parse_time_delta(unquoted_raw: str, expected: timedelta | type[Exceptio
         (" \t  '-4.56 hours' \t  ", Constant(timedelta(hours=-4.56))),
         ("now", NamedVariable(NamedVariableType.NOW)),
         ("NOW", UnparseableVariableExpressionError),  # case sensitive
+        ("version_uri", NamedVariable(NamedVariableType.VERSION_URI)),
+        ("version_", UnparseableVariableExpressionError),
         ("setMaxW", NamedVariable(NamedVariableType.DERSETTING_SET_MAX_W)),
         ("SETMAXW", UnparseableVariableExpressionError),  # case sensitive
         ("foo", UnparseableVariableExpressionError),  # unknown named variable
@@ -346,6 +348,7 @@ def test_parse_variable_expression_body_this(
         ({}, False),
         (NamedVariable(NamedVariableType.NOW), True),
         (NamedVariable(NamedVariableType.DERSETTING_SET_MAX_W), True),
+        (NamedVariable(NamedVariableType.VERSION_URI), True),
         (Constant(1.23), True),
         (Constant(timedelta(5)), True),
         (Expression(OperationType.ADD, Constant(1.23), NamedVariable(NamedVariableType.NOW)), True),
@@ -422,6 +425,7 @@ def test_snake_to_camel(input: str, expected: str) -> None:
         (NamedVariableType.DERSETTING_MAX_IMPORT_W, "(DERSetting.setMaxChargeRateW or DERSetting.setMaxW)"),
         (NamedVariableType.DERSETTING_MAX_EXPORT_W, "(DERSetting.setMaxDischargeRateW or DERSetting.setMaxW)"),
         (NamedVariableType.NOW, "now"),
+        (NamedVariableType.VERSION_URI, "version_uri"),
     ],
 )
 def test_named_variable_repr(input: NamedVariableType, expected: str) -> None:
