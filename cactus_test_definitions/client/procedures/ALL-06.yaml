@@ -25,6 +25,8 @@ Criteria:
       parameters: {"minimum_count": 6}
     - type: readings-der-reactive-power
       parameters: {"minimum_count": 6}
+    - type: voltage-phase-code
+      parameters: {}
     - type: all-polls-at-correct-time
       parameters:
         endpoints:

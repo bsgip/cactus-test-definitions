@@ -144,6 +144,7 @@ CHECK_PARAMETER_SCHEMA: dict[str, dict[str, ParameterSchema]] = {
             False, ParameterType.Boolean
         ),  # Default is True - If True, assert the response exists. Otherwise assert it does NOT exist
     },
+    "voltage-phase-code": {},  # True if the client has registered a "phase correct" combination of Voltage MMRs
 }
 VALID_CHECK_NAMES: set[str] = set(CHECK_PARAMETER_SCHEMA.keys())
 
