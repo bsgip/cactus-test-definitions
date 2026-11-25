@@ -12,21 +12,9 @@ TargetVersions:
 Criteria:
   checks:
     - type: all-steps-complete
-      parameters: {}
-    # Test is ~11.5 minutes of waiting which should leave enough time for:
-    #   one post @ 60 seconds (during startup - might not happen if timings line up)
-    #   two posts @ 300 seconds
-    #   one post @ 60 seconds (after update)
-    - type: readings-site-active-power
-      parameters: {"minimum_count": 4} 
-    - type: readings-site-reactive-power
-      parameters: {"minimum_count": 4}
-    - type: readings-voltage
-      parameters: {"minimum_count": 4}
-    - type: readings-der-active-power
-      parameters: {"minimum_count": 4}
-    - type: readings-der-reactive-power
-      parameters: {"minimum_count": 4}
+      parameters:
+        ignored_steps: 
+          - FAIL-TEST-LENGTH
     - type: voltage-phase-code
       parameters: {}
 
@@ -56,8 +44,52 @@ Preconditions:
 
 Steps:
   
+  # Precondition - ensure that we are getting 60s telemetry
+  # This will NOT trigger until our latest reading from ALL MUPs are at 60s
+  POST-MUP-60S-INITIAL:
+    instructions:
+      - All Readings must have a duration of 60s (matching the MirrorUsagePointList post rate).
+    event:
+      type: POST-request-received
+      parameters:
+        endpoint: /mup/*
+        serve_request_first: true
+      checks:
+        - type: readings-site-active-power
+          parameters: {"reading_length_seconds": 60, "latest_reading_only": true, "minimum_count": 1} 
+        - type: readings-site-reactive-power
+          parameters: {"reading_length_seconds": 60, "latest_reading_only": true, "minimum_count": 1}
+        - type: readings-voltage
+          parameters: {"reading_length_seconds": 60, "latest_reading_only": true, "minimum_count": 1}
+        - type: readings-der-active-power
+          parameters: {"reading_length_seconds": 60, "latest_reading_only": true, "minimum_count": 1}
+        - type: readings-der-reactive-power
+          parameters: {"reading_length_seconds": 60, "latest_reading_only": true, "minimum_count": 1}
+    actions:
+      - type: enable-steps
+        parameters:
+          steps:
+            - GET-MUP-300S
+            - FAIL-TEST-LENGTH  
+      - type: remove-steps
+        parameters:
+          steps:
+            - POST-MUP-60S-INITIAL
+
+  # This is a generous "fail time" to ensure that a client doesn't spend an inordinate amount of time picking up
+  # and then enacting an updated MUPList post rate.
+  FAIL-TEST-LENGTH:
+    event:
+      type: wait
+      parameters:
+        duration_seconds: 900 # 15 minutes is more than enough time to swap between a 300s POST and then a 60s POST
+    actions:
+      - type: finish-test
+        parameters: 
+          fail_message: The client MUST swap to the MirrorUsagePoint post rate either immediately or after finishing the current reading window.
+
   # (a, b)
-  GET-MUP-INITIAL:
+  GET-MUP-300S:
     event:
       type: GET-request-received
       parameters:
@@ -69,32 +101,45 @@ Steps:
       - type: enable-steps
         parameters:
           steps:
-            - WAIT-TILL-UPDATE
+            - POST-MUP-300S
       - type: remove-steps
         parameters:
           steps:
-            - GET-MUP-INITIAL
+            - GET-MUP-300S
 
-  # NOTE - (c) will be evaluated via TestCriteria checks
-
-  # (d, e)
-  WAIT-TILL-UPDATE:
+  # (c) - This will NOT trigger until our latest reading from ALL MUPs are at 300s
+  POST-MUP-300S:
+    instructions:
+      - New Readings must now have a duration of 300s (matching the updated MirrorUsagePointList post rate).
     event:
-      type: wait
+      type: POST-request-received
       parameters:
-        duration_seconds: 600
+        endpoint: /mup/*
+        serve_request_first: true
+      checks:
+        - type: readings-site-active-power
+          parameters: {"reading_length_seconds": 300, "latest_reading_only": true, "minimum_count": 1} 
+        - type: readings-site-reactive-power
+          parameters: {"reading_length_seconds": 300, "latest_reading_only": true, "minimum_count": 1}
+        - type: readings-voltage
+          parameters: {"reading_length_seconds": 300, "latest_reading_only": true, "minimum_count": 1}
+        - type: readings-der-active-power
+          parameters: {"reading_length_seconds": 300, "latest_reading_only": true, "minimum_count": 1}
+        - type: readings-der-reactive-power
+          parameters: {"reading_length_seconds": 300, "latest_reading_only": true, "minimum_count": 1}
     actions:
       - type: enable-steps
         parameters:
           steps:
-            - GET-MUP-UPDATED
+            - GET-MUP-60S
       - type: remove-steps
         parameters:
           steps:
-            - WAIT-TILL-UPDATE
+            - POST-MUP-300S
+
 
   # (d, e)
-  GET-MUP-UPDATED:
+  GET-MUP-60S:
     event:
       type: GET-request-received
       parameters:
@@ -102,56 +147,40 @@ Steps:
     actions:
       - type: set-comms-rate
         parameters:
-          mup_post_seconds: 60
+          mup_post_seconds: 60 # we leave the pollRate at 60s for quick discovery
       - type: enable-steps
         parameters:
           steps:
-            - POST-MUP-1     
+            - POST-MUP-60S-FINAL
       - type: remove-steps
         parameters:
           steps:
-            - GET-MUP-UPDATED
+            - GET-MUP-60S
 
-  # (f) - Depending on client implementation, the client may update the post rate immediately or may complete posting at the old post rate.
-  POST-MUP-1:
+  # (f) This will NOT trigger until our latest reading from ALL MUPs are at 60s
+  POST-MUP-60S-FINAL:
+    instructions:
+      - New Readings must have a duration of 60s (matching the updated MirrorUsagePointList post rate).
     event:
       type: POST-request-received
       parameters:
         endpoint: /mup/*
-    actions:
-      - type: enable-steps
-        parameters:
-          steps:
-            - POST-MUP-2
-            - WAIT-TILL-END
-      - type: remove-steps
-        parameters:
-          steps:
-            - POST-MUP-1 
-            
-  # (f) - This is our proxy for making sure that post rate has returned to 60s - it has 90 seconds to be hit after POST-MUP-1
-  POST-MUP-2:
-    event:
-      type: POST-request-received
-      parameters:
-        endpoint: /mup/*
+        serve_request_first: true
+      checks:
+        - type: readings-site-active-power
+          parameters: {"reading_length_seconds": 60, "latest_reading_only": true, "minimum_count": 1} 
+        - type: readings-site-reactive-power
+          parameters: {"reading_length_seconds": 60, "latest_reading_only": true, "minimum_count": 1}
+        - type: readings-voltage
+          parameters: {"reading_length_seconds": 60, "latest_reading_only": true, "minimum_count": 1}
+        - type: readings-der-active-power
+          parameters: {"reading_length_seconds": 60, "latest_reading_only": true, "minimum_count": 1}
+        - type: readings-der-reactive-power
+          parameters: {"reading_length_seconds": 60, "latest_reading_only": true, "minimum_count": 1}
     actions:
       - type: remove-steps
         parameters:
           steps:
-            - POST-MUP-2 
-              
-  # (f)
-  WAIT-TILL-END:
-    event:
-      type: wait
-      parameters:
-        duration_seconds: 90
-    actions:
-      - type: remove-steps
-        parameters:
-          steps:
-            - WAIT-TILL-END
+            - POST-MUP-60S-FINAL
       - type: finish-test
         parameters: {}
-  
